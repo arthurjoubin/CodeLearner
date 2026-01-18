@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-radius: 0 !important;
+  }
+
+  body {
+    @apply bg-white text-black antialiased font-mono;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-black text-white font-bold py-2 px-4 border-3 border-black uppercase tracking-wide transition-all duration-100;
+    @apply hover:bg-primary-500 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal;
+    @apply active:translate-x-0 active:translate-y-0 active:shadow-none;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-black font-bold py-2 px-4 border-3 border-black uppercase tracking-wide transition-all duration-100;
+    @apply hover:bg-gray-100 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal;
+    @apply active:translate-x-0 active:translate-y-0 active:shadow-none;
+  }
+
+  .card {
+    @apply bg-white border-3 border-black p-6 transition-all duration-100;
+  }
+
+  .card-interactive {
+    @apply card cursor-pointer;
+    @apply hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-brutal-lg;
+    @apply active:translate-x-0 active:translate-y-0 active:shadow-none;
+  }
+
+  .progress-bar {
+    @apply h-4 bg-white border-3 border-black overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-primary-500 transition-all duration-500 ease-out;
+  }
+
+  .xp-badge {
+    @apply inline-flex items-center gap-1 bg-yellow-400 text-black px-3 py-1 border-2 border-black text-sm font-bold uppercase;
+  }
+
+  .heart {
+    @apply text-red-500 transition-all duration-200;
+  }
+
+  .streak-badge {
+    @apply inline-flex items-center gap-1 bg-orange-400 text-black px-3 py-1 border-2 border-black font-bold uppercase;
+  }
+
+  /* Difficulty badges */
+  .difficulty-easy {
+    @apply bg-green-400 text-black border-2 border-black px-2 py-1 text-xs font-bold uppercase;
+  }
+
+  .difficulty-medium {
+    @apply bg-yellow-400 text-black border-2 border-black px-2 py-1 text-xs font-bold uppercase;
+  }
+
+  .difficulty-hard {
+    @apply bg-red-500 text-white border-2 border-black px-2 py-1 text-xs font-bold uppercase;
+  }
+
+  .difficulty-beginner {
+    @apply bg-green-400 text-black border-2 border-black px-2 py-1 text-xs font-bold uppercase;
+  }
+
+  .difficulty-intermediate {
+    @apply bg-yellow-400 text-black border-2 border-black px-2 py-1 text-xs font-bold uppercase;
+  }
+
+  .difficulty-advanced {
+    @apply bg-red-500 text-white border-2 border-black px-2 py-1 text-xs font-bold uppercase;
+  }
+
+  /* Input styles */
+  .input-brutal {
+    @apply w-full px-4 py-2 border-3 border-black bg-white text-black font-mono;
+    @apply focus:outline-none focus:ring-0 focus:shadow-brutal focus:translate-x-[-2px] focus:translate-y-[-2px];
+  }
+}
+
+/* Custom scrollbar - brutalist style */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-white border-l-2 border-black;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-black;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-800;
+}
+
+/* Monaco editor customization */
+.monaco-editor {
+  border: 3px solid black !important;
+}
+
+/* Prose overrides for brutalist style */
+.prose pre {
+  @apply border-3 border-black bg-gray-900;
+}
+
+.prose code {
+  @apply bg-yellow-200 text-black px-1 border border-black;
+}
+
+.prose pre code {
+  @apply bg-transparent border-0;
+}
