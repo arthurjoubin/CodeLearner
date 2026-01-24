@@ -1,0 +1,215 @@
+{
+  "module": {
+    "id": "frontend-tech",
+    "title": "Frontend Technologies",
+    "description": "HTML, CSS, Tailwind and styling approaches",
+    "icon": "Palette",
+    "requiredXp": 100,
+    "color": "from-pink-400 to-pink-600",
+    "courseId": "web-stack"
+  },
+  "lessons": [
+    {
+      "id": "html-structure",
+      "moduleId": "frontend-tech",
+      "title": "HTML: The Structure",
+      "order": 1,
+      "xpReward": 20,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- HTML = HyperText Markup Language (structure of web pages)\n- Uses tags: `<div>`, `<p>`, `<h1>`, etc.\n- Semantic HTML improves accessibility and SEO\n- Every webpage is HTML at its core\n\n---\n\n# HTML: The Skeleton of the Web\n\n## What is HTML?\n\nHTML is the **structure** of every webpage. It tells the browser:\n- \"This is a heading\"\n- \"This is a paragraph\"\n- \"This is a link\"\n- \"This is an image\"\n\n## Basic Structure\n\n```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>My Page</title>\n</head>\n<body>\n  <h1>Hello World</h1>\n  <p>This is a paragraph.</p>\n</body>\n</html>\n```\n\n## Common Tags\n\n**Headings:**\n```html\n<h1>Main Title</h1>\n<h2>Subtitle</h2>\n<h3>Section Title</h3>\n```\n\n**Text:**\n```html\n<p>Paragraph</p>\n<span>Inline text</span>\n<strong>Bold</strong>\n<em>Italic</em>\n```\n\n**Links & Images:**\n```html\n<a href=\"https://example.com\">Click here</a>\n<img src=\"photo.jpg\" alt=\"Description\">\n```\n\n**Lists:**\n```html\n<ul>\n  <li>Item 1</li>\n  <li>Item 2</li>\n</ul>\n```\n\n**Containers:**\n```html\n<div>Generic container</div>\n<section>Thematic section</section>\n<article>Self-contained content</article>\n<header>Header area</header>\n<footer>Footer area</footer>\n```\n\n## Semantic HTML\n\n**Non-semantic (bad):**\n```html\n<div class=\"header\">\n  <div class=\"nav\">...</div>\n</div>\n```\n\n**Semantic (good):**\n```html\n<header>\n  <nav>...</nav>\n</header>\n```\n\n**Why semantic?**\n- ✅ Screen readers understand it better\n- ✅ SEO (Google likes it)\n- ✅ More maintainable\n\n## Forms\n\n```html\n<form>\n  <label for=\"name\">Name:</label>\n  <input type=\"text\" id=\"name\" name=\"name\">\n  \n  <label for=\"email\">Email:</label>\n  <input type=\"email\" id=\"email\" name=\"email\">\n  \n  <button type=\"submit\">Submit</button>\n</form>\n```\n\n## Key Attributes\n\n- `id=\"unique\"` - Unique identifier\n- `class=\"btn primary\"` - CSS class(es)\n- `src=\"image.jpg\"` - Image/script source\n- `href=\"/about\"` - Link destination\n- `alt=\"Description\"` - Alternative text\n- `placeholder=\"Enter name\"` - Input hint\n\n## Accessibility\n\n**Always include:**\n- `alt` on images\n- `<label>` for inputs\n- Proper heading hierarchy (h1 → h2 → h3)\n- ARIA attributes when needed",
+      "codeExample": "<!-- Modern, semantic HTML example -->\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>My Blog</title>\n</head>\n<body>\n  <header>\n    <nav>\n      <a href=\"/\">Home</a>\n      <a href=\"/about\">About</a>\n    </nav>\n  </header>\n  \n  <main>\n    <article>\n      <h1>My First Blog Post</h1>\n      <p>Published on <time datetime=\"2024-01-15\">January 15, 2024</time></p>\n      <p>This is the content of my blog post...</p>\n    </article>\n  </main>\n  \n  <footer>\n    <p>&copy; 2024 My Blog</p>\n  </footer>\n</body>\n</html>"
+    },
+    {
+      "id": "css-basics",
+      "moduleId": "frontend-tech",
+      "title": "CSS: The Style",
+      "order": 2,
+      "xpReward": 25,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- CSS = Cascading Style Sheets (makes HTML look good)\n- Selectors target HTML elements\n- Cascade: styles can override each other\n- Specificity determines which style wins\n\n---\n\n# CSS: Making It Pretty\n\n## What is CSS?\n\nCSS makes HTML **look good**. Without CSS, all websites would look like plain text!\n\n## Basic Syntax\n\n```css\nselector {\n  property: value;\n}\n```\n\n**Example:**\n```css\nh1 {\n  color: blue;\n  font-size: 32px;\n}\n```\n\n## Selectors\n\n**Element:**\n```css\np { color: black; }\n```\n\n**Class:**\n```css\n.button { background: blue; }\n```\n```html\n<div class=\"button\">Click me</div>\n```\n\n**ID:**\n```css\n#header { height: 100px; }\n```\n```html\n<div id=\"header\">Header</div>\n```\n\n**Multiple selectors:**\n```css\nh1, h2, h3 {\n  font-family: Arial;\n}\n```\n\n**Descendant:**\n```css\nnav a {\n  color: white;\n}\n```\nTargets `<a>` inside `<nav>`\n\n## The Box Model\n\nEvery element is a box:\n\n```\n┌─────────────────────────────┐\n│         Margin              │\n│  ┌───────────────────────┐  │\n│  │      Border           │  │\n│  │  ┌─────────────────┐  │  │\n│  │  │    Padding      │  │  │\n│  │  │  ┌───────────┐  │  │  │\n│  │  │  │  Content  │  │  │  │\n│  │  │  └───────────┘  │  │  │\n│  │  └─────────────────┘  │  │\n│  └───────────────────────┘  │\n└─────────────────────────────┘\n```\n\n```css\n.box {\n  width: 200px;\n  padding: 20px;    /* Space inside */\n  border: 2px solid black;\n  margin: 10px;     /* Space outside */\n}\n```\n\n## Layout: Flexbox\n\n**Modern way to layout:**\n```css\n.container {\n  display: flex;\n  justify-content: center;  /* Horizontal */\n  align-items: center;      /* Vertical */\n  gap: 20px;                /* Space between items */\n}\n```\n\n## Common Properties\n\n**Text:**\n```css\ncolor: blue;\nfont-size: 16px;\nfont-weight: bold;\ntext-align: center;\n```\n\n**Background:**\n```css\nbackground-color: #f0f0f0;\nbackground-image: url('photo.jpg');\n```\n\n**Sizing:**\n```css\nwidth: 100%;\nheight: 200px;\nmax-width: 800px;\n```\n\n**Spacing:**\n```css\nmargin: 10px;           /* All sides */\nmargin: 10px 20px;      /* Top/bottom, left/right */\npadding: 10px 20px 30px 40px;  /* Top, right, bottom, left */\n```\n\n## Specificity (What Wins?)\n\nWhen multiple styles conflict:\n\n1. **Inline styles** (highest)\n2. **IDs** (#header)\n3. **Classes** (.button)\n4. **Elements** (p, div)\n\n```css\np { color: black; }          /* 1 point */\n.text { color: blue; }       /* 10 points */\n#title { color: red; }       /* 100 points */\n```\n\n`#title` wins!\n\n## The Cascade\n\nStyles cascade down:\n```css\nbody {\n  font-family: Arial;  /* All children inherit this */\n}\n```\n\nLater styles override earlier ones:\n```css\np { color: blue; }\np { color: red; }  /* This wins */\n```",
+      "codeExample": "/* Real-world CSS example */\n\n/* Reset */\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\n/* Typography */\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;\n  line-height: 1.6;\n  color: #333;\n}\n\n/* Layout */\n.container {\n  max-width: 1200px;\n  margin: 0 auto;\n  padding: 0 20px;\n}\n\n/* Components */\n.button {\n  display: inline-block;\n  padding: 12px 24px;\n  background: #007bff;\n  color: white;\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n  transition: background 0.3s;\n}\n\n.button:hover {\n  background: #0056b3;\n}\n\n/* Responsive */\n@media (max-width: 768px) {\n  .container {\n    padding: 0 10px;\n  }\n}"
+    },
+    {
+      "id": "tailwind-approach",
+      "moduleId": "frontend-tech",
+      "title": "Tailwind: Utility-First CSS",
+      "order": 3,
+      "xpReward": 30,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Tailwind = utility-first CSS framework\n- Uses classes like `flex`, `p-4`, `bg-blue-500`\n- No need to write custom CSS\n- Faster development but more HTML classes\n\n---\n\n# Tailwind: A Different Approach\n\n## What is Tailwind?\n\nTailwind is a **utility-first** CSS framework. Instead of writing CSS, you use pre-made classes.\n\n## Traditional CSS vs Tailwind\n\n**Traditional CSS:**\n```html\n<button class=\"btn-primary\">Click me</button>\n```\n```css\n.btn-primary {\n  background-color: blue;\n  color: white;\n  padding: 12px 24px;\n  border-radius: 4px;\n}\n```\n\n**Tailwind:**\n```html\n<button class=\"bg-blue-500 text-white px-6 py-3 rounded\">\n  Click me\n</button>\n```\n\nNo CSS file needed!\n\n## Common Tailwind Classes\n\n**Spacing:**\n```html\n<div class=\"p-4\">      <!-- padding: 1rem (16px) -->\n<div class=\"m-8\">      <!-- margin: 2rem (32px) -->\n<div class=\"px-4 py-2\"> <!-- padding-x: 1rem, padding-y: 0.5rem -->\n```\n\n**Colors:**\n```html\n<div class=\"bg-blue-500\">    <!-- background: blue -->\n<div class=\"text-red-600\">   <!-- color: red -->\n<div class=\"border-gray-300\"> <!-- border-color: gray -->\n```\n\n**Layout (Flexbox):**\n```html\n<div class=\"flex justify-center items-center gap-4\">\n  <!-- display: flex, center everything, gap: 1rem -->\n</div>\n```\n\n**Sizing:**\n```html\n<div class=\"w-full\">      <!-- width: 100% -->\n<div class=\"h-64\">        <!-- height: 16rem -->\n<div class=\"max-w-4xl\">   <!-- max-width: 56rem -->\n```\n\n**Typography:**\n```html\n<h1 class=\"text-3xl font-bold\">    <!-- font-size: 30px, bold -->\n<p class=\"text-gray-600 text-sm\">  <!-- gray color, small -->\n```\n\n**Responsive:**\n```html\n<div class=\"text-sm md:text-base lg:text-lg\">\n  <!-- Small on mobile, medium on tablet, large on desktop -->\n</div>\n```\n\n## Pros & Cons\n\n**✅ Pros:**\n- No need to name classes\n- Consistent design system\n- Faster development\n- Smaller CSS bundle (with PurgeCSS)\n- See all styles in HTML\n\n**❌ Cons:**\n- HTML can get cluttered\n- Learning curve (memorize class names)\n- Harder to change design globally\n- Not semantic class names\n\n## When to Use Tailwind?\n\n**Good for:**\n- ✅ Prototyping quickly\n- ✅ Component-based frameworks (React, Vue)\n- ✅ Teams that want consistency\n- ✅ Projects that change designs often\n\n**Not ideal for:**\n- ❌ Simple static sites\n- ❌ When you need very custom designs\n- ❌ SEO-critical pages (HTML bloat)\n\n## Extracting Components\n\nFor repeated patterns, use `@apply`:\n\n```css\n.btn-primary {\n  @apply bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600;\n}\n```\n\nOr in React:\n```jsx\nfunction Button({ children }) {\n  return (\n    <button className=\"bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600\">\n      {children}\n    </button>\n  );\n}\n```",
+      "codeExample": "// Tailwind example: Card component\n\n// Without Tailwind (traditional CSS):\n/*\n.card {\n  background: white;\n  border-radius: 8px;\n  box-shadow: 0 2px 4px rgba(0,0,0,0.1);\n  padding: 24px;\n}\n.card-title {\n  font-size: 24px;\n  font-weight: bold;\n  margin-bottom: 12px;\n}\n*/\n\n// With Tailwind:\nfunction Card() {\n  return (\n    <div className=\"bg-white rounded-lg shadow-md p-6\">\n      <h2 className=\"text-2xl font-bold mb-3\">Card Title</h2>\n      <p className=\"text-gray-600\">Card content goes here.</p>\n      <button className=\"mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600\">\n        Click me\n      </button>\n    </div>\n  );\n}\n\n// Responsive Tailwind:\nfunction Hero() {\n  return (\n    <div className=\"flex flex-col md:flex-row items-center gap-4 p-4 md:p-8\">\n      <img \n        src=\"photo.jpg\" \n        className=\"w-full md:w-1/2 rounded-lg\"\n      />\n      <div className=\"w-full md:w-1/2\">\n        <h1 className=\"text-2xl md:text-4xl font-bold mb-4\">\n          Welcome!\n        </h1>\n        <p className=\"text-base md:text-lg text-gray-700\">\n          This layout changes on mobile vs desktop.\n        </p>\n      </div>\n    </div>\n  );\n}"
+    },
+    {
+      "id": "css-preprocessors",
+      "moduleId": "frontend-tech",
+      "title": "CSS Preprocessors (Sass/SCSS)",
+      "order": 4,
+      "xpReward": 25,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Sass/SCSS adds features to CSS (variables, nesting, functions)\n- Compiles to regular CSS\n- Makes large stylesheets more maintainable\n- `.scss` is the most common syntax\n\n---\n\n# Sass/SCSS: Supercharged CSS\n\n## What is Sass?\n\n**Sass** (Syntactically Awesome Style Sheets) extends CSS with:\n- Variables\n- Nesting\n- Mixins (reusable chunks)\n- Functions\n\n**SCSS** is Sass with CSS-like syntax (.scss files)\n\n## Why Use It?\n\n**Problem:** CSS gets repetitive\n```css\n.button-primary { background: #007bff; }\n.button-secondary { background: #6c757d; }\n.text-primary { color: #007bff; }\n```\n\nYou're repeating `#007bff` everywhere!\n\n**Solution:** Sass variables\n```scss\n$primary-color: #007bff;\n$secondary-color: #6c757d;\n\n.button-primary { background: $primary-color; }\n.button-secondary { background: $secondary-color; }\n.text-primary { color: $primary-color; }\n```\n\n## Variables\n\n```scss\n$font-stack: Helvetica, sans-serif;\n$primary-color: #333;\n$base-padding: 16px;\n\nbody {\n  font: 100% $font-stack;\n  color: $primary-color;\n  padding: $base-padding;\n}\n```\n\n## Nesting\n\n**CSS (flat):**\n```css\nnav { background: black; }\nnav ul { margin: 0; }\nnav ul li { display: inline; }\nnav a { color: white; }\n```\n\n**SCSS (nested):**\n```scss\nnav {\n  background: black;\n  \n  ul {\n    margin: 0;\n    \n    li {\n      display: inline;\n    }\n  }\n  \n  a {\n    color: white;\n  }\n}\n```\n\nMuch more readable!\n\n## Mixins (Reusable Chunks)\n\n```scss\n@mixin border-radius($radius) {\n  -webkit-border-radius: $radius;\n  -moz-border-radius: $radius;\n  border-radius: $radius;\n}\n\n.button {\n  @include border-radius(4px);\n}\n\n.card {\n  @include border-radius(8px);\n}\n```\n\n## Partials & Imports\n\nSplit CSS into multiple files:\n\n```scss\n// _variables.scss\n$primary: #007bff;\n\n// _buttons.scss\n.button { background: $primary; }\n\n// main.scss\n@import 'variables';\n@import 'buttons';\n```\n\n## Functions\n\n```scss\n@function calculate-rem($pixels) {\n  @return $pixels / 16 * 1rem;\n}\n\n.text {\n  font-size: calculate-rem(24); // 1.5rem\n}\n```\n\n## Extends\n\n```scss\n.message {\n  padding: 12px;\n  border: 1px solid;\n}\n\n.success {\n  @extend .message;\n  border-color: green;\n}\n\n.error {\n  @extend .message;\n  border-color: red;\n}\n```\n\n## When to Use Sass?\n\n**✅ Good for:**\n- Large projects\n- Need to maintain design system\n- Working without frameworks\n- DRY (Don't Repeat Yourself) CSS\n\n**❌ Not needed:**\n- Small projects\n- Already using Tailwind\n- Using CSS-in-JS (styled-components)",
+      "codeExample": "// Real-world SCSS example\n\n// _variables.scss\n$colors: (\n  primary: #007bff,\n  secondary: #6c757d,\n  success: #28a745,\n  danger: #dc3545\n);\n\n$breakpoints: (\n  sm: 576px,\n  md: 768px,\n  lg: 992px\n);\n\n// _mixins.scss\n@mixin respond-to($breakpoint) {\n  @media (min-width: map-get($breakpoints, $breakpoint)) {\n    @content;\n  }\n}\n\n@mixin button-variant($color) {\n  background: map-get($colors, $color);\n  border: none;\n  color: white;\n  padding: 12px 24px;\n  border-radius: 4px;\n  \n  &:hover {\n    background: darken(map-get($colors, $color), 10%);\n  }\n}\n\n// _buttons.scss\n.btn {\n  cursor: pointer;\n  transition: all 0.3s;\n  \n  &.btn-primary {\n    @include button-variant(primary);\n  }\n  \n  &.btn-danger {\n    @include button-variant(danger);\n  }\n}\n\n// _layout.scss\n.container {\n  width: 100%;\n  padding: 0 15px;\n  \n  @include respond-to(md) {\n    max-width: 720px;\n  }\n  \n  @include respond-to(lg) {\n    max-width: 960px;\n  }\n}\n\n// main.scss\n@import 'variables';\n@import 'mixins';\n@import 'buttons';\n@import 'layout';"
+    },
+    {
+      "id": "css-in-js",
+      "moduleId": "frontend-tech",
+      "title": "CSS-in-JS",
+      "order": 5,
+      "xpReward": 25,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- CSS-in-JS = Write CSS inside JavaScript\n- Popular libraries: styled-components, Emotion, CSS Modules\n- Scoped styles (no global conflicts)\n- Dynamic styling with JavaScript logic\n\n---\n\n# CSS-in-JS: Styles Meet JavaScript\n\n## What is CSS-in-JS?\n\nWrite your styles directly in JavaScript files, alongside components.\n\n**Example (styled-components):**\n```jsx\nimport styled from 'styled-components';\n\nconst Button = styled.button`\n  background: blue;\n  color: white;\n  padding: 12px 24px;\n  border-radius: 4px;\n`;\n\nfunction App() {\n  return <Button>Click me</Button>;\n}\n```\n\n## Why CSS-in-JS?\n\n**Traditional problem:**\n```css\n/* styles.css */\n.button { background: blue; }\n```\n```jsx\n// Can't use JS variables in CSS\nconst theme = { primary: 'blue' };\n```\n\n**CSS-in-JS solution:**\n```jsx\nconst Button = styled.button`\n  background: ${props => props.theme.primary};\n`;\n```\n\n## Benefits\n\n**1. Scoped Styles**\nNo naming conflicts!\n\n```jsx\n// Component A\nconst Title = styled.h1`color: blue;`;\n\n// Component B\nconst Title = styled.h1`color: red;`;\n// No conflict! Each is scoped to its component\n```\n\n**2. Dynamic Styling**\n```jsx\nconst Button = styled.button`\n  background: ${props => props.primary ? 'blue' : 'gray'};\n  padding: ${props => props.large ? '16px' : '8px'};\n`;\n\n<Button primary large>Click me</Button>\n```\n\n**3. Dead Code Elimination**\nUnused styles are automatically removed.\n\n**4. Theming**\n```jsx\nconst theme = {\n  colors: { primary: 'blue', secondary: 'gray' },\n  spacing: { small: '8px', large: '16px' }\n};\n\n<ThemeProvider theme={theme}>\n  <App />\n</ThemeProvider>\n\nconst Button = styled.button`\n  background: ${props => props.theme.colors.primary};\n  padding: ${props => props.theme.spacing.large};\n`;\n```\n\n## Popular Libraries\n\n### styled-components\n```jsx\nconst Card = styled.div`\n  background: white;\n  padding: 20px;\n  border-radius: 8px;\n  \n  &:hover {\n    box-shadow: 0 4px 8px rgba(0,0,0,0.1);\n  }\n`;\n```\n\n### Emotion\nSimilar to styled-components:\n```jsx\nimport styled from '@emotion/styled';\n\nconst Button = styled.button`\n  color: hotpink;\n`;\n```\n\n### CSS Modules\nNot exactly CSS-in-JS, but scoped:\n```css\n/* Button.module.css */\n.button { background: blue; }\n```\n```jsx\nimport styles from './Button.module.css';\n\n<button className={styles.button}>Click</button>\n```\n\n## Pros & Cons\n\n**✅ Pros:**\n- Scoped to components\n- Dynamic styles with JS\n- Type safety (with TypeScript)\n- No class name conflicts\n- Automatic vendor prefixing\n\n**❌ Cons:**\n- Larger bundle size\n- Runtime performance cost (for some libraries)\n- Harder to debug (generated class names)\n- Learning curve\n\n## When to Use?\n\n**Good for:**\n- ✅ React/Vue component libraries\n- ✅ Apps with complex theming\n- ✅ When you need dynamic styles\n- ✅ Large teams (scoping prevents conflicts)\n\n**Not ideal:**\n- ❌ Static websites\n- ❌ Performance-critical apps\n- ❌ When you prefer separation of concerns",
+      "codeExample": "// Real-world styled-components example\n\nimport styled from 'styled-components';\n\n// Theming\nconst theme = {\n  colors: {\n    primary: '#007bff',\n    danger: '#dc3545',\n    gray: '#6c757d'\n  },\n  spacing: (multiplier) => `${8 * multiplier}px`\n};\n\n// Base button\nconst Button = styled.button`\n  padding: ${props => props.theme.spacing(1.5)} ${props => props.theme.spacing(3)};\n  border: none;\n  border-radius: 4px;\n  font-weight: bold;\n  cursor: pointer;\n  transition: all 0.3s;\n  \n  background: ${props => {\n    if (props.variant === 'primary') return props.theme.colors.primary;\n    if (props.variant === 'danger') return props.theme.colors.danger;\n    return props.theme.colors.gray;\n  }};\n  \n  color: white;\n  \n  &:hover {\n    opacity: 0.8;\n    transform: translateY(-2px);\n  }\n  \n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n`;\n\n// Extended variant\nconst PrimaryButton = styled(Button)`\n  background: linear-gradient(45deg, #007bff, #0056b3);\n`;\n\n// Usage\nfunction App() {\n  return (\n    <ThemeProvider theme={theme}>\n      <div>\n        <Button variant=\"primary\">Primary</Button>\n        <Button variant=\"danger\">Delete</Button>\n        <PrimaryButton>Fancy Primary</PrimaryButton>\n      </div>\n    </ThemeProvider>\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "frontend-ex-1",
+      "lessonId": "html-structure",
+      "moduleId": "frontend-tech",
+      "title": "HTML Semantics",
+      "difficulty": "easy",
+      "xpReward": 25,
+      "description": "Identify semantic HTML usage.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Which is the most semantic way to mark up a navigation menu?",
+          "options": ["<div class=\"nav\">", "<nav>", "<ul class=\"navigation\">", "<menu>"],
+          "correctAnswer": 1,
+          "explanation": "<nav> is the semantic HTML5 element specifically for navigation."
+        },
+        {
+          "question": "Which should you use for the main content of a page?",
+          "options": ["<div id=\"main\">", "<section>", "<main>", "<content>"],
+          "correctAnswer": 2,
+          "explanation": "<main> is the semantic element for the primary content of a page."
+        },
+        {
+          "question": "What's wrong with: <img src=\"photo.jpg\">",
+          "options": ["Nothing", "Missing alt attribute", "Should use <image>", "Missing title attribute"],
+          "correctAnswer": 1,
+          "explanation": "Images should always have an alt attribute for accessibility."
+        }
+      ]
+    },
+    {
+      "id": "frontend-ex-2",
+      "lessonId": "css-basics",
+      "moduleId": "frontend-tech",
+      "title": "CSS Specificity",
+      "difficulty": "medium",
+      "xpReward": 30,
+      "description": "Understand CSS specificity rules.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Which selector has the HIGHEST specificity?",
+          "options": ["p { }", ".text { }", "#title { }", "div p { }"],
+          "correctAnswer": 2,
+          "explanation": "ID selectors (#) have higher specificity than classes (.) or elements."
+        },
+        {
+          "question": "Given these styles, what color will the text be?\n\np { color: red; }\n.important { color: blue; }\n\n<p class=\"important\">Text</p>",
+          "options": ["red", "blue", "black", "depends on order"],
+          "correctAnswer": 1,
+          "explanation": "Class selector (.important) has higher specificity than element selector (p)."
+        },
+        {
+          "question": "What does 'box-sizing: border-box' do?",
+          "options": ["Adds a border", "Includes padding/border in width", "Makes the box bigger", "Removes margins"],
+          "correctAnswer": 1,
+          "explanation": "border-box makes width/height include padding and border, making sizing more predictable."
+        }
+      ]
+    },
+    {
+      "id": "frontend-ex-3",
+      "lessonId": "tailwind-approach",
+      "moduleId": "frontend-tech",
+      "title": "Tailwind vs Traditional CSS",
+      "difficulty": "easy",
+      "xpReward": 30,
+      "description": "Compare Tailwind and traditional CSS approaches.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What does 'p-4' mean in Tailwind?",
+          "options": ["padding: 4px", "padding: 16px (1rem)", "paragraph style 4", "position: 4"],
+          "correctAnswer": 1,
+          "explanation": "p-4 means padding: 1rem (16px). Tailwind's spacing scale: 1 = 0.25rem, 4 = 1rem."
+        },
+        {
+          "question": "Main benefit of Tailwind?",
+          "options": ["Smaller HTML", "No need to write custom CSS", "Better performance", "SEO improvement"],
+          "correctAnswer": 1,
+          "explanation": "Tailwind provides utility classes so you rarely need to write custom CSS."
+        },
+        {
+          "question": "What does 'md:text-lg' mean?",
+          "options": ["Medium text, large size", "text-lg on medium+ screens", "Markdown text", "Mobile-desktop text"],
+          "correctAnswer": 1,
+          "explanation": "md: is a responsive prefix - applies text-lg only on medium screens and up."
+        }
+      ]
+    },
+    {
+      "id": "frontend-ex-4",
+      "lessonId": "css-preprocessors",
+      "moduleId": "frontend-tech",
+      "title": "Sass Features",
+      "difficulty": "medium",
+      "xpReward": 30,
+      "description": "Test understanding of Sass/SCSS features.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What's the main benefit of Sass variables?",
+          "options": ["Faster CSS", "Reuse values across styles", "Better browser support", "Smaller file size"],
+          "correctAnswer": 1,
+          "explanation": "Variables let you define values once and reuse them, making updates easier."
+        },
+        {
+          "question": "What does @mixin do?",
+          "options": ["Imports files", "Creates reusable style chunks", "Adds mixins to coffee", "Extends classes"],
+          "correctAnswer": 1,
+          "explanation": "Mixins are reusable blocks of styles that you can @include in other selectors."
+        },
+        {
+          "question": "Do browsers understand .scss files?",
+          "options": ["Yes", "No, must be compiled to CSS", "Only modern browsers", "Only with polyfills"],
+          "correctAnswer": 1,
+          "explanation": "SCSS must be compiled to regular CSS before browsers can use it."
+        }
+      ]
+    },
+    {
+      "id": "frontend-ex-5",
+      "lessonId": "css-in-js",
+      "moduleId": "frontend-tech",
+      "title": "CSS-in-JS Concepts",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Understand CSS-in-JS benefits and trade-offs.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Main advantage of CSS-in-JS?",
+          "options": ["Faster loading", "Scoped styles (no conflicts)", "Better SEO", "Smaller bundle"],
+          "correctAnswer": 1,
+          "explanation": "CSS-in-JS scopes styles to components, preventing global naming conflicts."
+        },
+        {
+          "question": "Can you use JavaScript variables in CSS-in-JS?",
+          "options": ["No", "Yes", "Only with Sass", "Only inline styles"],
+          "correctAnswer": 1,
+          "explanation": "CSS-in-JS allows dynamic styles using JavaScript variables and props."
+        },
+        {
+          "question": "Main drawback of CSS-in-JS?",
+          "options": ["Hard to write", "Runtime performance cost", "No browser support", "Can't use hover"],
+          "correctAnswer": 1,
+          "explanation": "Some CSS-in-JS libraries compute styles at runtime, adding overhead."
+        }
+      ]
+    }
+  ]
+}

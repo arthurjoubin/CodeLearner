@@ -1,0 +1,267 @@
+{
+  "module": {
+    "id": "frontend-frameworks",
+    "title": "Frontend Frameworks",
+    "description": "Explore React, Vue, Svelte, Angular and choose the right framework",
+    "icon": "Layers",
+    "requiredXp": 400,
+    "color": "from-cyan-400 to-cyan-600",
+    "courseId": "web-stack"
+  },
+  "lessons": [
+    {
+      "id": "framework-vs-library",
+      "moduleId": "frontend-frameworks",
+      "title": "Framework vs Library",
+      "order": 1,
+      "xpReward": 30,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Library = you call its functions (React)\n- Framework = it calls your code (Angular)\n- Frameworks are opinionated, libraries are flexible\n- Both help build complex UIs faster\n\n---\n\n# Framework vs Library: What's the Difference?\n\n## The Key Difference\n\n**Library:** You are in control\n```javascript\n// You import and use it when YOU want\nimport { render } from 'my-library';\n\nfunction myApp() {\n  render(<div>Hello</div>);\n}\n```\n\n**Framework:** It is in control\n```javascript\n// Framework calls YOUR code\n// You follow its structure\n\nexport class AppComponent {\n  // Framework calls this automatically\n  ngOnInit() {\n    // Your code here\n  }\n}\n```\n\n## The Hollywood Principle\n\n**\"Don't call us, we'll call you\"**\n\n**Library:** You call the library\n**Framework:** The framework calls you\n\n## Real Examples\n\n**React (Library):**\n```jsx\nimport React from 'react';\nimport ReactDOM from 'react-dom';\n\n// You decide when and how to use it\nfunction App() {\n  return <h1>Hello</h1>;\n}\n\nReactDOM.render(<App />, document.getElementById('root'));\n```\n\nYou can use React anywhere, anyway you want!\n\n**Angular (Framework):**\n```typescript\nimport { Component } from '@angular/core';\n\n// Must follow Angular's structure\n@Component({\n  selector: 'app-root',\n  template: '<h1>Hello</h1>'\n})\nexport class AppComponent {\n  // Angular calls your lifecycle methods\n}\n```\n\nAngular dictates the structure!\n\n## Framework Characteristics\n\n**Opinionated:**\n- ✅ \"Do it this way\"\n- ✅ Built-in routing\n- ✅ Built-in state management\n- ✅ Specific file structure\n- ❌ Less flexibility\n\n**Examples:** Angular, Ember, Vue (more opinionated)\n\n## Library Characteristics\n\n**Flexible:**\n- ✅ \"Do it your way\"\n- ✅ Pick your own tools\n- ✅ Use only what you need\n- ❌ More decisions to make\n- ❌ Need to integrate tools yourself\n\n**Examples:** React, Preact, Vue (can be library-like)\n\n## Metaphor: Building a House\n\n**Library = Tools:**\n- You buy a hammer, saw, drill\n- You decide how to build the house\n- More freedom, more decisions\n- Can build anything\n\n**Framework = Kit Home:**\n- Comes with blueprints\n- \"Put wall A here, roof B there\"\n- Faster to build (if you follow the plan)\n- Limited to the design\n\n## Spectrum: Library → Framework\n\n```\nMore Flexible ←――――――――――――――――→ More Opinionated\n\nReact    Vue    Svelte    Angular    Ember\n(Library) (Both) (Library) (Framework) (Framework)\n```\n\n## When to Use a Framework\n\n**Choose framework when:**\n- ✅ You want structure\n- ✅ Large team needs consistency\n- ✅ You want built-in features\n- ✅ You're new and want guidance\n- ✅ Enterprise application\n\n## When to Use a Library\n\n**Choose library when:**\n- ✅ You want flexibility\n- ✅ Need to integrate with existing code\n- ✅ Want to pick your own tools\n- ✅ Building something unique\n- ✅ Smaller project\n\n## Modern Trend: Hybrid\n\nMany modern tools blur the line:\n\n**Next.js:**\n- Built on React (library)\n- But provides framework-like structure\n- Best of both worlds?\n\n**Vue:**\n- Can be used as library (CDN script)\n- Can be used as framework (Vue CLI, structure)\n\n## The Bottom Line\n\n**Library:** \n\"Here are tools, you build\"\n\n**Framework:** \n\"Here's the blueprint, you fill in details\"\n\nBoth are valid! Choose based on:\n- Team size\n- Project complexity\n- Your preference\n- Time constraints",
+      "codeExample": "// React (Library) - You control everything\n\nimport React, { useState } from 'react';\nimport ReactDOM from 'react-dom/client';\n// You choose your router\nimport { BrowserRouter } from 'react-router-dom';\n// You choose your state management\nimport { Provider } from 'react-redux';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  \n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>\n        Increment\n      </button>\n    </div>\n  );\n}\n\n// You compose everything yourself\nconst root = ReactDOM.createRoot(document.getElementById('root'));\nroot.render(\n  <BrowserRouter>\n    <Provider store={store}>\n      <Counter />\n    </Provider>\n  </BrowserRouter>\n);\n\n// ――――――――――――――――――――――――――――――――――――\n\n// Angular (Framework) - It controls the flow\n\nimport { Component } from '@angular/core';\nimport { Router } from '@angular/router';\n\n// Must use decorators\n@Component({\n  selector: 'app-counter',\n  template: `\n    <div>\n      <p>Count: {{ count }}</p>\n      <button (click)=\"increment()\">Increment</button>\n    </div>\n  `\n})\nexport class CounterComponent {\n  count = 0;\n  \n  // Angular calls this\n  constructor(private router: Router) {}\n  \n  // Angular calls this\n  ngOnInit() {\n    console.log('Component initialized');\n  }\n  \n  increment() {\n    this.count++;\n  }\n}\n\n// Angular bootstraps and manages everything\n// You just define components following its patterns"
+    },
+    {
+      "id": "react-ecosystem",
+      "moduleId": "frontend-frameworks",
+      "title": "React Ecosystem",
+      "order": 2,
+      "xpReward": 35,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- React is a UI library by Facebook (Meta)\n- Component-based architecture\n- Uses JSX (HTML-like syntax in JavaScript)\n- Large ecosystem with many supporting libraries\n\n---\n\n# React: The Most Popular Choice\n\n## What is React?\n\n**React** is a JavaScript library for building user interfaces using **components**.\n\n**Core concept:**\n```jsx\nfunction Welcome() {\n  return <h1>Hello, World!</h1>;\n}\n```\n\nEverything is a component!\n\n## Why React is Popular\n\n**1. Component-Based**\n```jsx\nfunction App() {\n  return (\n    <div>\n      <Header />\n      <MainContent />\n      <Footer />\n    </div>\n  );\n}\n```\n\nBuild UI from reusable pieces!\n\n**2. JSX (JavaScript + HTML)**\n```jsx\nconst name = 'Alice';\nconst element = <h1>Hello, {name}!</h1>;\n```\n\nHTML-like syntax in JavaScript!\n\n**3. Declarative**\n```jsx\n// You describe WHAT you want, not HOW\nfunction Profile({ user }) {\n  return (\n    <div>\n      {user.isLoggedIn ? (\n        <h1>Welcome back, {user.name}!</h1>\n      ) : (\n        <h1>Please log in</h1>\n      )}\n    </div>\n  );\n}\n```\n\n**4. One-Way Data Flow**\n```jsx\nfunction Parent() {\n  const [data, setData] = useState('Hello');\n  return <Child data={data} />; // Data flows down\n}\n```\n\n## React Hooks\n\n**Modern React uses Hooks:**\n\n**useState (state):**\n```jsx\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  \n  return (\n    <button onClick={() => setCount(count + 1)}>\n      Clicked {count} times\n    </button>\n  );\n}\n```\n\n**useEffect (side effects):**\n```jsx\nfunction UserProfile({ userId }) {\n  const [user, setUser] = useState(null);\n  \n  useEffect(() => {\n    // Fetch user when userId changes\n    fetch(`/api/users/${userId}`)\n      .then(r => r.json())\n      .then(setUser);\n  }, [userId]);\n  \n  return <div>{user?.name}</div>;\n}\n```\n\n**useContext (global state):**\n```jsx\nconst ThemeContext = createContext('light');\n\nfunction Button() {\n  const theme = useContext(ThemeContext);\n  return <button className={theme}>Click me</button>;\n}\n```\n\n## The React Ecosystem\n\n**React is just the UI layer!**\n\nYou need to choose:\n\n**Routing:**\n- React Router (most popular)\n- TanStack Router\n- Wouter\n\n**State Management:**\n- Redux (traditional)\n- Zustand (simple)\n- Jotai (atomic)\n- Context API (built-in)\n\n**Forms:**\n- React Hook Form\n- Formik\n\n**Styling:**\n- CSS Modules\n- Tailwind CSS\n- styled-components\n- Emotion\n\n**Data Fetching:**\n- TanStack Query (React Query)\n- SWR\n- fetch + useEffect\n\n**Meta-Frameworks:**\n- Next.js (SSR, SSG)\n- Remix (Web standards)\n- Gatsby (Static sites)\n\n## React Component Example\n\n```jsx\nimport { useState, useEffect } from 'react';\n\nfunction TodoList() {\n  const [todos, setTodos] = useState([]);\n  const [input, setInput] = useState('');\n  \n  useEffect(() => {\n    // Load todos from API\n    fetch('/api/todos')\n      .then(r => r.json())\n      .then(setTodos);\n  }, []);\n  \n  const addTodo = () => {\n    setTodos([...todos, { id: Date.now(), text: input }]);\n    setInput('');\n  };\n  \n  return (\n    <div>\n      <input \n        value={input}\n        onChange={(e) => setInput(e.target.value)}\n      />\n      <button onClick={addTodo}>Add</button>\n      \n      <ul>\n        {todos.map(todo => (\n          <li key={todo.id}>{todo.text}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}\n```\n\n## Pros & Cons\n\n**✅ Pros:**\n- Most popular (lots of jobs)\n- Huge ecosystem\n- Great tooling\n- Large community\n- Backed by Meta\n- Flexible\n\n**❌ Cons:**\n- Steep learning curve\n- Too many choices (decision fatigue)\n- Needs additional libraries\n- JSX can be confusing\n- Fast-changing ecosystem\n\n## When to Choose React\n\n**Great for:**\n- ✅ Single Page Applications\n- ✅ Dynamic, interactive UIs\n- ✅ Large applications\n- ✅ Teams (lots of developers know it)\n- ✅ When you need flexibility\n\n**Maybe not for:**\n- ❌ Simple static sites (use Next.js instead)\n- ❌ When you want everything built-in (use Angular)",
+      "codeExample": "// Complete React example: User dashboard\n\nimport { useState, useEffect } from 'react';\n\n// Custom hook for data fetching\nfunction useUser(userId) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n  \n  useEffect(() => {\n    setLoading(true);\n    fetch(`/api/users/${userId}`)\n      .then(r => r.json())\n      .then(data => {\n        setUser(data);\n        setLoading(false);\n      });\n  }, [userId]);\n  \n  return { user, loading };\n}\n\n// Reusable components\nfunction Avatar({ url, name }) {\n  return (\n    <img \n      src={url} \n      alt={name}\n      className=\"w-16 h-16 rounded-full\"\n    />\n  );\n}\n\nfunction UserCard({ user }) {\n  return (\n    <div className=\"bg-white p-6 rounded-lg shadow\">\n      <Avatar url={user.avatar} name={user.name} />\n      <h2 className=\"text-xl font-bold mt-4\">{user.name}</h2>\n      <p className=\"text-gray-600\">{user.email}</p>\n      <div className=\"mt-4\">\n        <span className=\"text-sm\">Posts: {user.postCount}</span>\n      </div>\n    </div>\n  );\n}\n\n// Main component\nfunction UserDashboard() {\n  const [selectedUserId, setSelectedUserId] = useState(1);\n  const { user, loading } = useUser(selectedUserId);\n  \n  if (loading) {\n    return <div>Loading...</div>;\n  }\n  \n  return (\n    <div className=\"container mx-auto p-4\">\n      <h1 className=\"text-3xl font-bold mb-6\">User Dashboard</h1>\n      \n      <div className=\"mb-4\">\n        <button \n          onClick={() => setSelectedUserId(1)}\n          className=\"mr-2 px-4 py-2 bg-blue-500 text-white rounded\"\n        >\n          User 1\n        </button>\n        <button \n          onClick={() => setSelectedUserId(2)}\n          className=\"px-4 py-2 bg-blue-500 text-white rounded\"\n        >\n          User 2\n        </button>\n      </div>\n      \n      <UserCard user={user} />\n    </div>\n  );\n}\n\nexport default UserDashboard;"
+    },
+    {
+      "id": "vue-progressive",
+      "moduleId": "frontend-frameworks",
+      "title": "Vue: Progressive Framework",
+      "order": 3,
+      "xpReward": 30,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Vue is progressive (start simple, add features as needed)\n- Template-based syntax (feels like HTML)\n- Easier learning curve than React\n- Built-in state management and routing options\n\n---\n\n# Vue: The Progressive Framework\n\n## What is Vue?\n\n**Vue** is a progressive JavaScript framework for building UIs.\n\n**\"Progressive\" means:**\nStart simple, add complexity only when needed!\n\n**Level 1: Just a script tag**\n```html\n<div id=\"app\">{{ message }}</div>\n\n<script src=\"https://unpkg.com/vue@3\"></script>\n<script>\n  Vue.createApp({\n    data() {\n      return { message: 'Hello Vue!' }\n    }\n  }).mount('#app');\n</script>\n```\n\n**Level 2: Single File Components**\n```vue\n<template>\n  <div>{{ message }}</div>\n</template>\n\n<script>\nexport default {\n  data() {\n    return { message: 'Hello Vue!' }\n  }\n}\n</script>\n```\n\n**Level 3: Full framework with router, state management, etc.**\n\n## Why Developers Love Vue\n\n**1. Template Syntax (feels natural)**\n```vue\n<template>\n  <div>\n    <h1>{{ title }}</h1>\n    <p v-if=\"showContent\">Content here</p>\n    <button @click=\"toggleContent\">Toggle</button>\n  </div>\n</template>\n```\n\nLooks like HTML!\n\n**2. Reactive Data**\n```vue\n<script setup>\nimport { ref } from 'vue';\n\nconst count = ref(0);\n\nfunction increment() {\n  count.value++; // UI updates automatically!\n}\n</script>\n```\n\n**3. Built-in Directives**\n```vue\n<template>\n  <!-- Conditional rendering -->\n  <p v-if=\"isLoggedIn\">Welcome!</p>\n  \n  <!-- List rendering -->\n  <li v-for=\"item in items\" :key=\"item.id\">\n    {{ item.name }}\n  </li>\n  \n  <!-- Two-way binding -->\n  <input v-model=\"name\" />\n  \n  <!-- Event handling -->\n  <button @click=\"handleClick\">Click me</button>\n</template>\n```\n\n**4. Composition API (modern)**\n```vue\n<script setup>\nimport { ref, computed, onMounted } from 'vue';\n\nconst count = ref(0);\nconst doubled = computed(() => count.value * 2);\n\nonMounted(() => {\n  console.log('Component mounted!');\n});\n</script>\n\n<template>\n  <div>\n    <p>Count: {{ count }}</p>\n    <p>Doubled: {{ doubled }}</p>\n    <button @click=\"count++\">Increment</button>\n  </div>\n</template>\n```\n\n## Single File Components (.vue)\n\n```vue\n<template>\n  <div class=\"user-profile\">\n    <img :src=\"user.avatar\" :alt=\"user.name\" />\n    <h2>{{ user.name }}</h2>\n    <p>{{ user.bio }}</p>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue';\n\nconst user = ref(null);\n\nonMounted(async () => {\n  const response = await fetch('/api/user');\n  user.value = await response.json();\n});\n</script>\n\n<style scoped>\n.user-profile {\n  padding: 20px;\n  border: 1px solid #ccc;\n}\n</style>\n```\n\nTemplate, logic, and styles in one file!\n\n## Vue Ecosystem\n\n**Official libraries (well-integrated):**\n\n**Vue Router:**\n```javascript\nimport { createRouter, createWebHistory } from 'vue-router';\n\nconst router = createRouter({\n  history: createWebHistory(),\n  routes: [\n    { path: '/', component: Home },\n    { path: '/about', component: About }\n  ]\n});\n```\n\n**Pinia (state management):**\n```javascript\nimport { defineStore } from 'pinia';\n\nexport const useUserStore = defineStore('user', {\n  state: () => ({ name: 'Alice', age: 25 }),\n  actions: {\n    updateName(newName) {\n      this.name = newName;\n    }\n  }\n});\n```\n\n**Nuxt.js (meta-framework):**\nVue's equivalent to Next.js\n\n## Vue vs React\n\n**Vue:**\n- ✅ Easier to learn\n- ✅ Template-based (familiar)\n- ✅ Built-in solutions\n- ✅ Better documentation\n- ❌ Smaller ecosystem\n- ❌ Fewer jobs\n\n**React:**\n- ✅ Larger ecosystem\n- ✅ More jobs\n- ✅ More flexible\n- ❌ Steeper learning curve\n- ❌ Need to choose libraries\n\n## When to Choose Vue\n\n**Great for:**\n- ✅ Beginners learning frontend frameworks\n- ✅ Teams that want productivity\n- ✅ Progressive enhancement (start simple)\n- ✅ When you want official solutions\n- ✅ Smaller to medium projects\n\n## Pros & Cons\n\n**✅ Pros:**\n- Easy to learn\n- Great documentation\n- Template syntax is intuitive\n- Official router and state management\n- Single File Components\n- Progressive (flexible)\n\n**❌ Cons:**\n- Smaller community than React\n- Fewer jobs\n- Less corporate backing\n- Smaller ecosystem",
+      "codeExample": "// Vue 3 Composition API example: Todo app\n\n<template>\n  <div class=\"todo-app\">\n    <h1>My Todos</h1>\n    \n    <form @submit.prevent=\"addTodo\">\n      <input \n        v-model=\"newTodo\"\n        placeholder=\"What needs to be done?\"\n        class=\"todo-input\"\n      />\n      <button type=\"submit\">Add</button>\n    </form>\n    \n    <ul class=\"todo-list\">\n      <li \n        v-for=\"todo in todos\" \n        :key=\"todo.id\"\n        :class=\"{ completed: todo.done }\"\n      >\n        <input \n          type=\"checkbox\" \n          v-model=\"todo.done\"\n        />\n        <span>{{ todo.text }}</span>\n        <button @click=\"removeTodo(todo.id)\">Delete</button>\n      </li>\n    </ul>\n    \n    <div class=\"stats\">\n      <p>Total: {{ totalTodos }}</p>\n      <p>Completed: {{ completedTodos }}</p>\n      <p>Remaining: {{ remainingTodos }}</p>\n    </div>\n  </div>\n</template>\n\n<script setup>\nimport { ref, computed } from 'vue';\n\n// State\nconst newTodo = ref('');\nconst todos = ref([\n  { id: 1, text: 'Learn Vue', done: true },\n  { id: 2, text: 'Build an app', done: false }\n]);\n\n// Computed properties\nconst totalTodos = computed(() => todos.value.length);\nconst completedTodos = computed(() => \n  todos.value.filter(t => t.done).length\n);\nconst remainingTodos = computed(() => \n  totalTodos.value - completedTodos.value\n);\n\n// Methods\nfunction addTodo() {\n  if (newTodo.value.trim()) {\n    todos.value.push({\n      id: Date.now(),\n      text: newTodo.value,\n      done: false\n    });\n    newTodo.value = '';\n  }\n}\n\nfunction removeTodo(id) {\n  todos.value = todos.value.filter(t => t.id !== id);\n}\n</script>\n\n<style scoped>\n.todo-app {\n  max-width: 600px;\n  margin: 0 auto;\n  padding: 20px;\n}\n\n.completed {\n  text-decoration: line-through;\n  opacity: 0.6;\n}\n</style>"
+    },
+    {
+      "id": "svelte-compiled",
+      "moduleId": "frontend-frameworks",
+      "title": "Svelte: The Compiled Framework",
+      "order": 4,
+      "xpReward": 30,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Svelte compiles to vanilla JavaScript (no runtime)\n- Write less code than React or Vue\n- Truly reactive (no virtual DOM)\n- Smaller bundle sizes\n\n---\n\n# Svelte: Rethinking Reactivity\n\n## What Makes Svelte Different?\n\n**Svelte is a compiler, not a framework!**\n\n**Traditional frameworks (React, Vue):**\n```\nYour code → Browser → Framework runs → Updates DOM\n                      ↑\n                Framework overhead\n```\n\n**Svelte:**\n```\nYour code → Compiler → Vanilla JavaScript → Browser → Updates DOM\n                                              ↑\n                                        No framework!\n```\n\n## Why This Matters\n\n**1. Smaller bundles**\n- No framework to ship\n- Only your code (compiled)\n\n**2. Faster runtime**\n- No virtual DOM\n- Direct DOM updates\n\n**3. Less code to write**\n- No boilerplate\n- Built-in reactivity\n\n## Svelte Syntax\n\n**Component:**\n```svelte\n<script>\n  let count = 0;\n  \n  function increment() {\n    count++; // Just update the variable!\n  }\n</script>\n\n<button on:click={increment}>\n  Clicked {count} times\n</button>\n```\n\nNo `useState`, no `this.setState` - just variables!\n\n## Reactive Declarations\n\n```svelte\n<script>\n  let count = 0;\n  \n  // Automatically updates when count changes\n  $: doubled = count * 2;\n  \n  // Reactive statement\n  $: if (count >= 10) {\n    alert('Count is high!');\n  }\n  \n  // Reactive block\n  $: {\n    console.log('Count is:', count);\n    console.log('Doubled is:', doubled);\n  }\n</script>\n\n<p>Count: {count}</p>\n<p>Doubled: {doubled}</p>\n<button on:click={() => count++}>Increment</button>\n```\n\nThe `$:` syntax marks reactive code!\n\n## Props & Events\n\n**Parent:**\n```svelte\n<script>\n  import Child from './Child.svelte';\n  \n  function handleMessage(event) {\n    console.log(event.detail);\n  }\n</script>\n\n<Child name=\"Alice\" on:message={handleMessage} />\n```\n\n**Child:**\n```svelte\n<script>\n  import { createEventDispatcher } from 'svelte';\n  \n  export let name; // Prop\n  \n  const dispatch = createEventDispatcher();\n  \n  function sendMessage() {\n    dispatch('message', { text: 'Hello!' });\n  }\n</script>\n\n<h1>Hello {name}</h1>\n<button on:click={sendMessage}>Send</button>\n```\n\n## Stores (State Management)\n\n**Writable store:**\n```javascript\n// stores.js\nimport { writable } from 'svelte/store';\n\nexport const count = writable(0);\n```\n\n**Using in component:**\n```svelte\n<script>\n  import { count } from './stores.js';\n  \n  // Auto-subscribe with $ prefix\n  function increment() {\n    $count++;\n  }\n</script>\n\n<p>Count: {$count}</p>\n<button on:click={increment}>Increment</button>\n```\n\nThe `$` prefix auto-subscribes!\n\n## Conditional & Loops\n\n```svelte\n<script>\n  let user = { loggedIn: true, name: 'Alice' };\n  let items = ['Apple', 'Banana', 'Cherry'];\n</script>\n\n<!-- Conditional -->\n{#if user.loggedIn}\n  <h1>Welcome, {user.name}!</h1>\n{:else}\n  <h1>Please log in</h1>\n{/if}\n\n<!-- Loop -->\n<ul>\n  {#each items as item, index}\n    <li>{index + 1}. {item}</li>\n  {/each}\n</ul>\n```\n\n## Animations Built-in\n\n```svelte\n<script>\n  import { fade, slide } from 'svelte/transition';\n  import { flip } from 'svelte/animate';\n  \n  let visible = true;\n</script>\n\n{#if visible}\n  <div transition:fade>\n    I fade in and out!\n  </div>\n{/if}\n\n<button on:click={() => visible = !visible}>\n  Toggle\n</button>\n```\n\nAnimations with one line!\n\n## SvelteKit (Meta-Framework)\n\n**Svelte's equivalent to Next.js:**\n- File-based routing\n- SSR, SSG, CSR\n- API routes\n- Built on Vite (fast!)\n\n```javascript\n// src/routes/+page.svelte\n<h1>Home page</h1>\n\n// src/routes/about/+page.svelte\n<h1>About page</h1>\n\n// Automatically routed!\n```\n\n## Pros & Cons\n\n**✅ Pros:**\n- Write less code\n- Smaller bundles\n- Faster runtime\n- Built-in animations\n- Great DX (developer experience)\n- Easy to learn\n\n**❌ Cons:**\n- Smaller ecosystem\n- Fewer jobs\n- Less mature\n- Fewer third-party libraries\n- Smaller community\n\n## When to Choose Svelte\n\n**Great for:**\n- ✅ New projects\n- ✅ Performance-critical apps\n- ✅ Smaller bundle size matters\n- ✅ You want to write less code\n- ✅ Embedded widgets\n\n**Maybe not for:**\n- ❌ When you need lots of libraries\n- ❌ Large enterprise teams\n- ❌ When you need many developers",
+      "codeExample": "// Complete Svelte example: User list with filtering\n\n<script>\n  import { onMount } from 'svelte';\n  \n  let users = [];\n  let loading = true;\n  let searchTerm = '';\n  \n  // Reactive filtered list\n  $: filteredUsers = users.filter(user => \n    user.name.toLowerCase().includes(searchTerm.toLowerCase())\n  );\n  \n  // Reactive count\n  $: displayCount = filteredUsers.length;\n  \n  onMount(async () => {\n    const response = await fetch('/api/users');\n    users = await response.json();\n    loading = false;\n  });\n  \n  async function deleteUser(id) {\n    await fetch(`/api/users/${id}`, { method: 'DELETE' });\n    users = users.filter(u => u.id !== id);\n  }\n</script>\n\n<style>\n  .user-card {\n    border: 1px solid #ddd;\n    padding: 1rem;\n    margin: 0.5rem 0;\n    border-radius: 4px;\n  }\n  \n  .user-card:hover {\n    background: #f5f5f5;\n  }\n</style>\n\n<div class=\"container\">\n  <h1>User Directory</h1>\n  \n  <input \n    type=\"text\"\n    bind:value={searchTerm}\n    placeholder=\"Search users...\"\n    class=\"search-input\"\n  />\n  \n  <p>Showing {displayCount} users</p>\n  \n  {#if loading}\n    <p>Loading...</p>\n  {:else if filteredUsers.length === 0}\n    <p>No users found</p>\n  {:else}\n    {#each filteredUsers as user (user.id)}\n      <div class=\"user-card\">\n        <h3>{user.name}</h3>\n        <p>{user.email}</p>\n        <button on:click={() => deleteUser(user.id)}>\n          Delete\n        </button>\n      </div>\n    {/each}\n  {/if}\n</div>\n\n<!-- Notice how clean and simple this is compared to React/Vue! -->"
+    },
+    {
+      "id": "angular-framework",
+      "moduleId": "frontend-frameworks",
+      "title": "Angular: Full Framework",
+      "order": 5,
+      "xpReward": 30,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Angular is a full framework by Google\n- TypeScript required (built-in)\n- Opinionated with everything included\n- Great for large enterprise applications\n\n---\n\n# Angular: The Enterprise Choice\n\n## What is Angular?\n\n**Angular** is a complete framework with everything built-in:\n- Component system\n- Routing\n- HTTP client\n- Forms\n- Dependency injection\n- Testing tools\n- CLI\n\n**Everything you need, out of the box!**\n\n## Why Angular is Different\n\n**React approach (library):**\n```\nReact → You choose:\n  - Router? (React Router, TanStack Router)\n  - State? (Redux, Zustand)\n  - Forms? (React Hook Form, Formik)\n  - HTTP? (fetch, axios)\n```\n\n**Angular approach (framework):**\n```\nAngular → Everything included:\n  ✅ Router (Angular Router)\n  ✅ State (RxJS, Services)\n  ✅ Forms (Angular Forms)\n  ✅ HTTP (HttpClient)\n```\n\nNo choices needed - use what's provided!\n\n## Angular Component\n\n```typescript\nimport { Component } from '@angular/core';\n\n@Component({\n  selector: 'app-counter',\n  template: `\n    <div>\n      <h1>Count: {{ count }}</h1>\n      <button (click)=\"increment()\">Increment</button>\n    </div>\n  `,\n  styles: [`\n    div { padding: 20px; }\n    button { background: blue; color: white; }\n  `]\n})\nexport class CounterComponent {\n  count = 0;\n  \n  increment() {\n    this.count++;\n  }\n}\n```\n\n**Key features:**\n- Decorators (`@Component`)\n- Template syntax\n- TypeScript classes\n\n## Dependency Injection\n\n**Service:**\n```typescript\nimport { Injectable } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\n\n@Injectable({ providedIn: 'root' })\nexport class UserService {\n  constructor(private http: HttpClient) {}\n  \n  getUsers() {\n    return this.http.get('/api/users');\n  }\n}\n```\n\n**Component using service:**\n```typescript\nimport { Component, OnInit } from '@angular/core';\nimport { UserService } from './user.service';\n\n@Component({\n  selector: 'app-users',\n  template: `\n    <div *ngFor=\"let user of users\">\n      {{ user.name }}\n    </div>\n  `\n})\nexport class UsersComponent implements OnInit {\n  users = [];\n  \n  // Service injected automatically!\n  constructor(private userService: UserService) {}\n  \n  ngOnInit() {\n    this.userService.getUsers().subscribe(\n      data => this.users = data\n    );\n  }\n}\n```\n\n## Template Syntax\n\n**Interpolation:**\n```html\n<h1>{{ title }}</h1>\n<p>{{ 1 + 1 }}</p>\n```\n\n**Property binding:**\n```html\n<img [src]=\"imageUrl\" [alt]=\"imageAlt\">\n<button [disabled]=\"isDisabled\">Click</button>\n```\n\n**Event binding:**\n```html\n<button (click)=\"handleClick()\">Click me</button>\n<input (input)=\"handleInput($event)\">\n```\n\n**Two-way binding:**\n```html\n<input [(ngModel)]=\"name\">\n<p>Hello {{ name }}</p>\n```\n\n**Directives:**\n```html\n<!-- Conditional -->\n<div *ngIf=\"isLoggedIn\">Welcome!</div>\n\n<!-- Loop -->\n<li *ngFor=\"let item of items; let i = index\">\n  {{ i }}. {{ item }}\n</li>\n\n<!-- Switch -->\n<div [ngSwitch]=\"status\">\n  <p *ngSwitchCase=\"'loading'\">Loading...</p>\n  <p *ngSwitchCase=\"'error'\">Error!</p>\n  <p *ngSwitchDefault>Content</p>\n</div>\n```\n\n## RxJS & Observables\n\nAngular uses **RxJS** for reactive programming:\n\n```typescript\nimport { Observable } from 'rxjs';\nimport { map, filter } from 'rxjs/operators';\n\nexport class DataComponent {\n  users$: Observable<User[]>;\n  \n  constructor(private http: HttpClient) {\n    this.users$ = this.http.get<User[]>('/api/users').pipe(\n      map(users => users.filter(u => u.active)),\n      map(users => users.slice(0, 10))\n    );\n  }\n}\n```\n\n```html\n<!-- Async pipe auto-subscribes -->\n<div *ngFor=\"let user of users$ | async\">\n  {{ user.name }}\n</div>\n```\n\n## Angular CLI\n\n**Powerful command-line tool:**\n\n```bash\n# Create new project\nng new my-app\n\n# Generate component\nng generate component user-profile\n# or: ng g c user-profile\n\n# Generate service\nng generate service user\n\n# Serve app\nng serve\n\n# Build for production\nng build --prod\n\n# Run tests\nng test\n```\n\n## Modules\n\n**Angular uses NgModules:**\n\n```typescript\nimport { NgModule } from '@angular/core';\nimport { BrowserModule } from '@angular/platform-browser';\nimport { AppComponent } from './app.component';\n\n@NgModule({\n  declarations: [AppComponent], // Components\n  imports: [BrowserModule],      // Other modules\n  providers: [],                 // Services\n  bootstrap: [AppComponent]      // Root component\n})\nexport class AppModule {}\n```\n\n## Pros & Cons\n\n**✅ Pros:**\n- Everything included\n- TypeScript by default\n- Great for large teams\n- Opinionated (consistency)\n- Backed by Google\n- Powerful CLI\n- Excellent for enterprise\n\n**❌ Cons:**\n- Steep learning curve\n- Verbose\n- Heavy framework\n- Less flexible\n- Smaller community than React\n- RxJS complexity\n\n## When to Choose Angular\n\n**Great for:**\n- ✅ Large enterprise applications\n- ✅ Teams that need structure\n- ✅ Long-term projects\n- ✅ When you want everything built-in\n- ✅ TypeScript projects\n\n**Maybe not for:**\n- ❌ Small projects\n- ❌ Prototypes\n- ❌ When you want flexibility\n- ❌ When bundle size matters",
+      "codeExample": "// Angular example: User list component\n\n// user.service.ts\nimport { Injectable } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { Observable } from 'rxjs';\n\ninterface User {\n  id: number;\n  name: string;\n  email: string;\n}\n\n@Injectable({ providedIn: 'root' })\nexport class UserService {\n  private apiUrl = '/api/users';\n  \n  constructor(private http: HttpClient) {}\n  \n  getUsers(): Observable<User[]> {\n    return this.http.get<User[]>(this.apiUrl);\n  }\n  \n  deleteUser(id: number): Observable<void> {\n    return this.http.delete<void>(`${this.apiUrl}/${id}`);\n  }\n}\n\n// user-list.component.ts\nimport { Component, OnInit } from '@angular/core';\nimport { UserService } from './user.service';\n\n@Component({\n  selector: 'app-user-list',\n  template: `\n    <div class=\"container\">\n      <h1>Users</h1>\n      \n      <input \n        [(ngModel)]=\"searchTerm\"\n        placeholder=\"Search users...\"\n        class=\"search-input\"\n      />\n      \n      <div *ngIf=\"loading\">Loading...</div>\n      \n      <div *ngIf=\"!loading\" class=\"user-list\">\n        <div \n          *ngFor=\"let user of filteredUsers\" \n          class=\"user-card\"\n        >\n          <h3>{{ user.name }}</h3>\n          <p>{{ user.email }}</p>\n          <button (click)=\"deleteUser(user.id)\">\n            Delete\n          </button>\n        </div>\n      </div>\n    </div>\n  `,\n  styles: [`\n    .user-card {\n      border: 1px solid #ddd;\n      padding: 1rem;\n      margin: 0.5rem 0;\n    }\n  `]\n})\nexport class UserListComponent implements OnInit {\n  users: User[] = [];\n  loading = true;\n  searchTerm = '';\n  \n  get filteredUsers() {\n    return this.users.filter(user => \n      user.name.toLowerCase().includes(this.searchTerm.toLowerCase())\n    );\n  }\n  \n  constructor(private userService: UserService) {}\n  \n  ngOnInit() {\n    this.userService.getUsers().subscribe(\n      data => {\n        this.users = data;\n        this.loading = false;\n      },\n      error => console.error('Error:', error)\n    );\n  }\n  \n  deleteUser(id: number) {\n    this.userService.deleteUser(id).subscribe(\n      () => {\n        this.users = this.users.filter(u => u.id !== id);\n      }\n    );\n  }\n}"
+    },
+    {
+      "id": "framework-comparison",
+      "moduleId": "frontend-frameworks",
+      "title": "Comparison and Choosing",
+      "order": 6,
+      "xpReward": 25,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- No \"best\" framework - depends on your needs\n- Consider: team size, project scope, timeline, ecosystem\n- React has most jobs, Vue easiest to learn, Angular best for enterprise\n- You can't go wrong with any of them\n\n---\n\n# Choosing the Right Framework\n\n## Quick Comparison\n\n**React:**\n- 📚 Library, not framework\n- ⚛️ JSX syntax\n- 🔧 Bring your own tools\n- 👥 Huge ecosystem\n- 💼 Most jobs\n\n**Vue:**\n- 🌱 Progressive framework\n- 📝 Template-based\n- 🎁 Official solutions included\n- 🎓 Easiest to learn\n- 🇨🇳 Popular in Asia\n\n**Svelte:**\n- ⚡ Compiler (no runtime)\n- 📦 Smallest bundles\n- ✍️ Write less code\n- 🆕 Newest/modern\n- 🌟 Best DX\n\n**Angular:**\n- 🏢 Full framework\n- 📘 TypeScript required\n- 🎯 Opinionated\n- 🏗️ Everything built-in\n- 💼 Enterprise favorite\n\n## Bundle Size Comparison\n\n**\"Hello World\" app (gzipped):**\n- Svelte: ~2 KB\n- Vue: ~10 KB\n- React: ~40 KB\n- Angular: ~60 KB\n\n**Note:** Real apps differ, but Svelte is consistently smaller!\n\n## Learning Curve\n\n```\nEasy ←――――――――――――――――――→ Hard\n\nVue < Svelte < React < Angular\n```\n\n**Vue:** Feels like HTML, easy to start\n**Svelte:** Simple syntax, but new concepts\n**React:** JSX and hooks take time\n**Angular:** TypeScript, RxJS, concepts\n\n## Job Market (2024)\n\n**Based on job postings:**\n\n1. **React** - 60%\n2. **Angular** - 20%\n3. **Vue** - 15%\n4. **Svelte** - 5%\n\nReact dominates, but all have opportunities!\n\n## Decision Matrix\n\n### Choose React if:\n- ✅ You want maximum job opportunities\n- ✅ You need a huge ecosystem\n- ✅ You value flexibility\n- ✅ You're building SPAs\n- ✅ You're okay learning curve\n\n### Choose Vue if:\n- ✅ You're new to frameworks\n- ✅ You want great documentation\n- ✅ You like template syntax\n- ✅ You want official solutions\n- ✅ You're building in Asia\n\n### Choose Svelte if:\n- ✅ Performance is critical\n- ✅ Bundle size matters\n- ✅ You want to write less code\n- ✅ You're building new projects\n- ✅ You value developer experience\n\n### Choose Angular if:\n- ✅ Building enterprise apps\n- ✅ Large team needs structure\n- ✅ You love TypeScript\n- ✅ You want everything included\n- ✅ Long-term maintenance\n\n## By Project Type\n\n**Small Personal Project:**\n→ Svelte or Vue (quick, easy)\n\n**Startup MVP:**\n→ React or Vue (fast development, hiring)\n\n**Enterprise Application:**\n→ Angular or React (mature, supported)\n\n**Performance-Critical:**\n→ Svelte (smallest, fastest)\n\n**Large Team:**\n→ Angular (structure) or React (talent pool)\n\n**Embedded Widget:**\n→ Svelte or Preact (tiny bundle)\n\n## Ecosystem Comparison\n\n**React:**\n- Router: React Router, TanStack Router\n- State: Redux, Zustand, Jotai, Recoil\n- Forms: React Hook Form, Formik\n- Data: React Query, SWR\n- Meta: Next.js, Remix, Gatsby\n\n**Vue:**\n- Router: Vue Router (official)\n- State: Pinia (official)\n- Forms: VeeValidate\n- Data: VueUse\n- Meta: Nuxt.js\n\n**Svelte:**\n- Router: SvelteKit (official)\n- State: Svelte stores (built-in)\n- Forms: Built-in\n- Data: Fetch API\n- Meta: SvelteKit\n\n**Angular:**\n- Router: Angular Router (built-in)\n- State: RxJS, NgRx\n- Forms: Angular Forms (built-in)\n- Data: HttpClient (built-in)\n- Meta: Angular Universal\n\n## Performance\n\n**Initial Load:**\nSvelte > Vue > React > Angular\n\n**Runtime:**\nSvelte ≈ Vue > React > Angular\n\n**Memory:**\nSvelte < Vue < React < Angular\n\n**Note:** For most apps, the difference is negligible!\n\n## Can't Decide?\n\n**Start with React if:**\n- You want to maximize career options\n- You need maximum flexibility\n\n**Start with Vue if:**\n- You're learning your first framework\n- You want to be productive quickly\n\n**Start with Svelte if:**\n- You love trying modern tech\n- You prioritize DX and performance\n\n**Start with Angular if:**\n- You're building enterprise software\n- Your team/company already uses it\n\n## The Truth\n\n**All of these frameworks are excellent!**\n\n- They all solve the same problems\n- They all have pros and cons\n- They all can build great apps\n- Learning one helps you learn others\n\n**The best framework is the one that:**\n- Your team knows\n- Fits your project\n- You enjoy using\n\n## Final Advice\n\n**Don't overthink it!**\n\n1. Pick one based on your situation\n2. Learn it well\n3. Build projects\n4. Learn another if curious\n\nThe skills transfer between frameworks!",
+      "codeExample": "// Same component in different frameworks\n\n// ═════════════════════════════════════\n// REACT\n// ═════════════════════════════════════\nimport { useState } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  \n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>\n        Increment\n      </button>\n    </div>\n  );\n}\n\n// ═════════════════════════════════════\n// VUE\n// ═════════════════════════════════════\n<template>\n  <div>\n    <p>Count: {{ count }}</p>\n    <button @click=\"count++\">\n      Increment\n    </button>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue';\nconst count = ref(0);\n</script>\n\n// ═════════════════════════════════════\n// SVELTE\n// ═════════════════════════════════════\n<script>\n  let count = 0;\n</script>\n\n<div>\n  <p>Count: {count}</p>\n  <button on:click={() => count++}>\n    Increment\n  </button>\n</div>\n\n// ═════════════════════════════════════\n// ANGULAR\n// ═════════════════════════════════════\nimport { Component } from '@angular/core';\n\n@Component({\n  selector: 'app-counter',\n  template: `\n    <div>\n      <p>Count: {{ count }}</p>\n      <button (click)=\"increment()\">\n        Increment\n      </button>\n    </div>\n  `\n})\nexport class CounterComponent {\n  count = 0;\n  \n  increment() {\n    this.count++;\n  }\n}\n\n// Notice: Same functionality, different syntax!\n// All are valid approaches."
+    }
+  ],
+  "exercises": [
+    {
+      "id": "frameworks-ex-1",
+      "lessonId": "framework-vs-library",
+      "moduleId": "frontend-frameworks",
+      "title": "Framework or Library?",
+      "difficulty": "easy",
+      "xpReward": 30,
+      "description": "Identify whether each statement describes a framework or library.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Which is a characteristic of a FRAMEWORK?",
+          "options": ["You call its functions when needed", "It calls your code following its structure", "Maximum flexibility", "Minimal opinions"],
+          "correctAnswer": 1,
+          "explanation": "Frameworks follow the 'Hollywood Principle' - they call your code. You work within their structure."
+        },
+        {
+          "question": "React is considered a:",
+          "options": ["Framework", "Library", "Compiler", "Runtime"],
+          "correctAnswer": 1,
+          "explanation": "React is a library - you import and use it when you want, you're in control of the app structure."
+        },
+        {
+          "question": "Which is true about opinionated frameworks?",
+          "options": ["More flexibility", "You choose all the tools", "Provides structure and built-in solutions", "Harder to learn"],
+          "correctAnswer": 2,
+          "explanation": "Opinionated frameworks provide structure and built-in solutions, reducing choice but increasing consistency."
+        },
+        {
+          "question": "When should you choose a framework over a library?",
+          "options": ["When you want maximum control", "When you want to pick your own tools", "When you want structure and consistency", "When building tiny projects"],
+          "correctAnswer": 2,
+          "explanation": "Frameworks are great when you want structure, consistency, and don't want to make many decisions."
+        }
+      ]
+    },
+    {
+      "id": "frameworks-ex-2",
+      "lessonId": "react-ecosystem",
+      "moduleId": "frontend-frameworks",
+      "title": "React Knowledge Check",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Test your understanding of React concepts.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What is JSX?",
+          "options": ["A templating language", "HTML-like syntax in JavaScript", "A build tool", "A state management library"],
+          "correctAnswer": 1,
+          "explanation": "JSX is a syntax extension that lets you write HTML-like code in JavaScript files."
+        },
+        {
+          "question": "Which hook manages component state in React?",
+          "options": ["useEffect", "useState", "useContext", "useReducer"],
+          "correctAnswer": 1,
+          "explanation": "useState is the hook for managing local component state in React."
+        },
+        {
+          "question": "What's a key drawback of React compared to frameworks like Angular?",
+          "options": ["Poor performance", "No community", "Need to choose your own routing/state libraries", "Can't build large apps"],
+          "correctAnswer": 2,
+          "explanation": "React is just a UI library, so you need to choose additional libraries for routing, state management, etc."
+        },
+        {
+          "question": "Which is NOT part of React itself?",
+          "options": ["JSX", "Hooks", "React Router", "Components"],
+          "correctAnswer": 2,
+          "explanation": "React Router is a separate library. React only provides the core UI functionality."
+        },
+        {
+          "question": "When should you use React?",
+          "options": ["Only for small projects", "Only for static sites", "For dynamic, interactive UIs and SPAs", "Only when you need SEO"],
+          "correctAnswer": 2,
+          "explanation": "React excels at building dynamic, interactive user interfaces and single-page applications."
+        }
+      ]
+    },
+    {
+      "id": "frameworks-ex-3",
+      "lessonId": "vue-progressive",
+      "moduleId": "frontend-frameworks",
+      "title": "Vue Concepts",
+      "difficulty": "easy",
+      "xpReward": 30,
+      "description": "Understanding Vue's progressive nature.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What does 'progressive' mean for Vue?",
+          "options": ["Modern design", "Start simple, add features as needed", "Automatic updates", "Better performance"],
+          "correctAnswer": 1,
+          "explanation": "Progressive means you can start with a simple script tag and gradually adopt more features as needed."
+        },
+        {
+          "question": "What syntax does Vue use for templates?",
+          "options": ["JSX", "HTML-like templates", "Plain JavaScript", "TypeScript only"],
+          "correctAnswer": 1,
+          "explanation": "Vue uses HTML-like template syntax that feels familiar and natural."
+        },
+        {
+          "question": "Compared to React, Vue is generally:",
+          "options": ["Harder to learn", "Easier to learn", "Same difficulty", "Requires more code"],
+          "correctAnswer": 1,
+          "explanation": "Vue is generally considered easier to learn because of its template syntax and clearer documentation."
+        },
+        {
+          "question": "What does v-model do in Vue?",
+          "options": ["Creates a model", "Two-way data binding", "Validates forms", "Makes API calls"],
+          "correctAnswer": 1,
+          "explanation": "v-model creates two-way data binding between form inputs and component data."
+        }
+      ]
+    },
+    {
+      "id": "frameworks-ex-4",
+      "lessonId": "svelte-compiled",
+      "moduleId": "frontend-frameworks",
+      "title": "Svelte's Unique Approach",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Understand what makes Svelte different.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "How is Svelte fundamentally different from React/Vue?",
+          "options": ["It's faster", "It compiles to vanilla JS (no runtime)", "It uses TypeScript", "It's older"],
+          "correctAnswer": 1,
+          "explanation": "Svelte is a compiler that produces vanilla JavaScript, unlike React/Vue which run in the browser."
+        },
+        {
+          "question": "What does the $ prefix mean in Svelte?",
+          "options": ["jQuery syntax", "Auto-subscribe to stores or reactive declarations", "Price variable", "Global variable"],
+          "correctAnswer": 1,
+          "explanation": "In Svelte, $ is used for reactive declarations ($: statement) and auto-subscribing to stores ($store)."
+        },
+        {
+          "question": "Main advantage of Svelte's compiler approach?",
+          "options": ["More features", "Smaller bundle size and no runtime overhead", "Easier syntax", "More jobs"],
+          "correctAnswer": 1,
+          "explanation": "Compiling to vanilla JS means smaller bundles and no framework runtime overhead."
+        },
+        {
+          "question": "How do you make a variable reactive in Svelte?",
+          "options": ["useState hook", "ref()", "Just declare it: let count = 0", "observable()"],
+          "correctAnswer": 2,
+          "explanation": "In Svelte, regular variable declarations are automatically reactive. Just use let!"
+        }
+      ]
+    },
+    {
+      "id": "frameworks-ex-5",
+      "lessonId": "framework-comparison",
+      "moduleId": "frontend-frameworks",
+      "title": "Choosing Your Framework",
+      "difficulty": "medium",
+      "xpReward": 40,
+      "description": "Make the right framework choice for different scenarios.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "You're building a large enterprise app with a 20-person team. Which framework?",
+          "options": ["Svelte", "Vue", "Angular", "Any of them"],
+          "correctAnswer": 2,
+          "explanation": "Angular's opinionated structure, built-in features, and TypeScript make it ideal for large enterprise teams."
+        },
+        {
+          "question": "You're a beginner learning your first framework. Which should you start with?",
+          "options": ["Angular", "Vue", "React", "Svelte"],
+          "correctAnswer": 1,
+          "explanation": "Vue has the easiest learning curve with great documentation and familiar template syntax."
+        },
+        {
+          "question": "You need maximum job opportunities. Which has the most jobs?",
+          "options": ["Angular", "Vue", "React", "Svelte"],
+          "correctAnswer": 2,
+          "explanation": "React dominates the job market with about 60% of frontend framework positions."
+        },
+        {
+          "question": "You're building a performance-critical embedded widget. Which framework?",
+          "options": ["Angular", "React", "Svelte", "Vue"],
+          "correctAnswer": 2,
+          "explanation": "Svelte produces the smallest bundles and has no runtime, perfect for embedded widgets."
+        },
+        {
+          "question": "What's the truth about choosing a framework?",
+          "options": ["React is always best", "There's one correct choice", "All are excellent, choose based on your needs", "Framework choice doesn't matter"],
+          "correctAnswer": 2,
+          "explanation": "All modern frameworks are excellent. Choose based on your specific project needs, team, and preferences."
+        }
+      ]
+    }
+  ]
+}

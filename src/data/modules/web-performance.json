@@ -1,0 +1,144 @@
+{
+  "module": {
+    "id": "web-performance",
+    "title": "Web Performance",
+    "description": "Understand and optimize web performance metrics",
+    "icon": "Zap",
+    "requiredXp": 3100,
+    "color": "from-amber-400 to-amber-600",
+    "courseId": "web-stack"
+  },
+  "lessons": [
+    {
+      "id": "why-performance-matters",
+      "moduleId": "web-performance",
+      "title": "Why Performance Matters",
+      "order": 1,
+      "xpReward": 30,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Performance directly impacts user experience and revenue\n- 100ms delay can reduce conversions by 7%\n- Google uses page speed as ranking factor\n- Mobile users especially affected by slow sites\n\n---\n\n# Performance = Money\n\n## The Business Impact\n\n**Real numbers from companies:**\n\n**Amazon:**\n- 100ms delay → 1% drop in sales\n- That's ~$1.6 billion per year!\n\n**Google:**\n- 500ms delay → 20% drop in traffic\n\n**Pinterest:**\n- 40% faster load → 15% more signups\n\n**Walmart:**\n- 1s improvement → 2% increase in conversions\n\n## Why Users Leave\n\n**Load time impact:**\n```\n1s load time → 7% conversion rate\n3s load time → 5% conversion rate (-29%)\n5s load time → 3% conversion rate (-57%)\n```\n\n**Mobile is worse:**\n- 53% of mobile users abandon site if it takes > 3s\n- Average mobile site takes 15s to load!\n\n## SEO Impact\n\n**Google's Core Web Vitals (2021+):**\n- Part of search ranking algorithm\n- Fast sites rank higher\n- Slow sites get penalized\n\n## User Experience\n\n**Perceived performance matters:**\n\n**Instant (< 100ms):**\nFeels immediate, responsive\n\n**Smooth (< 300ms):**\nUser perceives as \"fast\"\n\n**Acceptable (< 1s):**\nUser stays focused\n\n**Slow (> 1s):**\nUser loses focus, might leave\n\n**Unbearable (> 10s):**\nUser definitely leaves\n\n## What Makes Sites Slow?\n\n**1. Large JavaScript bundles**\n```\nReact + libraries → 500KB\nParsing + executing on mobile → 3-5s\n```\n\n**2. Unoptimized images**\n```\n5MB photo → 10s download on 3G\n```\n\n**3. Too many requests**\n```\n50 scripts, 30 stylesheets, 100 images\nEach has overhead!\n```\n\n**4. Slow server**\n```\nDatabase query takes 2s\nUser waits...\n```\n\n**5. No caching**\n```\nRe-downloading same resources every visit\n```\n\n## Performance Budget\n\n**Set limits:**\n```\nJavaScript: < 170KB gzipped\nTotal page size: < 1MB\nImages: < 200KB each\nTime to Interactive: < 3s\n```\n\nDon't exceed budget!\n\n## The Performance Mindset\n\n**Every feature has a cost:**\n\n```\nAdd analytics library? +50KB\nAdd chat widget? +200KB\nAdd marketing pixel? +30KB\n\nTotal: +280KB = +1-2s load time\n```\n\n**Ask:** Is it worth the cost?\n\n## Quick Wins\n\n**Easy improvements:**\n- ✅ Compress images (80% smaller)\n- ✅ Enable gzip/brotli (60% smaller)\n- ✅ Use CDN (faster delivery)\n- ✅ Lazy load images (load on scroll)\n- ✅ Remove unused JavaScript\n\n## Mobile-First Performance\n\n**Test on real devices:**\n- Mid-range Android (most common)\n- Slow 3G network\n- Throttled CPU\n\n**Not just:**\n- MacBook Pro\n- Fast WiFi\n- Desktop Chrome\n\n## Remember\n\n- Performance is a feature\n- Users don't care about your tech stack\n- Fast sites make more money\n- Optimize for real users, not benchmarks",
+      "codeExample": "// Measuring performance impact\n\n// 1. Use Performance API\nconst start = performance.now();\n\n// Do something expensive\nfor (let i = 0; i < 1000000; i++) {\n  // Heavy computation\n}\n\nconst end = performance.now();\nconsole.log(`Took ${end - start}ms`);\n\n// 2. Measure page load\nwindow.addEventListener('load', () => {\n  const perfData = performance.getEntriesByType('navigation')[0];\n  \n  console.log('DNS lookup:', perfData.domainLookupEnd - perfData.domainLookupStart);\n  console.log('TCP connection:', perfData.connectEnd - perfData.connectStart);\n  console.log('Time to first byte:', perfData.responseStart - perfData.requestStart);\n  console.log('DOM loaded:', perfData.domComplete - perfData.domLoading);\n});\n\n// 3. Track Core Web Vitals\nimport { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';\n\ngetCLS(console.log); // Cumulative Layout Shift\ngetFID(console.log); // First Input Delay\ngetFCP(console.log); // First Contentful Paint\ngetLCP(console.log); // Largest Contentful Paint\ngetTTFB(console.log); // Time to First Byte\n\n// 4. Bundle size analysis\n// In package.json:\n{\n  \"scripts\": {\n    \"analyze\": \"vite build && vite-bundle-visualizer\"\n  }\n}\n\n// Shows what's making your bundle big"
+    },
+    {
+      "id": "core-web-vitals",
+      "moduleId": "web-performance",
+      "title": "Core Web Vitals",
+      "order": 2,
+      "xpReward": 35,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Core Web Vitals = Google's key performance metrics\n- LCP (loading), FID (interactivity), CLS (visual stability)\n- Used in Google search rankings since 2021\n- Measurable with tools like Lighthouse\n\n---\n\n# The Three Core Web Vitals\n\n## 1. LCP (Largest Contentful Paint)\n\n**What:** Time until largest element is visible\n\n**Good:** < 2.5s\n**Needs improvement:** 2.5s - 4s\n**Poor:** > 4s\n\n**Common LCP elements:**\n- Hero image\n- Main heading\n- Video thumbnail\n- Large text block\n\n**How to improve:**\n\n```javascript\n// ❌ Bad: Large unoptimized image\n<img src=\"hero-5mb.jpg\" />\n\n// ✅ Good: Optimized, responsive images\n<img \n  src=\"hero-small.webp\"\n  srcset=\"\n    hero-small.webp 400w,\n    hero-medium.webp 800w,\n    hero-large.webp 1200w\n  \"\n  sizes=\"(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px\"\n  loading=\"eager\"\n  fetchpriority=\"high\"\n/>\n```\n\n**Other fixes:**\n- Use CDN\n- Preload critical resources\n- Optimize server response time\n- Remove render-blocking JavaScript\n\n## 2. FID (First Input Delay)\n\n**What:** Time from user's first click to browser response\n\n**Good:** < 100ms\n**Needs improvement:** 100ms - 300ms\n**Poor:** > 300ms\n\n**Why it matters:**\nUser clicks button, nothing happens → frustration!\n\n**Common causes:**\n- Heavy JavaScript execution\n- Long tasks blocking main thread\n- No code splitting\n\n**How to improve:**\n\n```javascript\n// ❌ Bad: Loading everything upfront\nimport HeavyChart from './HeavyChart';\nimport ComplexTable from './ComplexTable';\nimport AllFeatures from './AllFeatures';\n\nfunction App() {\n  return (\n    <div>\n      <HeavyChart /> {/* Blocks interaction! */}\n      <ComplexTable />\n      <AllFeatures />\n    </div>\n  );\n}\n\n// ✅ Good: Code splitting + lazy loading\nconst HeavyChart = lazy(() => import('./HeavyChart'));\nconst ComplexTable = lazy(() => import('./ComplexTable'));\n\nfunction App() {\n  const [showChart, setShowChart] = useState(false);\n  \n  return (\n    <div>\n      <button onClick={() => setShowChart(true)}>Show Chart</button>\n      {showChart && (\n        <Suspense fallback=\"Loading...\">\n          <HeavyChart />\n        </Suspense>\n      )}\n    </div>\n  );\n}\n```\n\n**Other fixes:**\n- Break up long tasks\n- Use web workers for heavy computation\n- Defer non-critical JavaScript\n- Minimize third-party scripts\n\n## 3. CLS (Cumulative Layout Shift)\n\n**What:** Unexpected layout shifts (content jumping)\n\n**Good:** < 0.1\n**Needs improvement:** 0.1 - 0.25\n**Poor:** > 0.25\n\n**Example of bad CLS:**\n```\nUser starts reading article\n↓\nAd loads and pushes content down\n↓\nUser accidentally clicks ad (frustrating!)\n```\n\n**How to improve:**\n\n```html\n<!-- ❌ Bad: Image without dimensions -->\n<img src=\"photo.jpg\" />\n<!-- Loads → page jumps! -->\n\n<!-- ✅ Good: Reserve space -->\n<img src=\"photo.jpg\" width=\"800\" height=\"600\" />\n<!-- Space reserved → no jump -->\n\n<!-- ❌ Bad: Font loading causes shift -->\n<link href=\"https://fonts.googleapis.com/css?family=Roboto\" rel=\"stylesheet\" />\n<!-- FOUT (Flash of Unstyled Text) -->\n\n<!-- ✅ Good: Preload fonts -->\n<link rel=\"preload\" as=\"font\" href=\"/fonts/roboto.woff2\" crossorigin />\n<style>\n  @font-face {\n    font-family: 'Roboto';\n    src: url('/fonts/roboto.woff2') format('woff2');\n    font-display: swap; /* or optional */\n  }\n</style>\n```\n\n**Other fixes:**\n- Set dimensions for images/videos\n- Reserve space for dynamic content\n- Avoid inserting content above existing content\n- Use CSS `aspect-ratio`\n\n## Measuring Core Web Vitals\n\n**Tools:**\n\n**1. Chrome DevTools:**\n- Lighthouse tab\n- Performance insights\n\n**2. PageSpeed Insights:**\n- https://pagespeed.web.dev/\n- Real-world data + lab data\n\n**3. Chrome User Experience Report:**\n- Real user metrics from Chrome users\n\n**4. Web Vitals Library:**\n```javascript\nimport { getCLS, getFID, getLCP } from 'web-vitals';\n\nfunction sendToAnalytics({ name, value, id }) {\n  gtag('event', name, {\n    value: Math.round(value),\n    event_category: 'Web Vitals',\n    event_label: id,\n    non_interaction: true\n  });\n}\n\ngetCLS(sendToAnalytics);\ngetFID(sendToAnalytics);\ngetLCP(sendToAnalytics);\n```\n\n## Priority Order\n\n**1. Fix CLS first**\n- Most impactful for UX\n- Easiest to fix (set dimensions)\n\n**2. Then LCP**\n- Optimize images\n- Improve server response\n\n**3. Finally FID**\n- Split code\n- Optimize JavaScript\n\n## Summary\n\n**LCP:** How fast content loads\n**FID:** How quickly site responds\n**CLS:** How stable layout is\n\nAll three = great user experience!",
+      "codeExample": "// Complete example: Optimizing for Core Web Vitals\n\n// 1. LCP optimization\nfunction HeroSection() {\n  return (\n    <section>\n      {/* Priority hint for LCP image */}\n      <img\n        src=\"/hero.webp\"\n        width=\"1200\"\n        height=\"600\"\n        alt=\"Hero image\"\n        fetchpriority=\"high\"\n        loading=\"eager\"\n      />\n      <h1>Welcome to Our Site</h1>\n    </section>\n  );\n}\n\n// 2. FID optimization with code splitting\nimport { lazy, Suspense } from 'react';\n\nconst HeavyComponent = lazy(() => import('./HeavyComponent'));\n\nfunction App() {\n  return (\n    <div>\n      {/* Critical content loads immediately */}\n      <header>Navigation</header>\n      <main>Main content</main>\n      \n      {/* Heavy components load later */}\n      <Suspense fallback={<div>Loading...</div>}>\n        <HeavyComponent />\n      </Suspense>\n    </div>\n  );\n}\n\n// 3. CLS optimization\nfunction ProductImage({ src, alt }) {\n  return (\n    <div style={{ aspectRatio: '16/9', overflow: 'hidden' }}>\n      <img\n        src={src}\n        alt={alt}\n        width=\"800\"\n        height=\"450\"\n        loading=\"lazy\"\n        style={{ width: '100%', height: 'auto' }}\n      />\n    </div>\n  );\n}\n\n// 4. Monitoring in production\nimport { getCLS, getFID, getLCP } from 'web-vitals';\n\nfunction reportWebVitals(metric) {\n  // Send to your analytics\n  if (window.gtag) {\n    gtag('event', metric.name, {\n      value: Math.round(metric.value),\n      event_label: metric.id\n    });\n  }\n  \n  // Log poor scores\n  if (metric.rating === 'poor') {\n    console.warn(`Poor ${metric.name}:`, metric.value);\n  }\n}\n\ngetCLS(reportWebVitals);\ngetFID(reportWebVitals);\ngetLCP(reportWebVitals);"
+    },
+    {
+      "id": "optimization-techniques",
+      "moduleId": "web-performance",
+      "title": "Optimization Techniques",
+      "order": 3,
+      "xpReward": 35,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Images are usually the biggest bottleneck\n- Code splitting dramatically reduces initial load\n- Caching prevents re-downloading resources\n- Lazy loading defers non-critical content\n\n---\n\n# Practical Optimization Techniques\n\n## 1. Image Optimization\n\n**Images = 50-70% of page weight!**\n\n### Choose the Right Format\n\n**WebP:** Modern, 30% smaller than JPEG\n**AVIF:** Newer, 50% smaller (limited support)\n**JPEG:** Photos, lossy compression\n**PNG:** Graphics with transparency\n**SVG:** Icons, logos (vector)\n\n```html\n<!-- Serve modern formats with fallback -->\n<picture>\n  <source srcset=\"image.avif\" type=\"image/avif\" />\n  <source srcset=\"image.webp\" type=\"image/webp\" />\n  <img src=\"image.jpg\" alt=\"Photo\" />\n</picture>\n```\n\n### Resize Images\n\n```html\n<!-- ❌ Bad: Serving 4K image for 400px display -->\n<img src=\"photo-4000x3000.jpg\" style=\"width: 400px\" />\n<!-- Wastes 90% of bandwidth! -->\n\n<!-- ✅ Good: Multiple sizes -->\n<img \n  srcset=\"\n    photo-400w.jpg 400w,\n    photo-800w.jpg 800w,\n    photo-1200w.jpg 1200w\n  \"\n  sizes=\"(max-width: 600px) 400px, 800px\"\n  src=\"photo-800w.jpg\"\n/>\n```\n\n### Lazy Loading\n\n```html\n<!-- Images below fold load only when scrolling -->\n<img src=\"image.jpg\" loading=\"lazy\" />\n```\n\n### Image CDN\n\nAutomatic optimization:\n\n```html\n<!-- Cloudinary example -->\n<img src=\"https://res.cloudinary.com/demo/image/upload/w_400,f_auto,q_auto/sample.jpg\" />\n<!-- w_400: width 400px -->\n<!-- f_auto: best format (WebP/AVIF) -->\n<!-- q_auto: smart quality -->\n```\n\n## 2. Code Splitting\n\n**Don't send 500KB when user needs 50KB!**\n\n### Route-Based Splitting\n\n```javascript\n// Next.js does this automatically!\nimport AboutPage from './about'; // ❌ Loaded on every page\n\n// ✅ Only load when visiting /about\nconst AboutPage = dynamic(() => import('./about'));\n```\n\n### Component-Based Splitting\n\n```javascript\nimport { lazy, Suspense } from 'react';\n\n// Heavy chart library (200KB)\nconst Chart = lazy(() => import('./Chart'));\n\nfunction Dashboard() {\n  const [showChart, setShowChart] = useState(false);\n  \n  return (\n    <div>\n      <button onClick={() => setShowChart(true)}>Show Chart</button>\n      \n      {showChart && (\n        <Suspense fallback={<div>Loading chart...</div>}>\n          <Chart data={data} />\n        </Suspense>\n      )}\n    </div>\n  );\n}\n```\n\n### Library Splitting\n\n```javascript\n// ❌ Bad: Import entire library\nimport _ from 'lodash'; // 70KB!\nconst result = _.debounce(fn, 300);\n\n// ✅ Good: Import only what you need\nimport debounce from 'lodash/debounce'; // 2KB\nconst result = debounce(fn, 300);\n```\n\n## 3. Caching\n\n### Browser Caching\n\n```\n// Server headers\nCache-Control: public, max-age=31536000, immutable\n```\n\nBrowser won't re-download for 1 year!\n\n**Fingerprinting:**\n```\napp.abc123.js  ← Hash in filename\napp.def456.js  ← New version = new hash\n```\n\n### Service Worker (PWA)\n\n```javascript\n// Cache assets for offline use\nself.addEventListener('install', (event) => {\n  event.waitUntil(\n    caches.open('v1').then((cache) => {\n      return cache.addAll([\n        '/',\n        '/styles.css',\n        '/app.js',\n        '/logo.png'\n      ]);\n    })\n  );\n});\n\nself.addEventListener('fetch', (event) => {\n  event.respondWith(\n    caches.match(event.request)\n      .then((response) => response || fetch(event.request))\n  );\n});\n```\n\n## 4. Resource Hints\n\n### Preload Critical Resources\n\n```html\n<!-- Load font early -->\n<link rel=\"preload\" href=\"/font.woff2\" as=\"font\" crossorigin />\n\n<!-- Preload critical CSS -->\n<link rel=\"preload\" href=\"/critical.css\" as=\"style\" />\n```\n\n### Prefetch Future Pages\n\n```html\n<!-- User might visit /about next -->\n<link rel=\"prefetch\" href=\"/about\" />\n```\n\n### DNS Prefetch\n\n```html\n<!-- Resolve DNS early for third-party domains -->\n<link rel=\"dns-prefetch\" href=\"https://fonts.googleapis.com\" />\n```\n\n## 5. Minification & Compression\n\n### Minification\n\n```javascript\n// Before (readable)\nfunction calculateTotal(price, tax) {\n  const total = price * (1 + tax);\n  return total;\n}\n\n// After (minified)\nfunction calculateTotal(e,t){return e*(1+t)}\n```\n\nAutomatic with build tools (Vite, webpack).\n\n### Compression\n\n**Gzip:** 60-70% smaller\n**Brotli:** 70-80% smaller (better!)\n\n```\n// Server config (nginx)\ngzip on;\ngzip_types text/css application/javascript;\nbrotli on;\n```\n\n## 6. Remove Unused Code\n\n### Tree Shaking\n\n```javascript\n// utils.js\nexport function used() { /* ... */ }\nexport function unused() { /* ... */ }\n\n// app.js\nimport { used } from './utils';\n\n// Bundle only includes 'used', not 'unused' ✅\n```\n\n### Analyze Bundle\n\n```bash\nnpm run build\nnpx vite-bundle-visualizer\n```\n\nSee what's making bundle big!\n\n## 7. Database Optimization\n\n```javascript\n// ❌ Bad: N+1 query problem\nconst users = await db.users.findMany();\nfor (const user of users) {\n  user.posts = await db.posts.findMany({ where: { userId: user.id } });\n}\n// 1 query for users + N queries for posts = Slow!\n\n// ✅ Good: Single query with join\nconst users = await db.users.findMany({\n  include: { posts: true }\n});\n// 1 query total = Fast!\n```\n\n## 8. CDN (Content Delivery Network)\n\n**Without CDN:**\n```\nUser in Australia → Server in US → 300ms latency\n```\n\n**With CDN:**\n```\nUser in Australia → CDN in Sydney → 20ms latency\n```\n\n15x faster!\n\n**Popular CDNs:**\n- Cloudflare (free tier)\n- Vercel (automatic)\n- Netlify (automatic)\n\n## Priority: What to Optimize First?\n\n**1. Images** (biggest impact)\n**2. JavaScript bundle** (code splitting)\n**3. Fonts** (preload, subset)\n**4. Third-party scripts** (defer, remove)\n**5. Server response** (caching, database)\n\n## Remember\n\n**Measure before optimizing!**\nUse Chrome DevTools to find real bottlenecks.\n\n**80/20 rule:**\n20% of optimizations give 80% of improvement.\n\n**Don't micro-optimize:**\nRemoving 1KB won't matter if you have a 2MB image!",
+      "codeExample": "// Real-world optimization example\n\n// 1. Image component with optimization\nfunction OptimizedImage({ src, alt }) {\n  return (\n    <picture>\n      {/* Modern formats */}\n      <source srcSet={`${src}.avif`} type=\"image/avif\" />\n      <source srcSet={`${src}.webp`} type=\"image/webp\" />\n      \n      {/* Responsive sizes */}\n      <img\n        srcSet={`\n          ${src}-400w.jpg 400w,\n          ${src}-800w.jpg 800w,\n          ${src}-1200w.jpg 1200w\n        `}\n        sizes=\"(max-width: 600px) 100vw, 800px\"\n        src={`${src}-800w.jpg`}\n        alt={alt}\n        loading=\"lazy\"\n        width=\"800\"\n        height=\"600\"\n      />\n    </picture>\n  );\n}\n\n// 2. Code splitting with dynamic imports\nimport { lazy, Suspense } from 'react';\n\nconst HeavyChart = lazy(() => import('./charts/HeavyChart'));\nconst AdminPanel = lazy(() => import('./admin/AdminPanel'));\n\n// 3. Memoization to prevent re-renders\nimport { memo, useMemo } from 'react';\n\nconst ExpensiveComponent = memo(({ data }) => {\n  const processedData = useMemo(() => {\n    return data.map(item => {\n      // Expensive computation\n      return processItem(item);\n    });\n  }, [data]); // Only recompute when data changes\n  \n  return <div>{/* Render processedData */}</div>;\n});\n\n// 4. Resource hints in document head\nfunction App() {\n  return (\n    <>\n      <Helmet>\n        {/* Preload critical font */}\n        <link rel=\"preload\" href=\"/fonts/main.woff2\" as=\"font\" crossorigin />\n        \n        {/* Prefetch next likely page */}\n        <link rel=\"prefetch\" href=\"/dashboard\" />\n        \n        {/* DNS prefetch for analytics */}\n        <link rel=\"dns-prefetch\" href=\"https://analytics.google.com\" />\n      </Helmet>\n      \n      {/* App content */}\n    </>\n  );\n}\n\n// 5. Virtual scrolling for long lists\nimport { FixedSizeList } from 'react-window';\n\nfunction LongList({ items }) {\n  // Only render visible items (not all 10,000!)\n  return (\n    <FixedSizeList\n      height={600}\n      itemCount={items.length}\n      itemSize={50}\n      width=\"100%\"\n    >\n      {({ index, style }) => (\n        <div style={style}>{items[index].name}</div>\n      )}\n    </FixedSizeList>\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "perf-ex-1",
+      "lessonId": "why-performance-matters",
+      "moduleId": "web-performance",
+      "title": "Performance Impact",
+      "difficulty": "easy",
+      "xpReward": 25,
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Why does performance matter for business?",
+          "options": ["Makes developers happy", "Directly impacts conversions and revenue", "Looks good in demos", "Required by law"],
+          "correctAnswer": 1,
+          "explanation": "Performance directly impacts user behavior - slower sites have lower conversion rates and revenue."
+        },
+        {
+          "question": "What happens to mobile users if your site takes > 3 seconds to load?",
+          "options": ["Nothing", "10% leave", "53% abandon the site", "Everyone waits patiently"],
+          "correctAnswer": 2,
+          "explanation": "Studies show 53% of mobile users abandon sites that take more than 3 seconds to load."
+        },
+        {
+          "question": "Biggest cause of slow websites?",
+          "options": ["Slow DNS", "Large JavaScript bundles and images", "Bad HTML", "Server location"],
+          "correctAnswer": 1,
+          "explanation": "Large JavaScript bundles and unoptimized images are the #1 cause of slow websites."
+        }
+      ]
+    },
+    {
+      "id": "perf-ex-2",
+      "lessonId": "core-web-vitals",
+      "moduleId": "web-performance",
+      "title": "Core Web Vitals",
+      "difficulty": "medium",
+      "xpReward": 30,
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What does LCP measure?",
+          "options": ["Total load time", "Time until largest element is visible", "JavaScript execution time", "Server response time"],
+          "correctAnswer": 1,
+          "explanation": "LCP (Largest Contentful Paint) measures when the largest visible element renders."
+        },
+        {
+          "question": "What causes poor CLS (Cumulative Layout Shift)?",
+          "options": ["Slow internet", "Images without dimensions", "Too much JavaScript", "Slow server"],
+          "correctAnswer": 1,
+          "explanation": "Images/ads without reserved space cause content to jump around (layout shift)."
+        },
+        {
+          "question": "Good FID (First Input Delay) score?",
+          "options": ["< 1s", "< 500ms", "< 100ms", "< 5s"],
+          "correctAnswer": 2,
+          "explanation": "FID should be under 100ms for instant-feeling interactions."
+        },
+        {
+          "question": "Do Core Web Vitals affect Google search rankings?",
+          "options": ["No", "Yes, since 2021", "Only for mobile", "Only for e-commerce"],
+          "correctAnswer": 1,
+          "explanation": "Since 2021, Core Web Vitals are part of Google's ranking algorithm."
+        }
+      ]
+    },
+    {
+      "id": "perf-ex-3",
+      "lessonId": "optimization-techniques",
+      "moduleId": "web-performance",
+      "title": "Optimization Strategies",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Best image format for photos on modern browsers?",
+          "options": ["JPEG", "PNG", "WebP or AVIF", "GIF"],
+          "correctAnswer": 2,
+          "explanation": "WebP and AVIF provide much better compression than JPEG while maintaining quality."
+        },
+        {
+          "question": "What is code splitting?",
+          "options": ["Breaking code into multiple files manually", "Loading only necessary code for each page/feature", "Minifying JavaScript", "Compressing files"],
+          "correctAnswer": 1,
+          "explanation": "Code splitting loads only the JavaScript needed for current page/feature, reducing initial bundle size."
+        },
+        {
+          "question": "What should you optimize FIRST?",
+          "options": ["Variable names", "Images", "CSS selectors", "HTML structure"],
+          "correctAnswer": 1,
+          "explanation": "Images are typically 50-70% of page weight, so optimizing them has the biggest impact."
+        },
+        {
+          "question": "What does a CDN do?",
+          "options": ["Compresses files", "Serves content from geographically closer servers", "Minifies code", "Optimizes images"],
+          "correctAnswer": 1,
+          "explanation": "CDN serves content from servers closer to users, dramatically reducing latency."
+        }
+      ]
+    }
+  ]
+}

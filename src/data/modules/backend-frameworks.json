@@ -1,0 +1,251 @@
+{
+  "module": {
+    "id": "backend-frameworks",
+    "title": "Backend Frameworks",
+    "description": "Express, FastAPI, Django, NestJS and choosing the right one",
+    "icon": "Server",
+    "requiredXp": 1400,
+    "color": "from-red-400 to-red-600",
+    "courseId": "web-stack"
+  },
+  "lessons": [
+    {
+      "id": "express-nodejs",
+      "moduleId": "backend-frameworks",
+      "title": "Express.js (Node.js)",
+      "order": 1,
+      "xpReward": 30,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Express = Minimalist web framework for Node.js\n- Most popular Node.js backend framework\n- Middleware-based architecture\n- Great for APIs and small to medium apps\n\n---\n\n# Express.js: The Node.js Standard\n\n## What is Express?\n\n**Express.js** is a minimal, flexible web framework for Node.js.\n\nIt's the **most popular** choice for building backend APIs with JavaScript.\n\n## Why Express?\n\n✅ **JavaScript everywhere** - Same language as frontend\n✅ **Huge ecosystem** - npm has millions of packages\n✅ **Fast to learn** - Minimal boilerplate\n✅ **Excellent for APIs** - RESTful APIs are easy\n✅ **Active community** - Easy to find help\n\n## Basic Express Server\n\n```javascript\nconst express = require('express');\nconst app = express();\n\n// Middleware to parse JSON\napp.use(express.json());\n\n// Routes\napp.get('/', (req, res) => {\n  res.json({ message: 'Hello World!' });\n});\n\napp.get('/users', (req, res) => {\n  res.json([\n    { id: 1, name: 'Alice' },\n    { id: 2, name: 'Bob' }\n  ]);\n});\n\napp.post('/users', (req, res) => {\n  const newUser = req.body;\n  res.status(201).json(newUser);\n});\n\n// Start server\napp.listen(3000, () => {\n  console.log('Server running on port 3000');\n});\n```\n\n## Middleware Pattern\n\n**Middleware** = Functions that run between request and response\n\n```javascript\n// Logger middleware\napp.use((req, res, next) => {\n  console.log(`${req.method} ${req.url}`);\n  next(); // Pass to next middleware\n});\n\n// Authentication middleware\nfunction requireAuth(req, res, next) {\n  if (!req.headers.authorization) {\n    return res.status(401).json({ error: 'Unauthorized' });\n  }\n  next();\n}\n\n// Use middleware on specific route\napp.get('/protected', requireAuth, (req, res) => {\n  res.json({ secret: 'data' });\n});\n```\n\n## Routing\n\n**Basic routes:**\n```javascript\napp.get('/users', getAllUsers);\napp.get('/users/:id', getUserById);\napp.post('/users', createUser);\napp.put('/users/:id', updateUser);\napp.delete('/users/:id', deleteUser);\n```\n\n**Route parameters:**\n```javascript\napp.get('/users/:id', (req, res) => {\n  const userId = req.params.id;\n  res.json({ id: userId });\n});\n\n// /users/123 → req.params.id = '123'\n```\n\n**Query parameters:**\n```javascript\napp.get('/search', (req, res) => {\n  const { q, limit } = req.query;\n  res.json({ query: q, limit });\n});\n\n// /search?q=react&limit=10\n```\n\n**Router (organize routes):**\n```javascript\nconst userRouter = express.Router();\n\nuserRouter.get('/', getAllUsers);\nuserRouter.post('/', createUser);\nuserRouter.get('/:id', getUserById);\n\napp.use('/api/users', userRouter);\n```\n\n## Error Handling\n\n```javascript\n// Async error handling\napp.get('/users/:id', async (req, res, next) => {\n  try {\n    const user = await db.getUser(req.params.id);\n    if (!user) {\n      return res.status(404).json({ error: 'User not found' });\n    }\n    res.json(user);\n  } catch (error) {\n    next(error); // Pass to error handler\n  }\n});\n\n// Global error handler (must be last)\napp.use((err, req, res, next) => {\n  console.error(err.stack);\n  res.status(500).json({ error: 'Internal server error' });\n});\n```\n\n## Popular Express Middleware\n\n**CORS** (cross-origin requests):\n```javascript\nconst cors = require('cors');\napp.use(cors());\n```\n\n**Morgan** (logging):\n```javascript\nconst morgan = require('morgan');\napp.use(morgan('combined'));\n```\n\n**Helmet** (security headers):\n```javascript\nconst helmet = require('helmet');\napp.use(helmet());\n```\n\n**Compression** (gzip):\n```javascript\nconst compression = require('compression');\napp.use(compression());\n```\n\n## When to Use Express?\n\n**✅ Great for:**\n- RESTful APIs\n- Microservices\n- Real-time apps (with Socket.io)\n- Server-side rendering (with templating)\n- Small to medium projects\n\n**⚠️ Consider alternatives for:**\n- Large enterprise apps (NestJS better)\n- Heavy data processing (Python better)\n- Need strict structure (Django better)\n\n## Pros & Cons\n\n**Pros:**\n- 🚀 Fast development\n- 📦 Huge npm ecosystem\n- 💪 Flexible, unopinionated\n- 🎯 Great for APIs\n- 🔧 Easy to customize\n\n**Cons:**\n- 🤷 Too flexible (no structure enforced)\n- 🔄 Callback hell without async/await\n- 🏗️ Need to set up everything yourself\n- 📚 No built-in ORM\n\n## Real-World Stack\n\n**MERN Stack:**\n- **M**ongoDB (database)\n- **E**xpress (backend)\n- **R**eact (frontend)\n- **N**ode.js (runtime)\n\n**Common setup:**\n- Express + PostgreSQL + TypeScript\n- Express + MongoDB + REST\n- Express + Prisma + GraphQL",
+      "codeExample": "// Complete Express API example\n\nconst express = require('express');\nconst cors = require('cors');\nconst helmet = require('helmet');\nconst morgan = require('morgan');\n\nconst app = express();\n\n// Middleware\napp.use(helmet());\napp.use(cors());\napp.use(morgan('combined'));\napp.use(express.json());\n\n// In-memory database (use real DB in production)\nlet users = [\n  { id: 1, name: 'Alice', email: 'alice@example.com' },\n  { id: 2, name: 'Bob', email: 'bob@example.com' }\n];\n\n// Routes\napp.get('/api/users', (req, res) => {\n  res.json(users);\n});\n\napp.get('/api/users/:id', (req, res) => {\n  const user = users.find(u => u.id === parseInt(req.params.id));\n  \n  if (!user) {\n    return res.status(404).json({ error: 'User not found' });\n  }\n  \n  res.json(user);\n});\n\napp.post('/api/users', (req, res) => {\n  const newUser = {\n    id: users.length + 1,\n    name: req.body.name,\n    email: req.body.email\n  };\n  \n  users.push(newUser);\n  res.status(201).json(newUser);\n});\n\napp.put('/api/users/:id', (req, res) => {\n  const user = users.find(u => u.id === parseInt(req.params.id));\n  \n  if (!user) {\n    return res.status(404).json({ error: 'User not found' });\n  }\n  \n  user.name = req.body.name || user.name;\n  user.email = req.body.email || user.email;\n  \n  res.json(user);\n});\n\napp.delete('/api/users/:id', (req, res) => {\n  const index = users.findIndex(u => u.id === parseInt(req.params.id));\n  \n  if (index === -1) {\n    return res.status(404).json({ error: 'User not found' });\n  }\n  \n  users.splice(index, 1);\n  res.status(204).send();\n});\n\n// Error handler\napp.use((err, req, res, next) => {\n  console.error(err.stack);\n  res.status(500).json({ error: 'Something went wrong!' });\n});\n\n// Start\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => {\n  console.log(`Server running on port ${PORT}`);\n});"
+    },
+    {
+      "id": "fastapi-python",
+      "moduleId": "backend-frameworks",
+      "title": "FastAPI (Python)",
+      "order": 2,
+      "xpReward": 30,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- FastAPI = Modern, fast Python web framework\n- Built on type hints and async/await\n- Auto-generates API documentation (Swagger/OpenAPI)\n- Great for data science, ML, and high-performance APIs\n\n---\n\n# FastAPI: Modern Python Backend\n\n## What is FastAPI?\n\n**FastAPI** is a modern, high-performance Python framework for building APIs.\n\nIt's **one of the fastest** Python frameworks and gaining popularity rapidly.\n\n## Why FastAPI?\n\n✅ **Fast** - Performance on par with Node.js and Go\n✅ **Auto documentation** - Swagger UI generated automatically\n✅ **Type safety** - Uses Python type hints\n✅ **Modern Python** - Async/await support\n✅ **Less code** - Very concise, productive\n✅ **Great for ML/AI** - Python ecosystem access\n\n## Basic FastAPI Server\n\n```python\nfrom fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get(\"/\")\ndef read_root():\n    return {\"message\": \"Hello World\"}\n\n@app.get(\"/users\")\ndef get_users():\n    return [\n        {\"id\": 1, \"name\": \"Alice\"},\n        {\"id\": 2, \"name\": \"Bob\"}\n    ]\n\n@app.post(\"/users\")\ndef create_user(name: str, email: str):\n    return {\"id\": 3, \"name\": name, \"email\": email}\n```\n\nRun with: `uvicorn main:app --reload`\n\n## Type Hints & Validation\n\n**Automatic validation:**\n```python\nfrom pydantic import BaseModel\n\nclass User(BaseModel):\n    name: str\n    email: str\n    age: int\n\n@app.post(\"/users\")\ndef create_user(user: User):\n    # FastAPI validates automatically!\n    # If invalid, returns 422 error\n    return user\n```\n\n**Path parameters:**\n```python\n@app.get(\"/users/{user_id}\")\ndef get_user(user_id: int):\n    # user_id automatically converted to int\n    return {\"id\": user_id}\n```\n\n**Query parameters:**\n```python\n@app.get(\"/search\")\ndef search(q: str, limit: int = 10):\n    return {\"query\": q, \"limit\": limit}\n\n# /search?q=react&limit=5\n```\n\n## Async Support\n\n```python\nimport asyncio\nfrom fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get(\"/users/{user_id}\")\nasync def get_user(user_id: int):\n    # Can use await for async operations\n    user = await db.fetch_user(user_id)\n    return user\n\n@app.get(\"/slow-operation\")\nasync def slow_operation():\n    # Won't block other requests\n    await asyncio.sleep(5)\n    return {\"status\": \"done\"}\n```\n\n## Auto Documentation\n\n**FastAPI automatically generates:**\n- **Swagger UI:** http://localhost:8000/docs\n- **ReDoc:** http://localhost:8000/redoc\n\nNo extra work needed!\n\n## Dependency Injection\n\n```python\nfrom fastapi import Depends, HTTPException\n\n# Dependency\nasync def get_current_user(token: str):\n    user = await verify_token(token)\n    if not user:\n        raise HTTPException(status_code=401)\n    return user\n\n# Use dependency\n@app.get(\"/profile\")\nasync def get_profile(user = Depends(get_current_user)):\n    return user\n```\n\n## Error Handling\n\n```python\nfrom fastapi import HTTPException\n\n@app.get(\"/users/{user_id}\")\nasync def get_user(user_id: int):\n    user = await db.get_user(user_id)\n    \n    if not user:\n        raise HTTPException(\n            status_code=404,\n            detail=\"User not found\"\n        )\n    \n    return user\n```\n\n## Database Integration\n\n**With SQLAlchemy:**\n```python\nfrom sqlalchemy.orm import Session\nfrom fastapi import Depends\n\n@app.get(\"/users\")\ndef get_users(db: Session = Depends(get_db)):\n    users = db.query(User).all()\n    return users\n```\n\n## When to Use FastAPI?\n\n**✅ Perfect for:**\n- High-performance APIs\n- Machine learning/AI backends\n- Data science applications\n- Microservices\n- Projects needing auto docs\n\n**⚠️ Consider alternatives:**\n- Full websites (Django better)\n- Simple CRUD (Express simpler)\n- Team prefers JavaScript (use Node.js)\n\n## Pros & Cons\n\n**Pros:**\n- ⚡ Very fast performance\n- 📚 Auto-generated docs\n- 🔒 Built-in validation\n- 🐍 Python ecosystem (NumPy, pandas, etc.)\n- 🎯 Modern async/await\n- 📝 Less boilerplate\n\n**Cons:**\n- 🆕 Newer (less mature than Django/Flask)\n- 📚 Smaller community vs Django\n- 🔧 More learning if new to Python\n\n## FastAPI vs Flask\n\n**FastAPI:**\n- Modern, async, fast\n- Auto docs, validation\n- Better for APIs\n\n**Flask:**\n- Older, stable, simple\n- More flexible\n- Better for simple apps\n\n## Real-World Stack\n\n**Common combinations:**\n- FastAPI + PostgreSQL + SQLAlchemy\n- FastAPI + MongoDB + Motor (async)\n- FastAPI + Redis + Celery\n- FastAPI + React + Docker",
+      "codeExample": "# Complete FastAPI example\n\nfrom fastapi import FastAPI, HTTPException, Depends\nfrom pydantic import BaseModel, EmailStr\nfrom typing import List, Optional\nimport uvicorn\n\napp = FastAPI(\n    title=\"User API\",\n    description=\"A simple user management API\",\n    version=\"1.0.0\"\n)\n\n# Pydantic models (validation + documentation)\nclass UserCreate(BaseModel):\n    name: str\n    email: EmailStr\n    age: int\n\nclass User(UserCreate):\n    id: int\n\nclass UserUpdate(BaseModel):\n    name: Optional[str] = None\n    email: Optional[EmailStr] = None\n    age: Optional[int] = None\n\n# In-memory database\nusers_db = [\n    {\"id\": 1, \"name\": \"Alice\", \"email\": \"alice@example.com\", \"age\": 25},\n    {\"id\": 2, \"name\": \"Bob\", \"email\": \"bob@example.com\", \"age\": 30}\n]\n\n# Routes\n@app.get(\"/\")\ndef root():\n    return {\"message\": \"Welcome to User API\"}\n\n@app.get(\"/users\", response_model=List[User])\ndef get_users(skip: int = 0, limit: int = 10):\n    \"\"\"Get all users with pagination\"\"\"\n    return users_db[skip:skip + limit]\n\n@app.get(\"/users/{user_id}\", response_model=User)\ndef get_user(user_id: int):\n    \"\"\"Get a specific user by ID\"\"\"\n    user = next((u for u in users_db if u[\"id\"] == user_id), None)\n    \n    if not user:\n        raise HTTPException(status_code=404, detail=\"User not found\")\n    \n    return user\n\n@app.post(\"/users\", response_model=User, status_code=201)\ndef create_user(user: UserCreate):\n    \"\"\"Create a new user\"\"\"\n    new_user = {\n        \"id\": len(users_db) + 1,\n        **user.dict()\n    }\n    users_db.append(new_user)\n    return new_user\n\n@app.put(\"/users/{user_id}\", response_model=User)\ndef update_user(user_id: int, user_update: UserUpdate):\n    \"\"\"Update an existing user\"\"\"\n    user = next((u for u in users_db if u[\"id\"] == user_id), None)\n    \n    if not user:\n        raise HTTPException(status_code=404, detail=\"User not found\")\n    \n    # Update only provided fields\n    update_data = user_update.dict(exclude_unset=True)\n    for key, value in update_data.items():\n        user[key] = value\n    \n    return user\n\n@app.delete(\"/users/{user_id}\", status_code=204)\ndef delete_user(user_id: int):\n    \"\"\"Delete a user\"\"\"\n    global users_db\n    user = next((u for u in users_db if u[\"id\"] == user_id), None)\n    \n    if not user:\n        raise HTTPException(status_code=404, detail=\"User not found\")\n    \n    users_db = [u for u in users_db if u[\"id\"] != user_id]\n    return None\n\nif __name__ == \"__main__\":\n    uvicorn.run(app, host=\"0.0.0.0\", port=8000)"
+    },
+    {
+      "id": "django-python",
+      "moduleId": "backend-frameworks",
+      "title": "Django (Python)",
+      "order": 3,
+      "xpReward": 30,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Django = Full-featured Python web framework\n- \"Batteries included\" - ORM, admin panel, auth out of the box\n- Best for complete web applications\n- Opinionated structure enforces good practices\n\n---\n\n# Django: The Complete Package\n\n## What is Django?\n\n**Django** is a high-level Python web framework that encourages rapid development.\n\nIt's **\"batteries included\"** - everything you need is built-in.\n\n## Why Django?\n\n✅ **Complete solution** - ORM, admin, auth included\n✅ **Mature & stable** - Used by Instagram, Spotify, Pinterest\n✅ **Security focused** - Protection against common vulnerabilities\n✅ **Admin panel** - Free, powerful admin interface\n✅ **Scalable** - Powers large applications\n✅ **Great documentation** - Excellent learning resources\n\n## What's Included?\n\n**Out of the box:**\n- ORM (Object-Relational Mapper)\n- Admin panel\n- Authentication & authorization\n- Form handling & validation\n- Template engine\n- URL routing\n- Security features\n- Session management\n\n## MVT Architecture\n\nDjango uses **Model-View-Template** (similar to MVC):\n\n**Model** - Database structure\n**View** - Business logic\n**Template** - HTML presentation\n\n## Basic Django App\n\n**Models (database):**\n```python\nfrom django.db import models\n\nclass User(models.Model):\n    name = models.CharField(max_length=100)\n    email = models.EmailField(unique=True)\n    created_at = models.DateTimeField(auto_now_add=True)\n    \n    def __str__(self):\n        return self.name\n```\n\n**Views (logic):**\n```python\nfrom django.shortcuts import render, get_object_or_404\nfrom django.http import JsonResponse\nfrom .models import User\n\ndef user_list(request):\n    users = User.objects.all()\n    return JsonResponse({\n        'users': list(users.values())\n    })\n\ndef user_detail(request, user_id):\n    user = get_object_or_404(User, pk=user_id)\n    return JsonResponse({\n        'id': user.id,\n        'name': user.name,\n        'email': user.email\n    })\n```\n\n**URLs (routing):**\n```python\nfrom django.urls import path\nfrom . import views\n\nurlpatterns = [\n    path('users/', views.user_list),\n    path('users/<int:user_id>/', views.user_detail),\n]\n```\n\n## Django ORM\n\n**Create:**\n```python\nuser = User.objects.create(\n    name='Alice',\n    email='alice@example.com'\n)\n```\n\n**Read:**\n```python\n# All users\nusers = User.objects.all()\n\n# Filter\nadults = User.objects.filter(age__gte=18)\n\n# Get one\nuser = User.objects.get(id=1)\n```\n\n**Update:**\n```python\nuser = User.objects.get(id=1)\nuser.name = 'Alice Smith'\nuser.save()\n```\n\n**Delete:**\n```python\nuser = User.objects.get(id=1)\nuser.delete()\n```\n\n## Admin Panel\n\n**Register model:**\n```python\nfrom django.contrib import admin\nfrom .models import User\n\n@admin.register(User)\nclass UserAdmin(admin.ModelAdmin):\n    list_display = ['name', 'email', 'created_at']\n    search_fields = ['name', 'email']\n```\n\nNow you have a full admin UI at `/admin`!\n\n## Authentication\n\n**Built-in auth:**\n```python\nfrom django.contrib.auth.decorators import login_required\n\n@login_required\ndef protected_view(request):\n    user = request.user\n    return JsonResponse({'user': user.username})\n```\n\n## Django REST Framework (DRF)\n\nFor building APIs, add DRF:\n\n```python\nfrom rest_framework import viewsets\nfrom rest_framework.decorators import api_view\nfrom rest_framework.response import Response\n\nclass UserViewSet(viewsets.ModelViewSet):\n    queryset = User.objects.all()\n    serializer_class = UserSerializer\n    \n    # Automatically provides:\n    # GET /users/\n    # POST /users/\n    # GET /users/{id}/\n    # PUT /users/{id}/\n    # DELETE /users/{id}/\n```\n\n## When to Use Django?\n\n**✅ Perfect for:**\n- Complete web applications\n- Content-heavy sites (blogs, news)\n- Projects needing admin panel\n- Enterprise applications\n- When you want structure enforced\n\n**⚠️ Consider alternatives:**\n- Simple APIs only (FastAPI lighter)\n- Real-time apps (Node.js better)\n- Microservices (too heavy)\n- Need flexibility (Flask better)\n\n## Pros & Cons\n\n**Pros:**\n- 🎁 Batteries included (ORM, admin, auth)\n- 🔒 Very secure (protects against common attacks)\n- 📚 Excellent documentation\n- 🏗️ Enforces good structure\n- ⚙️ Admin panel saves tons of time\n- 🧪 Great testing tools\n\n**Cons:**\n- 🐘 Can be overkill for simple apps\n- 📦 Larger footprint\n- 🔧 Opinionated (less flexible)\n- 📈 Steeper learning curve\n\n## Django vs FastAPI vs Flask\n\n**Django:**\n- Full-featured, complete solution\n- Best for full web apps\n- Built-in admin, ORM, auth\n\n**FastAPI:**\n- Modern, fast, APIs\n- Auto docs, validation\n- Async support\n\n**Flask:**\n- Minimal, flexible\n- You add what you need\n- Simple projects\n\n## Real-World Usage\n\n**Companies using Django:**\n- Instagram\n- Spotify\n- Pinterest\n- Dropbox\n- NASA\n\n**Common stack:**\n- Django + PostgreSQL + React\n- Django + DRF + Vue\n- Django + Celery + Redis",
+      "codeExample": "# Django REST Framework example\n\n# models.py\nfrom django.db import models\n\nclass User(models.Model):\n    name = models.CharField(max_length=100)\n    email = models.EmailField(unique=True)\n    age = models.IntegerField()\n    created_at = models.DateTimeField(auto_now_add=True)\n    \n    class Meta:\n        ordering = ['-created_at']\n    \n    def __str__(self):\n        return self.name\n\n# serializers.py\nfrom rest_framework import serializers\nfrom .models import User\n\nclass UserSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = User\n        fields = ['id', 'name', 'email', 'age', 'created_at']\n        read_only_fields = ['id', 'created_at']\n    \n    def validate_age(self, value):\n        if value < 0 or value > 150:\n            raise serializers.ValidationError(\"Invalid age\")\n        return value\n\n# views.py\nfrom rest_framework import viewsets, status\nfrom rest_framework.decorators import action\nfrom rest_framework.response import Response\nfrom .models import User\nfrom .serializers import UserSerializer\n\nclass UserViewSet(viewsets.ModelViewSet):\n    queryset = User.objects.all()\n    serializer_class = UserSerializer\n    \n    @action(detail=False, methods=['get'])\n    def adults(self, request):\n        \"\"\"Custom endpoint: /users/adults/\"\"\"\n        adults = self.queryset.filter(age__gte=18)\n        serializer = self.get_serializer(adults, many=True)\n        return Response(serializer.data)\n\n# urls.py\nfrom django.urls import path, include\nfrom rest_framework.routers import DefaultRouter\nfrom .views import UserViewSet\n\nrouter = DefaultRouter()\nrouter.register(r'users', UserViewSet)\n\nurlpatterns = [\n    path('api/', include(router.urls)),\n]\n\n# admin.py\nfrom django.contrib import admin\nfrom .models import User\n\n@admin.register(User)\nclass UserAdmin(admin.ModelAdmin):\n    list_display = ['name', 'email', 'age', 'created_at']\n    list_filter = ['created_at']\n    search_fields = ['name', 'email']\n    ordering = ['-created_at']"
+    },
+    {
+      "id": "nestjs-typescript",
+      "moduleId": "backend-frameworks",
+      "title": "NestJS (Node.js + TypeScript)",
+      "order": 4,
+      "xpReward": 30,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- NestJS = Enterprise-grade Node.js framework\n- Built with TypeScript, inspired by Angular\n- Opinionated structure with decorators\n- Best for large, scalable applications\n\n---\n\n# NestJS: Enterprise Node.js\n\n## What is NestJS?\n\n**NestJS** is a progressive Node.js framework for building efficient, scalable server-side applications.\n\nThink of it as **\"Express with structure\"** or **\"Django for Node.js\"**.\n\n## Why NestJS?\n\n✅ **TypeScript-first** - Full type safety\n✅ **Organized architecture** - Enforces good patterns\n✅ **Dependency injection** - Like Angular/Spring\n✅ **Modular design** - Easy to scale\n✅ **Enterprise-ready** - Built for large teams\n✅ **Testable** - Built-in testing support\n\n## NestJS vs Express\n\n**Express:**\n- Minimal, flexible\n- No structure enforced\n- You decide everything\n\n**NestJS:**\n- Opinionated structure\n- Enforces patterns (modules, controllers, services)\n- Built-in dependency injection\n\n## Architecture\n\n**NestJS uses:**\n- **Controllers** - Handle requests\n- **Services** - Business logic\n- **Modules** - Organize features\n- **Decorators** - Add metadata\n\n## Basic NestJS App\n\n**Controller:**\n```typescript\nimport { Controller, Get, Post, Body, Param } from '@nestjs/common';\nimport { UserService } from './user.service';\n\n@Controller('users')\nexport class UserController {\n  constructor(private userService: UserService) {}\n  \n  @Get()\n  findAll() {\n    return this.userService.findAll();\n  }\n  \n  @Get(':id')\n  findOne(@Param('id') id: string) {\n    return this.userService.findOne(id);\n  }\n  \n  @Post()\n  create(@Body() createUserDto: CreateUserDto) {\n    return this.userService.create(createUserDto);\n  }\n}\n```\n\n**Service:**\n```typescript\nimport { Injectable } from '@nestjs/common';\n\n@Injectable()\nexport class UserService {\n  private users = [];\n  \n  findAll() {\n    return this.users;\n  }\n  \n  findOne(id: string) {\n    return this.users.find(u => u.id === id);\n  }\n  \n  create(user: CreateUserDto) {\n    const newUser = { id: Date.now().toString(), ...user };\n    this.users.push(newUser);\n    return newUser;\n  }\n}\n```\n\n**Module:**\n```typescript\nimport { Module } from '@nestjs/common';\nimport { UserController } from './user.controller';\nimport { UserService } from './user.service';\n\n@Module({\n  controllers: [UserController],\n  providers: [UserService],\n})\nexport class UserModule {}\n```\n\n## Dependency Injection\n\n**Automatic injection:**\n```typescript\n@Injectable()\nexport class UserService {\n  constructor(\n    private readonly db: DatabaseService,\n    private readonly logger: LoggerService\n  ) {}\n  \n  async findAll() {\n    this.logger.log('Finding all users');\n    return this.db.users.findMany();\n  }\n}\n```\n\nNest automatically injects `db` and `logger`!\n\n## Validation with DTOs\n\n```typescript\nimport { IsString, IsEmail, MinLength } from 'class-validator';\n\nexport class CreateUserDto {\n  @IsString()\n  @MinLength(2)\n  name: string;\n  \n  @IsEmail()\n  email: string;\n}\n\n// In controller\n@Post()\ncreate(@Body() createUserDto: CreateUserDto) {\n  // Automatically validated!\n  return this.userService.create(createUserDto);\n}\n```\n\n## Middleware & Guards\n\n**Authentication guard:**\n```typescript\nimport { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';\n\n@Injectable()\nexport class AuthGuard implements CanActivate {\n  canActivate(context: ExecutionContext): boolean {\n    const request = context.switchToHttp().getRequest();\n    return !!request.user;\n  }\n}\n\n// Use it\n@UseGuards(AuthGuard)\n@Get('profile')\ngetProfile() {\n  return 'Protected route';\n}\n```\n\n## Database Integration\n\n**With TypeORM:**\n```typescript\nimport { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';\n\n@Entity()\nexport class User {\n  @PrimaryGeneratedColumn()\n  id: number;\n  \n  @Column()\n  name: string;\n  \n  @Column({ unique: true })\n  email: string;\n}\n\n@Injectable()\nexport class UserService {\n  constructor(\n    @InjectRepository(User)\n    private userRepository: Repository<User>\n  ) {}\n  \n  findAll() {\n    return this.userRepository.find();\n  }\n}\n```\n\n## When to Use NestJS?\n\n**✅ Perfect for:**\n- Large enterprise applications\n- Microservices architecture\n- Teams familiar with Angular\n- Projects needing structure\n- Long-term maintainability\n\n**⚠️ Overkill for:**\n- Simple APIs\n- Small projects\n- Prototypes\n- When flexibility is priority\n\n## Pros & Cons\n\n**Pros:**\n- 🏗️ Excellent architecture\n- 📘 TypeScript type safety\n- 🧪 Easy to test\n- 📚 Great documentation\n- ⚙️ Built-in features (validation, serialization)\n- 🏢 Enterprise-ready\n\n**Cons:**\n- 📈 Steeper learning curve\n- 🎯 More boilerplate than Express\n- 🐘 Heavier than minimal frameworks\n- 🔧 Less flexible (opinionated)\n\n## NestJS vs Other Frameworks\n\n**vs Express:**\n- More structure\n- TypeScript-first\n- Better for large apps\n\n**vs Django:**\n- Similar philosophy (batteries included)\n- Node.js instead of Python\n- Better for microservices\n\n**vs FastAPI:**\n- Similar modern approach\n- Node.js vs Python\n- Both have auto-docs\n\n## Real-World Stack\n\n**Common combinations:**\n- NestJS + PostgreSQL + TypeORM\n- NestJS + MongoDB + Mongoose\n- NestJS + GraphQL + Prisma\n- NestJS + Microservices + RabbitMQ",
+      "codeExample": "// Complete NestJS example\n\n// user.entity.ts\nimport { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';\n\n@Entity()\nexport class User {\n  @PrimaryGeneratedColumn()\n  id: number;\n  \n  @Column()\n  name: string;\n  \n  @Column({ unique: true })\n  email: string;\n  \n  @Column()\n  age: number;\n}\n\n// create-user.dto.ts\nimport { IsString, IsEmail, IsInt, Min, Max } from 'class-validator';\n\nexport class CreateUserDto {\n  @IsString()\n  name: string;\n  \n  @IsEmail()\n  email: string;\n  \n  @IsInt()\n  @Min(0)\n  @Max(150)\n  age: number;\n}\n\n// user.service.ts\nimport { Injectable, NotFoundException } from '@nestjs/common';\nimport { InjectRepository } from '@nestjs/typeorm';\nimport { Repository } from 'typeorm';\nimport { User } from './user.entity';\nimport { CreateUserDto } from './dto/create-user.dto';\n\n@Injectable()\nexport class UserService {\n  constructor(\n    @InjectRepository(User)\n    private userRepository: Repository<User>,\n  ) {}\n  \n  async findAll(): Promise<User[]> {\n    return this.userRepository.find();\n  }\n  \n  async findOne(id: number): Promise<User> {\n    const user = await this.userRepository.findOne({ where: { id } });\n    if (!user) {\n      throw new NotFoundException(`User #${id} not found`);\n    }\n    return user;\n  }\n  \n  async create(createUserDto: CreateUserDto): Promise<User> {\n    const user = this.userRepository.create(createUserDto);\n    return this.userRepository.save(user);\n  }\n  \n  async remove(id: number): Promise<void> {\n    const result = await this.userRepository.delete(id);\n    if (result.affected === 0) {\n      throw new NotFoundException(`User #${id} not found`);\n    }\n  }\n}\n\n// user.controller.ts\nimport { Controller, Get, Post, Delete, Body, Param, HttpCode } from '@nestjs/common';\nimport { UserService } from './user.service';\nimport { CreateUserDto } from './dto/create-user.dto';\n\n@Controller('users')\nexport class UserController {\n  constructor(private readonly userService: UserService) {}\n  \n  @Get()\n  findAll() {\n    return this.userService.findAll();\n  }\n  \n  @Get(':id')\n  findOne(@Param('id') id: string) {\n    return this.userService.findOne(+id);\n  }\n  \n  @Post()\n  @HttpCode(201)\n  create(@Body() createUserDto: CreateUserDto) {\n    return this.userService.create(createUserDto);\n  }\n  \n  @Delete(':id')\n  @HttpCode(204)\n  remove(@Param('id') id: string) {\n    return this.userService.remove(+id);\n  }\n}\n\n// user.module.ts\nimport { Module } from '@nestjs/common';\nimport { TypeOrmModule } from '@nestjs/typeorm';\nimport { UserController } from './user.controller';\nimport { UserService } from './user.service';\nimport { User } from './user.entity';\n\n@Module({\n  imports: [TypeOrmModule.forFeature([User])],\n  controllers: [UserController],\n  providers: [UserService],\n})\nexport class UserModule {}"
+    },
+    {
+      "id": "framework-comparison",
+      "moduleId": "backend-frameworks",
+      "title": "Framework Comparison & Selection",
+      "order": 5,
+      "xpReward": 25,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- No \"best\" framework - depends on requirements\n- Consider: language, team skills, project size, performance needs\n- Express = Simple/flexible, FastAPI = Fast/modern, Django = Complete, NestJS = Enterprise\n- Can mix and match in microservices\n\n---\n\n# Choosing the Right Framework\n\n## Quick Decision Matrix\n\n### JavaScript/TypeScript Ecosystem\n\n**Express:**\n- ✅ Simple API\n- ✅ Small project\n- ✅ Need flexibility\n- ✅ Team knows JS\n\n**NestJS:**\n- ✅ Large application\n- ✅ Enterprise/team\n- ✅ Want structure\n- ✅ TypeScript preference\n\n### Python Ecosystem\n\n**FastAPI:**\n- ✅ API-only project\n- ✅ Need performance\n- ✅ ML/data science integration\n- ✅ Want auto-docs\n\n**Django:**\n- ✅ Full web application\n- ✅ Need admin panel\n- ✅ Content-heavy site\n- ✅ Want everything included\n\n## Side-by-Side Comparison\n\n| Feature | Express | NestJS | FastAPI | Django |\n|---------|---------|--------|---------|--------|\n| Language | JS/TS | TypeScript | Python | Python |\n| Learning Curve | Easy | Medium | Easy | Medium |\n| Performance | Fast | Fast | Very Fast | Medium |\n| Structure | Flexible | Strict | Flexible | Strict |\n| Boilerplate | Minimal | More | Minimal | More |\n| ORM Built-in | ❌ | ❌ | ❌ | ✅ |\n| Admin Panel | ❌ | ❌ | ❌ | ✅ |\n| Auto Docs | ❌ | ✅ | ✅ | Via DRF |\n| Async Support | ✅ | ✅ | ✅ | Limited |\n| Best For | APIs | Enterprise | ML/APIs | Web Apps |\n\n## Decision Questions\n\n### 1. What's your primary language?\n\n**JavaScript/TypeScript?**\n→ Express or NestJS\n\n**Python?**\n→ FastAPI or Django\n\n**Don't care?**\n→ Consider team skills and ecosystem\n\n### 2. Project size and scope?\n\n**Small API (<10 endpoints)?**\n→ Express or FastAPI\n\n**Medium application?**\n→ Any framework works\n\n**Large enterprise system?**\n→ NestJS or Django\n\n### 3. Team size and experience?\n\n**Solo developer?**\n→ Use what you know best\n\n**Small team (<5)?**\n→ Flexible frameworks (Express, FastAPI)\n\n**Large team (>10)?**\n→ Opinionated frameworks (NestJS, Django)\n\n### 4. What are you building?\n\n**RESTful API only?**\n→ Express, FastAPI, or NestJS\n\n**Full website with pages?**\n→ Django or Next.js (React)\n\n**Microservices?**\n→ Express, FastAPI, or NestJS\n\n**ML/AI backend?**\n→ FastAPI (Python ecosystem)\n\n**Real-time app (chat, games)?**\n→ Express with Socket.io or NestJS\n\n## Real-World Scenarios\n\n### Scenario 1: Startup MVP\n**Requirements:**\n- Launch quickly\n- Small team (2-3)\n- Simple CRUD API\n- Might pivot\n\n**Best choice:** Express or FastAPI\n**Why:** Fast development, flexible, easy to change\n\n### Scenario 2: Enterprise SaaS\n**Requirements:**\n- Large team (20+)\n- Long-term maintenance\n- Need structure\n- TypeScript\n\n**Best choice:** NestJS\n**Why:** Enforces patterns, scalable, great for teams\n\n### Scenario 3: Content Platform (Blog, News)\n**Requirements:**\n- Admin panel needed\n- User management\n- Database-heavy\n- SEO important\n\n**Best choice:** Django\n**Why:** Admin panel, ORM, mature ecosystem\n\n### Scenario 4: ML/AI API\n**Requirements:**\n- Serve ML models\n- High performance\n- Data processing\n- Python libraries\n\n**Best choice:** FastAPI\n**Why:** Fast, async, Python ecosystem access\n\n### Scenario 5: Microservices\n**Requirements:**\n- Many small services\n- Independent deployment\n- Different teams\n\n**Best choice:** Mix of Express/FastAPI/NestJS\n**Why:** Use best tool per service\n\n## Performance Comparison\n\n**Requests/second (approximate):**\n- FastAPI: ~20,000\n- Express: ~15,000\n- NestJS: ~14,000\n- Django: ~5,000\n\n**Note:** Real performance depends on:\n- Database queries\n- Business logic\n- Infrastructure\n- Optimization\n\n## Ecosystem Considerations\n\n### JavaScript/Node.js\n**Pros:**\n- ✅ Huge npm ecosystem\n- ✅ Same language as frontend\n- ✅ Great for real-time\n- ✅ JSON-native\n\n**Cons:**\n- ❌ Callback complexity\n- ❌ Less mature for data science\n\n### Python\n**Pros:**\n- ✅ ML/AI libraries\n- ✅ Data science ecosystem\n- ✅ Readable syntax\n- ✅ Great for scripting\n\n**Cons:**\n- ❌ Slower than Node.js (except FastAPI)\n- ❌ Different language from frontend\n\n## Migration Path\n\n**Start simple, scale up:**\n\n1. **Prototype:** Express or FastAPI\n2. **Growing:** Add structure gradually\n3. **Mature:** Migrate to NestJS or Django if needed\n\n**Or start strict:**\n\n1. **From day 1:** NestJS or Django\n2. **Benefit:** Structure from start\n3. **Cost:** Slower initial development\n\n## Multi-Framework Architecture\n\n**Microservices can mix:**\n- Auth service: NestJS (needs structure)\n- ML service: FastAPI (Python libs)\n- Real-time: Express + Socket.io\n- Admin: Django (free admin panel)\n\n## Tips for Choosing\n\n📌 **Use what your team knows** (most important!)\n📌 **Match framework philosophy to project needs**\n📌 **Consider hiring market** (more Express devs than NestJS)\n📌 **Think long-term maintenance**\n📌 **Try building small project first**\n📌 **Check community size and activity**\n\n## Red Flags\n\n🚩 Choosing based on hype\n🚩 Ignoring team expertise\n🚩 Over-engineering simple projects\n🚩 Under-engineering complex projects\n🚩 Not considering ecosystem\n\n## Bottom Line\n\n**No wrong choice** if you consider:\n- Team skills\n- Project requirements\n- Long-term maintenance\n- Performance needs\n- Time constraints\n\nAll four frameworks are **excellent** for their use cases!",
+      "codeExample": "// Example: Same API in different frameworks\n\n// Express.js\nconst express = require('express');\nconst app = express();\napp.get('/users/:id', (req, res) => {\n  res.json({ id: req.params.id, name: 'Alice' });\n});\napp.listen(3000);\n\n// ---\n\n// NestJS\n@Controller('users')\nexport class UserController {\n  @Get(':id')\n  getUser(@Param('id') id: string) {\n    return { id, name: 'Alice' };\n  }\n}\n\n// ---\n\n// FastAPI (Python)\nfrom fastapi import FastAPI\napp = FastAPI()\n\n@app.get(\"/users/{user_id}\")\ndef get_user(user_id: int):\n    return {\"id\": user_id, \"name\": \"Alice\"}\n\n// ---\n\n// Django REST Framework (Python)\nfrom rest_framework.decorators import api_view\nfrom rest_framework.response import Response\n\n@api_view(['GET'])\ndef get_user(request, user_id):\n    return Response({\"id\": user_id, \"name\": \"Alice\"})\n\n// All do the same thing, different philosophies!"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "backend-ex-1",
+      "lessonId": "express-nodejs",
+      "moduleId": "backend-frameworks",
+      "title": "Express.js Concepts",
+      "difficulty": "easy",
+      "xpReward": 30,
+      "description": "Test your Express.js understanding.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What is middleware in Express?",
+          "options": ["A database", "Functions that run between request and response", "A templating engine", "An npm package"],
+          "correctAnswer": 1,
+          "explanation": "Middleware are functions that have access to request, response, and next, running in sequence."
+        },
+        {
+          "question": "How do you access route parameters in Express?\n\napp.get('/users/:id', ...)",
+          "options": ["req.params.id", "req.query.id", "req.body.id", "req.id"],
+          "correctAnswer": 0,
+          "explanation": "Route parameters (like :id) are accessed via req.params."
+        },
+        {
+          "question": "What does next() do in middleware?",
+          "options": ["Ends the response", "Moves to the next middleware", "Restarts the server", "Throws an error"],
+          "correctAnswer": 1,
+          "explanation": "next() passes control to the next middleware in the stack."
+        },
+        {
+          "question": "Which method is used to parse JSON bodies?",
+          "options": ["app.json()", "express.json()", "app.parseJSON()", "bodyParser()"],
+          "correctAnswer": 1,
+          "explanation": "express.json() is middleware that parses incoming JSON request bodies."
+        }
+      ]
+    },
+    {
+      "id": "backend-ex-2",
+      "lessonId": "fastapi-python",
+      "moduleId": "backend-frameworks",
+      "title": "FastAPI Features",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Understand FastAPI's unique features.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What does FastAPI automatically generate?",
+          "options": ["Database migrations", "API documentation", "Frontend code", "Test cases"],
+          "correctAnswer": 1,
+          "explanation": "FastAPI automatically generates interactive API documentation (Swagger UI and ReDoc)."
+        },
+        {
+          "question": "What is Pydantic used for in FastAPI?",
+          "options": ["Routing", "Data validation", "Authentication", "Database ORM"],
+          "correctAnswer": 1,
+          "explanation": "Pydantic models provide automatic data validation and serialization in FastAPI."
+        },
+        {
+          "question": "Main advantage of FastAPI over Flask?",
+          "options": ["Older and more stable", "Automatic validation and docs", "Simpler syntax", "Smaller bundle size"],
+          "correctAnswer": 1,
+          "explanation": "FastAPI provides automatic request validation, serialization, and API documentation."
+        },
+        {
+          "question": "FastAPI is built on which ASGI server?",
+          "options": ["Gunicorn", "Uvicorn", "Apache", "Nginx"],
+          "correctAnswer": 1,
+          "explanation": "FastAPI runs on Uvicorn (or other ASGI servers) which supports async/await."
+        }
+      ]
+    },
+    {
+      "id": "backend-ex-3",
+      "lessonId": "django-python",
+      "moduleId": "backend-frameworks",
+      "title": "Django Fundamentals",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Test Django framework knowledge.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What does 'batteries included' mean for Django?",
+          "options": ["Needs external packages", "Has ORM, admin, auth built-in", "Uses batteries for power", "Minimal features"],
+          "correctAnswer": 1,
+          "explanation": "'Batteries included' means Django comes with ORM, admin panel, authentication, and more out of the box."
+        },
+        {
+          "question": "What is Django's ORM?",
+          "options": ["A frontend framework", "Object-Relational Mapper for databases", "An admin panel", "A testing tool"],
+          "correctAnswer": 1,
+          "explanation": "Django ORM lets you interact with databases using Python objects instead of SQL."
+        },
+        {
+          "question": "When should you choose Django over FastAPI?",
+          "options": ["Building a simple API", "Need ML model serving", "Need a full web app with admin panel", "Want fastest performance"],
+          "correctAnswer": 2,
+          "explanation": "Django is best for complete web applications that benefit from built-in features like admin panel."
+        },
+        {
+          "question": "What is Django REST Framework (DRF)?",
+          "options": ["A database", "A library for building APIs", "A frontend framework", "A deployment tool"],
+          "correctAnswer": 1,
+          "explanation": "DRF is a powerful toolkit for building Web APIs in Django."
+        }
+      ]
+    },
+    {
+      "id": "backend-ex-4",
+      "lessonId": "nestjs-typescript",
+      "moduleId": "backend-frameworks",
+      "title": "NestJS Architecture",
+      "difficulty": "hard",
+      "xpReward": 40,
+      "description": "Understanding NestJS patterns.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What pattern does NestJS heavily use?",
+          "options": ["Singleton pattern", "Dependency injection", "Observer pattern", "Factory pattern"],
+          "correctAnswer": 1,
+          "explanation": "NestJS uses dependency injection to manage and inject dependencies into classes."
+        },
+        {
+          "question": "What are NestJS decorators like @Controller() and @Injectable()?",
+          "options": ["TypeScript functions", "Metadata annotations", "Database queries", "Routes"],
+          "correctAnswer": 1,
+          "explanation": "Decorators add metadata to classes, methods, and parameters to configure behavior."
+        },
+        {
+          "question": "When is NestJS better than Express?",
+          "options": ["For simple prototypes", "For large enterprise applications", "For static websites", "For beginners"],
+          "correctAnswer": 1,
+          "explanation": "NestJS provides structure and patterns that benefit large-scale applications and teams."
+        },
+        {
+          "question": "What is the purpose of DTOs in NestJS?",
+          "options": ["Database tables", "Data validation and type safety", "Routing", "Authentication"],
+          "correctAnswer": 1,
+          "explanation": "DTOs (Data Transfer Objects) define the shape of data and enable validation."
+        }
+      ]
+    },
+    {
+      "id": "backend-ex-5",
+      "lessonId": "framework-comparison",
+      "moduleId": "backend-frameworks",
+      "title": "Framework Selection Scenarios",
+      "difficulty": "hard",
+      "xpReward": 45,
+      "description": "Choose the right framework for different scenarios.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "You're building an ML model API that needs high performance. Which framework?",
+          "options": ["Express", "Django", "FastAPI", "NestJS"],
+          "correctAnswer": 2,
+          "explanation": "FastAPI excels at ML APIs: fast performance, async support, and Python ecosystem access."
+        },
+        {
+          "question": "A large team (20+ devs) needs to build an enterprise app with TypeScript. Which framework?",
+          "options": ["Express", "FastAPI", "Django", "NestJS"],
+          "correctAnswer": 3,
+          "explanation": "NestJS provides structure, TypeScript support, and patterns that help large teams collaborate."
+        },
+        {
+          "question": "You need a content management system with an admin panel. Which framework?",
+          "options": ["Express", "FastAPI", "Django", "NestJS"],
+          "correctAnswer": 2,
+          "explanation": "Django includes a powerful admin panel out of the box, perfect for content management."
+        },
+        {
+          "question": "Building a simple API for a hackathon (24 hours). Which framework?",
+          "options": ["Express or FastAPI", "NestJS", "Django", "Custom from scratch"],
+          "correctAnswer": 0,
+          "explanation": "Express or FastAPI have minimal boilerplate and let you build quickly without setup overhead."
+        },
+        {
+          "question": "What's the MOST important factor when choosing a framework?",
+          "options": ["Framework popularity", "Team's existing skills and experience", "Latest trends", "Performance benchmarks"],
+          "correctAnswer": 1,
+          "explanation": "Team expertise is most important - a familiar framework will be more productive than a 'better' unknown one."
+        }
+      ]
+    }
+  ]
+}
