@@ -142,12 +142,17 @@ export default function HomePage() {
                   </span>
                 </div>
               )}
-              {isAvailable && progress > 0 && (
-                <div className="absolute top-1.5 left-1.5 w-6 h-6 bg-black text-white flex items-center justify-center font-bold text-[10px]">
-                  {progress}%
-                </div>
-              )}
-              <div className="flex items-center gap-2 mb-1.5 mt-1">
+               {isAvailable && progress > 0 && (
+                 <div className="absolute top-1.5 left-1.5 w-6 h-6 bg-black text-white flex items-center justify-center font-bold text-[10px]">
+                   {progress}%
+                 </div>
+               )}
+               {isAvailable && progress > 0 && progress < 100 && (
+                 <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 bg-green-500 text-white text-[8px] font-bold uppercase tracking-wider">
+                   In Progress
+                 </div>
+               )}
+               <div className="flex items-center gap-2 mb-1.5 mt-1">
                 <img 
                   src={path.logo} 
                   alt={path.title} 
@@ -155,21 +160,33 @@ export default function HomePage() {
                 />
                 <div>
                   <h3 className="font-bold text-sm uppercase">{path.title}</h3>
-                  {isAvailable && (
+                  {isAvailable && progress === 0 && (
                     <span className="text-[8px] text-green-600 font-bold">Available</span>
+                  )}
+                  {isAvailable && progress > 0 && progress < 100 && (
+                    <span className="text-[8px] text-blue-600 font-bold">In Progress</span>
+                  )}
+                  {isAvailable && progress === 100 && (
+                    <span className="text-[8px] text-purple-600 font-bold">Completed</span>
                   )}
                 </div>
               </div>
-              <p className="text-[9px] mb-1 text-gray-600 line-clamp-2">{path.description}</p>
-              {isAvailable && (
-                <span className="text-[9px] font-bold text-primary-600">Start →</span>
-              )}
-            </Link>
+               <p className="text-[9px] mb-1 text-gray-600 line-clamp-2">{path.description}</p>
+               {isAvailable && progress === 0 && (
+                 <span className="text-[9px] font-bold text-primary-600">Start →</span>
+               )}
+               {isAvailable && progress > 0 && progress < 100 && (
+                 <span className="text-[9px] font-bold text-blue-600">Continue →</span>
+               )}
+               {isAvailable && progress === 100 && (
+                 <span className="text-[9px] font-bold text-purple-600">Review →</span>
+               )}
+             </Link>
           );
         })}
       </div>
 
-      <h2 className="font-bold text-sm uppercase text-gray-500 mb-3">Our Method</h2>
+      <h2 className="font-bold text-sm uppercase text-gray-500 mb-3 mt-8">Our Method</h2>
 
       <div className="border-2 border-black p-3">
         <div className="grid md:grid-cols-3 gap-4 text-xs">
