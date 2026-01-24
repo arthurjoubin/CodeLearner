@@ -76,6 +76,16 @@ export default function HomePage() {
   };
 
   const resumes = courseIds.map(id => getCourseProgress(id)).filter(Boolean) as CourseResume[];
+  
+  const getPathProgress = (courseId: string): number => {
+    const courseModules = getModulesForCourse(courseId);
+    const courseLessons = courseModules.flatMap(m => 
+      lessons.filter(l => l.moduleId === m.id)
+    );
+    if (courseLessons.length === 0) return 0;
+    const completed = courseLessons.filter(l => completedLessons.includes(l.id)).length;
+    return Math.round((completed / courseLessons.length) * 100);
+  };
 
   return (
     <div className="page-enter">
@@ -114,6 +124,7 @@ export default function HomePage() {
       <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide p-1">
         {learningPaths.map((path) => {
           const isAvailable = path.id === 'react' || path.id === 'web-stack';
+          const progress = getPathProgress(path.id);
 
           return (
             <Link
@@ -131,7 +142,12 @@ export default function HomePage() {
                   </span>
                 </div>
               )}
-              <div className="flex items-center gap-2 mb-1.5">
+              {isAvailable && progress > 0 && (
+                <div className="absolute top-1.5 left-1.5 w-6 h-6 bg-black text-white flex items-center justify-center font-bold text-[10px]">
+                  {progress}%
+                </div>
+              )}
+              <div className="flex items-center gap-2 mb-1.5 mt-1">
                 <img 
                   src={path.logo} 
                   alt={path.title} 
@@ -154,7 +170,7 @@ export default function HomePage() {
       </div>
 
       <div className="border-2 border-black p-3 mt-8">
-        <h2 className="font-bold text-sm uppercase text-gray-500 mb-2">Our Method</h2>
+        <h2 className="font-bold text-sm uppercase text-gray-500 mb-3">Our Method</h2>
         <div className="grid md:grid-cols-3 gap-4 text-xs">
           <div className="pr-3 md:border-r md:border-gray-300 md:last:border-r-0">
             <span className="font-bold text-black block mb-0.5">Learn by Doing</span>
