@@ -15,6 +15,8 @@ import {
   Heart,
   Loader,
   RotateCcw,
+  Maximize,
+  X,
 } from 'lucide-react';
 import LivePreview from '../components/LivePreview';
 
@@ -35,6 +37,7 @@ export default function ExercisePage() {
   const [isLoadingHint, setIsLoadingHint] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const alreadyCompleted = exerciseId ? isExerciseCompleted(exerciseId) : false;
 
@@ -46,6 +49,7 @@ export default function ExercisePage() {
       setHint('');
       setAttemptCount(0);
       setCompleted(false);
+      setIsExpanded(false);
     }
   }, [exercise?.id]);
 
@@ -191,13 +195,35 @@ export default function ExercisePage() {
             <p className="text-sm leading-relaxed">{exercise.instructions}</p>
           </div>
 
+          {/* Backdrop for expanded mode */}
+          {isExpanded && (
+            <div
+              className="fixed inset-0 bg-black/80 z-40 backdrop-blur-sm"
+              onClick={() => setIsExpanded(false)}
+            />
+          )}
+
           {/* Editor */}
-          <div className="flex-1 border-2 border-black bg-gray-900 flex flex-col min-h-[250px]">
-            <div className="flex items-center justify-between px-3 py-1.5 bg-black text-white text-xs">
-              <span className="font-bold uppercase">Editor</span>
+          <div className={`${isExpanded ? 'fixed inset-8 z-50 bg-gray-900 shadow-2xl border-4 border-black flex flex-col' : 'flex-1 border-2 border-black bg-gray-900 flex flex-col min-h-[250px]'}`}>
+            <div className={`flex items-center justify-between px-3 py-1.5 bg-black text-white text-xs ${isExpanded ? 'mb-0 py-3' : ''}`}>
+              <span className="font-bold uppercase flex items-center gap-2">
+                Editor {isExpanded && <span className="text-gray-400 font-normal normal-case">- Full Screen Mode</span>}
+              </span>
               <div className="flex items-center gap-1">
                 <button onClick={() => { setCode(exercise.starterCode); setFeedback(null); }} className="p-1 hover:bg-gray-700" title="Reset">
                   <RotateCcw className="w-3 h-3" />
+                </button>
+                <button
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className={`p-1 hover:bg-gray-700 flex items-center gap-1 ${isExpanded ? 'bg-red-600 hover:bg-red-700 px-2' : ''}`}
+                  title={isExpanded ? "Close" : "Expand"}
+                >
+                  {isExpanded ? (
+                    <>
+                      <X className="w-3 h-3" />
+                      <span className="font-bold">Close</span>
+                    </>
+                  ) : <Maximize className="w-3 h-3" />}
                 </button>
               </div>
             </div>

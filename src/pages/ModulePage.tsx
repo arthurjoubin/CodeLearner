@@ -11,6 +11,12 @@ export default function ModulePage() {
   const module = moduleId ? getModule(moduleId) : undefined;
   const lessons = moduleId ? getLessonsForModule(moduleId) : [];
 
+  const isLessonEffectivelyDone = (lessonId: string) => {
+    if (isLessonCompleted(lessonId)) return true;
+    const exercises = getExercisesForLesson(lessonId);
+    return exercises.length > 0 && exercises.every(e => isExerciseCompleted(e.id));
+  };
+
   if (!module || !user) {
     return (
       <div className="text-center py-12">
@@ -22,31 +28,26 @@ export default function ModulePage() {
 
   return (
     <div className="page-enter">
-      {/* Back */}
       <Link to="/" className="inline-flex items-center gap-2 text-black font-bold uppercase hover:underline mb-4">
         <ArrowLeft className="w-4 h-4" /> Back
       </Link>
 
-      {/* Header */}
       <div className="bg-black text-white border-2 border-black p-5 mb-6">
         <h1 className="text-2xl font-black mb-1 uppercase">{module.title}</h1>
         <p className="text-gray-400 text-sm">{module.description}</p>
       </div>
 
-      {/* Lessons - 3 columns */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
         {lessons.map((lesson, index) => {
           const exercises = getExercisesForLesson(lesson.id);
           const lessonDone = isLessonCompleted(lesson.id);
           const exercisesDone = exercises.filter(e => isExerciseCompleted(e.id)).length;
           const allExercisesDone = exercises.length === 0 || exercisesDone === exercises.length;
-          const isFullComplete = lessonDone && allExercisesDone;
+          const isAnythingDone = lessonDone || allExercisesDone;
 
-          // Unlock: first lesson always unlocked, others need previous lesson completed
           const prevLesson = index > 0 ? lessons[index - 1] : null;
-          const isUnlocked = index === 0 || (prevLesson && isLessonCompleted(prevLesson.id));
+          const isUnlocked = index === 0 || (prevLesson && isLessonEffectivelyDone(prevLesson.id));
 
-          // Locked lesson
           if (!isUnlocked) {
             return (
               <div key={lesson.id} className="border-2 border-gray-200 bg-gray-50 p-4">
@@ -66,7 +67,6 @@ export default function ModulePage() {
             );
           }
 
-          // Unlocked lesson
           const progressPercent = exercises.length > 0
             ? Math.round((exercisesDone / exercises.length) * 100)
             : lessonDone ? 100 : 0;
@@ -74,7 +74,7 @@ export default function ModulePage() {
           return (
             <div
               key={lesson.id}
-              className={`border-2 border-black p-3 ${isFullComplete ? 'bg-primary-50 border-primary-500' : 'bg-white'}`}
+              className={`border-2 border-black p-3 ${isAnythingDone ? 'bg-green-100 border-green-500' : 'bg-white'}`}
             >
               <div className="flex items-start gap-3">
                 <div className={`w-8 h-8 flex items-center justify-center font-bold border-2 border-black flex-shrink-0 text-sm ${lessonDone ? 'bg-primary-500 text-white' : 'bg-white text-black'
@@ -91,7 +91,6 @@ export default function ModulePage() {
                     </span>
                   </div>
 
-                  {/* Progress bar */}
                   <div className="mb-2">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wide">Progress</span>
@@ -105,15 +104,13 @@ export default function ModulePage() {
                     </div>
                   </div>
 
-                  {/* Course button */}
                   <div className="mb-2">
-                    <Link to={`/lesson/${lesson.id}`} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1.5 w-full justify-center">
+                    <Link to={`/lesson/${lesson.id}`} className={`btn-primary text-xs py-1.5 inline-flex items-center gap-1.5 w-full justify-center ${isAnythingDone ? 'bg-green-500 hover:bg-green-600' : ''}`}>
                       <BookOpen className="w-3.5 h-3.5" />
-                      {lessonDone ? 'Review Course' : 'Start Course'}
+                      {isAnythingDone ? '↺ Redo Course' : 'Start Course'}
                     </Link>
                   </div>
 
-                  {/* Exercises */}
                   {exercises.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
                       {exercises.map((exercise, i) => (
@@ -130,10 +127,6 @@ export default function ModulePage() {
                     </div>
                   )}
                 </div>
-
-                {isFullComplete && (
-                  <CheckCircle className="w-5 h-5 text-primary-500 flex-shrink-0" />
-                )}
               </div>
             </div>
           );

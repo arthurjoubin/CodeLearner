@@ -8,6 +8,8 @@ import {
   CheckCircle,
   Star,
   Code2,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import ReactMarkdown from './ReactMarkdown';
 import DifficultyBadge from '../components/DifficultyBadge';
@@ -22,6 +24,7 @@ export default function LessonPage() {
   const moduleLessons = module ? getLessonsForModule(module.id) : [];
 
   const [completed, setCompleted] = useState(false);
+  const [showExercisesDropdown, setShowExercisesDropdown] = useState(false);
 
   if (!lesson || !module || !user) {
     return (
@@ -53,18 +56,14 @@ export default function LessonPage() {
   return (
     <div className="page-enter">
       {/* Top Bar */}
-      <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-black">
-        <div className="flex items-center gap-3">
-          <Link to={`/module/${module.id}`} className="p-2 border-2 border-black hover:bg-gray-100">
-            <ArrowLeft className="w-4 h-4" />
-          </Link>
-          <div>
-            <p className="text-[10px] text-gray-500 font-bold uppercase">{module.title} / {currentIndex + 1}</p>
-            <h1 className="text-lg font-black text-black uppercase">{lesson.title}</h1>
-          </div>
-        </div>
+      <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-4 pb-3 border-b-2 border-black">
+        <Link to={`/module/${module.id}`} className="p-2 border-2 border-black hover:bg-gray-100 shrink-0">
+          <ArrowLeft className="w-4 h-4" />
+        </Link>
+        <p className="text-[10px] text-gray-500 font-bold uppercase hidden md:block">{module.title} / {currentIndex + 1}</p>
+        <h1 className="text-base md:text-lg font-black text-black uppercase truncate max-w-[150px] md:max-w-none">{lesson.title}</h1>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-auto">
           <DifficultyBadge difficulty={lesson.difficulty} />
           <span className="xp-badge text-xs">
             <Star className="w-3 h-3" />
@@ -75,16 +74,39 @@ export default function LessonPage() {
               <CheckCircle className="w-4 h-4 text-white" />
             </div>
           )}
-
-          {/* Exercise button in header */}
           {exercises.length > 0 && (
-            <Link
-              to={`/exercise/${exercises[0].id}`}
-              className="btn-primary text-xs py-1.5 px-3 inline-flex items-center gap-1.5 ml-2"
-            >
-              <Code2 className="w-3.5 h-3.5" />
-              Exercises ({completedExercisesCount}/{exercises.length})
-            </Link>
+            <div className="relative">
+              <button
+                onClick={() => setShowExercisesDropdown(!showExercisesDropdown)}
+                className="btn-primary text-xs py-1.5 px-3 inline-flex items-center gap-1.5"
+              >
+                <Code2 className="w-3.5 h-3.5" />
+                Exercises ({completedExercisesCount}/{exercises.length})
+                {showExercisesDropdown ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              </button>
+              {showExercisesDropdown && (
+                <div className="absolute right-0 top-full mt-1 bg-white border-2 border-black z-10 min-w-[200px] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  {exercises.map((exercise, index) => {
+                    const exCompleted = isExerciseCompleted(exercise.id);
+                    return (
+                      <Link
+                        key={exercise.id}
+                        to={`/exercise/${exercise.id}`}
+                        onClick={() => setShowExercisesDropdown(false)}
+                        className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 border-b border-black last:border-b-0"
+                      >
+                        {exCompleted ? (
+                          <CheckCircle className="w-4 h-4 text-primary-500 shrink-0" />
+                        ) : (
+                          <div className="w-4 h-4 border-2 border-black shrink-0" />
+                        )}
+                        <span className="text-xs font-bold uppercase">{index + 1}. {exercise.title}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -106,14 +128,14 @@ export default function LessonPage() {
       </div>
 
       {/* Bottom Nav */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         {prevLesson ? (
           <Link to={`/lesson/${prevLesson.id}`} className="btn-secondary text-xs py-1.5 inline-flex items-center gap-1.5">
             <ArrowLeft className="w-3.5 h-3.5" /> Previous
           </Link>
         ) : <div />}
 
-        {!completed && !alreadyCompleted ? (
+        {(!completed && !alreadyCompleted && !allExercisesCompleted) ? (
           <button onClick={handleComplete} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1.5">
             <CheckCircle className="w-3.5 h-3.5" /> Complete +{lesson.xpReward} XP
           </button>
@@ -136,17 +158,17 @@ export default function LessonPage() {
             <h2 className="text-xl font-black mb-2 uppercase">Completed!</h2>
             <p className="text-sm mb-4 font-bold text-yellow-600">+{lesson.xpReward} XP</p>
             <div className="flex flex-col gap-2">
-              {exercises.length > 0 ? (
+              {exercises.length > 0 && !allExercisesCompleted ? (
                 <Link to={`/exercise/${exercises[0].id}`} className="btn-primary text-sm">
                   Do the exercises
                 </Link>
               ) : nextLesson ? (
                 <Link to={`/lesson/${nextLesson.id}`} className="btn-primary text-sm">
-                  Next Lesson
+                  Next Lesson <ArrowRight className="w-4 h-4" />
                 </Link>
               ) : (
                 <Link to={`/module/${module.id}`} className="btn-primary text-sm">
-                  Back to Module
+                  Back to Module <ArrowRight className="w-4 h-4" />
                 </Link>
               )}
               <button onClick={() => setCompleted(false)} className="btn-secondary text-xs">

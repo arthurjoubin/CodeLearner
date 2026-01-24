@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { modules, getLessonsForModule } from '../data/modules';
+import { modules, getLessonsForModule, getExercisesForLesson } from '../data/modules';
 import { Lock, CheckCircle, Code, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, Layers, Settings, Gauge, Navigation, Star, Flame } from 'lucide-react';
 
 const iconMap: Record<string, React.ElementType> = {
@@ -8,15 +8,21 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 export default function HomePage() {
-  const { user, updateStreak, isLessonCompleted } = useUser();
+  const { user, updateStreak, isLessonCompleted, isExerciseCompleted } = useUser();
   updateStreak();
 
   if (!user) return null;
 
+  const isLessonEffectivelyDone = (lessonId: string) => {
+    if (isLessonCompleted(lessonId)) return true;
+    const exercises = getExercisesForLesson(lessonId);
+    return exercises.length > 0 && exercises.every(e => isExerciseCompleted(e.id));
+  };
+
   // Check if a module is complete (all lessons done)
   const isModuleComplete = (moduleId: string) => {
     const lessons = getLessonsForModule(moduleId);
-    return lessons.length > 0 && lessons.every(l => isLessonCompleted(l.id));
+    return lessons.length > 0 && lessons.every(l => isLessonEffectivelyDone(l.id));
   };
 
   return (
@@ -39,7 +45,7 @@ export default function HomePage() {
           const isUnlocked = index === 0 || (prevModule && isModuleComplete(prevModule.id));
 
           const lessons = getLessonsForModule(module.id);
-          const completedLessons = lessons.filter(l => user.completedLessons.includes(l.id)).length;
+          const completedLessons = lessons.filter(l => isLessonEffectivelyDone(l.id)).length;
           const totalLessons = lessons.length;
           const progress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
           const isComplete = progress === 100;
