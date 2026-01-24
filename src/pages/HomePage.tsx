@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { lessons } from '../data/modules';
+import { Play } from 'lucide-react';
 
 const learningPaths = [
   { id: 'web-stack', title: 'VIBECODER BASIS', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png' },
@@ -26,25 +28,43 @@ export default function HomePage() {
 
   if (!user) return null;
 
+  const completedLessons = user.completedLessons || [];
+
+  const findNextLesson = () => {
+    const sortedLessons = [...lessons].sort((a, b) => a.order - b.order);
+    for (const lesson of sortedLessons) {
+      if (!completedLessons.includes(lesson.id)) {
+        return lesson;
+      }
+    }
+    return sortedLessons[0];
+  };
+
+  const nextLesson = findNextLesson();
+  const progressPercent = lessons.length > 0 
+    ? Math.round((completedLessons.length / lessons.length) * 100) 
+    : 0;
+
   return (
     <div className="page-enter">
-      <div className="border-2 border-black p-3 mb-6">
-        <h2 className="font-black text-sm uppercase mb-2">Our Method</h2>
-        <div className="grid md:grid-cols-3 gap-4 text-xs">
-          <div className="pr-3 md:border-r md:border-gray-300 md:last:border-r-0">
-            <span className="font-bold text-black block mb-0.5">Learn by Doing</span>
-            <p className="text-gray-600">Theory meets practice. Every lesson combines concepts with hands-on exercises.</p>
-          </div>
-          <div className="pr-3 md:border-r md:border-gray-300 md:last:border-r-0 md:pl-2">
-            <span className="font-bold text-black block mb-0.5">Progress Through Practice</span>
-            <p className="text-gray-600">Build real skills step by step. Your experience grows as you complete lessons and exercises.</p>
-          </div>
-          <div className="md:pl-2">
-            <span className="font-bold text-black block mb-0.5">Stay Active</span>
-            <p className="text-gray-600">No passive watching. You code, you test, you learn by taking action.</p>
+      {nextLesson && (
+        <div className="border-2 border-black p-4 mb-6 bg-black text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Continue Learning</span>
+              <h2 className="font-black text-xl uppercase mt-1">Resume where you left off</h2>
+              <p className="text-xs text-gray-400 mt-1">{progressPercent}% completed</p>
+            </div>
+            <Link 
+              to={`/lesson/${nextLesson.id}`}
+              className="flex items-center gap-2 bg-white text-black px-4 py-2 font-bold uppercase text-sm hover:bg-gray-200 transition-colors"
+            >
+              <Play className="w-4 h-4" />
+              Continue
+            </Link>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="mb-6">
         <h1 className="text-3xl font-black text-black uppercase mb-2">Choose your Learning Path</h1>
@@ -91,6 +111,24 @@ export default function HomePage() {
             </Link>
           );
         })}
+      </div>
+
+      <div className="border-2 border-black p-3 mt-8">
+        <h2 className="font-black text-sm uppercase mb-2">Our Method</h2>
+        <div className="grid md:grid-cols-3 gap-4 text-xs">
+          <div className="pr-3 md:border-r md:border-gray-300 md:last:border-r-0">
+            <span className="font-bold text-black block mb-0.5">Learn by Doing</span>
+            <p className="text-gray-600">Theory meets practice. Every lesson combines concepts with hands-on exercises.</p>
+          </div>
+          <div className="pr-3 md:border-r md:border-gray-300 md:last:border-r-0 md:pl-2">
+            <span className="font-bold text-black block mb-0.5">Progress Through Practice</span>
+            <p className="text-gray-600">Build real skills step by step. Your experience grows as you complete lessons and exercises.</p>
+          </div>
+          <div className="md:pl-2">
+            <span className="font-bold text-black block mb-0.5">Stay Active</span>
+            <p className="text-gray-600">No passive watching. You code, you test, you learn by taking action.</p>
+          </div>
+        </div>
       </div>
 
       <style>{`
