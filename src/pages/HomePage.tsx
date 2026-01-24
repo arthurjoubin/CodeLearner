@@ -79,9 +79,8 @@ export default function HomePage() {
 
   return (
     <div className="page-enter">
-      <div className="mb-6">
-        <h1 className="text-3xl font-black text-black uppercase mb-2">Choose your Learning Path</h1>
-        <p className="text-gray-600">Start your coding journey with one of our curated paths</p>
+      <div className="mb-4">
+        <h2 className="font-bold text-sm uppercase text-gray-500 mb-3">Learning Paths</h2>
       </div>
 
       {resumes.length > 0 && (
