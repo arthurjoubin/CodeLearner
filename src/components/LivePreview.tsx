@@ -13,9 +13,16 @@ export default function LivePreview({ code }: LivePreviewProps) {
     const renderPreview = () => {
       if (!iframeRef.current) return;
 
+      // Don't try to render empty or very short code
+      const trimmedCode = code.trim();
+      if (!trimmedCode || trimmedCode.length < 10) {
+        setError(null);
+        return;
+      }
+
       try {
         // Transform JSX/TypeScript to plain JavaScript
-        const transformed = transform(code, {
+        const transformed = transform(trimmedCode, {
           transforms: ['typescript', 'jsx'],
           jsxRuntime: 'classic',
           jsxPragma: 'React.createElement',
@@ -23,11 +30,12 @@ export default function LivePreview({ code }: LivePreviewProps) {
         });
 
         // Find the component name (first function that starts with capital letter)
-        const componentMatch = code.match(/function\s+([A-Z][a-zA-Z0-9]*)/);
+        const componentMatch = trimmedCode.match(/function\s+([A-Z][a-zA-Z0-9]*)/);
         const componentName = componentMatch ? componentMatch[1] : null;
 
         if (!componentName) {
-          setError('No component found. Make sure your function name starts with a capital letter.');
+          // Not an error, just incomplete code
+          setError(null);
           return;
         }
 
@@ -86,8 +94,15 @@ export default function LivePreview({ code }: LivePreviewProps) {
 
         setError(null);
       } catch (err: unknown) {
+        // For transform errors (incomplete code), don't show an error
+        // Just clear previous output silently
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-        setError(`Syntax Error: ${errorMessage}`);
+        // Only show error if code looks complete (has closing brace)
+        if (trimmedCode.includes('return') && trimmedCode.endsWith('}')) {
+          setError(`Syntax Error: ${errorMessage}`);
+        } else {
+          setError(null);
+        }
       }
     };
 
@@ -110,7 +125,8 @@ export default function LivePreview({ code }: LivePreviewProps) {
     <iframe
       ref={iframeRef}
       title="Preview"
-      className="w-full h-full border-0"
+      className="w-full border-0 absolute inset-0"
+      style={{ height: '100%', minHeight: '250px' }}
       sandbox="allow-scripts allow-same-origin"
     />
   );

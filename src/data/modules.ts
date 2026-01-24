@@ -2349,6 +2349,402 @@ function Dashboard() {
   );
 }`,
   },
+
+  // === NEW LESSONS ===
+
+  // JSX Basics - New lesson
+  {
+    id: 'jsx-conditionals',
+    moduleId: 'jsx-basics',
+    title: 'Conditional Rendering',
+    order: 4,
+    xpReward: 25,
+    difficulty: 'beginner',
+    content: `# Conditional Rendering
+
+## Showing Content Conditionally
+
+In React, you often need to show different content based on conditions.
+
+## Using && Operator
+
+Show something only if a condition is true:
+
+\`\`\`jsx
+function Notification({ count }) {
+  return (
+    <div>
+      {count > 0 && <span>You have {count} messages</span>}
+    </div>
+  );
+}
+\`\`\`
+
+If \`count > 0\` is false, nothing is rendered.
+
+## Using Ternary Operator
+
+Show one thing or another:
+
+\`\`\`jsx
+function Status({ isOnline }) {
+  return (
+    <span>{isOnline ? "Online" : "Offline"}</span>
+  );
+}
+\`\`\`
+
+## Early Return
+
+Return different JSX based on conditions:
+
+\`\`\`jsx
+function UserGreeting({ user }) {
+  if (!user) {
+    return <p>Please log in</p>;
+  }
+  return <p>Welcome, {user.name}!</p>;
+}
+\`\`\``,
+    codeExample: `function Alert({ type, message }) {
+  if (!message) return null;
+
+  const colors = {
+    success: 'green',
+    error: 'red',
+    warning: 'orange'
+  };
+
+  return (
+    <div style={{ color: colors[type] || 'black' }}>
+      {type === 'error' && '⚠️ '}
+      {message}
+    </div>
+  );
+}`,
+  },
+
+  // Components & Props - New lesson
+  {
+    id: 'default-props',
+    moduleId: 'components-props',
+    title: 'Default Props',
+    order: 4,
+    xpReward: 20,
+    difficulty: 'beginner',
+    content: `# Default Props
+
+## Setting Default Values
+
+You can set default values for props when they're not provided.
+
+## Using Default Parameters
+
+\`\`\`jsx
+function Button({ label = "Click me", color = "blue" }) {
+  return (
+    <button style={{ backgroundColor: color }}>
+      {label}
+    </button>
+  );
+}
+
+// Usage
+<Button />  // Uses defaults
+<Button label="Submit" />  // Custom label, default color
+\`\`\`
+
+## Why Use Defaults?
+
+- **Safer code**: No undefined errors
+- **Less boilerplate**: Don't need to pass every prop
+- **Self-documenting**: Shows expected values`,
+    codeExample: `function Avatar({
+  src = "/default-avatar.png",
+  size = 40,
+  alt = "User avatar"
+}) {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      width={size}
+      height={size}
+      style={{ borderRadius: '50%' }}
+    />
+  );
+}
+
+// All these work:
+// <Avatar />
+// <Avatar src="/me.jpg" />
+// <Avatar size={60} alt="My photo" />`,
+  },
+
+  // State - New lesson
+  {
+    id: 'state-arrays',
+    moduleId: 'state-hooks',
+    title: 'State with Arrays',
+    order: 4,
+    xpReward: 30,
+    difficulty: 'intermediate',
+    content: `# State with Arrays
+
+## Managing Lists in State
+
+Arrays are common in React state for lists, todos, etc.
+
+## Adding Items
+
+\`\`\`jsx
+const [items, setItems] = useState([]);
+
+// Add new item
+setItems([...items, newItem]);
+\`\`\`
+
+## Removing Items
+
+\`\`\`jsx
+// Remove by index
+setItems(items.filter((_, i) => i !== indexToRemove));
+
+// Remove by id
+setItems(items.filter(item => item.id !== idToRemove));
+\`\`\`
+
+## Updating Items
+
+\`\`\`jsx
+setItems(items.map(item =>
+  item.id === targetId
+    ? { ...item, done: true }
+    : item
+));
+\`\`\`
+
+## Key Rule: Never Mutate!
+
+Always create a new array, never modify the existing one.`,
+    codeExample: `import { useState } from 'react';
+
+function TodoList() {
+  const [todos, setTodos] = useState([
+    { id: 1, text: 'Learn React', done: false }
+  ]);
+  const [input, setInput] = useState('');
+
+  const addTodo = () => {
+    if (!input.trim()) return;
+    setTodos([...todos, {
+      id: Date.now(),
+      text: input,
+      done: false
+    }]);
+    setInput('');
+  };
+
+  const toggleTodo = (id) => {
+    setTodos(todos.map(t =>
+      t.id === id ? { ...t, done: !t.done } : t
+    ));
+  };
+
+  const deleteTodo = (id) => {
+    setTodos(todos.filter(t => t.id !== id));
+  };
+
+  return (
+    <div>
+      <input
+        value={input}
+        onChange={e => setInput(e.target.value)}
+      />
+      <button onClick={addTodo}>Add</button>
+      <ul>
+        {todos.map(t => (
+          <li key={t.id}>
+            <span
+              onClick={() => toggleTodo(t.id)}
+              style={{ textDecoration: t.done ? 'line-through' : 'none' }}
+            >
+              {t.text}
+            </span>
+            <button onClick={() => deleteTodo(t.id)}>×</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}`,
+  },
+
+  // Effects - New lesson
+  {
+    id: 'effects-data-fetching',
+    moduleId: 'effects',
+    title: 'Data Fetching',
+    order: 3,
+    xpReward: 35,
+    difficulty: 'intermediate',
+    content: `# Fetching Data with useEffect
+
+## Basic Pattern
+
+\`\`\`jsx
+function UserList() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/users')
+      .then(res => res.json())
+      .then(data => {
+        setUsers(data);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  return <ul>{users.map(u => <li key={u.id}>{u.name}</li>)}</ul>;
+}
+\`\`\`
+
+## With Error Handling
+
+Always handle errors in production code:
+
+\`\`\`jsx
+const [error, setError] = useState(null);
+
+useEffect(() => {
+  fetch('/api/data')
+    .then(res => {
+      if (!res.ok) throw new Error('Failed');
+      return res.json();
+    })
+    .then(setData)
+    .catch(setError)
+    .finally(() => setLoading(false));
+}, []);
+\`\`\``,
+    codeExample: `import { useState, useEffect } from 'react';
+
+function PostList() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/posts?_limit=5')
+      .then(res => {
+        if (!res.ok) throw new Error('Network error');
+        return res.json();
+      })
+      .then(data => {
+        setPosts(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <p>Loading posts...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  return (
+    <ul>
+      {posts.map(post => (
+        <li key={post.id}>
+          <strong>{post.title}</strong>
+        </li>
+      ))}
+    </ul>
+  );
+}`,
+  },
+
+  // Custom Hooks - New lesson
+  {
+    id: 'hooks-uselocalstorage',
+    moduleId: 'custom-hooks',
+    title: 'useLocalStorage Hook',
+    order: 3,
+    xpReward: 35,
+    difficulty: 'intermediate',
+    content: `# useLocalStorage Hook
+
+## Persisting State
+
+Create a hook that syncs state with localStorage:
+
+\`\`\`jsx
+function useLocalStorage(key, initialValue) {
+  const [value, setValue] = useState(() => {
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : initialValue;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  return [value, setValue];
+}
+\`\`\`
+
+## Usage
+
+\`\`\`jsx
+function Settings() {
+  const [theme, setTheme] = useLocalStorage('theme', 'light');
+  // State persists across page reloads!
+}
+\`\`\``,
+    codeExample: `import { useState, useEffect } from 'react';
+
+function useLocalStorage(key, initialValue) {
+  const [value, setValue] = useState(() => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch {
+      return initialValue;
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  return [value, setValue];
+}
+
+// Example usage
+function App() {
+  const [name, setName] = useLocalStorage('userName', '');
+  const [darkMode, setDarkMode] = useLocalStorage('darkMode', false);
+
+  return (
+    <div style={{
+      background: darkMode ? '#333' : '#fff',
+      color: darkMode ? '#fff' : '#333'
+    }}>
+      <input
+        value={name}
+        onChange={e => setName(e.target.value)}
+        placeholder="Your name (saved!)"
+      />
+      <button onClick={() => setDarkMode(!darkMode)}>
+        Toggle Dark Mode
+      </button>
+    </div>
+  );
+}`,
+  },
 ];
 
 export const exercises: Exercise[] = [
@@ -3946,6 +4342,659 @@ function App() {
 }`,
     hints: ['Call useNavigate() to get navigate function', 'navigate(\'/path\') goes to that path', 'navigate(-1) goes back one step'],
     validationPrompt: 'Check if useNavigate is used for navigation to dashboard',
+  },
+
+  // === ADDITIONAL JSX EXERCISES ===
+  {
+    id: 'jsx-ex-4',
+    lessonId: 'jsx-intro',
+    moduleId: 'jsx-basics',
+    title: 'Dynamic Greeting',
+    difficulty: 'easy',
+    xpReward: 20,
+    description: 'Create a greeting with dynamic content.',
+    instructions: `Create a \`TimeGreeting\` component that:
+1. Has a variable \`hour\` set to 14
+2. Displays "Good afternoon!" in a paragraph`,
+    starterCode: `function TimeGreeting() {
+  // Create hour variable and return greeting
+
+}`,
+    solution: `function TimeGreeting() {
+  const hour = 14;
+  return <p>Good afternoon!</p>;
+}`,
+    hints: ['Use const to create the hour variable', 'Return a simple p element'],
+    validationPrompt: 'Check if TimeGreeting has hour=14 and displays Good afternoon',
+  },
+  {
+    id: 'jsx-ex-5',
+    lessonId: 'jsx-elements',
+    moduleId: 'jsx-basics',
+    title: 'Navigation Menu',
+    difficulty: 'medium',
+    xpReward: 30,
+    description: 'Build a simple navigation with multiple links.',
+    instructions: `Create a \`NavMenu\` component with:
+1. A nav element as parent
+2. Three anchor tags with texts: "Home", "About", "Contact"
+3. href attributes: "/", "/about", "/contact"`,
+    starterCode: `function NavMenu() {
+  // Return nav with three links
+
+}`,
+    solution: `function NavMenu() {
+  return (
+    <nav>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  );
+}`,
+    hints: ['Use nav as the wrapper element', 'Each a tag needs an href attribute'],
+    validationPrompt: 'Check if NavMenu has nav with 3 anchor tags for Home, About, Contact',
+  },
+  {
+    id: 'jsx-ex-6',
+    lessonId: 'jsx-expressions',
+    moduleId: 'jsx-basics',
+    title: 'User Profile Display',
+    difficulty: 'medium',
+    xpReward: 35,
+    description: 'Display user information using expressions.',
+    instructions: `Create a \`UserProfile\` component that:
+1. Has variables: name = "Alice", age = 28, city = "Paris"
+2. Displays: "{name}, {age} years old, from {city}" in a paragraph`,
+    starterCode: `function UserProfile() {
+  // Create variables and display info
+
+}`,
+    solution: `function UserProfile() {
+  const name = "Alice";
+  const age = 28;
+  const city = "Paris";
+  return <p>{name}, {age} years old, from {city}</p>;
+}`,
+    hints: ['Create three const variables', 'Use curly braces to embed each variable'],
+    validationPrompt: 'Check if UserProfile displays Alice, 28 years old, from Paris',
+  },
+
+  // === ADDITIONAL COMPONENTS & PROPS EXERCISES ===
+  {
+    id: 'props-ex-3',
+    lessonId: 'components-intro',
+    moduleId: 'components-props',
+    title: 'Button Component',
+    difficulty: 'easy',
+    xpReward: 20,
+    description: 'Create a reusable button component.',
+    instructions: `Create a \`Button\` component that:
+1. Accepts a \`label\` prop
+2. Returns a button element with the label as text`,
+    starterCode: `function Button({ label }) {
+  // Return button with label
+
+}`,
+    solution: `function Button({ label }) {
+  return <button>{label}</button>;
+}`,
+    hints: ['Destructure label from props', 'Use curly braces to display the label'],
+    validationPrompt: 'Check if Button accepts label prop and displays it in a button',
+  },
+  {
+    id: 'props-ex-4',
+    lessonId: 'children-prop',
+    moduleId: 'components-props',
+    title: 'Card Container',
+    difficulty: 'medium',
+    xpReward: 30,
+    description: 'Create a card that wraps any content.',
+    instructions: `Create a \`Card\` component that:
+1. Accepts \`title\` and \`children\` props
+2. Displays title in an h2
+3. Renders children below the title
+4. Wraps everything in a div`,
+    starterCode: `function Card({ title, children }) {
+  // Return div with title and children
+
+}`,
+    solution: `function Card({ title, children }) {
+  return (
+    <div>
+      <h2>{title}</h2>
+      {children}
+    </div>
+  );
+}`,
+    hints: ['children is a special prop for nested content', 'Just render {children} where you want the content'],
+    validationPrompt: 'Check if Card renders title in h2 and children below',
+  },
+
+  // === ADDITIONAL STATE EXERCISES ===
+  {
+    id: 'state-ex-3',
+    lessonId: 'state-intro',
+    moduleId: 'state-hooks',
+    title: 'Like Button',
+    difficulty: 'easy',
+    xpReward: 25,
+    description: 'Create a like button with count.',
+    instructions: `Create a \`LikeButton\` component that:
+1. Has a likes state starting at 0
+2. Shows "❤️ {likes}"
+3. Increments likes when clicked`,
+    starterCode: `import { useState } from 'react';
+
+function LikeButton() {
+  // Create likes state and button
+
+}`,
+    solution: `import { useState } from 'react';
+
+function LikeButton() {
+  const [likes, setLikes] = useState(0);
+  return (
+    <button onClick={() => setLikes(likes + 1)}>
+      ❤️ {likes}
+    </button>
+  );
+}`,
+    hints: ['Use useState(0) for initial likes', 'Put heart emoji and likes in the button'],
+    validationPrompt: 'Check if LikeButton has useState and increments on click',
+  },
+  {
+    id: 'state-ex-4',
+    lessonId: 'state-objects',
+    moduleId: 'state-hooks',
+    title: 'Theme Switcher',
+    difficulty: 'medium',
+    xpReward: 35,
+    description: 'Toggle between light and dark theme.',
+    instructions: `Create a \`ThemeSwitcher\` component that:
+1. Has a theme state starting as "light"
+2. Displays "Current theme: {theme}"
+3. Has a button that switches between "light" and "dark"`,
+    starterCode: `import { useState } from 'react';
+
+function ThemeSwitcher() {
+  // Create theme state and toggle
+
+}`,
+    solution: `import { useState } from 'react';
+
+function ThemeSwitcher() {
+  const [theme, setTheme] = useState("light");
+  return (
+    <div>
+      <p>Current theme: {theme}</p>
+      <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+        Toggle
+      </button>
+    </div>
+  );
+}`,
+    hints: ['Use ternary operator to toggle', 'Check if theme === "light" to decide next value'],
+    validationPrompt: 'Check if ThemeSwitcher toggles between light and dark',
+  },
+  {
+    id: 'state-ex-5',
+    lessonId: 'multiple-state',
+    moduleId: 'state-hooks',
+    title: 'User Form State',
+    difficulty: 'medium',
+    xpReward: 40,
+    description: 'Manage multiple form inputs with state.',
+    instructions: `Create a \`UserForm\` component with:
+1. name state (empty string)
+2. email state (empty string)
+3. Two inputs that update their respective states
+4. Display "Name: {name}, Email: {email}" below`,
+    starterCode: `import { useState } from 'react';
+
+function UserForm() {
+  // Create two states and two inputs
+
+}`,
+    solution: `import { useState } from 'react';
+
+function UserForm() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  return (
+    <div>
+      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
+      <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+      <p>Name: {name}, Email: {email}</p>
+    </div>
+  );
+}`,
+    hints: ['Create separate useState for each field', 'Use e.target.value in onChange'],
+    validationPrompt: 'Check if UserForm has two controlled inputs for name and email',
+  },
+
+  // === ADDITIONAL EVENT EXERCISES ===
+  {
+    id: 'events-ex-3',
+    lessonId: 'events-basics',
+    moduleId: 'events',
+    title: 'Hover Effect',
+    difficulty: 'easy',
+    xpReward: 25,
+    description: 'Change text on mouse hover.',
+    instructions: `Create a \`HoverBox\` component that:
+1. Has a hovered state (false)
+2. Shows "Hover me!" normally
+3. Shows "Hello!" when hovered
+4. Uses onMouseEnter and onMouseLeave`,
+    starterCode: `import { useState } from 'react';
+
+function HoverBox() {
+  // Create hover state and handlers
+
+}`,
+    solution: `import { useState } from 'react';
+
+function HoverBox() {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {hovered ? "Hello!" : "Hover me!"}
+    </div>
+  );
+}`,
+    hints: ['onMouseEnter fires when mouse enters', 'onMouseLeave fires when mouse leaves'],
+    validationPrompt: 'Check if HoverBox changes text on hover using onMouseEnter/Leave',
+  },
+  {
+    id: 'events-ex-4',
+    lessonId: 'events-object',
+    moduleId: 'events',
+    title: 'Key Press Display',
+    difficulty: 'medium',
+    xpReward: 30,
+    description: 'Display the last key pressed.',
+    instructions: `Create a \`KeyDisplay\` component that:
+1. Has a lastKey state (empty string)
+2. Has an input with onKeyDown handler
+3. Displays "Last key: {lastKey}" below the input`,
+    starterCode: `import { useState } from 'react';
+
+function KeyDisplay() {
+  // Track key presses
+
+}`,
+    solution: `import { useState } from 'react';
+
+function KeyDisplay() {
+  const [lastKey, setLastKey] = useState("");
+  return (
+    <div>
+      <input onKeyDown={(e) => setLastKey(e.key)} />
+      <p>Last key: {lastKey}</p>
+    </div>
+  );
+}`,
+    hints: ['Use e.key to get the pressed key', 'onKeyDown fires on every key press'],
+    validationPrompt: 'Check if KeyDisplay shows the last pressed key using e.key',
+  },
+
+  // === ADDITIONAL EFFECTS EXERCISES ===
+  {
+    id: 'effects-ex-2',
+    lessonId: 'effects-intro',
+    moduleId: 'effects',
+    title: 'Page View Counter',
+    difficulty: 'easy',
+    xpReward: 25,
+    description: 'Log when component mounts.',
+    instructions: `Create a \`PageTracker\` component that:
+1. Uses useEffect to console.log "Page viewed" on mount
+2. Uses empty dependency array []
+3. Displays "Welcome to the page"`,
+    starterCode: `import { useEffect } from 'react';
+
+function PageTracker() {
+  // Log on mount
+
+}`,
+    solution: `import { useEffect } from 'react';
+
+function PageTracker() {
+  useEffect(() => {
+    console.log("Page viewed");
+  }, []);
+
+  return <p>Welcome to the page</p>;
+}`,
+    hints: ['Empty array [] means run only on mount', 'Put console.log inside useEffect'],
+    validationPrompt: 'Check if PageTracker uses useEffect with empty deps to log on mount',
+  },
+  {
+    id: 'effects-ex-3',
+    lessonId: 'effects-cleanup',
+    moduleId: 'effects',
+    title: 'Timer with Cleanup',
+    difficulty: 'hard',
+    xpReward: 45,
+    description: 'Create a timer that cleans up.',
+    instructions: `Create a \`Timer\` component that:
+1. Has seconds state starting at 0
+2. Uses setInterval to increment every second
+3. Cleans up the interval on unmount
+4. Displays "Seconds: {seconds}"`,
+    starterCode: `import { useState, useEffect } from 'react';
+
+function Timer() {
+  // Create timer with cleanup
+
+}`,
+    solution: `import { useState, useEffect } from 'react';
+
+function Timer() {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds(s => s + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return <p>Seconds: {seconds}</p>;
+}`,
+    hints: ['Store interval ID to clear later', 'Return cleanup function from useEffect', 'Use s => s + 1 to avoid stale state'],
+    validationPrompt: 'Check if Timer uses setInterval with cleanup via clearInterval',
+  },
+
+  // === ADDITIONAL TYPESCRIPT EXERCISES ===
+  {
+    id: 'ts-ex-2',
+    lessonId: 'ts-basics',
+    moduleId: 'typescript-react',
+    title: 'Typed Function',
+    difficulty: 'easy',
+    xpReward: 25,
+    description: 'Create a typed utility function.',
+    instructions: `Create a function \`formatPrice\` that:
+1. Takes amount (number) as parameter
+2. Returns a string like "$XX.XX"
+3. Has proper TypeScript types`,
+    starterCode: `function formatPrice(amount) {
+  // Return formatted price
+
+}`,
+    solution: `function formatPrice(amount: number): string {
+  return "$" + amount.toFixed(2);
+}`,
+    hints: ['Add : number after the parameter', 'Add : string before the opening brace'],
+    validationPrompt: 'Check if formatPrice has number param type and string return type',
+  },
+  {
+    id: 'ts-ex-3',
+    lessonId: 'ts-components',
+    moduleId: 'typescript-react',
+    title: 'Typed Component',
+    difficulty: 'medium',
+    xpReward: 35,
+    description: 'Create a fully typed React component.',
+    instructions: `Create a typed \`Badge\` component:
+1. Define BadgeProps interface with text (string) and color (string)
+2. Component displays text in a span
+3. Uses color for style`,
+    starterCode: `interface BadgeProps {
+  // Define props
+}
+
+function Badge({ text, color }: BadgeProps) {
+  // Return styled span
+
+}`,
+    solution: `interface BadgeProps {
+  text: string;
+  color: string;
+}
+
+function Badge({ text, color }: BadgeProps) {
+  return <span style={{ backgroundColor: color }}>{text}</span>;
+}`,
+    hints: ['Interface defines the shape of props', 'Use style prop for backgroundColor'],
+    validationPrompt: 'Check if BadgeProps interface is defined with text and color strings',
+  },
+
+  // === EXERCISES FOR NEW LESSONS ===
+
+  // Conditional Rendering exercises
+  {
+    id: 'jsx-cond-1',
+    lessonId: 'jsx-conditionals',
+    moduleId: 'jsx-basics',
+    title: 'Show if True',
+    difficulty: 'easy',
+    xpReward: 20,
+    description: 'Use && to conditionally render.',
+    instructions: `Create a \`Notification\` component that:
+1. Accepts a \`hasNew\` prop (boolean)
+2. Shows "New notification!" only if hasNew is true
+3. Uses the && operator`,
+    starterCode: `function Notification({ hasNew }) {
+  // Show message only if hasNew
+
+}`,
+    solution: `function Notification({ hasNew }) {
+  return <div>{hasNew && <span>New notification!</span>}</div>;
+}`,
+    hints: ['Use && with the condition first', 'If false, nothing renders'],
+    validationPrompt: 'Check if Notification uses && to conditionally show message',
+  },
+  {
+    id: 'jsx-cond-2',
+    lessonId: 'jsx-conditionals',
+    moduleId: 'jsx-basics',
+    title: 'Login Status',
+    difficulty: 'easy',
+    xpReward: 25,
+    description: 'Use ternary for two states.',
+    instructions: `Create a \`LoginStatus\` component that:
+1. Accepts \`isLoggedIn\` prop (boolean)
+2. Shows "Welcome back!" if true
+3. Shows "Please log in" if false
+4. Uses ternary operator`,
+    starterCode: `function LoginStatus({ isLoggedIn }) {
+  // Show different message based on login state
+
+}`,
+    solution: `function LoginStatus({ isLoggedIn }) {
+  return <p>{isLoggedIn ? "Welcome back!" : "Please log in"}</p>;
+}`,
+    hints: ['Use condition ? true : false syntax', 'Put it inside curly braces'],
+    validationPrompt: 'Check if LoginStatus uses ternary to show different messages',
+  },
+
+  // Default Props exercises
+  {
+    id: 'default-props-1',
+    lessonId: 'default-props',
+    moduleId: 'components-props',
+    title: 'Greeting with Default',
+    difficulty: 'easy',
+    xpReward: 20,
+    description: 'Use default parameter value.',
+    instructions: `Create a \`Greeting\` component that:
+1. Accepts name prop with default "Guest"
+2. Returns "Hello, {name}!"`,
+    starterCode: `function Greeting({ name }) {
+  // Add default and return greeting
+
+}`,
+    solution: `function Greeting({ name = "Guest" }) {
+  return <p>Hello, {name}!</p>;
+}`,
+    hints: ['Add = "Guest" after name', 'Default is used when prop not provided'],
+    validationPrompt: 'Check if Greeting has default name of Guest',
+  },
+
+  // State with Arrays exercises
+  {
+    id: 'state-arr-1',
+    lessonId: 'state-arrays',
+    moduleId: 'state-hooks',
+    title: 'Add to List',
+    difficulty: 'medium',
+    xpReward: 35,
+    description: 'Add items to an array state.',
+    instructions: `Create a \`ColorList\` component that:
+1. Has colors state: ["red", "blue"]
+2. Has button "Add Green" that adds "green" to the list
+3. Displays all colors in a ul`,
+    starterCode: `import { useState } from 'react';
+
+function ColorList() {
+  // Create state and add functionality
+
+}`,
+    solution: `import { useState } from 'react';
+
+function ColorList() {
+  const [colors, setColors] = useState(["red", "blue"]);
+
+  return (
+    <div>
+      <button onClick={() => setColors([...colors, "green"])}>
+        Add Green
+      </button>
+      <ul>
+        {colors.map((c, i) => <li key={i}>{c}</li>)}
+      </ul>
+    </div>
+  );
+}`,
+    hints: ['Use spread: [...colors, newItem]', 'Never push to existing array'],
+    validationPrompt: 'Check if ColorList uses spread to add green to array',
+  },
+  {
+    id: 'state-arr-2',
+    lessonId: 'state-arrays',
+    moduleId: 'state-hooks',
+    title: 'Remove from List',
+    difficulty: 'medium',
+    xpReward: 40,
+    description: 'Remove items from array state.',
+    instructions: `Create a \`TagList\` component that:
+1. Has tags state: ["react", "javascript", "css"]
+2. Shows each tag with a "×" button
+3. Clicking × removes that tag`,
+    starterCode: `import { useState } from 'react';
+
+function TagList() {
+  // Create state with remove functionality
+
+}`,
+    solution: `import { useState } from 'react';
+
+function TagList() {
+  const [tags, setTags] = useState(["react", "javascript", "css"]);
+
+  const removeTag = (index) => {
+    setTags(tags.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div>
+      {tags.map((tag, i) => (
+        <span key={i}>
+          {tag} <button onClick={() => removeTag(i)}>×</button>
+        </span>
+      ))}
+    </div>
+  );
+}`,
+    hints: ['Use filter to exclude by index', 'filter((_, i) => i !== index)'],
+    validationPrompt: 'Check if TagList uses filter to remove items by index',
+  },
+
+  // Data Fetching exercise
+  {
+    id: 'fetch-1',
+    lessonId: 'effects-data-fetching',
+    moduleId: 'effects',
+    title: 'Fetch User Data',
+    difficulty: 'hard',
+    xpReward: 45,
+    description: 'Fetch and display data.',
+    instructions: `Create a \`UserInfo\` component that:
+1. Has user state (null) and loading state (true)
+2. Fetches from "https://api.example.com/user" on mount
+3. Shows "Loading..." while loading
+4. Shows user.name when loaded`,
+    starterCode: `import { useState, useEffect } from 'react';
+
+function UserInfo() {
+  // Fetch user data on mount
+
+}`,
+    solution: `import { useState, useEffect } from 'react';
+
+function UserInfo() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("https://api.example.com/user")
+      .then(res => res.json())
+      .then(data => {
+        setUser(data);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  return <p>{user.name}</p>;
+}`,
+    hints: ['Use empty [] for mount-only effect', 'Set loading false after data arrives'],
+    validationPrompt: 'Check if useEffect fetches data and manages loading state',
+  },
+
+  // useLocalStorage exercise
+  {
+    id: 'localstorage-1',
+    lessonId: 'hooks-uselocalstorage',
+    moduleId: 'custom-hooks',
+    title: 'Create useLocalStorage',
+    difficulty: 'hard',
+    xpReward: 50,
+    description: 'Build a localStorage hook.',
+    instructions: `Create a \`useLocalStorage\` hook that:
+1. Takes key and initialValue parameters
+2. Reads from localStorage on init
+3. Saves to localStorage when value changes
+4. Returns [value, setValue]`,
+    starterCode: `import { useState, useEffect } from 'react';
+
+function useLocalStorage(key, initialValue) {
+  // Implement the hook
+
+}`,
+    solution: `import { useState, useEffect } from 'react';
+
+function useLocalStorage(key, initialValue) {
+  const [value, setValue] = useState(() => {
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : initialValue;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  return [value, setValue];
+}`,
+    hints: ['Use lazy initialization in useState', 'useEffect syncs to localStorage'],
+    validationPrompt: 'Check if useLocalStorage reads/writes localStorage with useEffect',
   },
 ];
 

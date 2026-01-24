@@ -11,8 +11,10 @@ interface UserContextType {
   completeLesson: (lessonId: string) => void;
   completeExercise: (exerciseId: string) => void;
   updateStreak: () => void;
-  isLessonCompleted: (lessonId: string) => boolean;
   isExerciseCompleted: (exerciseId: string) => boolean;
+  isLessonCompleted: (lessonId: string) => boolean;
+  unlockLab: (labId: string) => void;
+  updateLabProgress: (labId: string, step: number, completed?: boolean) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -29,6 +31,7 @@ const DEFAULT_USER: User = {
   completedLessons: [],
   completedExercises: [],
   moduleProgress: {},
+  labProgress: {},
 };
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
@@ -39,76 +42,90 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     loadUser();
   }, []);
 
+  useEffect(() => {
+    if (user && !loading) {
+      api.saveUser(user);
+    }
+  }, [user, loading]);
+
   const loadUser = async () => {
     try {
       const userData = await api.getUser();
-      setUser(userData);
+      setUser({
+        ...DEFAULT_USER,
+        ...userData,
+        labProgress: userData.labProgress || {},
+      });
     } catch {
       // If no user exists, create default
       const newUser = { ...DEFAULT_USER };
-      await api.saveUser(newUser);
       setUser(newUser);
+      // api.saveUser will be called by useEffect
     } finally {
       setLoading(false);
     }
   };
 
-  const saveUser = useCallback(async (updatedUser: User) => {
-    setUser(updatedUser);
-    await api.saveUser(updatedUser);
+  const addXp = useCallback((amount: number) => {
+    setUser(prev => {
+      if (!prev) return prev;
+      const newXp = prev.xp + amount;
+      const newLevel = getLevelFromXp(newXp).level;
+      return { ...prev, xp: newXp, level: newLevel };
+    });
   }, []);
 
-  const addXp = useCallback((amount: number) => {
-    if (!user) return;
-    const newXp = user.xp + amount;
-    const newLevel = getLevelFromXp(newXp).level;
-    saveUser({ ...user, xp: newXp, level: newLevel });
-  }, [user, saveUser]);
-
-  const loseHeart = useCallback((): boolean => {
-    if (!user) return false;
-    if (user.hearts <= 0) return false;
-    saveUser({ ...user, hearts: user.hearts - 1 });
-    return true;
-  }, [user, saveUser]);
+  const loseHeart = useCallback(() => {
+    let success = false;
+    setUser(prev => {
+      if (!prev || prev.hearts <= 0) return prev;
+      success = true;
+      return { ...prev, hearts: prev.hearts - 1 };
+    });
+    return success;
+  }, []);
 
   const refillHearts = useCallback(() => {
-    if (!user) return;
-    saveUser({ ...user, hearts: user.maxHearts });
-  }, [user, saveUser]);
+    setUser(prev => prev ? { ...prev, hearts: prev.maxHearts } : prev);
+  }, []);
 
   const completeLesson = useCallback((lessonId: string) => {
-    if (!user || user.completedLessons.includes(lessonId)) return;
-    saveUser({
-      ...user,
-      completedLessons: [...user.completedLessons, lessonId],
+    setUser(prev => {
+      if (!prev || prev.completedLessons.includes(lessonId)) return prev;
+      return {
+        ...prev,
+        completedLessons: [...prev.completedLessons, lessonId],
+      };
     });
-  }, [user, saveUser]);
+  }, []);
 
   const completeExercise = useCallback((exerciseId: string) => {
-    if (!user || user.completedExercises.includes(exerciseId)) return;
-    saveUser({
-      ...user,
-      completedExercises: [...user.completedExercises, exerciseId],
+    setUser(prev => {
+      if (!prev || prev.completedExercises.includes(exerciseId)) return prev;
+      return {
+        ...prev,
+        completedExercises: [...prev.completedExercises, exerciseId],
+      };
     });
-  }, [user, saveUser]);
+  }, []);
 
   const updateStreak = useCallback(() => {
-    if (!user) return;
-    const today = new Date().toISOString().split('T')[0];
-    const lastActive = user.lastActiveDate;
+    setUser(prev => {
+      if (!prev) return prev;
+      const today = new Date().toISOString().split('T')[0];
+      const lastActive = prev.lastActiveDate;
+      if (lastActive === today) return prev;
 
-    if (lastActive === today) return;
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      const newStreak = lastActive === yesterday ? prev.streak + 1 : 1;
 
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-    const newStreak = lastActive === yesterday ? user.streak + 1 : 1;
-
-    saveUser({
-      ...user,
-      streak: newStreak,
-      lastActiveDate: today,
+      return {
+        ...prev,
+        streak: newStreak,
+        lastActiveDate: today,
+      };
     });
-  }, [user, saveUser]);
+  }, []);
 
   const isLessonCompleted = useCallback((lessonId: string): boolean => {
     return user?.completedLessons.includes(lessonId) || false;
@@ -117,6 +134,34 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const isExerciseCompleted = useCallback((exerciseId: string): boolean => {
     return user?.completedExercises.includes(exerciseId) || false;
   }, [user]);
+
+  const unlockLab = useCallback((labId: string) => {
+    setUser(prev => {
+      if (!prev) return prev;
+      const currentLabProgress = prev.labProgress?.[labId] || { unlocked: true, completed: false, currentStep: 0 };
+      return {
+        ...prev,
+        labProgress: {
+          ...prev.labProgress,
+          [labId]: { ...currentLabProgress, unlocked: true }
+        }
+      };
+    });
+  }, []);
+
+  const updateLabProgress = useCallback((labId: string, step: number, completed: boolean = false) => {
+    setUser(prev => {
+      if (!prev) return prev;
+      const currentLabProgress = prev.labProgress?.[labId] || { unlocked: true, completed: false, currentStep: 0 };
+      return {
+        ...prev,
+        labProgress: {
+          ...prev.labProgress,
+          [labId]: { ...currentLabProgress, currentStep: step, completed: completed || currentLabProgress.completed }
+        }
+      };
+    });
+  }, []);
 
   return (
     <UserContext.Provider
@@ -131,6 +176,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         updateStreak,
         isLessonCompleted,
         isExerciseCompleted,
+        unlockLab,
+        updateLabProgress,
       }}
     >
       {children}

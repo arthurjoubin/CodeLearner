@@ -10,6 +10,13 @@ export interface User {
   completedLessons: string[];
   completedExercises: string[];
   moduleProgress: Record<string, number>;
+  labProgress: Record<string, LabStatus>;
+}
+
+export interface LabStatus {
+  unlocked: boolean;
+  completed: boolean;
+  currentStep: number;
 }
 
 export interface Module {
@@ -20,6 +27,24 @@ export interface Module {
   lessons: Lesson[];
   requiredXp: number;
   color: string;
+}
+
+export interface Lab {
+  id: string;
+  title: string;
+  description: string;
+  requiredLevel: number;
+  steps: LabStep[];
+  xpReward: number;
+}
+
+export interface LabStep {
+  id: string;
+  title: string;
+  instructions: string;
+  starterCode: string;
+  validationPrompt: string;
+  aiHint: string;
 }
 
 export interface Lesson {

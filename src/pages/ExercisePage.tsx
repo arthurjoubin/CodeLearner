@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getExercise, getModule, getLesson, getExercisesForLesson } from '../data/modules';
 import { api } from '../services/api';
@@ -22,8 +22,7 @@ import LivePreview from '../components/LivePreview';
 
 export default function ExercisePage() {
   const { exerciseId } = useParams<{ exerciseId: string }>();
-  const navigate = useNavigate();
-  const { user, addXp, loseHeart, completeExercise, isExerciseCompleted } = useUser();
+  const { user, addXp, completeExercise, isExerciseCompleted } = useUser();
 
   const exercise = exerciseId ? getExercise(exerciseId) : undefined;
   const lesson = exercise ? getLesson(exercise.lessonId) : undefined;
@@ -59,9 +58,7 @@ export default function ExercisePage() {
     return (
       <div className="text-center py-12">
         <p className="text-black font-bold">Exercise not found</p>
-        <Link to="/" className="text-black underline font-bold uppercase">
-          Go back home
-        </Link>
+        <Link to="/" className="text-black underline font-bold uppercase">Go back home</Link>
       </div>
     );
   }
@@ -70,9 +67,23 @@ export default function ExercisePage() {
   const nextExercise = lessonExercises[currentIndex + 1];
   const prevExercise = lessonExercises[currentIndex - 1];
 
+  // Simple local validation as fallback
+  const simpleValidate = (code: string, solution: string): boolean => {
+    // Normalize code for comparison
+    const normalize = (s: string) => s.replace(/\s+/g, ' ').replace(/['"`]/g, '"').trim().toLowerCase();
+    const normalizedCode = normalize(code);
+    const normalizedSolution = normalize(solution);
+
+    // Check if key parts of solution are in the code
+    const solutionParts = normalizedSolution.split(/[;{}()]/g).filter(p => p.trim().length > 5);
+    const matchedParts = solutionParts.filter(part => normalizedCode.includes(part.trim()));
+
+    // Accept if at least 60% of solution parts are present
+    return matchedParts.length >= solutionParts.length * 0.6;
+  };
+
   const handleValidate = async () => {
     if (isValidating) return;
-
     setIsValidating(true);
     setFeedback(null);
     setAttemptCount(prev => prev + 1);
@@ -88,29 +99,31 @@ export default function ExercisePage() {
           addXp(exercise.xpReward);
           completeExercise(exercise.id);
         }
-        setFeedback({ isCorrect: true, message: result.feedback });
+        setFeedback({ isCorrect: true, message: result.feedback || 'Bien joué!' });
         setCompleted(true);
       } else {
-        // Lose a heart on wrong answer
-        const hasHearts = loseHeart();
-        if (!hasHearts && user.hearts <= 1) {
-          setFeedback({
-            isCorrect: false,
-            message: "You're out of hearts! Take a break and come back later.",
-          });
-        } else {
-          setFeedback({
-            isCorrect: false,
-            message: result.feedback + (result.hints?.[0] ? ` Hint: ${result.hints[0]}` : ''),
-          });
-        }
+        setFeedback({
+          isCorrect: false,
+          message: result.feedback || 'Pas tout à fait. Vérifiez votre code.',
+        });
       }
-    } catch (error) {
-      console.error('Validation error:', error);
-      setFeedback({
-        isCorrect: false,
-        message: 'Could not validate your code. Please try again.',
-      });
+    } catch {
+      // Fallback: use simple local validation
+      const isCorrect = simpleValidate(code, exercise.solution);
+
+      if (isCorrect) {
+        if (!alreadyCompleted) {
+          addXp(exercise.xpReward);
+          completeExercise(exercise.id);
+        }
+        setFeedback({ isCorrect: true, message: 'Bien joué!' });
+        setCompleted(true);
+      } else {
+        setFeedback({
+          isCorrect: false,
+          message: 'Pas tout à fait. Comparez avec la solution ou demandez un indice.'
+        });
+      }
     } finally {
       setIsValidating(false);
     }
@@ -118,226 +131,154 @@ export default function ExercisePage() {
 
   const handleGetHint = async () => {
     if (isLoadingHint) return;
-
     setIsLoadingHint(true);
     try {
-      const hintText = await api.getHint(
-        code,
-        { instructions: exercise.instructions, hints: exercise.hints },
-        attemptCount
-      );
+      const hintText = await api.getHint(code, { instructions: exercise.instructions, hints: exercise.hints }, attemptCount);
       setHint(hintText);
       setShowHint(true);
-    } catch (error) {
-      console.error('Hint error:', error);
-      setHint(exercise.hints[Math.min(attemptCount, exercise.hints.length - 1)] || 'Keep trying!');
+    } catch {
+      setHint(exercise.hints[Math.min(attemptCount, exercise.hints.length - 1)] || 'Continuez!');
       setShowHint(true);
     } finally {
       setIsLoadingHint(false);
     }
   };
 
-  const handleReset = () => {
-    setCode(exercise.starterCode);
-    setFeedback(null);
-  };
-
   return (
-    <div className="h-[calc(100vh-140px)]">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-4">
-          <Link
-            to={`/lesson/${lesson.id}`}
-            className="inline-flex items-center gap-2 text-black font-bold uppercase hover:underline"
-          >
+    <div className="h-[calc(100vh-120px)] flex flex-col page-enter">
+      {/* Header compact */}
+      <div className="flex items-center justify-between mb-3 pb-2 border-b-2 border-black">
+        <div className="flex items-center gap-3">
+          <Link to={`/lesson/${lesson.id}`} className="p-1.5 border-2 border-black hover:bg-gray-100">
             <ArrowLeft className="w-4 h-4" />
-            Back to Lesson
           </Link>
           <div>
-            <div className="text-sm text-black font-bold uppercase">
-              Exercise {currentIndex + 1} of {lessonExercises.length}
-            </div>
-            <h1 className="text-xl font-bold text-black uppercase">{exercise.title}</h1>
+            <p className="text-[10px] text-gray-500 font-bold uppercase">Exercice {currentIndex + 1}/{lessonExercises.length}</p>
+            <h1 className="text-base font-black text-black">{exercise.title}</h1>
           </div>
         </div>
-
-        <div className="flex items-center gap-3">
-          <span
-            className={`px-3 py-1 text-sm font-bold uppercase border-2 border-black ${
-              exercise.difficulty === 'easy'
-                ? 'bg-green-400 text-black'
-                : exercise.difficulty === 'medium'
-                ? 'bg-yellow-400 text-black'
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {exercise.difficulty}
+        <div className="flex items-center gap-2">
+          <span className="xp-badge text-xs py-0.5">
+            <Star className="w-3 h-3" />{exercise.xpReward}
           </span>
-          <span className="xp-badge">
-            <Star className="w-4 h-4" />
-            {exercise.xpReward} XP
-          </span>
+          <div className={`flex items-center gap-1 text-xs px-2 py-1 border-2 border-black font-bold ${user.hearts <= 2 ? 'bg-red-100 text-red-600' : 'bg-white'}`}>
+            <Heart className={`w-3 h-3 ${user.hearts <= 2 ? 'fill-red-500' : ''}`} />
+            {user.hearts}
+          </div>
           {alreadyCompleted && (
             <div className="bg-primary-500 p-1 border-2 border-black">
-              <CheckCircle className="w-5 h-5 text-white" />
+              <CheckCircle className="w-4 h-4 text-white" />
             </div>
           )}
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="grid lg:grid-cols-2 gap-4 h-[calc(100%-60px)]">
-        {/* Left: Instructions & Editor */}
-        <div className="flex flex-col gap-4">
+      {/* Main grid */}
+      <div className="flex-1 grid lg:grid-cols-2 gap-3 min-h-0 overflow-hidden">
+        {/* Left: Instructions + Editor */}
+        <div className="flex flex-col gap-3 min-h-0">
           {/* Instructions */}
-          <div className="card flex-shrink-0">
-            <h3 className="font-bold text-black mb-2 uppercase">Instructions</h3>
-            <p className="text-black whitespace-pre-wrap">{exercise.instructions}</p>
+          <div className="bg-white border-2 border-black p-3 flex-shrink-0">
+            <p className="text-[10px] font-bold uppercase text-gray-500 mb-1">Instructions</p>
+            <p className="text-sm leading-relaxed">{exercise.instructions}</p>
           </div>
 
           {/* Editor */}
-          <div className="card flex-1 p-0 overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2 bg-black text-white">
-              <span className="text-sm font-bold uppercase">Code Editor</span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleReset}
-                  className="p-1.5 hover:bg-gray-800 border border-white"
-                  title="Reset code"
-                >
-                  <RotateCcw className="w-4 h-4" />
+          <div className="flex-1 border-2 border-black bg-gray-900 flex flex-col min-h-[250px]">
+            <div className="flex items-center justify-between px-3 py-1.5 bg-black text-white text-xs">
+              <span className="font-bold uppercase">Editor</span>
+              <div className="flex items-center gap-1">
+                <button onClick={() => { setCode(exercise.starterCode); setFeedback(null); }} className="p-1 hover:bg-gray-700" title="Reset">
+                  <RotateCcw className="w-3 h-3" />
                 </button>
-                <button
-                  onClick={() => setShowSolution(!showSolution)}
-                  className="p-1.5 hover:bg-gray-800 border border-white"
-                  title={showSolution ? 'Hide solution' : 'Show solution'}
-                >
-                  {showSolution ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <button onClick={() => setShowSolution(!showSolution)} className="p-1 hover:bg-gray-700 flex items-center gap-1">
+                  {showSolution ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                  <span className="text-[10px]">{showSolution ? 'Cacher' : 'Solution'}</span>
                 </button>
               </div>
             </div>
-            <Editor
-              height="100%"
-              defaultLanguage="typescript"
-              theme="vs-dark"
-              value={showSolution ? exercise.solution : code}
-              onChange={(value) => !showSolution && setCode(value || '')}
-              options={{
-                minimap: { enabled: false },
-                fontSize: 14,
-                lineNumbers: 'on',
-                scrollBeyondLastLine: false,
-                automaticLayout: true,
-                tabSize: 2,
-                readOnly: showSolution,
-              }}
-            />
+            <div className="flex-1 min-h-0">
+              <Editor
+                height="100%"
+                defaultLanguage="typescript"
+                theme="vs-dark"
+                value={showSolution ? exercise.solution : code}
+                onChange={(value) => !showSolution && setCode(value || '')}
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 13,
+                  lineNumbers: 'on',
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                  tabSize: 2,
+                  readOnly: showSolution,
+                  padding: { top: 8 },
+                }}
+              />
+            </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-3 flex-shrink-0">
+          {/* Actions - 3 buttons */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             <button
               onClick={handleValidate}
-              disabled={isValidating || user.hearts === 0}
-              className="btn-primary flex items-center gap-2"
+              disabled={isValidating}
+              className="btn-primary text-xs py-1.5 px-3 flex items-center gap-1.5"
             >
-              {isValidating ? (
-                <Loader className="w-4 h-4 animate-spin" />
-              ) : (
-                <Play className="w-4 h-4" />
-              )}
-              Check Solution
+              {isValidating ? <Loader className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />}
+              Valider
             </button>
-
+            <button
+              onClick={() => setShowPreview(!showPreview)}
+              className="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5"
+            >
+              {showPreview ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+              Preview
+            </button>
             <button
               onClick={handleGetHint}
               disabled={isLoadingHint}
-              className="btn-secondary flex items-center gap-2"
+              className="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5"
             >
-              {isLoadingHint ? (
-                <Loader className="w-4 h-4 animate-spin" />
-              ) : (
-                <Lightbulb className="w-4 h-4" />
-              )}
-              Get Hint
+              {isLoadingHint ? <Loader className="w-3 h-3 animate-spin" /> : <Lightbulb className="w-3 h-3" />}
+              Indice
             </button>
-
-            <div className="flex-1" />
-
-            {/* Hearts warning */}
-            {user.hearts <= 2 && (
-              <div className="flex items-center gap-1 bg-red-100 text-red-600 text-sm px-2 py-1 border-2 border-black font-bold">
-                <Heart className="w-4 h-4 fill-current" />
-                {user.hearts} left
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Right: Preview & Feedback */}
-        <div className="flex flex-col gap-4">
+        {/* Right: Preview + Feedback */}
+        <div className="flex flex-col gap-3 min-h-0 overflow-hidden">
           {/* Feedback */}
           {feedback && (
-            <div
-              className={`card flex-shrink-0 ${
-                feedback.isCorrect
-                  ? 'bg-green-100 border-green-600'
-                  : 'bg-red-100 border-red-600'
-              } border-3`}
-            >
-              <div className="flex items-start gap-3">
-                {feedback.isCorrect ? (
-                  <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
-                ) : (
-                  <XCircle className="w-6 h-6 text-red-600 flex-shrink-0" />
-                )}
-                <div>
-                  <h4
-                    className={`font-bold uppercase ${
-                      feedback.isCorrect ? 'text-green-800' : 'text-red-800'
-                    }`}
-                  >
-                    {feedback.isCorrect ? 'Correct!' : 'Not quite right'}
-                  </h4>
-                  <p
-                    className={`text-sm ${
-                      feedback.isCorrect ? 'text-green-700' : 'text-red-700'
-                    }`}
-                  >
-                    {feedback.message}
-                  </p>
-                </div>
+            <div className={`p-3 border-2 flex items-start gap-2 flex-shrink-0 ${feedback.isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
+              {feedback.isCorrect ? <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" /> : <XCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />}
+              <div>
+                <p className={`font-bold text-xs uppercase ${feedback.isCorrect ? 'text-green-700' : 'text-red-700'}`}>
+                  {feedback.isCorrect ? 'Correct!' : 'Pas tout à fait'}
+                </p>
+                <p className={`text-xs ${feedback.isCorrect ? 'text-green-600' : 'text-red-600'}`}>{feedback.message}</p>
               </div>
             </div>
           )}
 
           {/* Hint */}
           {showHint && hint && (
-            <div className="card flex-shrink-0 bg-yellow-100 border-3 border-yellow-600">
-              <div className="flex items-start gap-3">
-                <Lightbulb className="w-6 h-6 text-yellow-600 flex-shrink-0" />
-                <div>
-                  <h4 className="font-bold text-yellow-800 uppercase">Hint</h4>
-                  <p className="text-sm text-yellow-700">{hint}</p>
-                </div>
-              </div>
+            <div className="p-3 border-2 border-yellow-500 bg-yellow-50 flex items-start gap-2 flex-shrink-0">
+              <Lightbulb className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-yellow-700">{hint}</p>
             </div>
           )}
 
           {/* Preview */}
-          <div className="card flex-1 p-0 overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2 bg-gray-200 border-b-3 border-black">
-              <span className="text-sm font-bold text-black uppercase">Live Preview</span>
-              <button
-                onClick={() => setShowPreview(!showPreview)}
-                className="text-sm text-black font-bold underline uppercase"
-              >
-                {showPreview ? 'Hide' : 'Show'}
+          <div className="flex-1 border-2 border-black flex flex-col min-h-[200px]">
+            <div className="flex items-center justify-between px-3 py-1.5 bg-gray-100 border-b-2 border-black">
+              <span className="text-xs font-bold uppercase">Preview</span>
+              <button onClick={() => setShowPreview(!showPreview)} className="text-[10px] font-bold underline">
+                {showPreview ? 'Cacher' : 'Afficher'}
               </button>
             </div>
             {showPreview && (
-              <div className="h-full bg-white">
+              <div className="flex-1 bg-white relative min-h-[150px]">
                 <LivePreview code={showSolution ? exercise.solution : code} />
               </div>
             )}
@@ -346,69 +287,65 @@ export default function ExercisePage() {
           {/* Navigation */}
           <div className="flex items-center justify-between flex-shrink-0">
             {prevExercise ? (
-              <Link
-                to={`/exercise/${prevExercise.id}`}
-                className="btn-secondary inline-flex items-center gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Previous
+              <Link to={`/exercise/${prevExercise.id}`} className="btn-secondary text-xs py-1.5 inline-flex items-center gap-1">
+                <ArrowLeft className="w-3 h-3" /> Préc.
               </Link>
-            ) : (
-              <div />
-            )}
-
+            ) : <div />}
             {nextExercise ? (
-              <Link
-                to={`/exercise/${nextExercise.id}`}
-                className="btn-primary inline-flex items-center gap-2"
-              >
-                Next Exercise
-                <ArrowRight className="w-4 h-4" />
+              <Link to={`/exercise/${nextExercise.id}`} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1">
+                Suiv. <ArrowRight className="w-3 h-3" />
               </Link>
             ) : (
-              <Link
-                to={`/module/${module.id}`}
-                className="btn-primary inline-flex items-center gap-2"
-              >
-                Finish Module
-                <ArrowRight className="w-4 h-4" />
+              <Link to={`/lesson/${lesson.id}`} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1">
+                Retour <ArrowRight className="w-3 h-3" />
               </Link>
             )}
           </div>
         </div>
       </div>
 
-      {/* Success modal */}
-      {completed && !alreadyCompleted && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-4 border-black p-8 text-center max-w-md animate-pop">
-            <div className="w-20 h-20 bg-yellow-400 flex items-center justify-center mx-auto mb-4 border-3 border-black">
-              <Star className="w-10 h-10 text-black" />
-            </div>
-            <h2 className="text-2xl font-bold text-black mb-2 uppercase">
-              Exercise Complete!
-            </h2>
-            <p className="text-black mb-4">
-              You earned {exercise.xpReward} XP. Great job solving this one!
-            </p>
-            <div className="flex gap-3 justify-center">
+      {/* Success modal - celebratory */}
+      {completed && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-4 border-black p-8 text-center max-w-sm animate-pop shadow-brutal">
+            {/* Confetti effect */}
+            <div className="text-6xl mb-4">🎉</div>
+
+            <h2 className="text-2xl font-black mb-2 uppercase text-green-600">Bravo !</h2>
+            <p className="text-gray-600 mb-4">Tu as réussi cet exercice</p>
+
+            {/* XP Badge */}
+            {!alreadyCompleted && (
+              <div className="inline-flex items-center gap-2 bg-yellow-400 text-black px-4 py-2 border-2 border-black font-black text-lg mb-6">
+                <Star className="w-5 h-5" />
+                +{exercise.xpReward} XP
+              </div>
+            )}
+            {alreadyCompleted && (
+              <p className="text-sm text-gray-500 mb-6">Déjà complété</p>
+            )}
+
+            <div className="flex flex-col gap-3">
               {nextExercise ? (
                 <Link
                   to={`/exercise/${nextExercise.id}`}
-                  className="btn-primary"
+                  className="bg-black text-white font-bold py-3 px-6 border-2 border-black uppercase hover:bg-gray-800 transition-colors"
                 >
-                  Next Exercise
+                  Exercice suivant →
                 </Link>
               ) : (
-                <Link to={`/module/${module.id}`} className="btn-primary">
-                  Back to Module
+                <Link
+                  to={`/lesson/${lesson.id}`}
+                  className="bg-black text-white font-bold py-3 px-6 border-2 border-black uppercase hover:bg-gray-800 transition-colors"
+                >
+                  Continuer le cours →
                 </Link>
               )}
               <button
                 onClick={() => setCompleted(false)}
-                className="btn-secondary"
+                className="text-sm text-gray-500 hover:text-black underline"
               >
-                Review
+                Rester sur cet exercice
               </button>
             </div>
           </div>

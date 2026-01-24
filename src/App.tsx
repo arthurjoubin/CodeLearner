@@ -4,6 +4,8 @@ import HomePage from './pages/HomePage';
 import ModulePage from './pages/ModulePage';
 import LessonPage from './pages/LessonPage';
 import ExercisePage from './pages/ExercisePage';
+import LabPage from './pages/LabPage';
+import LabsSelectionPage from './pages/LabsSelectionPage';
 import { useUser } from './context/UserContext';
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
           <Route path="/module/:moduleId" element={<ModulePage />} />
           <Route path="/lesson/:lessonId" element={<LessonPage />} />
           <Route path="/exercise/:exerciseId" element={<ExercisePage />} />
+          <Route path="/labs" element={<LabsSelectionPage />} />
+          <Route path="/labs/:labId" element={<LabPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>

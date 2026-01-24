@@ -1,58 +1,47 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { modules, getLessonsForModule, getExercisesForModule } from '../data/modules';
-import { Lock, CheckCircle, Code, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, Layers, Settings, Gauge, Navigation } from 'lucide-react';
+import { Lock, CheckCircle, Code, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, Layers, Settings, Gauge, Navigation, Star, Flame } from 'lucide-react';
 
 const iconMap: Record<string, React.ElementType> = {
-  Code,
-  Boxes,
-  Database,
-  MousePointer,
-  Zap,
-  Shield,
-  List,
-  FileInput,
-  Layers,
-  Settings,
-  Gauge,
-  Navigation,
+  Code, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, Layers, Settings, Gauge, Navigation,
 };
 
 export default function HomePage() {
-  const { user, updateStreak } = useUser();
-
-  // Update streak on visit
+  const { user, updateStreak, isLessonCompleted } = useUser();
   updateStreak();
 
   if (!user) return null;
 
+  // Check if a module is complete (all lessons done)
+  const isModuleComplete = (moduleId: string) => {
+    const lessons = getLessonsForModule(moduleId);
+    return lessons.length > 0 && lessons.every(l => isLessonCompleted(l.id));
+  };
+
   return (
-    <div>
-      {/* Welcome Section */}
-      <div className="bg-black text-white border-4 border-black p-6 mb-8">
-        <h1 className="text-3xl font-bold mb-2 uppercase">
-          Welcome back, {user.name}!
-        </h1>
-        <p className="text-gray-300">
-          Continue your React & TypeScript journey. You've earned {user.xp} XP so far!
-        </p>
+    <div className="page-enter">
+      {/* Welcome */}
+      <div className="bg-black text-white border-3 border-black p-5 mb-6">
+        <h1 className="text-2xl font-black mb-1 uppercase">Welcome back, {user.name}!</h1>
+        <p className="text-gray-400 text-sm">{user.xp} XP earned</p>
       </div>
 
-      {/* Modules Grid */}
-      <h2 className="text-2xl font-bold text-black mb-4 uppercase border-b-4 border-black pb-2">
-        Learning Path
+      {/* Modules */}
+      <h2 className="text-xl font-black text-black mb-4 uppercase border-b-2 border-black pb-2 flex items-center gap-2">
+        <Zap className="w-5 h-5" /> Learning Path
       </h2>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {modules.map((module, index) => {
-          const isLocked = user.xp < module.requiredXp;
+          // Unlock: first module always unlocked, others need previous module complete
+          const prevModule = index > 0 ? modules[index - 1] : null;
+          const isUnlocked = index === 0 || (prevModule && isModuleComplete(prevModule.id));
+
           const lessons = getLessonsForModule(module.id);
           const exercises = getExercisesForModule(module.id);
-          const completedLessons = lessons.filter(l =>
-            user.completedLessons.includes(l.id)
-          ).length;
-          const completedExercises = exercises.filter(e =>
-            user.completedExercises.includes(e.id)
-          ).length;
+          const completedLessons = lessons.filter(l => user.completedLessons.includes(l.id)).length;
+          const completedExercises = exercises.filter(e => user.completedExercises.includes(e.id)).length;
           const totalItems = lessons.length + exercises.length;
           const completedItems = completedLessons + completedExercises;
           const progress = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
@@ -60,87 +49,77 @@ export default function HomePage() {
 
           const Icon = iconMap[module.icon] || Code;
 
+          if (!isUnlocked) {
+            return (
+              <div
+                key={module.id}
+                className="border-2 border-gray-200 bg-gray-50 p-4 relative"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-gray-200 flex items-center justify-center text-gray-400 font-bold">
+                    {index + 1}
+                  </div>
+                  <div className="w-10 h-10 bg-gray-200 flex items-center justify-center">
+                    <Icon className="w-5 h-5 text-gray-400" />
+                  </div>
+                </div>
+                <h3 className="font-bold text-gray-400 mb-1 uppercase">{module.title}</h3>
+                <p className="text-xs text-gray-400 mb-3">{module.description}</p>
+                <div className="flex items-center gap-2 text-xs text-gray-400">
+                  <Lock className="w-3 h-3" />
+                  <span>Complétez le module précédent</span>
+                </div>
+              </div>
+            );
+          }
+
           return (
             <Link
               key={module.id}
-              to={isLocked ? '#' : `/module/${module.id}`}
-              className={`card-interactive relative overflow-hidden ${
-                isLocked ? 'opacity-60 cursor-not-allowed bg-gray-100' : ''
+              to={`/module/${module.id}`}
+              style={{ animationDelay: `${index * 50}ms` }}
+              className={`border-2 border-black p-4 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal ${
+                isComplete ? 'bg-primary-50 border-primary-500' : 'bg-white'
               }`}
-              onClick={(e) => isLocked && e.preventDefault()}
             >
-              {/* Content */}
-              <div className="relative">
-                {/* Status indicator */}
-                <div className="absolute top-0 right-0">
-                  {isLocked ? (
-                    <div className="flex items-center gap-1 bg-gray-200 text-black text-xs font-bold px-2 py-1 border-2 border-black">
-                      <Lock className="w-3 h-3" />
-                      <span>{module.requiredXp} XP</span>
-                    </div>
-                  ) : isComplete ? (
-                    <div className="bg-primary-500 p-1 border-2 border-black">
-                      <CheckCircle className="w-5 h-5 text-white" />
-                    </div>
-                  ) : null}
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`w-10 h-10 flex items-center justify-center font-bold border-2 border-black ${
+                  isComplete ? 'bg-primary-500 text-white' : 'bg-black text-white'
+                }`}>
+                  {isComplete ? <CheckCircle className="w-5 h-5" /> : index + 1}
                 </div>
-
-                {/* Number & Icon */}
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-black text-white flex items-center justify-center font-bold text-lg border-2 border-black">
-                    {index + 1}
-                  </div>
-                  <div className="w-10 h-10 bg-yellow-400 flex items-center justify-center border-2 border-black">
-                    <Icon className="w-5 h-5 text-black" />
-                  </div>
+                <div className="w-10 h-10 bg-yellow-400 flex items-center justify-center border-2 border-black">
+                  <Icon className="w-5 h-5 text-black" />
                 </div>
-
-                {/* Module info */}
-                <h3 className="font-bold text-black mb-1 uppercase">
-                  {module.title}
-                </h3>
-                <p className="text-sm text-gray-600 mb-3">
-                  {module.description}
-                </p>
-
-                {/* Progress bar */}
-                <div className="progress-bar">
-                  <div
-                    className="progress-fill"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-                <p className="text-xs text-black font-bold mt-1 uppercase">
-                  {completedItems}/{totalItems} completed
-                </p>
               </div>
+
+              <h3 className="font-bold text-black mb-1 uppercase">{module.title}</h3>
+              <p className="text-xs text-gray-600 mb-3">{module.description}</p>
+
+              {/* Progress */}
+              <div className="h-2 bg-gray-200 border border-black mb-1">
+                <div className="h-full bg-primary-500 transition-all" style={{ width: `${progress}%` }} />
+              </div>
+              <p className="text-[10px] text-gray-500 font-bold">{completedItems}/{totalItems} complétés</p>
             </Link>
           );
         })}
       </div>
 
-      {/* Quick Stats */}
-      <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="card text-center">
-          <div className="text-4xl font-bold text-black">{user.xp}</div>
-          <div className="text-sm text-gray-600 uppercase font-bold">Total XP</div>
-        </div>
-        <div className="card text-center bg-orange-100">
-          <div className="text-4xl font-bold text-black">{user.streak}</div>
-          <div className="text-sm text-gray-600 uppercase font-bold">Day Streak</div>
-        </div>
-        <div className="card text-center bg-blue-100">
-          <div className="text-4xl font-bold text-black">
-            {user.completedLessons.length}
+      {/* Stats */}
+      <div className="mt-6 grid grid-cols-4 gap-3">
+        {[
+          { label: 'XP', value: user.xp, icon: Star },
+          { label: 'Streak', value: user.streak, icon: Flame },
+          { label: 'Leçons', value: user.completedLessons.length, icon: Zap },
+          { label: 'Exercices', value: user.completedExercises.length, icon: Code },
+        ].map((stat) => (
+          <div key={stat.label} className="border-2 border-black p-3 text-center bg-white">
+            <div className="text-2xl font-black">{stat.value}</div>
+            <div className="text-[10px] text-gray-500 uppercase font-bold">{stat.label}</div>
           </div>
-          <div className="text-sm text-gray-600 uppercase font-bold">Lessons Done</div>
-        </div>
-        <div className="card text-center bg-purple-100">
-          <div className="text-4xl font-bold text-black">
-            {user.completedExercises.length}
-          </div>
-          <div className="text-sm text-gray-600 uppercase font-bold">Exercises Done</div>
-        </div>
+        ))}
       </div>
     </div>
   );

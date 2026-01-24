@@ -1,126 +1,86 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  * {
-    border-radius: 0 !important;
-  }
-
   body {
-    @apply bg-white text-black antialiased font-mono;
+    @apply bg-gray-50 text-black antialiased;
+    font-family: system-ui, -apple-system, sans-serif;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-black text-white font-bold py-2 px-4 border-3 border-black uppercase tracking-wide transition-all duration-100;
-    @apply hover:bg-primary-500 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal;
-    @apply active:translate-x-0 active:translate-y-0 active:shadow-none;
+    @apply bg-black text-white font-bold py-2 px-4 border-2 border-black uppercase text-sm transition-all;
+    @apply hover:bg-gray-800 active:scale-95;
   }
 
   .btn-secondary {
-    @apply bg-white text-black font-bold py-2 px-4 border-3 border-black uppercase tracking-wide transition-all duration-100;
-    @apply hover:bg-gray-100 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal;
-    @apply active:translate-x-0 active:translate-y-0 active:shadow-none;
+    @apply bg-white text-black font-bold py-2 px-4 border-2 border-black uppercase text-sm transition-all;
+    @apply hover:bg-gray-100 active:scale-95;
   }
 
   .card {
-    @apply bg-white border-3 border-black p-6 transition-all duration-100;
-  }
-
-  .card-interactive {
-    @apply card cursor-pointer;
-    @apply hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-brutal-lg;
-    @apply active:translate-x-0 active:translate-y-0 active:shadow-none;
-  }
-
-  .progress-bar {
-    @apply h-4 bg-white border-3 border-black overflow-hidden;
-  }
-
-  .progress-fill {
-    @apply h-full bg-primary-500 transition-all duration-500 ease-out;
+    @apply bg-white border-2 border-black p-4;
   }
 
   .xp-badge {
-    @apply inline-flex items-center gap-1 bg-yellow-400 text-black px-3 py-1 border-2 border-black text-sm font-bold uppercase;
+    @apply inline-flex items-center gap-1 bg-yellow-100 text-black px-2 py-1 text-xs font-bold;
   }
 
-  .heart {
-    @apply text-red-500 transition-all duration-200;
-  }
-
-  .streak-badge {
-    @apply inline-flex items-center gap-1 bg-orange-400 text-black px-3 py-1 border-2 border-black font-bold uppercase;
-  }
-
-  /* Difficulty badges */
-  .difficulty-easy {
-    @apply bg-green-400 text-black border-2 border-black px-2 py-1 text-xs font-bold uppercase;
-  }
-
-  .difficulty-medium {
-    @apply bg-yellow-400 text-black border-2 border-black px-2 py-1 text-xs font-bold uppercase;
-  }
-
-  .difficulty-hard {
-    @apply bg-red-500 text-white border-2 border-black px-2 py-1 text-xs font-bold uppercase;
-  }
-
-  .difficulty-beginner {
-    @apply bg-green-400 text-black border-2 border-black px-2 py-1 text-xs font-bold uppercase;
-  }
-
-  .difficulty-intermediate {
-    @apply bg-yellow-400 text-black border-2 border-black px-2 py-1 text-xs font-bold uppercase;
-  }
-
-  .difficulty-advanced {
-    @apply bg-red-500 text-white border-2 border-black px-2 py-1 text-xs font-bold uppercase;
-  }
-
-  /* Input styles */
   .input-brutal {
-    @apply w-full px-4 py-2 border-3 border-black bg-white text-black font-mono;
-    @apply focus:outline-none focus:ring-0 focus:shadow-brutal focus:translate-x-[-2px] focus:translate-y-[-2px];
+    @apply w-full px-3 py-2 border-2 border-black bg-white text-black text-sm;
+    @apply focus:outline-none focus:ring-2 focus:ring-black;
   }
 }
 
-/* Custom scrollbar - brutalist style */
+/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-white border-l-2 border-black;
+  @apply bg-gray-100;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-black;
+  @apply bg-gray-400;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-800;
+  @apply bg-gray-500;
 }
 
-/* Monaco editor customization */
-.monaco-editor {
-  border: 3px solid black !important;
+/* Code blocks */
+.prose-content pre {
+  @apply bg-gray-900 text-gray-100 border-2 border-black my-3;
 }
 
-/* Prose overrides for brutalist style */
-.prose pre {
-  @apply border-3 border-black bg-gray-900;
+.prose-content pre code {
+  @apply bg-transparent text-inherit border-0 p-3 block text-sm;
 }
 
-.prose code {
-  @apply bg-yellow-200 text-black px-1 border border-black;
+/* Animations */
+@keyframes pop {
+  0% { transform: scale(0.95); opacity: 0; }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-.prose pre code {
-  @apply bg-transparent border-0;
+.animate-pop {
+  animation: pop 0.2s ease-out;
+}
+
+.page-enter {
+  animation: pop 0.2s ease-out;
+}
+
+/* Shadow utility */
+.shadow-brutal {
+  box-shadow: 4px 4px 0 0 black;
+}
+
+.shadow-brutal-sm {
+  box-shadow: 2px 2px 0 0 black;
 }
