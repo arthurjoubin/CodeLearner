@@ -78,6 +78,10 @@ export default function HomePage() {
   const resumes = courseIds.map(id => getCourseProgress(id)).filter(Boolean) as CourseResume[];
   
   const getPathProgress = (courseId: string): number => {
+    const resume = resumes.find(r => r.courseId === courseId);
+    if (resume) {
+      return Math.max(1, resume.progress);
+    }
     const courseModules = getModulesForCourse(courseId);
     const courseLessons = courseModules.flatMap(m => 
       lessons.filter(l => l.moduleId === m.id)
@@ -102,7 +106,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-black text-white flex items-center justify-center font-bold text-sm">
-                      {resume.progress}%
+                      {Math.max(1, resume.progress)}%
                     </div>
                     <div>
                       <span className="font-bold text-sm uppercase">{resume.courseTitle}</span>
@@ -124,7 +128,10 @@ export default function HomePage() {
       <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide p-1">
         {learningPaths.map((path) => {
           const isAvailable = path.id === 'react' || path.id === 'web-stack';
-          const progress = getPathProgress(path.id);
+          const resume = resumes.find(r => r.courseId === path.id);
+          const progress = resume 
+            ? Math.max(1, getPathProgress(path.id))
+            : getPathProgress(path.id);
 
           return (
             <Link
@@ -142,9 +149,9 @@ export default function HomePage() {
                   </span>
                 </div>
               )}
-               {isAvailable && progress > 0 && (
-                 <div className="absolute top-1.5 left-1.5 w-6 h-6 bg-black text-white flex items-center justify-center font-bold text-[10px]">
-                   {progress}%
+               {isAvailable && resume && resume.progress < 100 && (
+                 <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 bg-green-500 text-white text-[8px] font-bold uppercase tracking-wider">
+                   In Progress
                  </div>
                )}
                {isAvailable && progress > 0 && progress < 100 && (
@@ -160,26 +167,26 @@ export default function HomePage() {
                 />
                 <div>
                   <h3 className="font-bold text-sm uppercase">{path.title}</h3>
-                  {isAvailable && progress === 0 && (
-                    <span className="text-[8px] text-green-600 font-bold">Available</span>
-                  )}
-                  {isAvailable && progress > 0 && progress < 100 && (
+                  {isAvailable && resume && resume.progress < 100 && (
                     <span className="text-[8px] text-blue-600 font-bold">In Progress</span>
                   )}
-                  {isAvailable && progress === 100 && (
+                  {isAvailable && !resume && (
+                    <span className="text-[8px] text-green-600 font-bold">Available</span>
+                  )}
+                  {isAvailable && resume && resume.progress === 100 && (
                     <span className="text-[8px] text-purple-600 font-bold">Completed</span>
                   )}
                 </div>
               </div>
                <p className="text-[9px] mb-1 text-gray-600 line-clamp-2">{path.description}</p>
-               {isAvailable && progress === 0 && (
-                 <span className="text-[9px] font-bold text-primary-600">Start →</span>
-               )}
-               {isAvailable && progress > 0 && progress < 100 && (
+               {isAvailable && resume && resume.progress < 100 && (
                  <span className="text-[9px] font-bold text-blue-600">Continue →</span>
                )}
-               {isAvailable && progress === 100 && (
+               {isAvailable && resume && resume.progress === 100 && (
                  <span className="text-[9px] font-bold text-purple-600">Review →</span>
+               )}
+               {isAvailable && !resume && (
+                 <span className="text-[9px] font-bold text-primary-600">Start →</span>
                )}
              </Link>
           );
