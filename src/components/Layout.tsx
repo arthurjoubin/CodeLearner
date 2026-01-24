@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getLevelFromXp } from '../types';
-import { Flame, Zap, FlaskConical, LogIn, LogOut, ChevronRight, Trophy, HelpCircle, Lightbulb, Menu, X } from 'lucide-react';
+import { Flame, FlaskConical, LogIn, LogOut, ChevronRight, Trophy, HelpCircle, Lightbulb, Menu, X } from 'lucide-react';
 import { modules, lessons } from '../data/modules';
 
 const ASCII_LOGO = `██╗  ██╗ █████╗  ██████╗██╗  ██╗██╗   ██╗██████╗ 
@@ -94,10 +94,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2">
               <pre className="hidden lg:block text-[8px] leading-[1] font-mono text-black whitespace-pre">{ASCII_LOGO}</pre>
-              <pre className="hidden sm:block lg:hidden text-[10px] leading-[1] font-mono text-black whitespace-pre">{ASCII_LOGO_SMALL}</pre>
-              <div className="sm:hidden w-8 h-8 bg-black flex items-center justify-center">
-                <Zap className="w-5 h-5 text-yellow-400" />
-              </div>
+              <pre className="block lg:hidden text-[10px] leading-[1] font-mono text-black whitespace-pre">{ASCII_LOGO_SMALL}</pre>
             </Link>
 
             {pathTitle && (
