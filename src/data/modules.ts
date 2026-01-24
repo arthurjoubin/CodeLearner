@@ -120,7 +120,15 @@ export const lessons: Lesson[] = [
     order: 1,
     xpReward: 15,
     difficulty: 'beginner',
-    content: `# What is JSX?
+    content: `# Essential to know
+- JSX stands for JavaScript XML.
+- It allows writing HTML-like code inside JavaScript.
+- JSX must be compiled into standard JavaScript.
+- It is NOT HTML, but looks like it.
+
+---
+
+# What is JSX?
 
 JSX stands for **JavaScript XML**. It's a syntax extension that lets you write HTML-like code in JavaScript.
 
@@ -179,7 +187,15 @@ You can put any JavaScript expression inside the braces!`,
     order: 2,
     xpReward: 20,
     difficulty: 'beginner',
-    content: `# JSX Elements
+    content: `# Essential to know
+- Creates elements like HTML tags variables.
+- Can be nested.
+- Must have exactly ONE root element.
+- Use Fragments \`<></>\` to group without adding a DOM node.
+
+---
+
+# JSX Elements
 
 ## Creating Elements
 
@@ -252,7 +268,15 @@ Use \`<></>\` (Fragment) when you don't want an extra div in the DOM.`,
     order: 3,
     xpReward: 25,
     difficulty: 'beginner',
-    content: `# JavaScript Expressions in JSX
+    content: `# Essential to know
+- Use curly braces \`{}\` to embed JavaScript expressions.
+- Can execute math, variables, functions.
+- Cannot use statements like \`if\` or \`for\` inside braces.
+- Objects cannot be rendered directly.
+
+---
+
+# JavaScript Expressions in JSX
 
 ## Using Curly Braces
 
@@ -333,7 +357,15 @@ Use \`&&\` to conditionally render:
     order: 1,
     xpReward: 20,
     difficulty: 'beginner',
-    content: `# What are Components?
+    content: `# Essential to know
+- Components are reusable UI building blocks.
+- Function components return JSX.
+- Component names MUST start with a capital letter.
+- Can be used like HTML tags \`<Component />\`.
+
+---
+
+# What are Components?
 
 Components are the **building blocks** of React applications. Think of them as custom, reusable HTML elements.
 
@@ -399,7 +431,15 @@ function App() {
     order: 2,
     xpReward: 25,
     difficulty: 'beginner',
-    content: `# Props: Passing Data to Components
+    content: `# Essential to know
+- Props pass data from parent to child components.
+- Read-only (immutable) within the child.
+- Passed like HTML attributes.
+- Received via destructuring in the function arguments.
+
+---
+
+# Props: Passing Data to Components
 
 Props let you pass data to components, making them dynamic and reusable.
 
@@ -489,7 +529,14 @@ function App() {
     order: 3,
     xpReward: 25,
     difficulty: 'intermediate',
-    content: `# The Children Prop
+    content: `# Essential to know
+- Special prop \`children\` captures content between opening/closing tags.
+- Allows component composition.
+- Useful for wrappers and layout components.
+
+---
+
+# The Children Prop
 
 The \`children\` prop lets you pass content between component tags.
 
@@ -573,7 +620,15 @@ function App() {
     order: 1,
     xpReward: 25,
     difficulty: 'beginner',
-    content: `# Introduction to State
+    content: `# Essential to know
+- State is data that changes over time within a component.
+- \`useState\` hook initializes state.
+- Returns \`[currentValue, functionToUpdate]\`.
+- Always use the setter function; never mutate state directly.
+
+---
+
+# Introduction to State
 
 State is data that **changes over time** and affects what's rendered.
 
@@ -650,7 +705,15 @@ function Counter() {
     order: 2,
     xpReward: 30,
     difficulty: 'intermediate',
-    content: `# State with Objects and Arrays
+    content: `# Essential to know
+- State can be objects or arrays.
+- Updates must create NEW objects/arrays (immutability).
+- Use spread syntax \`...\` to copy existing properties.
+- React compares references to detect changes.
+
+---
+
+# State with Objects and Arrays
 
 State can hold any value: numbers, strings, booleans, objects, arrays.
 
@@ -737,7 +800,14 @@ function TodoList() {
     order: 3,
     xpReward: 25,
     difficulty: 'intermediate',
-    content: `# Multiple State Variables
+    content: `# Essential to know
+- You can use multiple \`useState\` hooks.
+- Split state for independent values.
+- Group state for values that change together.
+
+---
+
+# Multiple State Variables
 
 You can use \`useState\` multiple times in a component!
 
@@ -835,7 +905,14 @@ function RegistrationForm() {
     order: 1,
     xpReward: 20,
     difficulty: 'beginner',
-    content: `# Event Handling in React
+    content: `# Essential to know
+- React uses camelCase for events (\`onClick\`).
+- Pass function references, don't execute them (\`onClick={handleClick}\`).
+- Common events: \`onClick\`, \`onChange\`, \`onSubmit\`.
+
+---
+
+# Event Handling in React
 
 React handles events similarly to HTML, with a few differences.
 
@@ -928,7 +1005,15 @@ function EventDemo() {
     order: 2,
     xpReward: 25,
     difficulty: 'intermediate',
-    content: `# The Event Object
+    content: `# Essential to know
+- \`event\` object is passed to handlers.
+- \`event.target.value\` gets input value.
+- \`event.preventDefault()\` stops default browser behavior.
+- \`event.stopPropagation()\` stops event bubbling.
+
+---
+
+# The Event Object
 
 Event handlers receive an event object with useful information.
 
@@ -1013,7 +1098,14 @@ function Form() {
     order: 1,
     xpReward: 30,
     difficulty: 'intermediate',
-    content: `# Introduction to useEffect
+    content: `# Essential to know
+- \`useEffect\` handles side effects (API calls, subscriptions).
+- Runs after every render by default.
+- Dependency array \`[]\` controls when it runs.
+
+---
+
+# Introduction to useEffect
 
 \`useEffect\` lets you perform **side effects** in components.
 
@@ -1091,7 +1183,15 @@ function Timer() {
     order: 2,
     xpReward: 30,
     difficulty: 'advanced',
-    content: `# Effect Cleanup
+    content: `# Essential to know
+- Clean up side effects to prevent memory leaks.
+- Return a cleanup function from \`useEffect\`.
+- Runs before next effect or on unmount.
+- Essential for event listeners, timers.
+
+---
+
+# Effect Cleanup
 
 Some effects need **cleanup** to avoid memory leaks and bugs.
 
@@ -1176,7 +1276,15 @@ function MouseTracker() {
     order: 1,
     xpReward: 30,
     difficulty: 'intermediate',
-    content: `# TypeScript Basics for React
+    content: `# Essential to know
+- Adds static types to JS.
+- Catches errors at compile time.
+- Basic types: \`string\`, \`number\`, \`boolean\`, arrays.
+- \`interface\` defines object shapes.
+
+---
+
+# TypeScript Basics for React
 
 TypeScript adds **static types** to JavaScript, catching errors before runtime.
 
@@ -1257,7 +1365,15 @@ function toggleTodo(todos: Todo[], id: number): Todo[] {
     order: 2,
     xpReward: 35,
     difficulty: 'advanced',
-    content: `# Typing React Components
+    content: `# Essential to know
+- Defines props interface.
+- Use \`React.ReactNode\` for \`children\`.
+- State type: \`useState<Type>(initial)\`.
+- Event types: \`React.ChangeEvent\`, \`React.MouseEvent\`.
+
+---
+
+# Typing React Components
 
 ## Typing Props
 
@@ -1363,7 +1479,14 @@ function TodoList() {
     order: 1,
     xpReward: 25,
     difficulty: 'beginner',
-    content: `# Rendering Lists in React
+    content: `# Essential to know
+- Use \`.map()\` to convert arrays to JSX.
+- Returns a new array of elements.
+- Always add a unique \`key\` prop.
+
+---
+
+# Rendering Lists in React
 
 ## The map() Method
 
@@ -1405,7 +1528,15 @@ function FruitList() {
     order: 2,
     xpReward: 30,
     difficulty: 'intermediate',
-    content: `# Understanding Keys
+    content: `# Essential to know
+- Keys help React track item identity.
+- Must be unique among siblings.
+- Must be stable (no random keys).
+- Prefer IDs over array indices.
+
+---
+
+# Understanding Keys
 
 ## Why Keys Matter
 
@@ -1456,7 +1587,14 @@ Keys help React identify which items changed, were added, or removed.
     order: 3,
     xpReward: 30,
     difficulty: 'intermediate',
-    content: `# Filtering & Sorting Lists
+    content: `# Essential to know
+- \`filter()\` removes items.
+- \`sort()\` reorders items.
+- Chain operations: \`.filter().sort().map()\`.
+
+---
+
+# Filtering & Sorting Lists
 
 ## Filtering with filter()
 
@@ -1511,7 +1649,15 @@ Chain filter, sort, and map together:
     order: 1,
     xpReward: 25,
     difficulty: 'beginner',
-    content: `# Controlled Components
+    content: `# Essential to know
+- Form elements controlled by React state.
+- \`value\` prop is state.
+- \`onChange\` updates state.
+- Single source of truth.
+
+---
+
+# Controlled Components
 
 ## What is a Controlled Component?
 
@@ -1567,7 +1713,14 @@ function LoginForm() {
     order: 2,
     xpReward: 35,
     difficulty: 'intermediate',
-    content: `# Form Validation
+    content: `# Essential to know
+- Real-time validation updates errors as user types.
+- Check validation on submit.
+- Disable submit button if form is invalid.
+
+---
+
+# Form Validation
 
 ## Real-time Validation
 
@@ -1634,7 +1787,14 @@ function SignupForm() {
     order: 3,
     xpReward: 35,
     difficulty: 'intermediate',
-    content: `# Managing Multiple Fields
+    content: `# Essential to know
+- Use a single state object for multiple fields.
+- Update using spread syntax: \`...prev\`.
+- Use \`[e.target.name]\` property access.
+
+---
+
+# Managing Multiple Fields
 
 ## Single State Object
 
@@ -1702,7 +1862,15 @@ function ContactForm() {
     order: 1,
     xpReward: 30,
     difficulty: 'intermediate',
-    content: `# Introduction to Context
+    content: `# Essential to know
+- Solves "prop drilling".
+- \`createContext()\` creates the context.
+- \`useContext()\` consumes it.
+- Useful for global data (theme, user).
+
+---
+
+# Introduction to Context
 
 ## The Prop Drilling Problem
 
@@ -1760,7 +1928,14 @@ function ThemedButton() {
     order: 2,
     xpReward: 35,
     difficulty: 'intermediate',
-    content: `# Creating Context Providers
+    content: `# Essential to know
+- Provider component wraps the part of the app that needs access.
+- Accepts a \`value\` prop.
+- Custom hooks (e.g., \`useTheme\`) simplify access.
+
+---
+
+# Creating Context Providers
 
 ## Provider Pattern
 
@@ -1815,7 +1990,14 @@ export function useAuth() {
     order: 3,
     xpReward: 35,
     difficulty: 'advanced',
-    content: `# Context Best Practices
+    content: `# Essential to know
+- Use for low-frequency updates (themes, auth).
+- Avoid for high-frequency updates (performance).
+- Split contexts (State vs Dispatch).
+
+---
+
+# Context Best Practices
 
 ## When to Use Context
 
@@ -1870,7 +2052,14 @@ export function TodosProvider({ children }) {
     order: 1,
     xpReward: 35,
     difficulty: 'intermediate',
-    content: `# Creating Custom Hooks
+    content: `# Essential to know
+- Reuse stateful logic across components.
+- Must start with "use".
+- Can call other hooks inside.
+
+---
+
+# Creating Custom Hooks
 
 ## What are Custom Hooks?
 
@@ -1923,7 +2112,14 @@ function Counter() {
     order: 2,
     xpReward: 40,
     difficulty: 'advanced',
-    content: `# Common Hook Patterns
+    content: `# Essential to know
+- Common uses: fetching data, localStorage.
+- Encapsulate complex logic.
+- Makes components cleaner.
+
+---
+
+# Common Hook Patterns
 
 ## useLocalStorage
 
@@ -1996,7 +2192,14 @@ function UserList() {
     order: 1,
     xpReward: 35,
     difficulty: 'intermediate',
-    content: `# React.memo
+    content: `# Essential to know
+- \`React.memo\` memoizes a component.
+- Only re-renders if props change.
+- Optimization for pure components.
+
+---
+
+# React.memo
 
 ## Preventing Unnecessary Re-renders
 
@@ -2047,7 +2250,14 @@ function App() {
     order: 2,
     xpReward: 40,
     difficulty: 'advanced',
-    content: `# useMemo & useCallback
+    content: `# Essential to know
+- \`useMemo\` caches a value.
+- \`useCallback\` caches a function.
+- Dependencies array controls re-calculation.
+
+---
+
+# useMemo & useCallback
 
 ## useMemo
 
@@ -2104,7 +2314,15 @@ function App() {
     order: 3,
     xpReward: 35,
     difficulty: 'advanced',
-    content: `# Performance Best Practices
+    content: `# Essential to know
+- Measure before optimizing.
+- Keep state local.
+- Use keys properly.
+- Avoid creating objects inside render.
+
+---
+
+# Performance Best Practices
 
 ## Key Principles
 
@@ -2167,7 +2385,14 @@ function OptimizedList() {
     order: 1,
     xpReward: 30,
     difficulty: 'intermediate',
-    content: `# React Router Basics
+    content: `# Essential to know
+- \`BrowserRouter\` wraps the app.
+- \`Routes\` contains \`Route\` definitions.
+- \`Link\` replaces \`<a>\` tags.
+
+---
+
+# React Router Basics
 
 ## Installation
 
@@ -2223,7 +2448,14 @@ function App() {
     order: 2,
     xpReward: 35,
     difficulty: 'intermediate',
-    content: `# Route Parameters
+    content: `# Essential to know
+- Define params in path: \`/user/:id\`.
+- Access with \`useParams()\`.
+- Enables dynamic pages.
+
+---
+
+# Route Parameters
 
 ## Dynamic Routes
 
@@ -2287,7 +2519,14 @@ function App() {
     order: 3,
     xpReward: 35,
     difficulty: 'advanced',
-    content: `# Programmatic Navigation
+    content: `# Essential to know
+- \`useNavigate\` hook for programmatic navigation.
+- \`navigate('/path')\`.
+- \`navigate(-1)\` for back.
+
+---
+
+# Programmatic Navigation
 
 ## useNavigate Hook
 
@@ -2360,7 +2599,14 @@ function Dashboard() {
     order: 4,
     xpReward: 25,
     difficulty: 'beginner',
-    content: `# Conditional Rendering
+    content: `# Essential to know
+- \`&&\` for "show if true".
+- \`? :\` for "if/else".
+- Early return for completely different views.
+
+---
+
+# Conditional Rendering
 
 ## Showing Content Conditionally
 
@@ -2432,7 +2678,14 @@ function UserGreeting({ user }) {
     order: 4,
     xpReward: 20,
     difficulty: 'beginner',
-    content: `# Default Props
+    content: `# Essential to know
+- Set default values in component parameters.
+- Prevents undefined errors.
+- Example: \`function Btn({ color = 'blue' })\`.
+
+---
+
+# Default Props
 
 ## Setting Default Values
 
@@ -2489,7 +2742,14 @@ function Button({ label = "Click me", color = "blue" }) {
     order: 4,
     xpReward: 30,
     difficulty: 'intermediate',
-    content: `# State with Arrays
+    content: `# Essential to know
+- Use arrays in state for lists.
+- Add: \`[...old, new]\`. Remove: \`.filter()\`.
+- NEVER mutate the array directly.
+
+---
+
+# State with Arrays
 
 ## Managing Lists in State
 
@@ -2588,7 +2848,14 @@ function TodoList() {
     order: 3,
     xpReward: 35,
     difficulty: 'intermediate',
-    content: `# Fetching Data with useEffect
+    content: `# Essential to know
+- Fetch data inside \`useEffect\`.
+- Use \`[]\` to run once on mount.
+- Handle loading and error states.
+
+---
+
+# Fetching Data with useEffect
 
 ## Basic Pattern
 
@@ -2675,7 +2942,14 @@ function PostList() {
     order: 3,
     xpReward: 35,
     difficulty: 'intermediate',
-    content: `# useLocalStorage Hook
+    content: `# Essential to know
+- Sync state with localStorage.
+- Initialize with function to read.
+- Update storage in \`useEffect\`.
+
+---
+
+# useLocalStorage Hook
 
 ## Persisting State
 
