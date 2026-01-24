@@ -5,13 +5,6 @@ import { getLevelFromXp } from '../types';
 import { Flame, FlaskConical, LogIn, LogOut, ChevronRight, Trophy, HelpCircle, Lightbulb, Menu, X } from 'lucide-react';
 import { modules, lessons } from '../data/modules';
 
-const ASCII_LOGO = `██╗  ██╗ █████╗  ██████╗██╗  ██╗██╗   ██╗██████╗ 
-██║  ██║██╔══██╗██╔════╝██║ ██╔╝██║   ██║██╔══██╗
-█████████║███████║██║     █████╔╝ ██║   ██║██████╔╝
-██╔══██║██╔══██║██║     ██╔═██╗ ██║   ██║██╔═══╝ 
-██║  ██║██║  ██║╚██████╗██║  ██╗╚██████╔╝██╗     
-╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝`;
-
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -85,9 +78,11 @@ export default function Layout({ children }: LayoutProps) {
       <header className="bg-white border-b-2 border-black sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
-              <pre className="hidden lg:block text-[8px] leading-[1] font-mono text-black bg-white">{ASCII_LOGO}</pre>
-              <span className="block lg:hidden text-lg font-bold tracking-widest">HACKUP</span>
+            <Link to="/" className="flex items-center gap-2 group">
+              <div className="relative">
+                <span className="text-xl font-bold tracking-widest">HACK<span className="text-primary-500">UP</span></span>
+                <div className="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+              </div>
             </Link>
 
             {pathTitle && (
@@ -109,15 +104,16 @@ export default function Layout({ children }: LayoutProps) {
             )}
 
             <div className="flex items-center gap-1.5 sm:gap-3">
-              <Link to="/labs" className="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 transition-colors" title="Labs">
-                <FlaskConical className="w-4 h-4" />
-                <span className="text-xs font-medium hidden sm:inline">Lab</span>
+              <Link to="/labs" className="flex items-center gap-1 px-2 py-1 group relative" title="Labs">
+                <span className="text-xs font-medium hidden sm:inline group-hover:text-primary-600 transition-colors">Lab</span>
+                <FlaskConical className="w-4 h-4 text-black group-hover:text-primary-600 transition-colors" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
               </Link>
 
               <div className="relative">
                 <button
                   onClick={() => setStreakPopupOpen(!streakPopupOpen)}
-                  className="flex items-center gap-1 bg-black text-white px-1.5 sm:px-2 py-1 text-xs font-bold"
+                  className="flex items-center gap-1 bg-black text-white px-1.5 sm:px-2 py-1 text-xs font-bold hover:bg-gray-800 transition-colors"
                 >
                   <Flame className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">{user.streak}</span>
@@ -133,9 +129,9 @@ export default function Layout({ children }: LayoutProps) {
                       <div className="p-3 space-y-1 text-sm">
                         <p>Daily practice keeps your streak alive.</p>
                         <p className="font-bold pt-1">XP Bonus:</p>
-                        <p>7+ days: +10%</p>
-                        <p>30+ days: +25%</p>
-                        <p>100+ days: +50%</p>
+                        <p>7+ days: <span className="text-primary-600 font-mono font-bold">+10%</span></p>
+                        <p>30+ days: <span className="text-primary-600 font-mono font-bold">+25%</span></p>
+                        <p>100+ days: <span className="text-primary-600 font-mono font-bold">+50%</span></p>
                       </div>
                     </div>
                   </>
@@ -145,7 +141,7 @@ export default function Layout({ children }: LayoutProps) {
               <div className="relative">
                 <button
                   onClick={() => setLevelPopupOpen(!levelPopupOpen)}
-                  className="flex items-center gap-1 border border-black px-1.5 sm:px-2 py-1 text-xs font-bold"
+                  className="flex items-center gap-1 border-2 border-black px-1.5 sm:px-2 py-1 text-xs font-bold hover:bg-black hover:text-white transition-colors"
                 >
                   <span className="hidden sm:inline">Lv.{levelInfo.level}</span>
                   <span className="sm:hidden">Lv{levelInfo.level}</span>
@@ -160,19 +156,19 @@ export default function Layout({ children }: LayoutProps) {
                       <div className="p-2 space-y-1 text-sm">
                         <div className="flex justify-between">
                           <span>Lesson</span>
-                          <span className="font-mono font-bold">+50</span>
+                          <span className="font-mono font-bold text-primary-600">+50</span>
                         </div>
                         <div className="flex justify-between">
                           <span>Exercise</span>
-                          <span className="font-mono font-bold">+100</span>
+                          <span className="font-mono font-bold text-primary-600">+100</span>
                         </div>
                         <div className="flex justify-between">
                           <span>Module</span>
-                          <span className="font-mono font-bold">+500</span>
+                          <span className="font-mono font-bold text-primary-600">+500</span>
                         </div>
                         <div className="flex justify-between">
                           <span>Path</span>
-                          <span className="font-mono font-bold">+2000</span>
+                          <span className="font-mono font-bold text-primary-600">+2000</span>
                         </div>
                       </div>
                     </div>
@@ -197,35 +193,38 @@ export default function Layout({ children }: LayoutProps) {
                         <Link
                           to="/leaderboard"
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50"
+                          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 group"
                         >
-                          <Trophy className="w-4 h-4" />
-                          <span>Leaderboard</span>
+                          <Trophy className="w-4 h-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                          <span className="group-hover:text-primary-600 transition-colors">Leaderboard</span>
+                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
                         </Link>
                         <Link
                           to="/help"
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50"
+                          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 group"
                         >
-                          <HelpCircle className="w-4 h-4" />
-                          <span>How it works</span>
+                          <HelpCircle className="w-4 h-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                          <span className="group-hover:text-primary-600 transition-colors">How it works</span>
+                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
                         </Link>
                         <Link
                           to="/feedback"
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50"
+                          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 group"
                         >
-                          <Lightbulb className="w-4 h-4" />
-                          <span>Give feedback</span>
+                          <Lightbulb className="w-4 h-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                          <span className="group-hover:text-primary-600 transition-colors">Give feedback</span>
+                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
                         </Link>
                         <hr className="my-1 border-gray-200" />
                         {isGuest ? (
                           <button
                             onClick={() => { login(); setMenuOpen(false); }}
-                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 w-full text-left"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 w-full text-left group"
                           >
-                            <LogIn className="w-4 h-4" />
-                            <span>Log in</span>
+                            <LogIn className="w-4 h-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                            <span className="group-hover:text-primary-600 transition-colors">Log in</span>
                           </button>
                         ) : (
                           <button

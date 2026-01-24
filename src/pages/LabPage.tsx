@@ -140,9 +140,11 @@ export default function LabPage() {
             {/* Lab Header */}
             <div className="flex items-center justify-between mb-2 bg-black text-white p-2 lg:p-3 border-4 border-black shadow-brutal-sm">
                 <div className="flex items-center gap-2 lg:gap-4 flex-1 min-w-0">
-                    <Link to="/" className="p-1.5 lg:p-2 hover:bg-gray-800 border-2 border-white flex-shrink-0">
-                        <ArrowLeft className="w-4 h-4 lg:w-5 lg:h-5" />
-                    </Link>
+                    <div className="relative group">
+                      <Link to="/labs" className="p-1.5 lg:p-2 hover:bg-primary-500 border-2 border-white flex-shrink-0 transition-colors block">
+                          <ArrowLeft className="w-4 h-4 lg:w-5 lg:h-5" />
+                      </Link>
+                    </div>
                     <div className="min-w-0 flex-1">
                         <h1 className="text-sm lg:text-xl font-black uppercase tracking-tighter truncate">{lab.title}</h1>
                         <div className="flex items-center gap-2">

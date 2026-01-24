@@ -51,13 +51,19 @@ export default function LearningPathPage() {
 
   return (
     <div className="page-enter">
-      <Link to="/" className="inline-flex items-center gap-2 text-black font-bold uppercase hover:underline mb-4">
-        <ArrowLeft className="w-4 h-4" /> Back
-      </Link>
+      <div className="relative inline-block group mb-4">
+        <Link to="/" className="inline-flex items-center gap-2 text-black font-bold uppercase hover:text-primary-600 transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Back
+        </Link>
+        <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-20 duration-200" />
+      </div>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-black text-black uppercase">{pathTitle}</h1>
-        <p className="text-gray-600">Master {pathTitle} from basics to advanced</p>
+        <div className="relative inline-block group">
+          <h1 className="text-2xl font-black text-black uppercase">{pathTitle}</h1>
+          <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+        </div>
+        <p className="text-gray-600 mt-1">Master {pathTitle} from basics to advanced</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 p-1">
@@ -77,7 +83,7 @@ export default function LearningPathPage() {
             return (
               <div
                 key={module.id}
-                className="border-2 border-gray-200 bg-gray-50 p-4 relative"
+                className="border-2 border-gray-200 bg-gray-50 p-4 relative opacity-60"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex items-center gap-3 mb-3">
@@ -103,11 +109,11 @@ export default function LearningPathPage() {
               key={module.id}
               to={`/module/${module.id}`}
               style={{ animationDelay: `${index * 50}ms` }}
-              className={`border-2 border-black p-4 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal ${isComplete ? 'bg-primary-50 border-primary-500' : 'bg-white'
+              className={`border-2 border-black p-4 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal group ${isComplete ? 'bg-primary-50' : 'bg-white'
                 }`}
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 flex items-center justify-center font-bold border-2 border-black ${isComplete ? 'bg-primary-500 text-white' : 'bg-black text-white'
+                <div className={`w-10 h-10 flex items-center justify-center font-bold border-2 border-black transition-colors ${isComplete ? 'bg-primary-500 text-white' : 'bg-black text-white group-hover:bg-primary-500'
                   }`}>
                   {isComplete ? <CheckCircle className="w-5 h-5" /> : index + 1}
                 </div>
@@ -116,13 +122,13 @@ export default function LearningPathPage() {
                 </div>
               </div>
 
-              <h3 className="font-bold text-black mb-1 uppercase">{module.title}</h3>
+              <h3 className="font-bold text-black mb-1 uppercase group-hover:text-primary-600 transition-colors">{module.title}</h3>
               <p className="text-xs text-gray-600 mb-3">{module.description}</p>
 
-              <div className="h-2.5 bg-gray-200 border border-black mb-1 overflow-hidden">
+              <div className="h-2.5 bg-gray-200 border border-black overflow-hidden">
                 <div className="h-full bg-primary-500 transition-all duration-300" style={{ width: `${progress}%` }} />
               </div>
-              <p className="text-[10px] text-gray-500 font-bold">{completedLessons}/{totalLessons} lessons • {progress}%</p>
+              <p className="text-[10px] text-gray-500 font-bold mt-1">{completedLessons}/{totalLessons} lessons • {progress}%</p>
             </Link>
           );
         })}

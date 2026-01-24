@@ -91,11 +91,13 @@ export default function LessonPage() {
     <div className="page-enter">
       {/* Top Bar */}
       <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-4 pb-3 border-b-2 border-black">
-        <Link to={`/module/${module.id}`} className="p-2 border-2 border-black hover:bg-gray-100 shrink-0">
-          <ArrowLeft className="w-4 h-4" />
-        </Link>
+        <div className="relative group">
+          <Link to={`/module/${module.id}`} className="p-2 border-2 border-black hover:bg-primary-500 hover:border-primary-500 transition-colors block">
+            <ArrowLeft className="w-4 h-4" />
+          </Link>
+        </div>
         <p className="text-[10px] text-gray-500 font-bold uppercase hidden md:block">{module.title} / {currentIndex + 1}</p>
-        <h1 className="text-base md:text-lg font-black text-black uppercase truncate max-w-[150px] md:max-w-none">{lesson.title}</h1>
+        <h1 className="text-base md:text-lg font-black text-black uppercase truncate max-w-[150px] md:max-w-none group-hover:text-primary-600 transition-colors">{lesson.title}</h1>
 
         <div className="flex items-center gap-2 ml-auto">
           <DifficultyBadge difficulty={lesson.difficulty} />

@@ -33,7 +33,10 @@ export default function LeaderboardPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-black mb-8 uppercase tracking-tight">Leaderboard</h1>
+      <div className="relative inline-block group mb-8">
+        <h1 className="text-3xl font-black uppercase tracking-tight">Leaderboard</h1>
+        <span className="absolute -bottom-1 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+      </div>
 
       <div className="border-2 border-black">
         <div className="bg-black text-white px-4 py-3 font-bold uppercase text-sm flex items-center gap-2">
@@ -48,12 +51,10 @@ export default function LeaderboardPage() {
           return (
             <div
               key={u.id}
-              className={`px-4 py-3 flex items-center justify-between border-b border-black last:border-b-0 ${
-                isCurrentUser ? 'bg-yellow-100' : rank % 2 === 0 ? 'bg-gray-50' : 'bg-white'
-              }`}
+              className={`px-4 py-3 flex items-center justify-between border-b border-black last:border-b-0 transition-colors ${isCurrentUser ? 'bg-primary-50' : 'hover:bg-gray-50'} ${rank % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
             >
               <div className="flex items-center gap-3">
-                <span className={`font-mono font-bold w-8 ${rank <= 3 ? 'text-xl' : ''}`}>
+                <span className={`font-mono font-bold w-8 ${rank <= 3 ? 'text-xl' : ''} ${rank <= 3 ? 'text-primary-600' : ''}`}>
                   {rank <= 3 ? ['#1', '#2', '#3'][rank - 1] : `#${rank}`}
                 </span>
                 {u.avatar_url ? (
@@ -64,10 +65,10 @@ export default function LeaderboardPage() {
                   </div>
                 )}
                 <span className="font-bold">{u.name}</span>
-                {isCurrentUser && <span className="text-xs bg-black text-white px-1.5 py-0.5">YOU</span>}
+                {isCurrentUser && <span className="text-xs bg-primary-500 text-white px-1.5 py-0.5">YOU</span>}
               </div>
               <div className="flex items-center gap-4 text-sm font-medium">
-                <span className="text-orange-600">{u.streak}🔥</span>
+                <span className="text-primary-600">{u.streak}🔥</span>
                 <span>Lv.{u.level}</span>
                 <span className="font-mono">{u.xp.toLocaleString()} XP</span>
               </div>
@@ -89,7 +90,7 @@ export default function LeaderboardPage() {
               <span className="font-bold">{user.name} (you)</span>
             </div>
             <div className="flex items-center gap-4 text-sm font-medium">
-              <span className="text-orange-400">{user.streak}🔥</span>
+              <span className="text-primary-400">{user.streak}🔥</span>
               <span>Lv.{currentUserLevel}</span>
               <span className="font-mono">{user.xp.toLocaleString()} XP</span>
             </div>

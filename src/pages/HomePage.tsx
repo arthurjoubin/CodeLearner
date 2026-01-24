@@ -95,25 +95,28 @@ export default function HomePage() {
     <div className="page-enter">
       {resumes.length > 0 && (
         <div className="mb-8">
-          <h2 className="font-bold text-sm uppercase text-gray-500 mb-3">Continue Learning</h2>
-          <div className="space-y-2">
+          <div className="relative inline-block group">
+            <h2 className="font-bold text-sm uppercase text-gray-500">Continue Learning</h2>
+            <span className="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+          </div>
+          <div className="space-y-2 mt-3">
             {resumes.map(resume => (
               <Link
                 key={resume.courseId}
                 to={`/lesson/${resume.nextLesson.id}`}
-                className="block border-2 border-black p-3 bg-white hover:bg-gray-50 transition-colors"
+                className="block border-2 border-black p-3 bg-white hover:bg-gray-50 transition-all group relative"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-black text-white flex items-center justify-center font-bold text-sm">
+                    <div className="w-8 h-8 bg-black text-white flex items-center justify-center font-bold text-sm group-hover:bg-primary-500 transition-colors">
                       {Math.max(1, resume.progress)}%
                     </div>
                     <div>
-                      <span className="font-bold text-sm uppercase">{resume.courseTitle}</span>
+                      <span className="font-bold text-sm uppercase text-black group-hover:text-primary-600 transition-colors">{resume.courseTitle}</span>
                       <p className="text-xs text-gray-600">{resume.nextLesson.title}</p>
                     </div>
                   </div>
-                  <Play className="w-5 h-5" />
+                  <Play className="w-5 h-5 text-black group-hover:text-primary-600 transition-colors" />
                 </div>
               </Link>
             ))}
@@ -122,7 +125,10 @@ export default function HomePage() {
       )}
 
       <div className="mb-4">
-        <h2 className="font-bold text-sm uppercase text-gray-500">Learning Paths</h2>
+        <div className="relative inline-block group">
+          <h2 className="font-bold text-sm uppercase text-gray-500">Learning Paths</h2>
+          <span className="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+        </div>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide p-1">
@@ -137,65 +143,54 @@ export default function HomePage() {
             <Link
               key={path.id}
               to={isAvailable ? `/learning-path/${path.id}` : '#'}
-              className={`border-2 border-black p-3 relative transition-all flex-shrink-0 w-48 ${isAvailable 
+              className={`border-2 border-black p-3 relative transition-all flex-shrink-0 w-32 ${isAvailable 
                 ? 'bg-white hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal cursor-pointer' 
                 : 'bg-gray-100 opacity-60 grayscale cursor-not-allowed'
               }`}
             >
               {!isAvailable && (
-                <div className="absolute top-1.5 right-1.5">
+                <div className="absolute bottom-1.5 right-1.5">
                   <span className="px-1.5 py-0.5 bg-gray-300 text-gray-600 text-[8px] font-bold uppercase tracking-wider border border-gray-400">
                     Soon
                   </span>
                 </div>
               )}
-               {isAvailable && resume && resume.progress < 100 && (
-                 <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 bg-green-500 text-white text-[8px] font-bold uppercase tracking-wider">
-                   In Progress
-                 </div>
-               )}
-               {isAvailable && progress > 0 && progress < 100 && (
-                 <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 bg-green-500 text-white text-[8px] font-bold uppercase tracking-wider">
-                   In Progress
-                 </div>
-               )}
-               <div className="flex items-center gap-2 mb-1.5 mt-1">
+              {isAvailable && resume && resume.progress < 100 && (
+                <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 bg-primary-500 text-white text-[8px] font-bold uppercase tracking-wider">
+                  {progress}%
+                </div>
+              )}
+              {isAvailable && resume && resume.progress === 100 && (
+                <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 bg-primary-500 text-white text-[8px] font-bold uppercase tracking-wider">
+                  ✓
+                </div>
+              )}
+              {isAvailable && !resume && (
+                <div className="absolute bottom-1.5 right-1.5">
+                  <span className="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[8px] font-bold uppercase tracking-wider border border-gray-300">
+                    New
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center gap-2">
                 <img 
                   src={path.logo} 
                   alt={path.title} 
                   className="w-6 h-6 object-contain"
                 />
-                <div>
-                  <h3 className="font-bold text-sm uppercase">{path.title}</h3>
-                  {isAvailable && resume && resume.progress < 100 && (
-                    <span className="text-[8px] text-blue-600 font-bold">In Progress</span>
-                  )}
-                  {isAvailable && !resume && (
-                    <span className="text-[8px] text-green-600 font-bold">Available</span>
-                  )}
-                  {isAvailable && resume && resume.progress === 100 && (
-                    <span className="text-[8px] text-purple-600 font-bold">Completed</span>
-                  )}
-                </div>
+                <h3 className="font-bold text-xs uppercase text-black">{path.title}</h3>
               </div>
-               <p className="text-[9px] mb-1 text-gray-600 line-clamp-2">{path.description}</p>
-               {isAvailable && resume && resume.progress < 100 && (
-                 <span className="text-[9px] font-bold text-blue-600">Continue →</span>
-               )}
-               {isAvailable && resume && resume.progress === 100 && (
-                 <span className="text-[9px] font-bold text-purple-600">Review →</span>
-               )}
-               {isAvailable && !resume && (
-                 <span className="text-[9px] font-bold text-primary-600">Start →</span>
-               )}
-             </Link>
+            </Link>
           );
         })}
       </div>
 
-      <h2 className="font-bold text-sm uppercase text-gray-500 mb-3 mt-8">Our Method</h2>
+      <div className="relative inline-block group mt-8">
+        <h2 className="font-bold text-sm uppercase text-gray-500">Our Method</h2>
+        <span className="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+      </div>
 
-      <div className="border-2 border-black p-3">
+      <div className="border-2 border-black p-3 mt-3">
         <div className="grid md:grid-cols-3 gap-4 text-xs">
           <div className="pr-3 md:border-r md:border-gray-300 md:last:border-r-0">
             <span className="font-bold text-black block mb-0.5">Learn by Doing</span>

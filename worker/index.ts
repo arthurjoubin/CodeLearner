@@ -432,7 +432,7 @@ Be more specific with each attempt. Don't give the answer directly.`;
         return json({ hint: response }, origin, env);
       }
 
-      // GET /api/leaderboard - Get top users by XP
+      // GET /api/leaderboard - Get top users by XP (exclude guests)
       if (path === '/api/leaderboard' && request.method === 'GET') {
         const limit = parseInt(url.searchParams.get('limit') || '10');
         const offset = parseInt(url.searchParams.get('offset') || '0');
@@ -441,7 +441,8 @@ Be more specific with each attempt. Don't give the answer directly.`;
           SELECT u.id, u.name, u.avatar_url, p.xp, p.level, p.streak
           FROM users u
           LEFT JOIN user_progress p ON u.id = p.user_id
-          ORDER BY p.xp DESC
+          WHERE u.name != 'Learner' OR u.avatar_url IS NOT NULL
+          ORDER BY p.xp DESC, u.name ASC
           LIMIT ${limit} OFFSET ${offset}
         `).all();
 
@@ -449,6 +450,14 @@ Be more specific with each attempt. Don't give the answer directly.`;
         const total = await env.DB.prepare('SELECT COUNT(*) as count FROM users').first<{ count: number }>();
 
         return json({ users, total: total?.count || 0 }, origin, env);
+      }
+
+      // POST /api/admin/cleanup-guests - Remove guest users (for admin use)
+      if (path === '/api/admin/cleanup-guests' && request.method === 'POST') {
+        await env.DB.prepare(
+          "DELETE FROM users WHERE name = 'Learner' AND avatar_url IS NULL"
+        ).run();
+        return json({ success: true, message: 'Guest users removed' }, origin, env);
       }
 
       return error('Not found', origin, env, 404);

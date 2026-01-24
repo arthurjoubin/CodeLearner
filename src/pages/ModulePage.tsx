@@ -48,9 +48,12 @@ export default function ModulePage() {
 
   return (
     <div className="page-enter">
-      <Link to={`/learning-path/${module.courseId}`} className="inline-flex items-center gap-2 text-black font-bold uppercase hover:underline mb-4">
-        <ArrowLeft className="w-4 h-4" /> Back
-      </Link>
+      <div className="relative inline-block group mb-4">
+        <Link to={`/learning-path/${module.courseId}`} className="inline-flex items-center gap-2 text-black font-bold uppercase hover:text-primary-600 transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Back
+        </Link>
+        <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-20 duration-200" />
+      </div>
 
       <div className="bg-black text-white border-2 border-black p-5 mb-6">
         <h1 className="text-2xl font-black mb-1 uppercase">{module.title}</h1>
@@ -70,7 +73,7 @@ export default function ModulePage() {
 
           if (!isUnlocked) {
             return (
-              <div key={lesson.id} className="border-2 border-gray-200 bg-gray-50 p-4">
+              <div key={lesson.id} className="border-2 border-gray-200 bg-gray-50 p-4 opacity-60">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-gray-200 flex items-center justify-center text-gray-400 font-bold">
                     {index + 1}
@@ -94,16 +97,16 @@ export default function ModulePage() {
           return (
             <div
               key={lesson.id}
-              className={`border-2 border-black p-3 ${isAnythingDone ? 'bg-green-100 border-green-500' : 'bg-white'}`}
+              className={`border-2 border-black p-3 transition-all hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-brutal-sm ${isAnythingDone ? 'bg-primary-50' : 'bg-white'}`}
             >
               <div className="flex items-start gap-3">
-                <div className={`w-8 h-8 flex items-center justify-center font-bold border-2 border-black flex-shrink-0 text-sm ${lessonDone ? 'bg-primary-500 text-white' : 'bg-white text-black'
+                <div className={`w-8 h-8 flex items-center justify-center font-bold border-2 border-black flex-shrink-0 text-sm transition-colors ${lessonDone ? 'bg-primary-500 text-white' : 'bg-white text-black group-hover:bg-primary-500 group-hover:text-white'
                   }`}>
                   {lessonDone ? <CheckCircle className="w-4 h-4" /> : index + 1}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-black uppercase text-sm mb-1.5">{lesson.title}</h3>
+                  <h3 className="font-bold text-black uppercase text-sm mb-1.5 group-hover:text-primary-600 transition-colors">{lesson.title}</h3>
                   <div className="flex items-center flex-wrap gap-1.5 mb-2">
                     <DifficultyBadge difficulty={lesson.difficulty} size="sm" />
                     <span className="xp-badge text-xs py-0.5">
@@ -114,7 +117,7 @@ export default function ModulePage() {
                   <div className="mb-2">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wide">Progress</span>
-                      <span className="text-[9px] font-bold text-gray-600">{progressPercent}%</span>
+                      <span className="text-[9px] font-bold text-primary-600">{progressPercent}%</span>
                     </div>
                     <div className="w-full h-2.5 bg-gray-200 border border-black overflow-hidden">
                       <div
@@ -125,9 +128,9 @@ export default function ModulePage() {
                   </div>
 
                   <div className="mb-2">
-                    <Link to={`/lesson/${lesson.id}`} className={`btn-primary text-xs py-1.5 inline-flex items-center gap-1.5 w-full justify-center ${isAnythingDone ? 'bg-green-500 hover:bg-green-600' : ''}`}>
+                    <Link to={`/lesson/${lesson.id}`} className={`btn-primary text-xs py-1.5 inline-flex items-center gap-1.5 w-full justify-center ${isAnythingDone ? 'bg-primary-500 hover:bg-primary-600' : ''}`}>
                       <BookOpen className="w-3.5 h-3.5" />
-                      {isAnythingDone ? '↺ Redo Course' : 'Start Course'}
+                      {isAnythingDone ? '↺ Redo' : 'Start'}
                     </Link>
                   </div>
 
@@ -137,11 +140,11 @@ export default function ModulePage() {
                         <Link
                           key={exercise.id}
                           to={`/exercise/${exercise.id}`}
-                          className={`text-xs py-1 px-2 border-2 border-black font-bold inline-flex items-center gap-1 transition-all ${isExerciseCompleted(exercise.id) ? 'bg-primary-400 text-white' : 'bg-white hover:bg-gray-100 hover:shadow-brutal-sm'
+                          className={`text-xs py-1 px-2 border-2 border-black font-bold inline-flex items-center gap-1 transition-all hover:translate-x-[-1px] hover:translate-y-[-1px] ${isExerciseCompleted(exercise.id) ? 'bg-primary-500 text-white' : 'bg-white hover:bg-gray-100'
                             }`}
                         >
                           {isExerciseCompleted(exercise.id) ? <CheckCircle className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-                          Exo {i + 1}
+                          Ex {i + 1}
                         </Link>
                       ))}
                     </div>

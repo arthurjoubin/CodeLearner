@@ -1,6 +1,6 @@
-# Code Learner - Learn React & TypeScript
+# HACKUP - Learn to Code by Doing
 
-An interactive learning platform to master React and TypeScript, featuring gamification elements inspired by Duolingo.
+An interactive platform to master web development through hands-on practice.
 
 ## Features
 

@@ -23,10 +23,13 @@ export default function LabsSelectionPage() {
     <div className="page-enter">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-black uppercase mb-1 flex items-center gap-2">
-          <FlaskConical className="w-6 h-6" /> Project Labs
-        </h1>
-        <p className="text-sm text-gray-600">
+        <div className="relative inline-block group">
+          <h1 className="text-2xl font-black uppercase mb-1 flex items-center gap-2">
+            <FlaskConical className="w-6 h-6 text-primary-600" /> Project Labs
+          </h1>
+          <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+        </div>
+        <p className="text-sm text-gray-600 mt-1">
           Guided projects to apply your React skills
         </p>
       </div>
@@ -44,7 +47,7 @@ export default function LabsSelectionPage() {
             return (
               <div
                 key={lab.id}
-                className="border-2 border-gray-200 bg-gray-50 p-5"
+                className="border-2 border-gray-200 bg-gray-50 p-5 opacity-60"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-gray-200 flex items-center justify-center text-gray-400">
@@ -69,11 +72,11 @@ export default function LabsSelectionPage() {
             <Link
               key={lab.id}
               to={`/labs/${lab.id}`}
-              className={`border-2 border-black p-5 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal ${isCompleted ? 'bg-primary-50 border-primary-500' : 'bg-white'
+              className={`border-2 border-black p-5 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal group ${isCompleted ? 'bg-primary-50 border-primary-500' : 'bg-white'
                 }`}
             >
               <div className="flex items-start gap-4">
-                <div className={`w-12 h-12 flex items-center justify-center border-2 border-black ${isCompleted ? 'bg-primary-500 text-white' : 'bg-yellow-400'
+                <div className={`w-12 h-12 flex items-center justify-center border-2 border-black transition-colors ${isCompleted ? 'bg-primary-500 text-white' : 'bg-yellow-400 group-hover:bg-primary-500 group-hover:text-white'
                   }`}>
                   {isCompleted ? <CheckCircle className="w-5 h-5" /> : <FlaskConical className="w-5 h-5" />}
                 </div>
@@ -85,7 +88,7 @@ export default function LabsSelectionPage() {
                       <span className="text-[10px] text-primary-600 font-bold uppercase">Completed</span>
                     )}
                   </div>
-                  <h3 className="font-bold text-black mb-1">{lab.title}</h3>
+                  <h3 className="font-bold text-black mb-1 group-hover:text-primary-600 transition-colors">{lab.title}</h3>
                   <p className="text-xs text-gray-600 mb-3">{lab.description}</p>
 
                   <div className="flex items-center justify-between">
@@ -93,7 +96,7 @@ export default function LabsSelectionPage() {
                       <span className="text-[10px] bg-gray-100 px-2 py-0.5 border border-black font-bold">
                         {lab.steps.length} steps
                       </span>
-                      <span className="text-[10px] bg-yellow-100 px-2 py-0.5 border border-yellow-600 font-bold flex items-center gap-1">
+                      <span className="text-[10px] bg-primary-100 px-2 py-0.5 border border-primary-500 font-bold flex items-center gap-1 text-primary-600">
                         <Star className="w-3 h-3" /> {lab.xpReward} XP
                       </span>
                     </div>
@@ -106,7 +109,7 @@ export default function LabsSelectionPage() {
                   </div>
                 </div>
 
-                <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0 group-hover:text-primary-600 transition-colors" />
               </div>
             </Link>
           );
