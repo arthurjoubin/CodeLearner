@@ -94,11 +94,11 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2">
               <pre className="hidden lg:block text-[8px] leading-[1] font-mono text-black whitespace-pre">{ASCII_LOGO}</pre>
-              <pre className="block lg:hidden text-[6px] leading-[1] font-mono text-black whitespace-pre">{ASCII_LOGO_SMALL}</pre>
+              <pre className="block lg:hidden text-[5px] leading-[1] font-mono text-black whitespace-pre">{ASCII_LOGO_SMALL}</pre>
             </Link>
 
             {pathTitle && (
-              <div className="flex items-center gap-1 text-xs font-bold overflow-x-auto">
+              <div className="hidden md:flex items-center gap-1 text-xs font-bold overflow-x-auto">
                 <Link to={`/learning-path/${pathId}`} className="text-primary-600 hover:underline">{pathTitle}</Link>
                 {moduleTitle && (
                   <>
