@@ -85,9 +85,9 @@ export default function Layout({ children }: LayoutProps) {
       <header className="bg-white border-b-2 border-black sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 overflow-hidden">
+            <Link to="/" className="flex items-center gap-2">
               <pre className="hidden lg:block text-[8px] leading-[1] font-mono text-black bg-white">{ASCII_LOGO}</pre>
-              <pre className="block lg:hidden text-[3px] leading-[1] font-mono text-black bg-white">{ASCII_LOGO}</pre>
+              <span className="block lg:hidden text-lg font-bold tracking-widest">HACKUP</span>
             </Link>
 
             {pathTitle && (
