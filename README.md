@@ -1,4 +1,4 @@
-# ReactQuest - Learn React & TypeScript
+# Code Learner - Learn React & TypeScript
 
 An interactive learning platform to master React and TypeScript, featuring gamification elements inspired by Duolingo.
 

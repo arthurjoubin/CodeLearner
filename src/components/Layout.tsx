@@ -69,7 +69,7 @@ export default function Layout({ children }: LayoutProps) {
                 <Zap className="w-5 h-5 text-yellow-400" />
               </div>
               <span className="font-black text-lg text-black uppercase tracking-tight">
-                ReactQuest
+                Code Learner
               </span>
             </Link>
 
@@ -157,7 +157,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200 py-3">
         <div className="max-w-6xl mx-auto px-4 text-center text-xs text-gray-400">
-          ReactQuest - Learn React & TypeScript
+          Code Learner - Learn React & TypeScript
         </div>
       </footer>
     </div>
