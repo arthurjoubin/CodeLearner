@@ -62,6 +62,7 @@ export interface Exercise {
   id: string;
   lessonId: string;
   moduleId: string;
+  order?: number;
   title: string;
   description: string;
   instructions: string;
