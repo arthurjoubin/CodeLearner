@@ -169,8 +169,9 @@ export default function HomePage() {
         })}
       </div>
 
-      <div className="border-2 border-black p-3 mt-8">
-        <h2 className="font-bold text-sm uppercase text-gray-500 mb-3">Our Method</h2>
+      <h2 className="font-bold text-sm uppercase text-gray-500 mb-3">Our Method</h2>
+
+      <div className="border-2 border-black p-3">
         <div className="grid md:grid-cols-3 gap-4 text-xs">
           <div className="pr-3 md:border-r md:border-gray-300 md:last:border-r-0">
             <span className="font-bold text-black block mb-0.5">Learn by Doing</span>
