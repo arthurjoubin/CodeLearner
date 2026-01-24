@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { BookOpen, Gamepad2, Zap } from 'lucide-react';
 
 const learningPaths = [
   { id: 'react', title: 'React', description: 'Apprenez React et TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png' },
@@ -17,34 +16,25 @@ export default function HomePage() {
 
   return (
     <div className="page-enter">
-      <div className="bg-yellow-50 border-2 border-black p-4 mb-6">
-        <h2 className="font-black text-lg uppercase mb-3">Our Method</h2>
-        <div className="grid md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <BookOpen className="w-5 h-5 text-primary-600" />
-              <span className="font-bold text-primary-600">Learn by Doing</span>
-            </div>
+      <div className="border-2 border-black p-3 mb-6">
+        <h2 className="font-black text-sm uppercase mb-2">Our Method</h2>
+        <div className="grid md:grid-cols-3 gap-4 text-xs">
+          <div className="pr-3 md:border-r md:border-gray-300 md:last:border-r-0">
+            <span className="font-bold text-black block mb-0.5">Learn by Doing</span>
             <p className="text-gray-600">Theory meets practice. Every lesson combines concepts with hands-on exercises.</p>
           </div>
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Gamepad2 className="w-5 h-5 text-primary-600" />
-              <span className="font-bold text-primary-600">Gamification</span>
-            </div>
-            <p className="text-gray-600">Earn XP, level up, keep your streak. Learning becomes a game you want to win.</p>
+          <div className="pr-3 md:border-r md:border-gray-300 md:last:border-r-0 md:pl-2">
+            <span className="font-bold text-black block mb-0.5">Progress Through Practice</span>
+            <p className="text-gray-600">Build real skills step by step. Your experience grows as you complete lessons and exercises.</p>
           </div>
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Zap className="w-5 h-5 text-primary-600" />
-              <span className="font-bold text-primary-600">Stay Active</span>
-            </div>
+          <div className="md:pl-2">
+            <span className="font-bold text-black block mb-0.5">Stay Active</span>
             <p className="text-gray-600">No passive watching. You code, you test, you learn by taking action.</p>
           </div>
         </div>
       </div>
 
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-3xl font-black text-black uppercase mb-2">Choose your Learning Path</h1>
         <p className="text-gray-600">Start your coding journey with one of our curated paths</p>
       </div>
