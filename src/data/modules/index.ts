@@ -16,6 +16,8 @@ import type { Module, Lesson, Exercise } from '../../types';
 
 // Import all module JSON files
 // Type assertions needed since JSON imports are loosely typed
+
+// React course modules
 import jsxBasicsData from './jsx-basics.json';
 import componentsPropsData from './components-props.json';
 import stateHooksData from './state-hooks.json';
@@ -29,6 +31,22 @@ import customHooksData from './custom-hooks.json';
 import performanceData from './performance.json';
 import reactRouterData from './react-router.json';
 
+// Web Stack course modules
+import howWebWorksData from './how-web-works.json';
+import frontendTechData from './frontend-tech.json';
+import javascriptTypescriptData from './javascript-typescript.json';
+import frontendFrameworksData from './frontend-frameworks.json';
+import fullstackFrameworksData from './fullstack-frameworks.json';
+import databasesDataData from './databases-data.json';
+import dataFormatsLogsData from './data-formats-logs.json';
+import backendFrameworksData from './backend-frameworks.json';
+import architecturePatternsData from './architecture-patterns.json';
+import makingRightChoiceData from './making-right-choice.json';
+import devopsBasicsData from './devops-basics.json';
+import securityBasicsData from './security-basics.json';
+import webPerformanceData from './web-performance.json';
+import testingBasicsData from './testing-basics.json';
+
 // Type for the JSON file structure
 interface ModuleData {
   module: Omit<Module, 'lessons'>;
@@ -38,6 +56,7 @@ interface ModuleData {
 
 // All module data files with type assertions
 const moduleFiles: ModuleData[] = [
+  // React course
   jsxBasicsData as ModuleData,
   componentsPropsData as ModuleData,
   stateHooksData as ModuleData,
@@ -50,6 +69,22 @@ const moduleFiles: ModuleData[] = [
   customHooksData as ModuleData,
   performanceData as ModuleData,
   reactRouterData as ModuleData,
+
+  // Web Stack course
+  howWebWorksData as ModuleData,
+  frontendTechData as ModuleData,
+  javascriptTypescriptData as ModuleData,
+  frontendFrameworksData as ModuleData,
+  fullstackFrameworksData as ModuleData,
+  databasesDataData as ModuleData,
+  dataFormatsLogsData as ModuleData,
+  backendFrameworksData as ModuleData,
+  architecturePatternsData as ModuleData,
+  makingRightChoiceData as ModuleData,
+  devopsBasicsData as ModuleData,
+  securityBasicsData as ModuleData,
+  webPerformanceData as ModuleData,
+  testingBasicsData as ModuleData,
 ];
 
 // Type for module metadata in JSON (includes courseId)

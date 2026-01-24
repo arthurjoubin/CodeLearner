@@ -1,0 +1,252 @@
+{
+  "module": {
+    "id": "data-formats-logs",
+    "title": "Data Formats & Logs",
+    "description": "JSON, YAML, Markdown, logs, and environment variables",
+    "icon": "FileText",
+    "requiredXp": 1100,
+    "color": "from-orange-400 to-orange-600",
+    "courseId": "web-stack"
+  },
+  "lessons": [
+    {
+      "id": "json-structure",
+      "moduleId": "data-formats-logs",
+      "title": "JSON: The Web's Data Format",
+      "order": 1,
+      "xpReward": 25,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- JSON = JavaScript Object Notation (data exchange format)\n- Human-readable key-value pairs\n- Used everywhere: APIs, config files, databases\n- Strict syntax rules (double quotes, no trailing commas)\n\n---\n\n# JSON: Data You Can Read\n\n## What is JSON?\n\n**JSON** is the standard format for sending data between systems. It's:\n- ✅ Easy for humans to read\n- ✅ Easy for machines to parse\n- ✅ Language-independent (works with any language)\n- ✅ Lightweight\n\n## Basic Structure\n\n```json\n{\n  \"name\": \"Alice\",\n  \"age\": 25,\n  \"isActive\": true,\n  \"email\": null\n}\n```\n\n**Keys** must be strings (double quotes)\n**Values** can be:\n- String: `\"hello\"`\n- Number: `42`, `3.14`\n- Boolean: `true`, `false`\n- Null: `null`\n- Array: `[1, 2, 3]`\n- Object: `{\"key\": \"value\"}`\n\n## Arrays in JSON\n\n```json\n{\n  \"users\": [\n    {\"name\": \"Alice\", \"age\": 25},\n    {\"name\": \"Bob\", \"age\": 30}\n  ]\n}\n```\n\n## Nested Objects\n\n```json\n{\n  \"user\": {\n    \"name\": \"Alice\",\n    \"address\": {\n      \"city\": \"New York\",\n      \"zip\": \"10001\"\n    }\n  }\n}\n```\n\n## Common Mistakes\n\n**❌ Single quotes**\n```json\n{'name': 'Alice'}  // INVALID\n```\n\n**❌ Trailing commas**\n```json\n{\"name\": \"Alice\",}  // INVALID\n```\n\n**❌ Comments**\n```json\n{\"name\": \"Alice\"}  // No comments allowed!\n```\n\n**✅ Valid JSON**\n```json\n{\"name\": \"Alice\"}\n```\n\n## Working with JSON\n\n**Parse (string → object):**\n```javascript\nconst jsonString = '{\"name\": \"Alice\"}';\nconst obj = JSON.parse(jsonString);\nconsole.log(obj.name);  // \"Alice\"\n```\n\n**Stringify (object → string):**\n```javascript\nconst obj = {name: \"Alice\", age: 25};\nconst jsonString = JSON.stringify(obj);\nconsole.log(jsonString);  // '{\"name\":\"Alice\",\"age\":25}'\n```\n\n## Real-World Uses\n\n**API Response:**\n```json\n{\n  \"status\": \"success\",\n  \"data\": {\n    \"id\": 123,\n    \"name\": \"Product\",\n    \"price\": 29.99\n  }\n}\n```\n\n**Config File (package.json):**\n```json\n{\n  \"name\": \"my-app\",\n  \"version\": \"1.0.0\",\n  \"dependencies\": {\n    \"react\": \"^18.0.0\"\n  }\n}\n```\n\n## Why JSON?\n\n**vs XML:** Much simpler, less verbose\n**vs CSV:** Can handle nested data\n**vs YAML:** Stricter, less ambiguous\n\n## Tips\n\n📌 Use online validators (jsonlint.com) to check syntax\n📌 Pretty-print with `JSON.stringify(obj, null, 2)`\n📌 Most APIs return JSON by default\n📌 Store data, not code (no functions!)",
+      "codeExample": "// Working with JSON in JavaScript\n\n// Parsing JSON from API\nconst response = await fetch('/api/users/1');\nconst data = await response.json();\nconsole.log(data);\n// {\"id\": 1, \"name\": \"Alice\", \"email\": \"alice@example.com\"}\n\n// Creating JSON\nconst user = {\n  name: \"Bob\",\n  age: 30,\n  hobbies: [\"coding\", \"gaming\"],\n  address: {\n    city: \"Boston\",\n    state: \"MA\"\n  }\n};\n\nconst jsonString = JSON.stringify(user, null, 2);\nconsole.log(jsonString);\n/*\n{\n  \"name\": \"Bob\",\n  \"age\": 30,\n  \"hobbies\": [\n    \"coding\",\n    \"gaming\"\n  ],\n  \"address\": {\n    \"city\": \"Boston\",\n    \"state\": \"MA\"\n  }\n}\n*/\n\n// Error handling\ntry {\n  const obj = JSON.parse('{invalid json}');\n} catch (error) {\n  console.error('Invalid JSON:', error.message);\n}\n\n// Reading local JSON file (Node.js)\nconst data = require('./data.json');\n\n// Or with ES modules\nimport data from './data.json' assert { type: 'json' };"
+    },
+    {
+      "id": "yaml-config",
+      "moduleId": "data-formats-logs",
+      "title": "YAML for Configuration",
+      "order": 2,
+      "xpReward": 20,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- YAML = YAML Ain't Markup Language (human-friendly config)\n- Uses indentation (like Python)\n- Common for config files (Docker, CI/CD, Kubernetes)\n- More readable than JSON for configs\n\n---\n\n# YAML: Configuration Made Easy\n\n## What is YAML?\n\n**YAML** is a human-friendly data format used primarily for **configuration files**.\n\nIt's easier to read and write than JSON, but more strict about formatting.\n\n## JSON vs YAML\n\n**JSON:**\n```json\n{\n  \"name\": \"my-app\",\n  \"version\": \"1.0.0\",\n  \"dependencies\": {\n    \"react\": \"18.0.0\"\n  }\n}\n```\n\n**YAML:**\n```yaml\nname: my-app\nversion: 1.0.0\ndependencies:\n  react: 18.0.0\n```\n\nMuch cleaner!\n\n## Basic Syntax\n\n**Key-value pairs:**\n```yaml\nname: Alice\nage: 25\nemail: alice@example.com\n```\n\n**Nested objects (use indentation):**\n```yaml\nuser:\n  name: Alice\n  address:\n    city: New York\n    zip: 10001\n```\n\n**Arrays (two ways):**\n```yaml\n# Method 1: Dash syntax\nhobbies:\n  - coding\n  - gaming\n  - reading\n\n# Method 2: Inline\nhobbies: [coding, gaming, reading]\n```\n\n**Booleans and null:**\n```yaml\nisActive: true\nverified: false\nmiddleName: null\n```\n\n## Real-World Examples\n\n### Docker Compose\n```yaml\nversion: '3'\nservices:\n  web:\n    image: nginx\n    ports:\n      - \"80:80\"\n  db:\n    image: postgres\n    environment:\n      POSTGRES_PASSWORD: secret\n```\n\n### GitHub Actions (CI/CD)\n```yaml\nname: Test\non: [push, pull_request]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v2\n      - name: Run tests\n        run: npm test\n```\n\n### Kubernetes Config\n```yaml\napiVersion: v1\nkind: Pod\nmetadata:\n  name: my-app\nspec:\n  containers:\n    - name: app\n      image: my-app:latest\n      ports:\n        - containerPort: 3000\n```\n\n## YAML Rules\n\n**✅ Indentation matters (2 or 4 spaces)**\n```yaml\nuser:\n  name: Alice  # Correct\nuser:\nname: Alice    # WRONG\n```\n\n**✅ NO TABS (only spaces)**\n```yaml\nname: Alice  # Spaces: OK\nname: Alice  # Tab: ERROR\n```\n\n**✅ Comments allowed**\n```yaml\nname: Alice  # This is a comment\n# Full line comment\nage: 25\n```\n\n**✅ Quotes optional (but sometimes needed)**\n```yaml\nmessage: Hello world      # OK\nmessage: \"Hello world\"    # Also OK\nversion: \"1.0\"            # Needed (or becomes number 1.0)\n```\n\n## Multi-line Strings\n\n**Preserve newlines (`|`):**\n```yaml\ndescription: |\n  This is line 1\n  This is line 2\n  This is line 3\n```\n\n**Fold newlines (`>`):**\n```yaml\ndescription: >\n  This all becomes\n  one long line\n  of text\n```\n\n## When to Use YAML?\n\n**✅ Configuration files**\n- docker-compose.yml\n- .github/workflows/*.yml\n- kubernetes configs\n- Application settings\n\n**❌ Data exchange**\n- Use JSON for APIs\n- Use JSON for web data\n\n## Common Pitfalls\n\n**Problem: Norway becomes `false`**\n```yaml\ncountry: NO  # Parsed as boolean false!\ncountry: \"NO\"  # Correct\n```\n\n**Problem: Version numbers**\n```yaml\nversion: 1.0  # Becomes number 1.0\nversion: \"1.0\"  # Stays string \"1.0\"\n```\n\n## Tips\n\n📌 Use YAML validators online (yamllint.com)\n📌 Be consistent with indentation (2 spaces recommended)\n📌 Quote strings with special characters\n📌 Use `---` to separate multiple documents in one file",
+      "codeExample": "# Real-world YAML examples\n\n# package.yaml (alternative to package.json)\nname: my-app\nversion: 1.0.0\nscripts:\n  dev: npm run dev\n  build: npm run build\n  test: npm test\ndependencies:\n  react: ^18.0.0\n  axios: ^1.0.0\n\n---\n# .github/workflows/test.yml\nname: Run Tests\n\non:\n  push:\n    branches: [main, develop]\n  pull_request:\n    branches: [main]\n\njobs:\n  test:\n    runs-on: ubuntu-latest\n    \n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v3\n      \n      - name: Setup Node\n        uses: actions/setup-node@v3\n        with:\n          node-version: 18\n      \n      - name: Install dependencies\n        run: npm install\n      \n      - name: Run tests\n        run: npm test\n\n---\n# docker-compose.yml\nversion: '3.8'\n\nservices:\n  frontend:\n    build: ./frontend\n    ports:\n      - \"3000:3000\"\n    environment:\n      - API_URL=http://backend:5000\n    depends_on:\n      - backend\n  \n  backend:\n    build: ./backend\n    ports:\n      - \"5000:5000\"\n    environment:\n      - DATABASE_URL=postgresql://db:5432\n    depends_on:\n      - db\n  \n  db:\n    image: postgres:15\n    environment:\n      POSTGRES_USER: admin\n      POSTGRES_PASSWORD: secret\n      POSTGRES_DB: myapp\n    volumes:\n      - postgres_data:/var/lib/postgresql/data\n\nvolumes:\n  postgres_data:"
+    },
+    {
+      "id": "markdown-docs",
+      "moduleId": "data-formats-logs",
+      "title": "Markdown for Documentation",
+      "order": 3,
+      "xpReward": 20,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Markdown = Simple syntax for formatting text\n- Used for README files, docs, comments\n- GitHub, GitLab, Stack Overflow all support it\n- Easy to learn, renders to HTML\n\n---\n\n# Markdown: Write Docs Fast\n\n## What is Markdown?\n\n**Markdown** is a lightweight markup language for creating formatted text using plain text.\n\nYou write **plain text** with simple symbols, and it renders as **formatted HTML**.\n\n## Why Markdown?\n\n✅ **Easy to write** - no complex tags\n✅ **Readable as plain text** - even without rendering\n✅ **Universal** - works everywhere (GitHub, docs, blogs)\n✅ **Version control friendly** - just text files\n\n## Basic Syntax\n\n### Headings\n```markdown\n# Heading 1\n## Heading 2\n### Heading 3\n#### Heading 4\n```\n\n### Text Formatting\n```markdown\n**bold text**\n*italic text*\n***bold and italic***\n~~strikethrough~~\n`inline code`\n```\n\n### Links\n```markdown\n[Link text](https://example.com)\n[Link with title](https://example.com \"Hover text\")\n```\n\n### Images\n```markdown\n![Alt text](image.jpg)\n![Logo](logo.png \"Company Logo\")\n```\n\n### Lists\n\n**Unordered:**\n```markdown\n- Item 1\n- Item 2\n  - Nested item\n  - Another nested\n- Item 3\n```\n\n**Ordered:**\n```markdown\n1. First item\n2. Second item\n3. Third item\n```\n\n### Code Blocks\n\n**Inline code:**\n```markdown\nUse `console.log()` to debug\n```\n\n**Code blocks:**\n````markdown\n```javascript\nfunction hello() {\n  console.log(\"Hello!\");\n}\n```\n````\n\n### Blockquotes\n```markdown\n> This is a quote\n> It can span multiple lines\n```\n\n### Tables\n```markdown\n| Name  | Age | City     |\n|-------|-----|----------|\n| Alice | 25  | New York |\n| Bob   | 30  | Boston   |\n```\n\n### Horizontal Rule\n```markdown\n---\nor\n***\n```\n\n## GitHub-Flavored Markdown\n\n### Task Lists\n```markdown\n- [x] Completed task\n- [ ] Incomplete task\n- [ ] Another task\n```\n\n### Mentions\n```markdown\n@username - mention a user\n#123 - link to issue/PR\n```\n\n### Emoji\n```markdown\n:rocket: :fire: :tada:\n```\n\n### Code with Syntax Highlighting\n````markdown\n```python\ndef hello():\n    print(\"Hello!\")\n```\n\n```bash\nnpm install\nnpm start\n```\n````\n\n## Real-World: README.md\n\n```markdown\n# My Project\n\nShort description of what this project does.\n\n## Features\n\n- ✅ Feature 1\n- ✅ Feature 2\n- 🚧 Coming soon: Feature 3\n\n## Installation\n\n```bash\nnpm install my-project\n```\n\n## Usage\n\n```javascript\nimport { myFunction } from 'my-project';\n\nmyFunction();\n```\n\n## Contributing\n\nSee [CONTRIBUTING.md](CONTRIBUTING.md)\n\n## License\n\nMIT\n```\n\n## Tips for Good Documentation\n\n📌 **Start with a clear title and description**\n📌 **Use headings to organize content**\n📌 **Include code examples**\n📌 **Add a table of contents for long docs**\n📌 **Use screenshots/GIFs to show UI**\n\n## Common Use Cases\n\n**README files:**\n- Project overview\n- Installation instructions\n- Usage examples\n\n**Documentation:**\n- API docs\n- Tutorials\n- Guides\n\n**Blogging:**\n- Dev.to\n- Medium\n- Personal blogs\n\n**Comments:**\n- GitHub issues/PRs\n- Stack Overflow\n- Discord/Slack",
+      "codeExample": "<!-- Example: Professional README.md -->\n\n# Project Name\n\n[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]\n[![Version](https://img.shields.io/badge/version-1.0.0-blue)]\n\n> Short tagline describing your project\n\n## Table of Contents\n\n- [Features](#features)\n- [Installation](#installation)\n- [Quick Start](#quick-start)\n- [API Reference](#api-reference)\n- [Contributing](#contributing)\n- [License](#license)\n\n## Features\n\n- 🚀 Fast and lightweight\n- 🎨 Beautiful UI components\n- 📦 Zero dependencies\n- 🔧 Easy to configure\n\n## Installation\n\n```bash\nnpm install my-package\n# or\nyarn add my-package\n```\n\n## Quick Start\n\n```javascript\nimport { MyComponent } from 'my-package';\n\nfunction App() {\n  return <MyComponent />;\n}\n```\n\n## API Reference\n\n### `myFunction(options)`\n\nDoes something useful.\n\n**Parameters:**\n- `options` (Object): Configuration object\n  - `name` (String): User name\n  - `age` (Number): User age\n\n**Returns:** `Promise<User>`\n\n**Example:**\n```javascript\nconst user = await myFunction({\n  name: 'Alice',\n  age: 25\n});\n```\n\n## Contributing\n\nContributions are welcome!\n\n1. Fork the repo\n2. Create your feature branch (`git checkout -b feature/amazing`)\n3. Commit your changes (`git commit -m 'Add amazing feature'`)\n4. Push to the branch (`git push origin feature/amazing`)\n5. Open a Pull Request\n\n## License\n\nMIT © [Your Name](https://github.com/yourusername)"
+    },
+    {
+      "id": "understanding-logs",
+      "moduleId": "data-formats-logs",
+      "title": "Reading Application Logs",
+      "order": 4,
+      "xpReward": 25,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Logs = Record of events that happen in your app\n- Log levels: DEBUG, INFO, WARN, ERROR, FATAL\n- Essential for debugging production issues\n- Learn to read timestamps, stack traces, and error messages\n\n---\n\n# Logs: Your App's Black Box\n\n## What Are Logs?\n\n**Logs** are messages your application writes to record what's happening.\n\nThink of them as your app's **diary** - every important event is recorded.\n\n## Why Logs Matter\n\n**Production debugging:**\n```\nUser: \"The app crashed!\"\nYou: *checks logs* \"Ah, database connection timeout at 3:42 PM\"\n```\n\n**Monitoring:**\n- Track user behavior\n- Detect performance issues\n- Catch errors before users report them\n\n**Auditing:**\n- Who did what, when?\n- Security investigations\n- Compliance requirements\n\n## Log Levels\n\nLogs have different **severity levels**:\n\n### DEBUG\n```\n[DEBUG] User clicked button 'Submit'\n[DEBUG] Validating form data: {name: 'Alice', email: 'alice@example.com'}\n```\n**Use:** Development only, very detailed\n\n### INFO\n```\n[INFO] User 'alice@example.com' logged in successfully\n[INFO] Processing payment for order #12345\n```\n**Use:** Normal operations, important events\n\n### WARN\n```\n[WARN] API response took 3.5s (threshold: 2s)\n[WARN] Retrying failed request (attempt 2/3)\n```\n**Use:** Something's wrong but not critical\n\n### ERROR\n```\n[ERROR] Failed to connect to database: Connection timeout\n[ERROR] Payment processing failed: Insufficient funds\n```\n**Use:** Something failed, needs attention\n\n### FATAL\n```\n[FATAL] Out of memory - shutting down\n[FATAL] Critical security breach detected\n```\n**Use:** Catastrophic failure, app can't continue\n\n## Reading Log Entries\n\n**Typical log format:**\n```\n2024-01-24 14:32:15 [ERROR] src/api/users.js:42 - Failed to fetch user\n  Error: User not found\n    at getUser (src/api/users.js:42)\n    at handleRequest (src/server.js:18)\n```\n\n**Breaking it down:**\n- `2024-01-24 14:32:15` - **Timestamp** (when it happened)\n- `[ERROR]` - **Level** (how severe)\n- `src/api/users.js:42` - **Location** (which file, line)\n- `Failed to fetch user` - **Message** (what happened)\n- Stack trace below - **Context** (how we got here)\n\n## Stack Traces\n\n**What is it?**\nA list of function calls that led to an error.\n\n```\nError: Cannot read property 'name' of undefined\n    at getUserName (utils.js:10)      ← Error occurred here\n    at renderProfile (Profile.js:25)  ← Called from here\n    at App (App.js:15)                ← Which was called from here\n```\n\n**Read from top to bottom:**\n1. Error happened in `utils.js` line 10\n2. Which was called by `Profile.js` line 25\n3. Which was called by `App.js` line 15\n\n## Structured Logs (JSON)\n\nModern apps often use **JSON logs**:\n\n```json\n{\n  \"timestamp\": \"2024-01-24T14:32:15Z\",\n  \"level\": \"ERROR\",\n  \"message\": \"Database query failed\",\n  \"userId\": \"user_123\",\n  \"query\": \"SELECT * FROM users WHERE id = $1\",\n  \"error\": \"connection timeout\",\n  \"duration\": 5000\n}\n```\n\n**Benefits:**\n- Easy to search/filter\n- Tools can parse it\n- Add custom metadata\n\n## Log Aggregation Tools\n\n**In production, use tools to manage logs:**\n\n- **CloudWatch** (AWS)\n- **Datadog**\n- **Splunk**\n- **ELK Stack** (Elasticsearch, Logstash, Kibana)\n- **Sentry** (errors only)\n\n## Best Practices\n\n**✅ Log meaningful information**\n```javascript\n// Bad\nlogger.info('Processing');\n\n// Good\nlogger.info('Processing order #12345 for user alice@example.com');\n```\n\n**✅ Include context**\n```javascript\nlogger.error('Payment failed', {\n  orderId: 12345,\n  userId: 'user_123',\n  amount: 99.99,\n  error: err.message\n});\n```\n\n**✅ Don't log sensitive data**\n```javascript\n// Bad\nlogger.info('User logged in', { password: 'secret123' });\n\n// Good\nlogger.info('User logged in', { userId: 'user_123' });\n```\n\n**✅ Use appropriate levels**\n- Don't use ERROR for warnings\n- Don't use DEBUG in production\n\n## Debugging with Logs\n\n**Problem:** \"App crashes randomly\"\n\n**Solution:**\n1. Check ERROR and FATAL logs around crash time\n2. Look for patterns (same endpoint? same user?)\n3. Read stack traces to find root cause\n4. Add more logging if needed\n\n## Tips\n\n📌 Always log errors with stack traces\n📌 Include timestamps in UTC\n📌 Log both start and end of important operations\n📌 Use correlation IDs to track requests across services\n📌 Rotate logs (don't fill up disk!)",
+      "codeExample": "// Logging in Node.js with Winston\n\nconst winston = require('winston');\n\n// Configure logger\nconst logger = winston.createLogger({\n  level: process.env.LOG_LEVEL || 'info',\n  format: winston.format.combine(\n    winston.format.timestamp(),\n    winston.format.json()\n  ),\n  transports: [\n    new winston.transports.File({ filename: 'error.log', level: 'error' }),\n    new winston.transports.File({ filename: 'combined.log' })\n  ]\n});\n\n// Add console logging in development\nif (process.env.NODE_ENV !== 'production') {\n  logger.add(new winston.transports.Console({\n    format: winston.format.simple()\n  }));\n}\n\n// Usage\nlogger.info('Server started', { port: 3000 });\n\nlogger.warn('API response slow', {\n  endpoint: '/api/users',\n  duration: 3500,\n  threshold: 2000\n});\n\nlogger.error('Database query failed', {\n  query: 'SELECT * FROM users',\n  error: err.message,\n  stack: err.stack\n});\n\n// In Express middleware\napp.use((req, res, next) => {\n  const start = Date.now();\n  \n  res.on('finish', () => {\n    logger.info('HTTP Request', {\n      method: req.method,\n      url: req.url,\n      status: res.statusCode,\n      duration: Date.now() - start,\n      userId: req.user?.id\n    });\n  });\n  \n  next();\n});\n\n// Error handling\napp.use((err, req, res, next) => {\n  logger.error('Unhandled error', {\n    error: err.message,\n    stack: err.stack,\n    url: req.url,\n    method: req.method,\n    userId: req.user?.id\n  });\n  \n  res.status(500).json({ error: 'Internal server error' });\n});"
+    },
+    {
+      "id": "environment-variables",
+      "moduleId": "data-formats-logs",
+      "title": "Environment Variables",
+      "order": 5,
+      "xpReward": 25,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Environment variables = Config values set outside your code\n- Used for secrets, API keys, and environment-specific settings\n- Never commit secrets to git!\n- Use .env files locally, platform settings in production\n\n---\n\n# Environment Variables: Config Outside Code\n\n## What Are Environment Variables?\n\n**Environment variables** (env vars) are configuration values stored **outside your code**.\n\n**Why?**\n- ✅ Keep secrets out of source code\n- ✅ Different settings per environment (dev/staging/prod)\n- ✅ Easy to change without code changes\n- ✅ Security best practice\n\n## The Problem\n\n**Bad:**\n```javascript\nconst db = connectDatabase({\n  host: 'prod-db.example.com',\n  password: 'super-secret-123'\n});\n```\n\n**Issues:**\n- 🚨 Password in source code!\n- 🚨 Committed to Git (public if leaked)\n- 🚨 Same settings for dev and production\n- 🚨 Need code change to update password\n\n**Good:**\n```javascript\nconst db = connectDatabase({\n  host: process.env.DB_HOST,\n  password: process.env.DB_PASSWORD\n});\n```\n\n## How They Work\n\n**Set in shell:**\n```bash\nexport API_KEY=abc123\nexport NODE_ENV=production\n```\n\n**Access in code:**\n```javascript\nconsole.log(process.env.API_KEY);  // 'abc123'\nconsole.log(process.env.NODE_ENV); // 'production'\n```\n\n## .env Files (Development)\n\n**Create `.env` file:**\n```bash\nDB_HOST=localhost\nDB_PORT=5432\nDB_PASSWORD=dev-password\nAPI_KEY=test-key-123\nNODE_ENV=development\n```\n\n**Load with dotenv:**\n```javascript\nrequire('dotenv').config();\n\nconsole.log(process.env.DB_HOST); // 'localhost'\n```\n\n**IMPORTANT:** Add to `.gitignore`!\n```\n# .gitignore\n.env\n.env.local\n```\n\n## Common Environment Variables\n\n### NODE_ENV\n```javascript\nif (process.env.NODE_ENV === 'production') {\n  // Production settings\n} else {\n  // Development settings\n}\n```\n\n### PORT\n```javascript\nconst port = process.env.PORT || 3000;\napp.listen(port);\n```\n\n### Database URLs\n```javascript\nconst dbUrl = process.env.DATABASE_URL;\n// postgresql://user:pass@host:5432/dbname\n```\n\n### API Keys\n```javascript\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n```\n\n## Different Environments\n\n**Development (.env.development):**\n```bash\nDB_HOST=localhost\nDB_NAME=myapp_dev\nAPI_URL=http://localhost:3000\nDEBUG=true\n```\n\n**Production (set in platform):**\n```bash\nDB_HOST=prod-db.aws.com\nDB_NAME=myapp_prod\nAPI_URL=https://api.myapp.com\nDEBUG=false\n```\n\n## Platform-Specific Setup\n\n### Vercel\n```bash\n# Via CLI\nvercel env add API_KEY\n\n# Or in dashboard: Settings → Environment Variables\n```\n\n### Heroku\n```bash\nheroku config:set API_KEY=abc123\nheroku config:set DB_PASSWORD=secret\n```\n\n### Docker\n```yaml\n# docker-compose.yml\nservices:\n  app:\n    environment:\n      - NODE_ENV=production\n      - DB_HOST=db\n      - API_KEY=${API_KEY}\n```\n\n### AWS Lambda\n```javascript\n// Set in Lambda console or via SAM/CloudFormation\nEnvironment:\n  Variables:\n    API_KEY: abc123\n    DB_HOST: prod-db.amazonaws.com\n```\n\n## Best Practices\n\n**✅ Use .env for local development**\n**✅ Provide .env.example (without secrets)**\n```bash\n# .env.example\nDB_HOST=\nDB_PASSWORD=\nAPI_KEY=\nNODE_ENV=development\n```\n\n**✅ Never commit secrets**\n```bash\n# Bad: committed to git\nAPI_KEY=sk_live_abc123xyz\n\n# Good: use env var\nAPI_KEY=${API_KEY}\n```\n\n**✅ Validate required vars**\n```javascript\nconst required = ['DB_HOST', 'DB_PASSWORD', 'API_KEY'];\n\nfor (const key of required) {\n  if (!process.env[key]) {\n    throw new Error(`Missing required env var: ${key}`);\n  }\n}\n```\n\n**✅ Use descriptive names**\n```bash\n# Bad\nKEY=abc\n\n# Good\nSTRIPE_SECRET_KEY=abc\nSENDGRID_API_KEY=xyz\n```\n\n## Security Tips\n\n🔐 **Never log secrets**\n```javascript\n// Bad\nconsole.log('API Key:', process.env.API_KEY);\n\n// Good\nconsole.log('API Key: [REDACTED]');\n```\n\n🔐 **Rotate keys regularly**\n\n🔐 **Use different keys per environment**\n\n🔐 **Limit access to production secrets**\n\n## Debugging\n\n```javascript\n// Print all env vars (careful in production!)\nconsole.log(process.env);\n\n// Check if var exists\nif (!process.env.API_KEY) {\n  console.error('API_KEY not set!');\n}\n\n// Use defaults\nconst apiUrl = process.env.API_URL || 'http://localhost:3000';\n```",
+      "codeExample": "// Environment variables in practice\n\n// 1. Install dotenv\n// npm install dotenv\n\n// 2. Create .env file\n/*\nDB_HOST=localhost\nDB_PORT=5432\nDB_NAME=myapp\nDB_USER=admin\nDB_PASSWORD=secret123\n\nSTRIPE_SECRET_KEY=sk_test_...\nSTRIPE_PUBLISHABLE_KEY=pk_test_...\n\nJWT_SECRET=my-super-secret-key\nJWT_EXPIRES_IN=7d\n\nNODE_ENV=development\nPORT=3000\n*/\n\n// 3. Load environment variables\nrequire('dotenv').config();\n\n// 4. Use in your app\nconst express = require('express');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\nconst app = express();\n\n// Database config\nconst dbConfig = {\n  host: process.env.DB_HOST,\n  port: process.env.DB_PORT,\n  database: process.env.DB_NAME,\n  user: process.env.DB_USER,\n  password: process.env.DB_PASSWORD\n};\n\n// Environment-specific behavior\nif (process.env.NODE_ENV === 'production') {\n  app.use(someProductionMiddleware());\n} else {\n  app.use(developmentLogger());\n}\n\n// Validation helper\nfunction requireEnvVars(...vars) {\n  const missing = vars.filter(v => !process.env[v]);\n  \n  if (missing.length > 0) {\n    throw new Error(`Missing required env vars: ${missing.join(', ')}`);\n  }\n}\n\nrequireEnvVars('DB_HOST', 'DB_PASSWORD', 'JWT_SECRET');\n\n// Start server\nconst port = process.env.PORT || 3000;\napp.listen(port, () => {\n  console.log(`Server running on port ${port}`);\n  console.log(`Environment: ${process.env.NODE_ENV}`);\n});\n\n// .env.example (commit this)\n/*\nDB_HOST=localhost\nDB_PORT=5432\nDB_NAME=\nDB_USER=\nDB_PASSWORD=\n\nSTRIPE_SECRET_KEY=\nSTRIPE_PUBLISHABLE_KEY=\n\nJWT_SECRET=\nJWT_EXPIRES_IN=7d\n\nNODE_ENV=development\nPORT=3000\n*/"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "data-ex-1",
+      "lessonId": "json-structure",
+      "moduleId": "data-formats-logs",
+      "title": "JSON Validation",
+      "difficulty": "easy",
+      "xpReward": 30,
+      "description": "Identify valid and invalid JSON.",
+      "instructions": "Determine which JSON snippets are valid.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Is this valid JSON?\n{'name': 'Alice'}",
+          "options": ["Yes", "No"],
+          "correctAnswer": 1,
+          "explanation": "JSON requires double quotes for keys. Single quotes are invalid."
+        },
+        {
+          "question": "Is this valid JSON?\n{\"name\": \"Alice\",}",
+          "options": ["Yes", "No"],
+          "correctAnswer": 1,
+          "explanation": "Trailing commas are not allowed in JSON."
+        },
+        {
+          "question": "Is this valid JSON?\n{\"age\": 25, \"name\": \"Alice\"}",
+          "options": ["Yes", "No"],
+          "correctAnswer": 0,
+          "explanation": "This is valid JSON. Key order doesn't matter, proper quotes, no trailing comma."
+        },
+        {
+          "question": "Which data type is NOT supported in JSON?",
+          "options": ["String", "Number", "Function", "Boolean"],
+          "correctAnswer": 2,
+          "explanation": "JSON supports strings, numbers, booleans, null, arrays, and objects. Functions are not valid."
+        }
+      ]
+    },
+    {
+      "id": "data-ex-2",
+      "lessonId": "yaml-config",
+      "moduleId": "data-formats-logs",
+      "title": "YAML vs JSON",
+      "difficulty": "easy",
+      "xpReward": 30,
+      "description": "Understanding YAML syntax and use cases.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What's the main advantage of YAML over JSON for config files?",
+          "options": ["Faster parsing", "More readable/less verbose", "Better browser support", "Smaller file size"],
+          "correctAnswer": 1,
+          "explanation": "YAML is more human-readable with less syntax noise, making it ideal for config files."
+        },
+        {
+          "question": "Which is correct YAML syntax?",
+          "options": ["name: Alice", "name = Alice", "\"name\": \"Alice\"", "name := Alice"],
+          "correctAnswer": 0,
+          "explanation": "YAML uses 'key: value' syntax. Quotes are optional for simple strings."
+        },
+        {
+          "question": "What will happen if you use tabs instead of spaces in YAML?",
+          "options": ["Nothing, it works fine", "Parser error", "Automatic conversion to spaces", "Warning message"],
+          "correctAnswer": 1,
+          "explanation": "YAML does not allow tabs for indentation, only spaces. It will cause a parse error."
+        },
+        {
+          "question": "Where is YAML commonly used?",
+          "options": ["API responses", "Docker/Kubernetes configs", "Browser storage", "Database queries"],
+          "correctAnswer": 1,
+          "explanation": "YAML is widely used for configuration files like Docker Compose, Kubernetes, and CI/CD pipelines."
+        }
+      ]
+    },
+    {
+      "id": "data-ex-3",
+      "lessonId": "understanding-logs",
+      "moduleId": "data-formats-logs",
+      "title": "Reading Log Levels",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Match scenarios to appropriate log levels.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "A user successfully logged in. Which log level?",
+          "options": ["DEBUG", "INFO", "WARN", "ERROR"],
+          "correctAnswer": 1,
+          "explanation": "INFO is for normal, important events like successful logins."
+        },
+        {
+          "question": "Database connection failed. Which log level?",
+          "options": ["DEBUG", "INFO", "WARN", "ERROR"],
+          "correctAnswer": 3,
+          "explanation": "ERROR is appropriate for failures that prevent normal operation."
+        },
+        {
+          "question": "API response took 3 seconds (threshold is 2s). Which log level?",
+          "options": ["DEBUG", "INFO", "WARN", "ERROR"],
+          "correctAnswer": 2,
+          "explanation": "WARN is for issues that aren't failures but indicate potential problems."
+        },
+        {
+          "question": "What information should you avoid logging?",
+          "options": ["User IDs", "Timestamps", "Passwords/API keys", "Error messages"],
+          "correctAnswer": 2,
+          "explanation": "Never log sensitive data like passwords, API keys, or credit card numbers."
+        },
+        {
+          "question": "What is a stack trace?",
+          "options": ["A list of database queries", "A sequence of function calls leading to an error", "A log file format", "A debugging tool"],
+          "correctAnswer": 1,
+          "explanation": "A stack trace shows the sequence of function calls that led to an error, helping you trace the bug's origin."
+        }
+      ]
+    },
+    {
+      "id": "data-ex-4",
+      "lessonId": "environment-variables",
+      "moduleId": "data-formats-logs",
+      "title": "Environment Variable Best Practices",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Understand when and how to use environment variables.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Should you commit your .env file to Git?",
+          "options": ["Yes, always", "No, never", "Only in private repos", "Only without secrets"],
+          "correctAnswer": 1,
+          "explanation": "Never commit .env files to Git. They contain secrets and should be in .gitignore."
+        },
+        {
+          "question": "What should you commit instead of .env?",
+          "options": ["Nothing", ".env.example (without real values)", "Encrypted .env", ".env.backup"],
+          "correctAnswer": 1,
+          "explanation": ".env.example shows what variables are needed without exposing real secrets."
+        },
+        {
+          "question": "Which belongs in an environment variable?",
+          "options": ["Function names", "Database password", "Component props", "CSS styles"],
+          "correctAnswer": 1,
+          "explanation": "Secrets, API keys, and environment-specific config belong in env vars."
+        },
+        {
+          "question": "How do you access an env variable in Node.js?",
+          "options": ["env.API_KEY", "process.env.API_KEY", "ENV.API_KEY", "getEnv('API_KEY')"],
+          "correctAnswer": 1,
+          "explanation": "In Node.js, use process.env.VARIABLE_NAME to access environment variables."
+        },
+        {
+          "question": "Best practice for required environment variables?",
+          "options": ["Use defaults for everything", "Fail fast if missing", "Log warning and continue", "Ask user for input"],
+          "correctAnswer": 1,
+          "explanation": "Validate required env vars at startup and fail fast with a clear error message."
+        }
+      ]
+    },
+    {
+      "id": "data-ex-5",
+      "lessonId": "markdown-docs",
+      "moduleId": "data-formats-logs",
+      "title": "Markdown Mastery",
+      "difficulty": "easy",
+      "xpReward": 25,
+      "description": "Test your Markdown syntax knowledge.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "How do you create a link in Markdown?",
+          "options": ["<a href='url'>text</a>", "[text](url)", "(text)[url]", "link[text, url]"],
+          "correctAnswer": 1,
+          "explanation": "Markdown links use [text](url) syntax."
+        },
+        {
+          "question": "How do you make text bold?",
+          "options": ["*text*", "**text**", "<b>text</b>", "__text"],
+          "correctAnswer": 1,
+          "explanation": "**text** or __text__ makes text bold in Markdown."
+        },
+        {
+          "question": "What's the most common use of Markdown?",
+          "options": ["Styling websites", "Writing documentation", "Database queries", "API responses"],
+          "correctAnswer": 1,
+          "explanation": "Markdown is primarily used for documentation, README files, and content writing."
+        }
+      ]
+    }
+  ]
+}
