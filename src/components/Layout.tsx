@@ -94,7 +94,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2">
               <pre className="hidden lg:block text-[8px] leading-[1] font-mono text-black whitespace-pre">{ASCII_LOGO}</pre>
-              <pre className="block lg:hidden text-[5px] leading-[1] font-mono text-black whitespace-pre">{ASCII_LOGO_SMALL}</pre>
+              <pre className="block lg:hidden text-[3px] leading-[1] font-mono text-black whitespace-pre">{ASCII_LOGO_SMALL}</pre>
             </Link>
 
             {pathTitle && (
