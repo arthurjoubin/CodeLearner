@@ -12,13 +12,6 @@ const ASCII_LOGO = `██╗  ██╗ █████╗  ██████�
 ██║  ██║██║  ██║╚██████╗██║  ██╗╚██████╔╝██╗     
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝`;
 
-const ASCII_LOGO_SMALL = `██╗  ██╗ █████╗  ██████╗██╗  ██╗██╗   ██╗██████╗ 
-██║  ██║██╔══██╗██╔════╝██║ ██╔╝██║   ██║██╔══██╗
-█████████║███████║██║     █████╔╝ ██║   ██║██████╔╝
-██╔══██║██╔══██║██║     ██╔═██╗ ██║   ██║██╔═══╝ 
-██║  ██║██║  ██║╚██████╗██║  ██╗╚██████╔╝██╗     
-╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝`;
-
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -93,8 +86,8 @@ export default function Layout({ children }: LayoutProps) {
         <div className="max-w-6xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 overflow-hidden">
-              <pre className="hidden lg:block text-[8px] leading-[1] font-mono text-black whitespace-pre bg-white">{ASCII_LOGO}</pre>
-              <pre className="block lg:hidden text-[3px] leading-[1] font-mono text-black whitespace-pre bg-white min-w-max">{ASCII_LOGO_SMALL}</pre>
+              <pre className="hidden lg:block text-[8px] leading-[1] font-mono text-black bg-white">{ASCII_LOGO}</pre>
+              <pre className="block lg:hidden text-[3px] leading-[1] font-mono text-black bg-white">{ASCII_LOGO}</pre>
             </Link>
 
             {pathTitle && (
