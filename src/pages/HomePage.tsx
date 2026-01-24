@@ -79,10 +79,6 @@ export default function HomePage() {
 
   return (
     <div className="page-enter">
-      <div className="mb-4">
-        <h2 className="font-bold text-sm uppercase text-gray-500 mb-3">Learning Paths</h2>
-      </div>
-
       {resumes.length > 0 && (
         <div className="mb-8">
           <h2 className="font-bold text-sm uppercase text-gray-500 mb-3">Continue Learning</h2>
@@ -110,6 +106,10 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      <div className="mb-4">
+        <h2 className="font-bold text-sm uppercase text-gray-500">Learning Paths</h2>
+      </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide p-1">
         {learningPaths.map((path) => {
@@ -154,7 +154,7 @@ export default function HomePage() {
       </div>
 
       <div className="border-2 border-black p-3 mt-8">
-        <h2 className="font-black text-sm uppercase mb-2">Our Method</h2>
+        <h2 className="font-bold text-sm uppercase text-gray-500 mb-2">Our Method</h2>
         <div className="grid md:grid-cols-3 gap-4 text-xs">
           <div className="pr-3 md:border-r md:border-gray-300 md:last:border-r-0">
             <span className="font-bold text-black block mb-0.5">Learn by Doing</span>
