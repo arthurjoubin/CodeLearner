@@ -15,8 +15,6 @@ import {
   Heart,
   Loader,
   RotateCcw,
-  Eye,
-  EyeOff,
 } from 'lucide-react';
 import LivePreview from '../components/LivePreview';
 
@@ -36,7 +34,6 @@ export default function ExercisePage() {
   const [hint, setHint] = useState('');
   const [isLoadingHint, setIsLoadingHint] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
-  const [showSolution, setShowSolution] = useState(false);
   const [completed, setCompleted] = useState(false);
 
   const alreadyCompleted = exerciseId ? isExerciseCompleted(exerciseId) : false;
@@ -48,7 +45,6 @@ export default function ExercisePage() {
       setShowHint(false);
       setHint('');
       setAttemptCount(0);
-      setShowSolution(false);
       setCompleted(false);
     }
   }, [exercise?.id]);
@@ -203,10 +199,6 @@ export default function ExercisePage() {
                 <button onClick={() => { setCode(exercise.starterCode); setFeedback(null); }} className="p-1 hover:bg-gray-700" title="Reset">
                   <RotateCcw className="w-3 h-3" />
                 </button>
-                <button onClick={() => setShowSolution(!showSolution)} className="p-1 hover:bg-gray-700 flex items-center gap-1">
-                  {showSolution ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                  <span className="text-[10px]">{showSolution ? 'Hide' : 'Solution'}</span>
-                </button>
               </div>
             </div>
             <div className="flex-1 min-h-0">
@@ -214,8 +206,8 @@ export default function ExercisePage() {
                 height="100%"
                 defaultLanguage="typescript"
                 theme="vs-dark"
-                value={showSolution ? exercise.solution : code}
-                onChange={(value) => !showSolution && setCode(value || '')}
+                value={code}
+                onChange={(value) => setCode(value || '')}
                 options={{
                   minimap: { enabled: false },
                   fontSize: 13,
@@ -223,7 +215,6 @@ export default function ExercisePage() {
                   scrollBeyondLastLine: false,
                   automaticLayout: true,
                   tabSize: 2,
-                  readOnly: showSolution,
                   padding: { top: 8 },
                 }}
               />
@@ -280,7 +271,7 @@ export default function ExercisePage() {
               <span className="text-xs font-bold uppercase">Preview</span>
             </div>
             <div className="flex-1 bg-white relative min-h-[150px]">
-              <LivePreview code={showSolution ? exercise.solution : code} />
+              <LivePreview code={code} />
             </div>
           </div>
 
