@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { lessons } from '../data/modules';
+import { lessons, modules, getModulesForCourse } from '../data/modules';
 import { Play } from 'lucide-react';
 
 const learningPaths = [
@@ -10,6 +10,13 @@ const learningPaths = [
   { id: 'fastapi', title: 'FastAPI', description: 'Build modern APIs with FastAPI', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png' },
   { id: 'git', title: 'Git', description: 'Master version control with Git', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png' },
 ];
+
+interface CourseResume {
+  courseId: string;
+  courseTitle: string;
+  nextLesson: { id: string; title: string; moduleId: string };
+  progress: number;
+}
 
 export default function HomePage() {
   const { user, updateStreak, loading } = useUser();
@@ -29,47 +36,81 @@ export default function HomePage() {
   if (!user) return null;
 
   const completedLessons = user.completedLessons || [];
-
-  const findNextLesson = () => {
-    const sortedLessons = [...lessons].sort((a, b) => a.order - b.order);
+  const courseIds = [...new Set(modules.map(m => m.courseId))];
+  
+  const getCourseProgress = (courseId: string): CourseResume | null => {
+    const courseModules = getModulesForCourse(courseId);
+    const courseLessons = courseModules.flatMap(m => 
+      lessons.filter(l => l.moduleId === m.id).map(l => ({ ...l, moduleId: m.id }))
+    );
+    
+    if (courseLessons.length === 0) return null;
+    
+    const sortedLessons = courseLessons.sort((a, b) => {
+      const moduleA = courseModules.find(m => m.id === a.moduleId);
+      const moduleB = courseModules.find(m => m.id === b.moduleId);
+      const orderA = courseModules.indexOf(moduleA!);
+      const orderB = courseModules.indexOf(moduleB!);
+      if (orderA !== orderB) return orderA - orderB;
+      return a.order - b.order;
+    });
+    
     for (const lesson of sortedLessons) {
       if (!completedLessons.includes(lesson.id)) {
-        return lesson;
+        const completed = sortedLessons.filter(l => completedLessons.includes(l.id)).length;
+        return {
+          courseId,
+          courseTitle: learningPaths.find(p => p.id === courseId)?.title || courseId,
+          nextLesson: { id: lesson.id, title: lesson.title, moduleId: lesson.moduleId },
+          progress: Math.round((completed / sortedLessons.length) * 100)
+        };
       }
     }
-    return sortedLessons[0];
+    
+    return {
+      courseId,
+      courseTitle: learningPaths.find(p => p.id === courseId)?.title || courseId,
+      nextLesson: { id: sortedLessons[0].id, title: sortedLessons[0].title, moduleId: sortedLessons[0].moduleId },
+      progress: 100
+    };
   };
 
-  const nextLesson = findNextLesson();
-  const progressPercent = lessons.length > 0 
-    ? Math.round((completedLessons.length / lessons.length) * 100) 
-    : 0;
+  const resumes = courseIds.map(id => getCourseProgress(id)).filter(Boolean) as CourseResume[];
 
   return (
     <div className="page-enter">
-      {nextLesson && (
-        <div className="border-2 border-black p-4 mb-6 bg-black text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Continue Learning</span>
-              <h2 className="font-black text-xl uppercase mt-1">Resume where you left off</h2>
-              <p className="text-xs text-gray-400 mt-1">{progressPercent}% completed</p>
-            </div>
-            <Link 
-              to={`/lesson/${nextLesson.id}`}
-              className="flex items-center gap-2 bg-white text-black px-4 py-2 font-bold uppercase text-sm hover:bg-gray-200 transition-colors"
-            >
-              <Play className="w-4 h-4" />
-              Continue
-            </Link>
-          </div>
-        </div>
-      )}
-
       <div className="mb-6">
         <h1 className="text-3xl font-black text-black uppercase mb-2">Choose your Learning Path</h1>
         <p className="text-gray-600">Start your coding journey with one of our curated paths</p>
       </div>
+
+      {resumes.length > 0 && (
+        <div className="mb-8">
+          <h2 className="font-bold text-sm uppercase text-gray-500 mb-3">Continue Learning</h2>
+          <div className="space-y-2">
+            {resumes.map(resume => (
+              <Link
+                key={resume.courseId}
+                to={`/lesson/${resume.nextLesson.id}`}
+                className="block border-2 border-black p-3 bg-white hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-black text-white flex items-center justify-center font-bold text-sm">
+                      {resume.progress}%
+                    </div>
+                    <div>
+                      <span className="font-bold text-sm uppercase">{resume.courseTitle}</span>
+                      <p className="text-xs text-gray-600">{resume.nextLesson.title}</p>
+                    </div>
+                  </div>
+                  <Play className="w-5 h-5" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide p-1">
         {learningPaths.map((path) => {
