@@ -1,22 +1,34 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { modules, getLessonsForModule, getExercisesForLesson } from '../data/modules';
-import { Lock, CheckCircle, Code, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, Layers, Settings, Gauge, Navigation, ArrowLeft } from 'lucide-react';
+import { getModulesForCourse, getLessonsForModule, getExercisesForLesson } from '../data/modules';
+import { Lock, CheckCircle, Code, Code2, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, FileText, Layers, Settings, Gauge, Navigation, Network, Palette, Server, Target, TestTube, GitBranch, ArrowLeft } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
 const iconMap: Record<string, React.ElementType> = {
-  Code, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, Layers, Settings, Gauge, Navigation,
+  Code, Code2, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, FileText, Layers, Settings, Gauge, Navigation, Network, Palette, Server, Target, TestTube, GitBranch,
 };
 
 export default function LearningPathPage() {
   const { pathId } = useParams<{ pathId: string }>();
-  const { user, updateStreak, isLessonCompleted, isExerciseCompleted } = useUser();
+  const { user, updateStreak, isLessonCompleted, isExerciseCompleted, loading } = useUser();
   updateStreak();
+
+  if (loading) {
+    return (
+      <div className="min-h-[calc(100vh-120px)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) return null;
 
   const learningPathTitles: Record<string, string> = {
     react: 'React',
+    'web-stack': 'Web Stack Essentials',
     python: 'Python',
     javascript: 'JavaScript',
     fastapi: 'FastAPI',
@@ -24,6 +36,7 @@ export default function LearningPathPage() {
   };
 
   const pathTitle = learningPathTitles[pathId || ''] || 'Learning Path';
+  const courseModules = getModulesForCourse(pathId || '');
 
   const isLessonEffectivelyDone = (lessonId: string) => {
     if (isLessonCompleted(lessonId)) return true;
@@ -48,8 +61,8 @@ export default function LearningPathPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 p-1">
-        {modules.map((module, index) => {
-          const prevModule = index > 0 ? modules[index - 1] : null;
+        {courseModules.map((module, index) => {
+          const prevModule = index > 0 ? courseModules[index - 1] : null;
           const isUnlocked = index === 0 || (prevModule && isModuleComplete(prevModule.id));
 
           const lessons = getLessonsForModule(module.id);

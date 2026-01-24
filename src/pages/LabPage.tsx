@@ -22,7 +22,7 @@ import LivePreview from '../components/LivePreview';
 export default function LabPage() {
     const { labId } = useParams<{ labId: string }>();
     const navigate = useNavigate();
-    const { user, isGuest, addXp, updateLabProgress } = useUser();
+    const { user, isGuest, addXp, updateLabProgress, loading } = useUser();
     const lab = labId ? getLab(labId) : undefined;
 
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -35,7 +35,6 @@ export default function LabPage() {
 
     useEffect(() => {
         if (!lab || !user) return;
-        // Guests can only access level 1 labs
         if (isGuest && lab.requiredLevel > 1) {
             navigate('/');
             return;
@@ -58,7 +57,27 @@ export default function LabPage() {
         }
     }, [currentStepIndex, lab]);
 
-    if (!lab || !user) return null;
+    if (loading) {
+        return (
+            <div className="min-h-[calc(100vh-120px)] flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-gray-600">Loading...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!lab) {
+        return (
+            <div className="text-center py-12">
+                <p className="text-black font-bold">Lab not found</p>
+                <Link to="/labs" className="text-black underline font-bold uppercase">Go back to labs</Link>
+            </div>
+        );
+    }
+
+    if (!user) return null;
 
     const currentStep = lab.steps[currentStepIndex];
     const isLastStep = currentStepIndex === lab.steps.length - 1;

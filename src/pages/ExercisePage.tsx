@@ -3,7 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getExercise, getModule, getLesson, getExercisesForLesson } from '../data/modules';
 import { api } from '../services/api';
+import { isQuizExercise, isCodeExercise } from '../types';
 import Editor from '@monaco-editor/react';
+import QuizPage from './QuizPage';
 import {
   ArrowLeft,
   Send,
@@ -23,14 +25,14 @@ import LivePreview from '../components/LivePreview';
 
 export default function ExercisePage() {
   const { exerciseId } = useParams<{ exerciseId: string }>();
-  const { user, isGuest, addXp, completeExercise, isExerciseCompleted } = useUser();
+  const { user, isGuest, addXp, completeExercise, isExerciseCompleted, loading } = useUser();
 
   const exercise = exerciseId ? getExercise(exerciseId) : undefined;
   const lesson = exercise ? getLesson(exercise.lessonId) : undefined;
   const module = exercise ? getModule(exercise.moduleId) : undefined;
   const lessonExercises = lesson ? getExercisesForLesson(lesson.id) : [];
 
-  const [code, setCode] = useState(exercise?.starterCode || '');
+  const [code, setCode] = useState((exercise && isCodeExercise(exercise)) ? exercise.starterCode : '');
   const [isValidating, setIsValidating] = useState(false);
   const [feedback, setFeedback] = useState<{ isCorrect: boolean; message: string } | null>(null);
   const [showHint, setShowHint] = useState(false);
@@ -44,7 +46,7 @@ export default function ExercisePage() {
   const alreadyCompleted = exerciseId ? isExerciseCompleted(exerciseId) : false;
 
   useEffect(() => {
-    if (exercise) {
+    if (exercise && isCodeExercise(exercise)) {
       setCode(exercise.starterCode);
       setFeedback(null);
       setShowHint(false);
@@ -55,12 +57,44 @@ export default function ExercisePage() {
     }
   }, [exercise?.id]);
 
-  if (!exercise || !lesson || !module || !user) {
+  if (loading) {
+    return (
+      <div className="min-h-[calc(100vh-120px)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!exercise || !lesson || !module) {
     return (
       <div className="text-center py-12">
         <p className="text-black font-bold">Exercise not found</p>
         <Link to="/" className="text-black underline font-bold uppercase">Go back home</Link>
       </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-black font-bold">Please sign in to access this exercise</p>
+        <Link to="/" className="text-black underline font-bold uppercase">Go back home</Link>
+      </div>
+    );
+  }
+
+  // Route to QuizPage for quiz exercises
+  if (isQuizExercise(exercise)) {
+    return (
+      <QuizPage
+        exercise={exercise}
+        lesson={lesson}
+        lessonExercises={lessonExercises}
+        isExerciseCompleted={isExerciseCompleted}
+      />
     );
   }
 

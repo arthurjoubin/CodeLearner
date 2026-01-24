@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
 const learningPaths = [
+  { id: 'web-stack', title: 'VIBECODER BASIS', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png' },
   { id: 'react', title: 'React', description: 'Learn React and TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png' },
   { id: 'python', title: 'Python', description: 'Learn Python basics and programming', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png' },
   { id: 'fastapi', title: 'FastAPI', description: 'Build modern APIs with FastAPI', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png' },
@@ -9,8 +10,19 @@ const learningPaths = [
 ];
 
 export default function HomePage() {
-  const { user, updateStreak } = useUser();
+  const { user, updateStreak, loading } = useUser();
   updateStreak();
+
+  if (loading) {
+    return (
+      <div className="min-h-[calc(100vh-120px)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) return null;
 
@@ -41,7 +53,7 @@ export default function HomePage() {
 
       <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide p-1">
         {learningPaths.map((path) => {
-          const isAvailable = path.id === 'react';
+          const isAvailable = path.id === 'react' || path.id === 'web-stack';
 
           return (
             <Link

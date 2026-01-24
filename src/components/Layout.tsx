@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getLevelFromXp } from '../types';
@@ -7,14 +7,14 @@ import { modules, lessons } from '../data/modules';
 
 const ASCII_LOGO = `██╗  ██╗ █████╗  ██████╗██╗  ██╗██╗   ██╗██████╗ 
 ██║  ██║██╔══██╗██╔════╝██║ ██╔╝██║   ██║██╔══██╗
-████████║███████║██║     █████╔╝ ██║   ██║██████╔╝
+█████████║███████║██║     █████╔╝ ██║   ██║██████╔╝
 ██╔══██║██╔══██║██║     ██╔═██╗ ██║   ██║██╔═══╝ 
 ██║  ██║██║  ██║╚██████╗██║  ██╗╚██████╔╝██╗     
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝`;
 
 const ASCII_LOGO_SMALL = `██╗  ██╗ █████╗  ██████╗██╗  ██╗
 ██║  ██║██╔══██╗██╔════╝██║ ██╔╝
-████████║███████║██║     █████╔╝ 
+█████████║███████║██║     █████╔╝ 
 ██╔══██║██╔══██║██║     ██╔═██╗ 
 ██║  ██║██║  ██║╚██████╗██║  ██╗
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝`;
@@ -24,19 +24,15 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const { user, isGuest, login, logout } = useUser();
+  const { user, isGuest, login, logout, loading } = useUser();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [levelPopupOpen, setLevelPopupOpen] = useState(false);
   const [streakPopupOpen, setStreakPopupOpen] = useState(false);
 
-  if (!user) return null;
-
-  const levelInfo = getLevelFromXp(user.xp);
-
   const { pathname } = location;
 
-  const getBreadcrumbInfo = () => {
+  const breadcrumbInfo = useMemo(() => {
     const pathMatch = pathname.match(/\/learning-path\/([^/?]+)/);
     if (pathMatch) {
       const pathId = pathMatch[1];
@@ -72,12 +68,27 @@ export default function Layout({ children }: LayoutProps) {
     }
 
     return { pathTitle: null, pathId: null, moduleTitle: null, lessonTitle: null };
-  };
+  }, [pathname]);
 
-  const { pathTitle, pathId, moduleTitle, lessonTitle } = getBreadcrumbInfo();
+  const { pathTitle, pathId, moduleTitle, lessonTitle } = breadcrumbInfo;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) return null;
+
+  const levelInfo = getLevelFromXp(user.xp);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col relative">
       <header className="bg-white border-b-2 border-black sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
@@ -254,6 +265,7 @@ export default function Layout({ children }: LayoutProps) {
           HACKUP - Learn to Code by Doing
         </div>
       </footer>
+
     </div>
   );
 }

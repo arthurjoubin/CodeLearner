@@ -18,7 +18,7 @@ import DifficultyBadge from '../components/DifficultyBadge';
 
 export default function LessonPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
-  const { user, addXp, completeLesson, isLessonCompleted, isExerciseCompleted } = useUser();
+  const { user, addXp, completeLesson, isLessonCompleted, isExerciseCompleted, loading } = useUser();
 
   const lesson = lessonId ? getLesson(lessonId) : undefined;
   const module = lesson ? getModule(lesson.moduleId) : undefined;
@@ -29,13 +29,33 @@ export default function LessonPage() {
   const [showExercisesDropdown, setShowExercisesDropdown] = useState(false);
   const [showLessonsDropdown, setShowLessonsDropdown] = useState(false);
 
-  if (!lesson || !module || !user) {
+  if (loading) {
+    return (
+      <div className="min-h-[calc(100vh-120px)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!lesson || !module) {
     return (
       <div className="text-center py-12">
         <p className="text-black font-bold">Lesson not found</p>
         <Link to="/" className="text-black underline font-bold uppercase">
           Go back home
         </Link>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-black font-bold">Please sign in to access this lesson</p>
+        <Link to="/" className="text-black underline font-bold uppercase">Go back home</Link>
       </div>
     );
   }

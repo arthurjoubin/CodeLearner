@@ -139,12 +139,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const isLessonCompleted = useCallback((lessonId: string): boolean => {
-    return user?.completedLessons.includes(lessonId) || false;
-  }, [user]);
+    return user?.completedLessons?.includes(lessonId) || false;
+  }, [user?.completedLessons]);
 
   const isExerciseCompleted = useCallback((exerciseId: string): boolean => {
-    return user?.completedExercises.includes(exerciseId) || false;
-  }, [user]);
+    return user?.completedExercises?.includes(exerciseId) || false;
+  }, [user?.completedExercises]);
 
   const unlockLab = useCallback((labId: string) => {
     setUser(prev => {

@@ -59,8 +59,10 @@ export interface Lesson {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
 }
 
-export interface Exercise {
+// Exercice de code (React)
+export interface CodeExercise {
   id: string;
+  type?: 'code'; // optionnel pour rétro-compatibilité
   lessonId: string;
   moduleId: string;
   order?: number;
@@ -73,6 +75,40 @@ export interface Exercise {
   validationPrompt: string;
   xpReward: number;
   difficulty: 'easy' | 'medium' | 'hard' | 'advanced';
+}
+
+// Question de quiz
+export interface QuizQuestion {
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+}
+
+// Exercice quiz (Web Stack)
+export interface QuizExercise {
+  id: string;
+  type: 'quiz';
+  lessonId: string;
+  moduleId: string;
+  title: string;
+  description?: string;
+  instructions?: string;
+  questions: QuizQuestion[];
+  xpReward: number;
+  difficulty: 'easy' | 'medium' | 'hard' | 'advanced';
+}
+
+// Type union
+export type Exercise = CodeExercise | QuizExercise;
+
+// Type guards
+export function isQuizExercise(exercise: Exercise): exercise is QuizExercise {
+  return exercise.type === 'quiz';
+}
+
+export function isCodeExercise(exercise: Exercise): exercise is CodeExercise {
+  return exercise.type !== 'quiz';
 }
 
 export interface ChatMessage {

@@ -6,7 +6,7 @@ import DifficultyBadge from '../components/DifficultyBadge';
 
 export default function ModulePage() {
   const { moduleId } = useParams<{ moduleId: string }>();
-  const { user, isLessonCompleted, isExerciseCompleted } = useUser();
+  const { user, isLessonCompleted, isExerciseCompleted, loading } = useUser();
 
   const module = moduleId ? getModule(moduleId) : undefined;
   const lessons = moduleId ? getLessonsForModule(moduleId) : [];
@@ -17,7 +17,18 @@ export default function ModulePage() {
     return exercises.length > 0 && exercises.every(e => isExerciseCompleted(e.id));
   };
 
-  if (!module || !user) {
+  if (loading) {
+    return (
+      <div className="min-h-[calc(100vh-120px)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!module) {
     return (
       <div className="text-center py-12">
         <p className="text-black font-bold">Module not found</p>
@@ -26,9 +37,18 @@ export default function ModulePage() {
     );
   }
 
+  if (!user) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-black font-bold">Please sign in to access this module</p>
+        <Link to="/" className="text-black underline font-bold uppercase">Go back home</Link>
+      </div>
+    );
+  }
+
   return (
     <div className="page-enter">
-      <Link to="/learning-path/react" className="inline-flex items-center gap-2 text-black font-bold uppercase hover:underline mb-4">
+      <Link to={`/learning-path/${module.courseId}`} className="inline-flex items-center gap-2 text-black font-bold uppercase hover:underline mb-4">
         <ArrowLeft className="w-4 h-4" /> Back
       </Link>
 
