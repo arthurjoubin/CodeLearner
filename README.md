@@ -23,14 +23,28 @@ An interactive learning platform to master React and TypeScript, featuring gamif
 ```bash
 # Install dependencies
 npm install
+```
 
-# Start both frontend and backend
+### Quick Start
+
+**Linux/Mac:**
+```bash
+./start.sh
+```
+
+**Windows:**
+```cmd
+start.bat
+```
+
+**Or using npm:**
+```bash
 npm start
 ```
 
 This will start:
 - Frontend at http://localhost:5173
-- Backend API at http://localhost:3001
+- Backend API at http://localhost:3000
 
 ### Alternative: Run separately
 

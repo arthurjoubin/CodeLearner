@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getModule, getLessonsForModule, getExercisesForLesson } from '../data/modules';
-import { ArrowLeft, BookOpen, Code2, CheckCircle, Play, Star, Lock } from 'lucide-react';
+import { ArrowLeft, BookOpen, CheckCircle, Play, Star, Lock } from 'lucide-react';
 import DifficultyBadge from '../components/DifficultyBadge';
 
 export default function ModulePage() {
@@ -24,7 +24,7 @@ export default function ModulePage() {
     <div className="page-enter">
       {/* Back */}
       <Link to="/" className="inline-flex items-center gap-2 text-black font-bold uppercase hover:underline mb-4">
-        <ArrowLeft className="w-4 h-4" /> Retour
+        <ArrowLeft className="w-4 h-4" /> Back
       </Link>
 
       {/* Header */}
@@ -58,7 +58,7 @@ export default function ModulePage() {
                     <h3 className="font-bold text-gray-400 uppercase">{lesson.title}</h3>
                     <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
                       <Lock className="w-3 h-3" />
-                      <span>Complétez la leçon précédente</span>
+                      <span>Complete previous lesson</span>
                     </div>
                   </div>
                 </div>
@@ -67,54 +67,72 @@ export default function ModulePage() {
           }
 
           // Unlocked lesson
+          const progressPercent = exercises.length > 0
+            ? Math.round((exercisesDone / exercises.length) * 100)
+            : lessonDone ? 100 : 0;
+
           return (
             <div
               key={lesson.id}
-              className={`border-2 border-black p-4 ${isFullComplete ? 'bg-primary-50 border-primary-500' : 'bg-white'}`}
+              className={`border-2 border-black p-3 ${isFullComplete ? 'bg-primary-50 border-primary-500' : 'bg-white'}`}
             >
-              <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 flex items-center justify-center font-bold border-2 border-black ${
-                  lessonDone ? 'bg-primary-500 text-white' : 'bg-white text-black'
-                }`}>
-                  {lessonDone ? <CheckCircle className="w-5 h-5" /> : index + 1}
+              <div className="flex items-start gap-3">
+                <div className={`w-8 h-8 flex items-center justify-center font-bold border-2 border-black flex-shrink-0 text-sm ${lessonDone ? 'bg-primary-500 text-white' : 'bg-white text-black'
+                  }`}>
+                  {lessonDone ? <CheckCircle className="w-4 h-4" /> : index + 1}
                 </div>
 
-                <div className="flex-1">
-                  <h3 className="font-bold text-black uppercase">{lesson.title}</h3>
-                  <div className="flex items-center flex-wrap gap-2 mt-1 mb-2">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-black uppercase text-sm mb-1.5">{lesson.title}</h3>
+                  <div className="flex items-center flex-wrap gap-1.5 mb-2">
                     <DifficultyBadge difficulty={lesson.difficulty} size="sm" />
                     <span className="xp-badge text-xs py-0.5">
                       <Star className="w-3 h-3" />{lesson.xpReward}
                     </span>
-                    {exercises.length > 0 && (
-                      <span className="text-xs bg-gray-100 px-2 py-0.5 border border-black font-bold">
-                        <Code2 className="w-3 h-3 inline mr-1" />{exercisesDone}/{exercises.length}
-                      </span>
-                    )}
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
-                    <Link to={`/lesson/${lesson.id}`} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1.5">
-                      <BookOpen className="w-3.5 h-3.5" />
-                      {lessonDone ? 'Revoir' : 'Commencer'}
-                    </Link>
-                    {exercises.map((exercise, i) => (
-                      <Link
-                        key={exercise.id}
-                        to={`/exercise/${exercise.id}`}
-                        className={`text-xs py-1.5 px-2.5 border-2 border-black font-bold inline-flex items-center gap-1 ${
-                          isExerciseCompleted(exercise.id) ? 'bg-primary-400' : 'bg-white hover:bg-gray-100'
-                        }`}
-                      >
-                        {isExerciseCompleted(exercise.id) ? <CheckCircle className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-                        Ex.{i + 1}
-                      </Link>
-                    ))}
+                  {/* Progress bar */}
+                  <div className="mb-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wide">Progress</span>
+                      <span className="text-[9px] font-bold text-gray-600">{progressPercent}%</span>
+                    </div>
+                    <div className="w-full h-2.5 bg-gray-200 border border-black overflow-hidden">
+                      <div
+                        className="h-full bg-primary-500 transition-all duration-300"
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                    </div>
                   </div>
+
+                  {/* Course button */}
+                  <div className="mb-2">
+                    <Link to={`/lesson/${lesson.id}`} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1.5 w-full justify-center">
+                      <BookOpen className="w-3.5 h-3.5" />
+                      {lessonDone ? 'Review Course' : 'Start Course'}
+                    </Link>
+                  </div>
+
+                  {/* Exercises */}
+                  {exercises.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {exercises.map((exercise, i) => (
+                        <Link
+                          key={exercise.id}
+                          to={`/exercise/${exercise.id}`}
+                          className={`text-xs py-1 px-2 border-2 border-black font-bold inline-flex items-center gap-1 transition-all ${isExerciseCompleted(exercise.id) ? 'bg-primary-400 text-white' : 'bg-white hover:bg-gray-100 hover:shadow-brutal-sm'
+                            }`}
+                        >
+                          {isExerciseCompleted(exercise.id) ? <CheckCircle className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+                          Exo {i + 1}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {isFullComplete && (
-                  <CheckCircle className="w-6 h-6 text-primary-500 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-primary-500 flex-shrink-0" />
                 )}
               </div>
             </div>
@@ -124,7 +142,7 @@ export default function ModulePage() {
 
       {lessons.length === 0 && (
         <div className="text-center py-12 text-gray-500">
-          <p className="font-bold">Contenu à venir...</p>
+          <p className="font-bold">Coming soon...</p>
         </div>
       )}
     </div>

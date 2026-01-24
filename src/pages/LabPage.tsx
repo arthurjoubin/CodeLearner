@@ -64,7 +64,7 @@ export default function LabPage() {
         if (isValidating) return;
 
         if (isGuest) {
-            setFeedback({ isCorrect: false, message: 'Connecte-toi avec GitHub pour valider ton code et sauvegarder ta progression!' });
+            setFeedback({ isCorrect: false, message: 'Sign in with GitHub to validate your code and save your progress!' });
             return;
         }
 
@@ -96,6 +96,12 @@ export default function LabPage() {
 
     const askAiHelp = async () => {
         if (isAskingAi) return;
+
+        if (isGuest) {
+            setAiMessage('Sign in with GitHub to get AI-powered hints!');
+            return;
+        }
+
         setIsAskingAi(true);
         try {
             const response = await api.getHint(code, { instructions: currentStep.instructions, hints: [currentStep.aiHint] }, 0);

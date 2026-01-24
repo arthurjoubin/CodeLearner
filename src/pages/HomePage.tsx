@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { modules, getLessonsForModule, getExercisesForModule } from '../data/modules';
+import { modules, getLessonsForModule } from '../data/modules';
 import { Lock, CheckCircle, Code, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, Layers, Settings, Gauge, Navigation, Star, Flame } from 'lucide-react';
 
 const iconMap: Record<string, React.ElementType> = {
@@ -39,12 +39,9 @@ export default function HomePage() {
           const isUnlocked = index === 0 || (prevModule && isModuleComplete(prevModule.id));
 
           const lessons = getLessonsForModule(module.id);
-          const exercises = getExercisesForModule(module.id);
           const completedLessons = lessons.filter(l => user.completedLessons.includes(l.id)).length;
-          const completedExercises = exercises.filter(e => user.completedExercises.includes(e.id)).length;
-          const totalItems = lessons.length + exercises.length;
-          const completedItems = completedLessons + completedExercises;
-          const progress = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+          const totalLessons = lessons.length;
+          const progress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
           const isComplete = progress === 100;
 
           const Icon = iconMap[module.icon] || Code;
@@ -68,7 +65,7 @@ export default function HomePage() {
                 <p className="text-xs text-gray-400 mb-3">{module.description}</p>
                 <div className="flex items-center gap-2 text-xs text-gray-400">
                   <Lock className="w-3 h-3" />
-                  <span>Complétez le module précédent</span>
+                  <span>Complete the previous module</span>
                 </div>
               </div>
             );
@@ -79,14 +76,12 @@ export default function HomePage() {
               key={module.id}
               to={`/module/${module.id}`}
               style={{ animationDelay: `${index * 50}ms` }}
-              className={`border-2 border-black p-4 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal ${
-                isComplete ? 'bg-primary-50 border-primary-500' : 'bg-white'
-              }`}
+              className={`border-2 border-black p-4 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal ${isComplete ? 'bg-primary-50 border-primary-500' : 'bg-white'
+                }`}
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 flex items-center justify-center font-bold border-2 border-black ${
-                  isComplete ? 'bg-primary-500 text-white' : 'bg-black text-white'
-                }`}>
+                <div className={`w-10 h-10 flex items-center justify-center font-bold border-2 border-black ${isComplete ? 'bg-primary-500 text-white' : 'bg-black text-white'
+                  }`}>
                   {isComplete ? <CheckCircle className="w-5 h-5" /> : index + 1}
                 </div>
                 <div className="w-10 h-10 bg-yellow-400 flex items-center justify-center border-2 border-black">
@@ -98,10 +93,10 @@ export default function HomePage() {
               <p className="text-xs text-gray-600 mb-3">{module.description}</p>
 
               {/* Progress */}
-              <div className="h-2 bg-gray-200 border border-black mb-1">
-                <div className="h-full bg-primary-500 transition-all" style={{ width: `${progress}%` }} />
+              <div className="h-2.5 bg-gray-200 border border-black mb-1 overflow-hidden">
+                <div className="h-full bg-primary-500 transition-all duration-300" style={{ width: `${progress}%` }} />
               </div>
-              <p className="text-[10px] text-gray-500 font-bold">{completedItems}/{totalItems} complétés</p>
+              <p className="text-[10px] text-gray-500 font-bold">{completedLessons}/{totalLessons} lessons • {progress}%</p>
             </Link>
           );
         })}
@@ -112,8 +107,8 @@ export default function HomePage() {
         {[
           { label: 'XP', value: user.xp, icon: Star },
           { label: 'Streak', value: user.streak, icon: Flame },
-          { label: 'Leçons', value: user.completedLessons.length, icon: Zap },
-          { label: 'Exercices', value: user.completedExercises.length, icon: Code },
+          { label: 'Lessons', value: user.completedLessons.length, icon: Zap },
+          { label: 'Exercises', value: user.completedExercises.length, icon: Code },
         ].map((stat) => (
           <div key={stat.label} className="border-2 border-black p-3 text-center bg-white">
             <div className="text-2xl font-black">{stat.value}</div>

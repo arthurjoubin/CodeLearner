@@ -83,7 +83,7 @@ export default function LessonPage() {
               className="btn-primary text-xs py-1.5 px-3 inline-flex items-center gap-1.5 ml-2"
             >
               <Code2 className="w-3.5 h-3.5" />
-              Exercices ({completedExercisesCount}/{exercises.length})
+              Exercises ({completedExercisesCount}/{exercises.length})
             </Link>
           )}
         </div>
@@ -96,7 +96,7 @@ export default function LessonPage() {
         {lesson.codeExample && (
           <div className="mt-5 pt-4 border-t border-gray-200">
             <p className="font-bold text-xs uppercase mb-2 flex items-center gap-1.5">
-              <Code2 className="w-3.5 h-3.5" /> Exemple
+              <Code2 className="w-3.5 h-3.5" /> Example
             </p>
             <pre className="bg-gray-900 text-gray-100 p-3 overflow-x-auto text-xs border-2 border-black">
               <code>{lesson.codeExample}</code>
@@ -109,21 +109,21 @@ export default function LessonPage() {
       <div className="flex items-center justify-between">
         {prevLesson ? (
           <Link to={`/lesson/${prevLesson.id}`} className="btn-secondary text-xs py-1.5 inline-flex items-center gap-1.5">
-            <ArrowLeft className="w-3.5 h-3.5" /> Précédent
+            <ArrowLeft className="w-3.5 h-3.5" /> Previous
           </Link>
         ) : <div />}
 
         {!completed && !alreadyCompleted ? (
           <button onClick={handleComplete} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1.5">
-            <CheckCircle className="w-3.5 h-3.5" /> Terminer +{lesson.xpReward} XP
+            <CheckCircle className="w-3.5 h-3.5" /> Complete +{lesson.xpReward} XP
           </button>
         ) : nextLesson ? (
           <Link to={`/lesson/${nextLesson.id}`} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1.5">
-            Suivant <ArrowRight className="w-3.5 h-3.5" />
+            Next <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         ) : (
           <Link to={`/module/${module.id}`} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1.5">
-            Retour au module <ArrowRight className="w-3.5 h-3.5" />
+            Back to Module <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         )}
       </div>
@@ -133,24 +133,24 @@ export default function LessonPage() {
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
           <div className="bg-white border-3 border-black p-6 text-center max-w-xs animate-pop">
             <CheckCircle className="w-12 h-12 text-primary-500 mx-auto mb-3" />
-            <h2 className="text-xl font-black mb-2 uppercase">Terminé!</h2>
+            <h2 className="text-xl font-black mb-2 uppercase">Completed!</h2>
             <p className="text-sm mb-4 font-bold text-yellow-600">+{lesson.xpReward} XP</p>
             <div className="flex flex-col gap-2">
               {exercises.length > 0 ? (
                 <Link to={`/exercise/${exercises[0].id}`} className="btn-primary text-sm">
-                  Faire les exercices
+                  Do the exercises
                 </Link>
               ) : nextLesson ? (
                 <Link to={`/lesson/${nextLesson.id}`} className="btn-primary text-sm">
-                  Leçon suivante
+                  Next Lesson
                 </Link>
               ) : (
                 <Link to={`/module/${module.id}`} className="btn-primary text-sm">
-                  Retour au module
+                  Back to Module
                 </Link>
               )}
               <button onClick={() => setCompleted(false)} className="btn-secondary text-xs">
-                Revoir
+                Review
               </button>
             </div>
           </div>

@@ -22,7 +22,7 @@ import LivePreview from '../components/LivePreview';
 
 export default function ExercisePage() {
   const { exerciseId } = useParams<{ exerciseId: string }>();
-  const { user, addXp, completeExercise, isExerciseCompleted } = useUser();
+  const { user, isGuest, addXp, completeExercise, isExerciseCompleted } = useUser();
 
   const exercise = exerciseId ? getExercise(exerciseId) : undefined;
   const lesson = exercise ? getLesson(exercise.lessonId) : undefined;
@@ -37,7 +37,6 @@ export default function ExercisePage() {
   const [isLoadingHint, setIsLoadingHint] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
-  const [showPreview, setShowPreview] = useState(true);
   const [completed, setCompleted] = useState(false);
 
   const alreadyCompleted = exerciseId ? isExerciseCompleted(exerciseId) : false;
@@ -84,6 +83,12 @@ export default function ExercisePage() {
 
   const handleValidate = async () => {
     if (isValidating) return;
+
+    if (isGuest) {
+      setFeedback({ isCorrect: false, message: 'Sign in with GitHub to validate your code and save your progress!' });
+      return;
+    }
+
     setIsValidating(true);
     setFeedback(null);
     setAttemptCount(prev => prev + 1);
@@ -99,12 +104,12 @@ export default function ExercisePage() {
           addXp(exercise.xpReward);
           completeExercise(exercise.id);
         }
-        setFeedback({ isCorrect: true, message: result.feedback || 'Bien joué!' });
+        setFeedback({ isCorrect: true, message: result.feedback || 'Well done!' });
         setCompleted(true);
       } else {
         setFeedback({
           isCorrect: false,
-          message: result.feedback || 'Pas tout à fait. Vérifiez votre code.',
+          message: result.feedback || 'Not quite. Check your code.',
         });
       }
     } catch {
@@ -116,12 +121,12 @@ export default function ExercisePage() {
           addXp(exercise.xpReward);
           completeExercise(exercise.id);
         }
-        setFeedback({ isCorrect: true, message: 'Bien joué!' });
+        setFeedback({ isCorrect: true, message: 'Well done!' });
         setCompleted(true);
       } else {
         setFeedback({
           isCorrect: false,
-          message: 'Pas tout à fait. Comparez avec la solution ou demandez un indice.'
+          message: 'Not quite. Check the solution or ask for a hint.'
         });
       }
     } finally {
@@ -131,13 +136,20 @@ export default function ExercisePage() {
 
   const handleGetHint = async () => {
     if (isLoadingHint) return;
+
+    if (isGuest) {
+      setHint('Sign in with GitHub to get AI-powered hints!');
+      setShowHint(true);
+      return;
+    }
+
     setIsLoadingHint(true);
     try {
       const hintText = await api.getHint(code, { instructions: exercise.instructions, hints: exercise.hints }, attemptCount);
       setHint(hintText);
       setShowHint(true);
     } catch {
-      setHint(exercise.hints[Math.min(attemptCount, exercise.hints.length - 1)] || 'Continuez!');
+      setHint(exercise.hints[Math.min(attemptCount, exercise.hints.length - 1)] || 'Keep going!');
       setShowHint(true);
     } finally {
       setIsLoadingHint(false);
@@ -153,7 +165,7 @@ export default function ExercisePage() {
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <p className="text-[10px] text-gray-500 font-bold uppercase">Exercice {currentIndex + 1}/{lessonExercises.length}</p>
+            <p className="text-[10px] text-gray-500 font-bold uppercase">Exercise {currentIndex + 1}/{lessonExercises.length}</p>
             <h1 className="text-base font-black text-black">{exercise.title}</h1>
           </div>
         </div>
@@ -193,7 +205,7 @@ export default function ExercisePage() {
                 </button>
                 <button onClick={() => setShowSolution(!showSolution)} className="p-1 hover:bg-gray-700 flex items-center gap-1">
                   {showSolution ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                  <span className="text-[10px]">{showSolution ? 'Cacher' : 'Solution'}</span>
+                  <span className="text-[10px]">{showSolution ? 'Hide' : 'Solution'}</span>
                 </button>
               </div>
             </div>
@@ -226,14 +238,7 @@ export default function ExercisePage() {
               className="btn-primary text-xs py-1.5 px-3 flex items-center gap-1.5"
             >
               {isValidating ? <Loader className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />}
-              Valider
-            </button>
-            <button
-              onClick={() => setShowPreview(!showPreview)}
-              className="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5"
-            >
-              {showPreview ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-              Preview
+              Check
             </button>
             <button
               onClick={handleGetHint}
@@ -241,7 +246,7 @@ export default function ExercisePage() {
               className="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5"
             >
               {isLoadingHint ? <Loader className="w-3 h-3 animate-spin" /> : <Lightbulb className="w-3 h-3" />}
-              Indice
+              Hint
             </button>
           </div>
         </div>
@@ -254,7 +259,7 @@ export default function ExercisePage() {
               {feedback.isCorrect ? <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" /> : <XCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />}
               <div>
                 <p className={`font-bold text-xs uppercase ${feedback.isCorrect ? 'text-green-700' : 'text-red-700'}`}>
-                  {feedback.isCorrect ? 'Correct!' : 'Pas tout à fait'}
+                  {feedback.isCorrect ? 'Correct!' : 'Not quite'}
                 </p>
                 <p className={`text-xs ${feedback.isCorrect ? 'text-green-600' : 'text-red-600'}`}>{feedback.message}</p>
               </div>
@@ -271,33 +276,28 @@ export default function ExercisePage() {
 
           {/* Preview */}
           <div className="flex-1 border-2 border-black flex flex-col min-h-[200px]">
-            <div className="flex items-center justify-between px-3 py-1.5 bg-gray-100 border-b-2 border-black">
+            <div className="px-3 py-1.5 bg-gray-100 border-b-2 border-black">
               <span className="text-xs font-bold uppercase">Preview</span>
-              <button onClick={() => setShowPreview(!showPreview)} className="text-[10px] font-bold underline">
-                {showPreview ? 'Cacher' : 'Afficher'}
-              </button>
             </div>
-            {showPreview && (
-              <div className="flex-1 bg-white relative min-h-[150px]">
-                <LivePreview code={showSolution ? exercise.solution : code} />
-              </div>
-            )}
+            <div className="flex-1 bg-white relative min-h-[150px]">
+              <LivePreview code={showSolution ? exercise.solution : code} />
+            </div>
           </div>
 
           {/* Navigation */}
           <div className="flex items-center justify-between flex-shrink-0">
             {prevExercise ? (
               <Link to={`/exercise/${prevExercise.id}`} className="btn-secondary text-xs py-1.5 inline-flex items-center gap-1">
-                <ArrowLeft className="w-3 h-3" /> Préc.
+                <ArrowLeft className="w-3 h-3" /> Prev
               </Link>
             ) : <div />}
             {nextExercise ? (
               <Link to={`/exercise/${nextExercise.id}`} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1">
-                Suiv. <ArrowRight className="w-3 h-3" />
+                Next <ArrowRight className="w-3 h-3" />
               </Link>
             ) : (
               <Link to={`/lesson/${lesson.id}`} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1">
-                Retour <ArrowRight className="w-3 h-3" />
+                Back <ArrowRight className="w-3 h-3" />
               </Link>
             )}
           </div>
@@ -311,8 +311,8 @@ export default function ExercisePage() {
             {/* Confetti effect */}
             <div className="text-6xl mb-4">🎉</div>
 
-            <h2 className="text-2xl font-black mb-2 uppercase text-green-600">Bravo !</h2>
-            <p className="text-gray-600 mb-4">Tu as réussi cet exercice</p>
+            <h2 className="text-2xl font-black mb-2 uppercase text-green-600">Well Done!</h2>
+            <p className="text-gray-600 mb-4">You completed this exercise</p>
 
             {/* XP Badge */}
             {!alreadyCompleted && (
@@ -322,7 +322,7 @@ export default function ExercisePage() {
               </div>
             )}
             {alreadyCompleted && (
-              <p className="text-sm text-gray-500 mb-6">Déjà complété</p>
+              <p className="text-sm text-gray-500 mb-6">Already completed</p>
             )}
 
             <div className="flex flex-col gap-3">
@@ -331,21 +331,21 @@ export default function ExercisePage() {
                   to={`/exercise/${nextExercise.id}`}
                   className="bg-black text-white font-bold py-3 px-6 border-2 border-black uppercase hover:bg-gray-800 transition-colors"
                 >
-                  Exercice suivant →
+                  Next Exercise →
                 </Link>
               ) : (
                 <Link
                   to={`/lesson/${lesson.id}`}
                   className="bg-black text-white font-bold py-3 px-6 border-2 border-black uppercase hover:bg-gray-800 transition-colors"
                 >
-                  Continuer le cours →
+                  Continue →
                 </Link>
               )}
               <button
                 onClick={() => setCompleted(false)}
                 className="text-sm text-gray-500 hover:text-black underline"
               >
-                Rester sur cet exercice
+                Stay on this exercise
               </button>
             </div>
           </div>

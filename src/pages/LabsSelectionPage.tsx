@@ -16,7 +16,7 @@ export default function LabsSelectionPage() {
           <FlaskConical className="w-6 h-6" /> Project Labs
         </h1>
         <p className="text-sm text-gray-600">
-          Projets guidés pour appliquer tes compétences React
+          Guided projects to apply your React skills
         </p>
       </div>
 
@@ -45,7 +45,7 @@ export default function LabsSelectionPage() {
                     <p className="text-xs text-gray-400 mb-3">{lab.description}</p>
                     <div className="flex items-center gap-2 text-xs text-gray-400">
                       <Lock className="w-3 h-3" />
-                      <span>Niveau {lab.requiredLevel} requis</span>
+                      <span>Level {lab.requiredLevel} required</span>
                     </div>
                   </div>
                 </div>
@@ -58,14 +58,12 @@ export default function LabsSelectionPage() {
             <Link
               key={lab.id}
               to={`/labs/${lab.id}`}
-              className={`border-2 border-black p-5 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal ${
-                isCompleted ? 'bg-primary-50 border-primary-500' : 'bg-white'
-              }`}
+              className={`border-2 border-black p-5 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal ${isCompleted ? 'bg-primary-50 border-primary-500' : 'bg-white'
+                }`}
             >
               <div className="flex items-start gap-4">
-                <div className={`w-12 h-12 flex items-center justify-center border-2 border-black ${
-                  isCompleted ? 'bg-primary-500 text-white' : 'bg-yellow-400'
-                }`}>
+                <div className={`w-12 h-12 flex items-center justify-center border-2 border-black ${isCompleted ? 'bg-primary-500 text-white' : 'bg-yellow-400'
+                  }`}>
                   {isCompleted ? <CheckCircle className="w-5 h-5" /> : <FlaskConical className="w-5 h-5" />}
                 </div>
 
@@ -73,7 +71,7 @@ export default function LabsSelectionPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <p className="text-[10px] text-gray-500 font-bold uppercase">Lab {index + 1}</p>
                     {isCompleted && (
-                      <span className="text-[10px] text-primary-600 font-bold uppercase">Complété</span>
+                      <span className="text-[10px] text-primary-600 font-bold uppercase">Completed</span>
                     )}
                   </div>
                   <h3 className="font-bold text-black mb-1">{lab.title}</h3>
@@ -82,7 +80,7 @@ export default function LabsSelectionPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] bg-gray-100 px-2 py-0.5 border border-black font-bold">
-                        {lab.steps.length} étapes
+                        {lab.steps.length} steps
                       </span>
                       <span className="text-[10px] bg-yellow-100 px-2 py-0.5 border border-yellow-600 font-bold flex items-center gap-1">
                         <Star className="w-3 h-3" /> {lab.xpReward} XP
