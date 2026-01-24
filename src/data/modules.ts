@@ -1182,7 +1182,7 @@ function Timer() {
     title: 'Effect Cleanup',
     order: 2,
     xpReward: 30,
-    difficulty: 'advanced',
+    difficulty: 'advanced' as const,
     content: `# Essential to know
 - Clean up side effects to prevent memory leaks.
 - Return a cleanup function from \`useEffect\`.
@@ -1364,7 +1364,7 @@ function toggleTodo(todos: Todo[], id: number): Todo[] {
     title: 'Typing React Components',
     order: 2,
     xpReward: 35,
-    difficulty: 'advanced',
+    difficulty: 'advanced' as const,
     content: `# Essential to know
 - Defines props interface.
 - Use \`React.ReactNode\` for \`children\`.
@@ -1989,7 +1989,7 @@ export function useAuth() {
     title: 'Context Best Practices',
     order: 3,
     xpReward: 35,
-    difficulty: 'advanced',
+    difficulty: 'advanced' as const,
     content: `# Essential to know
 - Use for low-frequency updates (themes, auth).
 - Avoid for high-frequency updates (performance).
@@ -2111,7 +2111,7 @@ function Counter() {
     title: 'Common Hook Patterns',
     order: 2,
     xpReward: 40,
-    difficulty: 'advanced',
+    difficulty: 'advanced' as const,
     content: `# Essential to know
 - Common uses: fetching data, localStorage.
 - Encapsulate complex logic.
@@ -2249,7 +2249,7 @@ function App() {
     title: 'useMemo & useCallback',
     order: 2,
     xpReward: 40,
-    difficulty: 'advanced',
+    difficulty: 'advanced' as const,
     content: `# Essential to know
 - \`useMemo\` caches a value.
 - \`useCallback\` caches a function.
@@ -2313,7 +2313,7 @@ function App() {
     title: 'Performance Best Practices',
     order: 3,
     xpReward: 35,
-    difficulty: 'advanced',
+    difficulty: 'advanced' as const,
     content: `# Essential to know
 - Measure before optimizing.
 - Keep state local.
@@ -2518,7 +2518,7 @@ function App() {
     title: 'Programmatic Navigation',
     order: 3,
     xpReward: 35,
-    difficulty: 'advanced',
+    difficulty: 'advanced' as const,
     content: `# Essential to know
 - \`useNavigate\` hook for programmatic navigation.
 - \`navigate('/path')\`.
@@ -3729,7 +3729,7 @@ function RegisterForm() {
     lessonId: 'forms-validation',
     moduleId: 'forms-validation',
     title: 'Submit Validation',
-    difficulty: 'hard',
+    difficulty: 'advanced' as const,
     xpReward: 40,
     description: 'Validate form on submission',
     instructions: `Add submit validation to the form.
@@ -3956,7 +3956,7 @@ function Counter() {
     lessonId: 'context-patterns',
     moduleId: 'context-api',
     title: 'Theme Toggle',
-    difficulty: 'hard',
+    difficulty: 'advanced' as const,
     xpReward: 40,
     description: 'Build a complete theme toggle system',
     instructions: `Create a ThemeProvider that allows toggling between light and dark themes.
@@ -4151,7 +4151,7 @@ function NameForm() {
     lessonId: 'hooks-patterns',
     moduleId: 'custom-hooks',
     title: 'usePrevious Hook',
-    difficulty: 'hard',
+    difficulty: 'advanced' as const,
     xpReward: 40,
     description: 'Create a hook to track previous values',
     instructions: `Create a usePrevious hook that remembers the previous value.
@@ -4340,7 +4340,7 @@ function FilteredList() {
     lessonId: 'perf-usememo',
     moduleId: 'performance',
     title: 'Use useCallback',
-    difficulty: 'hard',
+    difficulty: 'advanced' as const,
     xpReward: 40,
     description: 'Memoize a callback function',
     instructions: `The Button component re-renders because handleClick is recreated each time.
@@ -4952,7 +4952,7 @@ function PageTracker() {
     lessonId: 'effects-cleanup',
     moduleId: 'effects',
     title: 'Timer with Cleanup',
-    difficulty: 'hard',
+    difficulty: 'advanced' as const,
     xpReward: 45,
     description: 'Create a timer that cleans up.',
     instructions: `Create a \`Timer\` component that:
@@ -5197,7 +5197,7 @@ function TagList() {
     lessonId: 'effects-data-fetching',
     moduleId: 'effects',
     title: 'Fetch User Data',
-    difficulty: 'hard',
+    difficulty: 'advanced' as const,
     xpReward: 45,
     description: 'Fetch and display data.',
     instructions: `Create a \`UserInfo\` component that:
@@ -5239,7 +5239,7 @@ function UserInfo() {
     lessonId: 'hooks-uselocalstorage',
     moduleId: 'custom-hooks',
     title: 'Create useLocalStorage',
-    difficulty: 'hard',
+    difficulty: 'advanced' as const,
     xpReward: 50,
     description: 'Build a localStorage hook.',
     instructions: `Create a \`useLocalStorage\` hook that:
@@ -5266,9 +5266,350 @@ function useLocalStorage(key, initialValue) {
   }, [key, value]);
 
   return [value, setValue];
-}`,
+}
+`,
     hints: ['Use lazy initialization in useState', 'useEffect syncs to localStorage'],
     validationPrompt: 'Check if useLocalStorage reads/writes localStorage with useEffect',
+  },
+
+  // === NEW ADVANCED LESSONS ===
+  {
+    id: 'use-reducer',
+    moduleId: 'state-hooks',
+    title: 'useReducer Hook',
+    order: 5,
+    xpReward: 40,
+    difficulty: 'advanced' as const,
+    content: `# Essential to know
+- useReducer is for complex state logic.
+- Useful when state depends on previous state.
+- Often better than multiple useState for related state.
+
+---
+
+# useReducer Hook
+
+## When to use useReducer
+
+- State logic is complex
+- Multiple related values
+- State depends on previous state
+- You want to centralize state updates
+
+## Basic Syntax
+
+const [state, dispatch] = useReducer(reducer, initialState);
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return { ...state, count: state.count + 1 };
+    case 'decrement':
+      return { ...state, count: state.count - 1 };
+    default:
+      return state;
+  }
+}
+
+dispatch({ type: 'increment' });`,
+    codeExample: `import { useReducer } from 'react';
+
+const initialState = { count: 0, step: 1 };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return { ...state, count: state.count + state.step };
+    case 'decrement':
+      return { ...state, count: state.count - state.step };
+    case 'setStep':
+      return { ...state, step: action.payload };
+    case 'reset':
+      return initialState;
+    default:
+      return state;
+  }
+}
+
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      <p>Step: {state.step}</p>
+      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>
+      <button onClick={() => dispatch({ type: 'increment' })}>+</button>
+      <input
+        type="number"
+        value={state.step}
+        onChange={(e) => dispatch({ type: 'setStep', payload: Number(e.target.value) })}
+      />
+    </div>
+  );
+}`,
+  },
+  {
+    id: 'effects-pitfalls',
+    moduleId: 'effects',
+    title: 'useEffect Pitfalls',
+    order: 4,
+    xpReward: 40,
+    difficulty: 'advanced' as const,
+    content: `# Essential to know
+- Missing dependencies causes stale closures.
+- Never ignore the lint warning!
+- Dependencies must include all values from render scope.
+- Use functional updates to avoid stale state.
+
+---
+
+# useEffect Pitfalls
+
+## The Missing Dependency Problem
+
+Never ignore the eslint warning! Missing dependencies cause bugs.
+
+## Stale Closures
+
+When dependencies are missing, you get stale values:
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log(count); // Always 0!
+      setCount(count + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []); // Empty = never re-runs
+
+  return <p>{count}</p>;
+}
+
+## Solution: Functional Updates
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setCount(c => c + 1); // Functional update
+  }, 1000);
+  return () => clearInterval(interval);
+}, []);`,
+    codeExample: `import { useState, useEffect } from 'react';
+
+function CorrectComponent() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    console.log('Effect runs, count =', count);
+  }, [count]);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+
+function FunctionalUpdate() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCount(c => c + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return <p>Count: {count}</p>;
+}`,
+  },
+  {
+    id: 'context-performance',
+    moduleId: 'context-api',
+    title: 'Context Performance',
+    order: 4,
+    xpReward: 40,
+    difficulty: 'advanced' as const,
+    content: `# Essential to know
+- Context causes all consumers to re-render when value changes.
+- Split contexts to avoid unnecessary re-renders.
+- Use useMemo to memoize the context value.
+
+---
+
+# Context Performance
+
+## The Re-render Problem
+
+When context value changes, ALL components consuming that context re-render.
+
+## Solution: Split Contexts
+
+Separate static and dynamic values:
+
+function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState('light');
+
+  return (
+    <ThemeContext.Provider value={theme}>
+      <ThemeUpdateContext.Provider value={setTheme}>
+        {children}
+      </ThemeUpdateContext.Provider>
+    </ThemeContext.Provider>
+  );
+}`,
+    codeExample: `import { createContext, useContext, useState } from 'react';
+
+const CountContext = createContext();
+const SetCountContext = createContext();
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <SetCountContext.Provider value={setCount}>
+      <CountContext.Provider value={count}>
+        <Header />
+        <Content />
+      </CountContext.Provider>
+    </SetCountContext.Provider>
+  );
+}
+
+function Header() {
+  const count = useContext(CountContext);
+  return <header>Count: {count}</header>;
+}
+
+function Content() {
+  const setCount = useContext(SetCountContext);
+  return <button onClick={() => setCount(c => c + 1)}>Increment</button>;
+}`,
+  },
+  {
+    id: 'error-boundaries',
+    moduleId: 'performance',
+    title: 'Error Boundaries',
+    order: 4,
+    xpReward: 45,
+    difficulty: 'advanced' as const,
+    content: `# Essential to know
+- Error Boundaries catch JavaScript errors in child components.
+- Prevents entire app from crashing.
+- Uses static getDerivedStateFromError() or componentDidCatch().
+- Only class components can be Error Boundaries.
+
+---
+
+# Error Boundaries
+
+## What is an Error Boundary?
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Error:', error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <h1>Something went wrong!</h1>;
+    }
+    return this.props.children;
+  }
+}`,
+    codeExample: `import { Component } from 'react';
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Caught error:', error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '20px', background: '#ffebee' }}>
+          <h2>Oops! Something went wrong</h2>
+          <button onClick={() => this.setState({ hasError: false })}>
+            Try Again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}`,
+  },
+  {
+    id: 'code-splitting',
+    moduleId: 'performance',
+    title: 'Code Splitting',
+    order: 5,
+    xpReward: 45,
+    difficulty: 'advanced' as const,
+    content: `# Essential to know
+- React.lazy() loads components on demand.
+- Reduces initial bundle size.
+- Must be used with Suspense for loading state.
+
+---
+
+# Code Splitting
+
+## Why Code Split?
+
+Load only what users need, when they need it.
+
+## React.lazy + Suspense
+
+const HeavyComponent = lazy(() => import('./HeavyComponent'));
+
+function App() {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <HeavyComponent />
+    </Suspense>
+  );
+}`,
+    codeExample: `import { useState, lazy, Suspense } from 'react';
+
+const Modal = lazy(() => import('./Modal'));
+
+function App() {
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <div>
+      <button onClick={() => setShowModal(true)}>Open Modal</button>
+
+      {showModal && (
+        <Suspense fallback={<div>Loading Modal...</div>}>
+          <Modal onClose={() => setShowModal(false)} />
+        </Suspense>
+      )}
+    </div>
+  );
+}`,
   },
 ];
 

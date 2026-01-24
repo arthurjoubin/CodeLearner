@@ -70,7 +70,7 @@ export interface Exercise {
   hints: string[];
   validationPrompt: string;
   xpReward: number;
-  difficulty: 'easy' | 'medium' | 'hard';
+  difficulty: 'easy' | 'medium' | 'hard' | 'advanced';
 }
 
 export interface ChatMessage {
