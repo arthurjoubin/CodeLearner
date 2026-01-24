@@ -4,6 +4,20 @@ import { getLevelFromXp } from '../types';
 import { Flame, Star, Zap, FlaskConical, LogIn, LogOut, ChevronRight } from 'lucide-react';
 import { modules } from '../data/modules';
 
+const ASCII_LOGO = `██╗  ██╗ █████╗  ██████╗██╗  ██╗██╗   ██╗██████╗ 
+██║  ██║██╔══██╗██╔════╝██║ ██╔╝██║   ██║██╔══██╗
+███████║███████║██║     █████╔╝ ██║   ██║██████╔╝
+██╔══██║██╔══██║██║     ██╔═██╗ ██║   ██║██╔═══╝ 
+██║  ██║██║  ██║╚██████╗██║  ██╗╚██████╔╝██╗     
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝`;
+
+const ASCII_LOGO_SMALL = `██╗  ██╗ █████╗  ██████╗██╗  ██╗
+██║  ██║██╔══██╗██╔════╝██║ ██╔╝
+███████║███████║██║     █████╔╝ 
+██╔══██║██╔══██║██║     ██╔═██╗ 
+██║  ██║██║  ██║╚██████╗██║  ██╗
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝`;
+
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -65,12 +79,11 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-black flex items-center justify-center">
+              <pre className="hidden lg:block text-[8px] leading-[1] font-mono text-black whitespace-pre">{ASCII_LOGO}</pre>
+              <pre className="hidden md:block lg:hidden text-[10px] leading-[1] font-mono text-black whitespace-pre">{ASCII_LOGO_SMALL}</pre>
+              <div className="md:hidden w-8 h-8 bg-black flex items-center justify-center">
                 <Zap className="w-5 h-5 text-yellow-400" />
               </div>
-              <span className="font-black text-lg text-black uppercase tracking-tight">
-                Code Learner
-              </span>
             </Link>
 
             {/* Breadcrumb */}
@@ -157,7 +170,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200 py-3">
         <div className="max-w-6xl mx-auto px-4 text-center text-xs text-gray-400">
-          Code Learner - Learn React & TypeScript
+          HACKUP - Learn to Code by Doing
         </div>
       </footer>
     </div>
