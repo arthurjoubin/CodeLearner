@@ -13,10 +13,12 @@ export default function LivePreview({ code }: LivePreviewProps) {
     const renderPreview = () => {
       if (!iframeRef.current) return;
 
+      // Clear any previous errors at the start
+      setError(null);
+
       // Don't try to render empty or very short code
       const trimmedCode = code.trim();
       if (!trimmedCode || trimmedCode.length < 10) {
-        setError(null);
         return;
       }
 
@@ -103,8 +105,6 @@ export default function LivePreview({ code }: LivePreviewProps) {
           doc.write(html);
           doc.close();
         }
-
-        setError(null);
       } catch (err: unknown) {
         // For transform errors (incomplete code), don't show an error
         // Just clear previous output silently
@@ -123,18 +123,15 @@ export default function LivePreview({ code }: LivePreviewProps) {
     return () => clearTimeout(timeoutId);
   }, [code]);
 
-  if (error) {
-    return (
-      <div className="p-4 bg-red-50 h-full">
-        <div className="text-red-600 font-mono text-sm whitespace-pre-wrap">
-          {error}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="relative w-full h-full" style={{ minHeight: '250px' }}>
+      {error && (
+        <div className="absolute inset-0 z-10 p-4 bg-red-50 h-full overflow-auto">
+          <div className="text-red-600 font-mono text-sm whitespace-pre-wrap">
+            {error}
+          </div>
+        </div>
+      )}
       <iframe
         ref={iframeRef}
         title="Preview"
