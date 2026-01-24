@@ -28,7 +28,7 @@ export default function ModulePage() {
 
   return (
     <div className="page-enter">
-      <Link to="/" className="inline-flex items-center gap-2 text-black font-bold uppercase hover:underline mb-4">
+      <Link to="/learning-path/react" className="inline-flex items-center gap-2 text-black font-bold uppercase hover:underline mb-4">
         <ArrowLeft className="w-4 h-4" /> Back
       </Link>
 

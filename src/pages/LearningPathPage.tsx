@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { modules, getLessonsForModule, getExercisesForLesson } from '../data/modules';
-import { Lock, CheckCircle, Code, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, Layers, Settings, Gauge, Navigation, Star, Flame } from 'lucide-react';
+import { Lock, CheckCircle, Code, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, Layers, Settings, Gauge, Navigation, ArrowLeft } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
 const iconMap: Record<string, React.ElementType> = {
@@ -38,12 +38,16 @@ export default function LearningPathPage() {
 
   return (
     <div className="page-enter">
+      <Link to="/" className="inline-flex items-center gap-2 text-black font-bold uppercase hover:underline mb-4">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </Link>
+
       <div className="mb-6">
         <h1 className="text-2xl font-black text-black uppercase">{pathTitle}</h1>
         <p className="text-gray-600">Master {pathTitle} from basics to advanced</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 p-1">
         {modules.map((module, index) => {
           const prevModule = index > 0 ? modules[index - 1] : null;
           const isUnlocked = index === 0 || (prevModule && isModuleComplete(prevModule.id));
@@ -109,20 +113,6 @@ export default function LearningPathPage() {
             </Link>
           );
         })}
-      </div>
-
-      <div className="mt-6 grid grid-cols-4 gap-3">
-        {[
-          { label: 'XP', value: user.xp, icon: Star },
-          { label: 'Streak', value: user.streak, icon: Flame },
-          { label: 'Lessons', value: user.completedLessons.length, icon: Zap },
-          { label: 'Exercises', value: user.completedExercises.length, icon: Code },
-        ].map((stat) => (
-          <div key={stat.label} className="border-2 border-black p-3 text-center bg-white">
-            <div className="text-2xl font-black">{stat.value}</div>
-            <div className="text-[10px] text-gray-500 uppercase font-bold">{stat.label}</div>
-          </div>
-        ))}
       </div>
     </div>
   );
