@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getLevelFromXp } from '../types';
-import { Heart, Flame, Star, Zap, FlaskConical } from 'lucide-react';
+import { Heart, Flame, Star, Zap, FlaskConical, LogIn, LogOut } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const { user } = useUser();
+  const { user, isGuest, login, logout } = useUser();
 
   if (!user) return null;
 
@@ -31,19 +31,19 @@ export default function Layout({ children }: LayoutProps) {
             </Link>
 
             {/* Stats */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-3">
               <Link to="/labs" className="p-1.5 hover:bg-gray-100 transition-colors" title="Labs">
                 <FlaskConical className="w-5 h-5 text-black" />
               </Link>
 
               {/* Streak */}
-              <div className="flex items-center gap-1 bg-orange-100 px-2 py-1 text-xs font-bold">
+              <div className="flex items-center gap-1 bg-orange-100 px-1.5 sm:px-2 py-1 text-xs font-bold">
                 <Flame className="w-4 h-4 text-orange-500" />
-                {user.streak}
+                <span className="hidden sm:inline">{user.streak}</span>
               </div>
 
-              {/* Hearts */}
-              <div className="flex items-center gap-0.5">
+              {/* Hearts - hidden on very small screens */}
+              <div className="hidden xs:flex items-center gap-0.5">
                 {Array.from({ length: user.maxHearts }).map((_, i) => (
                   <Heart
                     key={i}
@@ -53,7 +53,7 @@ export default function Layout({ children }: LayoutProps) {
               </div>
 
               {/* XP */}
-              <div className="flex items-center gap-1 bg-yellow-100 px-2 py-1 text-xs font-bold">
+              <div className="flex items-center gap-1 bg-yellow-100 px-1.5 sm:px-2 py-1 text-xs font-bold">
                 <Star className="w-4 h-4 text-yellow-600" />
                 {user.xp}
               </div>
@@ -62,6 +62,34 @@ export default function Layout({ children }: LayoutProps) {
               <div className="hidden sm:block text-xs font-bold text-gray-500">
                 Lv.{levelInfo.level}
               </div>
+
+              {/* Auth */}
+              {isGuest ? (
+                <button
+                  onClick={login}
+                  className="flex items-center gap-1 bg-black text-white px-2 py-1 text-xs font-bold hover:bg-gray-800 transition-colors"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span className="hidden sm:inline">Login</span>
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  {user?.avatarUrl && (
+                    <img
+                      src={user.avatarUrl}
+                      alt={user.name}
+                      className="w-6 h-6 rounded-full border border-black"
+                    />
+                  )}
+                  <button
+                    onClick={logout}
+                    className="p-1 hover:bg-gray-100 transition-colors"
+                    title="Logout"
+                  >
+                    <LogOut className="w-4 h-4 text-gray-600" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

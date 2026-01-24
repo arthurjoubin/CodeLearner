@@ -1,34 +1,35 @@
 import { User, ChatMessage, ValidationResult } from '../types';
 
-const API_BASE = import.meta.env.PROD
-  ? 'https://codelearner-api.arthurjoubin.workers.dev/api'
-  : '/api';
-
-// Get or create a unique user ID for this browser
-function getUserId(): string {
-  let id = localStorage.getItem('codelearner_user_id');
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem('codelearner_user_id', id);
-  }
-  return id;
-}
+const WORKER_URL = 'https://codelearner-api.arthurjoubin.workers.dev';
 
 export const api = {
-  getUserId,
-
-  // User endpoints
-  async getUser(): Promise<User> {
-    const userId = getUserId();
-    const res = await fetch(`${API_BASE}/user/${userId}`);
-    if (!res.ok) throw new Error('Failed to fetch user');
-    return res.json();
+  // Auth endpoints - always use worker URL (OAuth callback is configured there)
+  getLoginUrl(): string {
+    return `${WORKER_URL}/auth/login`;
   },
 
+  async getMe(): Promise<User | null> {
+    const res = await fetch(`${WORKER_URL}/auth/me`, {
+      credentials: 'include',
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.user;
+  },
+
+  async logout(): Promise<void> {
+    await fetch(`${WORKER_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+  },
+
+  // User endpoints
   async saveUser(user: User): Promise<void> {
-    await fetch(`${API_BASE}/user`, {
+    await fetch(`${WORKER_URL}/api/user`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(user),
     });
   },
@@ -38,12 +39,16 @@ export const api = {
     code: string,
     exercise: { instructions: string; validationPrompt: string }
   ): Promise<ValidationResult> {
-    const res = await fetch(`${API_BASE}/validate`, {
+    const res = await fetch(`${WORKER_URL}/api/validate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ code, exercise }),
     });
-    if (!res.ok) throw new Error('Validation failed');
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Validation failed');
+    }
     return res.json();
   },
 
@@ -51,9 +56,10 @@ export const api = {
     messages: ChatMessage[],
     context: { topic: string; lessonContent?: string }
   ): Promise<string> {
-    const res = await fetch(`${API_BASE}/chat`, {
+    const res = await fetch(`${WORKER_URL}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ messages, context }),
     });
     if (!res.ok) throw new Error('Chat failed');
@@ -66,9 +72,10 @@ export const api = {
     exercise: { instructions: string; hints: string[] },
     attemptCount: number
   ): Promise<string> {
-    const res = await fetch(`${API_BASE}/hint`, {
+    const res = await fetch(`${WORKER_URL}/api/hint`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ code, exercise, attemptCount }),
     });
     if (!res.ok) throw new Error('Failed to get hint');

@@ -1,10 +1,13 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { User, getLevelFromXp } from '../types';
 import { api } from '../services/api';
 
 interface UserContextType {
   user: User | null;
+  isGuest: boolean;
   loading: boolean;
+  login: () => void;
+  logout: () => Promise<void>;
   addXp: (amount: number) => void;
   loseHeart: () => boolean;
   refillHearts: () => void;
@@ -19,54 +22,77 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-function getDefaultUser(): User {
-  return {
-    id: api.getUserId(),
-    email: `${api.getUserId()}@local.user`,
-    name: 'Learner',
-    xp: 0,
-    level: 1,
-    hearts: 5,
-    maxHearts: 5,
-    streak: 0,
-    lastActiveDate: new Date().toISOString().split('T')[0],
-    completedLessons: [],
-    completedExercises: [],
-    moduleProgress: {},
-    labProgress: {},
-  };
-}
+// Guest user (not persisted)
+const GUEST_USER: User = {
+  id: 'guest',
+  name: 'Guest',
+  xp: 0,
+  level: 1,
+  hearts: 5,
+  maxHearts: 5,
+  streak: 0,
+  lastActiveDate: new Date().toISOString().split('T')[0],
+  completedLessons: [],
+  completedExercises: [],
+  moduleProgress: {},
+  labProgress: {},
+};
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isGuest, setIsGuest] = useState(true);
   const [loading, setLoading] = useState(true);
+  const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     loadUser();
   }, []);
 
+  // Debounced save - only for authenticated users
   useEffect(() => {
-    if (user && !loading) {
-      api.saveUser(user);
+    if (!user || isGuest || loading) return;
+
+    if (saveTimeout.current) {
+      clearTimeout(saveTimeout.current);
     }
-  }, [user, loading]);
+
+    saveTimeout.current = setTimeout(() => {
+      api.saveUser(user).catch(console.error);
+    }, 1000);
+
+    return () => {
+      if (saveTimeout.current) {
+        clearTimeout(saveTimeout.current);
+      }
+    };
+  }, [user, isGuest, loading]);
 
   const loadUser = async () => {
     try {
-      const userData = await api.getUser();
-      setUser({
-        ...getDefaultUser(),
-        ...userData,
-        labProgress: userData.labProgress || {},
-      });
+      const userData = await api.getMe();
+      if (userData) {
+        setUser(userData);
+        setIsGuest(false);
+      } else {
+        setUser({ ...GUEST_USER });
+        setIsGuest(true);
+      }
     } catch {
-      // If no user exists, create default
-      const newUser = { ...getDefaultUser() };
-      setUser(newUser);
-      // api.saveUser will be called by useEffect
+      setUser({ ...GUEST_USER });
+      setIsGuest(true);
     } finally {
       setLoading(false);
     }
+  };
+
+  const login = () => {
+    window.location.href = api.getLoginUrl();
+  };
+
+  const logout = async () => {
+    await api.logout();
+    setUser({ ...GUEST_USER });
+    setIsGuest(true);
   };
 
   const addXp = useCallback((amount: number) => {
@@ -170,7 +196,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     <UserContext.Provider
       value={{
         user,
+        isGuest,
         loading,
+        login,
+        logout,
         addXp,
         loseHeart,
         refillHearts,

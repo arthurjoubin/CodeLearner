@@ -21,13 +21,25 @@ export default function LivePreview({ code }: LivePreviewProps) {
       }
 
       try {
+        // Remove React imports and exports since React is loaded globally in the iframe
+        const codeWithoutImports = trimmedCode
+          .replace(/import\s+.*\s+from\s+['"]react['"];?\n?/g, '')
+          .replace(/import\s+.*\s+from\s+['"]react-dom['"];?\n?/g, '')
+          .replace(/export\s+default\s+/g, '')
+          .replace(/export\s+/g, '');
+
+        console.log('[LivePreview] Original code:', trimmedCode);
+        console.log('[LivePreview] Code without imports/exports:', codeWithoutImports);
+
         // Transform JSX/TypeScript to plain JavaScript
-        const transformed = transform(trimmedCode, {
+        const transformed = transform(codeWithoutImports, {
           transforms: ['typescript', 'jsx'],
           jsxRuntime: 'classic',
           jsxPragma: 'React.createElement',
           jsxFragmentPragma: 'React.Fragment',
         });
+
+        console.log('[LivePreview] Transformed code:', transformed.code);
 
         // Find the component name (first function that starts with capital letter)
         const componentMatch = trimmedCode.match(/function\s+([A-Z][a-zA-Z0-9]*)/);
@@ -122,12 +134,13 @@ export default function LivePreview({ code }: LivePreviewProps) {
   }
 
   return (
-    <iframe
-      ref={iframeRef}
-      title="Preview"
-      className="w-full border-0 absolute inset-0"
-      style={{ height: '100%', minHeight: '250px' }}
-      sandbox="allow-scripts allow-same-origin"
-    />
+    <div className="relative w-full h-full" style={{ minHeight: '250px' }}>
+      <iframe
+        ref={iframeRef}
+        title="Preview"
+        className="w-full h-full border-0 absolute inset-0"
+        sandbox="allow-scripts allow-same-origin allow-forms"
+      />
+    </div>
   );
 }

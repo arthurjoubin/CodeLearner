@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL,
+  avatar_url TEXT,
   created_at TEXT DEFAULT (datetime('now'))
 );
 

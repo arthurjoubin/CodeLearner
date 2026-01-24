@@ -20,7 +20,7 @@ import LivePreview from '../components/LivePreview';
 export default function LabPage() {
     const { labId } = useParams<{ labId: string }>();
     const navigate = useNavigate();
-    const { user, addXp, updateLabProgress } = useUser();
+    const { user, isGuest, addXp, updateLabProgress } = useUser();
     const lab = labId ? getLab(labId) : undefined;
 
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -32,6 +32,11 @@ export default function LabPage() {
 
     useEffect(() => {
         if (!lab || !user) return;
+        // Guests can only access level 1 labs
+        if (isGuest && lab.requiredLevel > 1) {
+            navigate('/');
+            return;
+        }
         const progress = user.labProgress?.[lab.id];
         if (!progress?.unlocked && user.level < lab.requiredLevel) {
             navigate('/');
@@ -40,7 +45,7 @@ export default function LabPage() {
         if (progress) {
             setCurrentStepIndex(progress.currentStep);
         }
-    }, [lab, user, navigate]);
+    }, [lab, user, isGuest, navigate]);
 
     useEffect(() => {
         if (lab?.steps[currentStepIndex]) {
@@ -57,6 +62,12 @@ export default function LabPage() {
 
     const handleValidate = async () => {
         if (isValidating) return;
+
+        if (isGuest) {
+            setFeedback({ isCorrect: false, message: 'Connecte-toi avec GitHub pour valider ton code et sauvegarder ta progression!' });
+            return;
+        }
+
         setIsValidating(true);
         setFeedback(null);
 
@@ -76,7 +87,8 @@ export default function LabPage() {
                 setFeedback({ isCorrect: false, message: result.feedback });
             }
         } catch (error) {
-            setFeedback({ isCorrect: false, message: 'Validation failed. Check your connection.' });
+            const message = error instanceof Error ? error.message : 'Validation failed. Check your connection.';
+            setFeedback({ isCorrect: false, message });
         } finally {
             setIsValidating(false);
         }
@@ -96,38 +108,38 @@ export default function LabPage() {
     };
 
     return (
-        <div className="h-[calc(100vh-140px)] flex flex-col page-enter">
+        <div className="min-h-[calc(100vh-140px)] lg:h-[calc(100vh-140px)] flex flex-col page-enter pb-4 lg:pb-0">
             {/* Lab Header */}
-            <div className="flex items-center justify-between mb-4 bg-black text-white p-4 border-4 border-black shadow-brutal-sm">
-                <div className="flex items-center gap-4">
-                    <Link to="/" className="p-2 hover:bg-gray-800 border-2 border-white">
-                        <ArrowLeft className="w-5 h-5" />
+            <div className="flex items-center justify-between mb-4 bg-black text-white p-3 lg:p-4 border-4 border-black shadow-brutal-sm">
+                <div className="flex items-center gap-2 lg:gap-4 flex-1 min-w-0">
+                    <Link to="/" className="p-1.5 lg:p-2 hover:bg-gray-800 border-2 border-white flex-shrink-0">
+                        <ArrowLeft className="w-4 h-4 lg:w-5 lg:h-5" />
                     </Link>
-                    <div>
-                        <h1 className="text-xl font-black uppercase tracking-tighter">{lab.title}</h1>
+                    <div className="min-w-0 flex-1">
+                        <h1 className="text-sm lg:text-xl font-black uppercase tracking-tighter truncate">{lab.title}</h1>
                         <div className="flex items-center gap-2">
-                            <div className="flex gap-1">
+                            <div className="flex gap-0.5 lg:gap-1">
                                 {lab.steps.map((_, i) => (
                                     <div
                                         key={i}
-                                        className={`w-8 h-2 border border-white ${i <= currentStepIndex ? 'bg-yellow-400' : 'bg-gray-700'}`}
+                                        className={`w-4 lg:w-8 h-1.5 lg:h-2 border border-white ${i <= currentStepIndex ? 'bg-yellow-400' : 'bg-gray-700'}`}
                                     />
                                 ))}
                             </div>
-                            <span className="text-[10px] font-bold uppercase opacity-70">Step {currentStepIndex + 1} of {lab.steps.length}</span>
+                            <span className="text-[8px] lg:text-[10px] font-bold uppercase opacity-70 whitespace-nowrap">Step {currentStepIndex + 1}/{lab.steps.length}</span>
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
-                    <div className="bg-yellow-400 text-black px-3 py-1 border-2 border-black font-black text-sm uppercase">
+                <div className="flex items-center gap-2 lg:gap-3 flex-shrink-0">
+                    <div className="bg-yellow-400 text-black px-2 lg:px-3 py-1 border-2 border-black font-black text-xs lg:text-sm uppercase">
                         +{lab.xpReward} XP
                     </div>
                 </div>
             </div>
 
-            <div className="flex-1 grid lg:grid-cols-12 gap-6 overflow-hidden min-h-0">
+            <div className="flex-1 flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6 overflow-auto lg:overflow-hidden min-h-0">
                 {/* Sidebar: Instructions & AI Agent */}
-                <div className="lg:col-span-3 flex flex-col gap-6 overflow-hidden min-h-0">
+                <div className="lg:col-span-3 flex flex-col gap-4 lg:gap-6 lg:overflow-hidden min-h-0">
                     <div className="card bg-white border-4 border-black flex-shrink-0 max-h-[40%] overflow-y-auto shadow-brutal-sm">
                         <h3 className="font-black uppercase text-[10px] mb-3 opacity-50 tracking-[0.2em]">Current Goal</h3>
                         <p className="font-bold text-sm leading-relaxed">{currentStep.instructions}</p>
@@ -157,7 +169,7 @@ export default function LabPage() {
                 </div>
 
                 {/* Center: Editor */}
-                <div className="lg:col-span-5 flex flex-col card p-0 border-4 border-black overflow-hidden bg-gray-900 shadow-brutal">
+                <div className="lg:col-span-5 flex flex-col card p-0 border-4 border-black overflow-hidden bg-gray-900 shadow-brutal min-h-[400px] lg:min-h-0">
                     <div className="flex items-center justify-between px-4 py-2 border-b-2 border-black bg-black text-white">
                         <div className="flex items-center gap-3">
                             <div className="w-6 h-6 bg-yellow-400 flex items-center justify-center border border-black transform rotate-3">
@@ -202,10 +214,10 @@ export default function LabPage() {
                 </div>
 
                 {/* Right: Results */}
-                <div className="lg:col-span-4 flex flex-col gap-6 overflow-hidden min-h-0">
-                    <div className="card flex-1 p-0 border-4 border-black overflow-hidden flex flex-col bg-white shadow-brutal-sm">
+                <div className="lg:col-span-4 flex flex-col gap-4 lg:gap-6 lg:overflow-hidden min-h-0">
+                    <div className="card flex-1 p-0 border-4 border-black overflow-hidden flex flex-col bg-white shadow-brutal-sm min-h-[250px]">
                         <div className="px-4 py-2 bg-gray-100 border-b-2 border-black font-black uppercase text-[10px] tracking-widest">Preview Window</div>
-                        <div className="flex-1 bg-white overflow-auto p-6 flex items-center justify-center">
+                        <div className="flex-1 bg-white overflow-auto p-4 lg:p-6">
                             <LivePreview code={code} />
                         </div>
                     </div>
