@@ -82,4 +82,13 @@ export const api = {
     const data = await res.json();
     return data.hint;
   },
+
+  async getLeaderboard(): Promise<Array<{ id: string; name: string; avatar_url: string | null; xp: number; level: number; streak: number }>> {
+    const res = await fetch(`${WORKER_URL}/api/leaderboard`, {
+      credentials: 'include',
+    });
+    if (!res.ok) throw new Error('Failed to fetch leaderboard');
+    const data = await res.json();
+    return data.users;
+  },
 };

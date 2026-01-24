@@ -1,0 +1,140 @@
+{
+  "module": {
+    "id": "components-props",
+    "title": "Components & Props",
+    "description": "Build reusable UI pieces and pass data between them",
+    "icon": "Boxes",
+    "requiredXp": 100,
+    "color": "from-purple-400 to-purple-600",
+    "courseId": "react"
+  },
+  "lessons": [
+    {
+      "id": "components-intro",
+      "moduleId": "components-props",
+      "title": "What are Components?",
+      "order": 1,
+      "xpReward": 20,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Components are reusable UI building blocks.\n- Function components return JSX.\n- Component names MUST start with a capital letter.\n- Can be used like HTML tags `<Component />`.\n\n---\n\n# What are Components?\n\nComponents are the **building blocks** of React applications. Think of them as custom, reusable HTML elements.\n\n## Why Components?\n\n- **Reusability**: Write once, use everywhere\n- **Organization**: Break complex UIs into smaller pieces\n- **Maintainability**: Each component handles one thing\n\n## Function Components\n\nThe modern way to create components:\n\n```jsx\nfunction Welcome() {\n  return <h1>Hello!</h1>;\n}\n```\n\n## Rules for Components\n\n1. **Name starts with capital letter**: `Button`, not `button`\n2. **Return JSX**: Every component returns something to render\n3. **One root element**: Just like regular JSX\n\n## Using Components\n\nUse your component like an HTML tag:\n\n```jsx\nfunction App() {\n  return (\n    <div>\n      <Welcome />\n      <Welcome />\n      <Welcome />\n    </div>\n  );\n}\n```\n\nEach `<Welcome />` renders the same \"Hello!\" heading.",
+      "codeExample": "// Define a component\nfunction Greeting() {\n  return <h1>Hello, React learner!</h1>;\n}\n\n// Use it multiple times\nfunction App() {\n  return (\n    <div>\n      <Greeting />\n      <Greeting />\n      <p>Components can be reused!</p>\n    </div>\n  );\n}"
+    },
+    {
+      "id": "props-intro",
+      "moduleId": "components-props",
+      "title": "Passing Props",
+      "order": 2,
+      "xpReward": 25,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Props pass data from parent to child components.\n- Read-only (immutable) within the child.\n- Passed like HTML attributes.\n- Received via destructuring in the function arguments.\n\n---\n\n# Props: Passing Data to Components\n\nProps let you pass data to components, making them dynamic and reusable.\n\n## What are Props?\n\nProps (short for \"properties\") are like function arguments:\n\n```jsx\n// Without props - static\nfunction Greeting() {\n  return <h1>Hello, stranger!</h1>;\n}\n\n// With props - dynamic\nfunction Greeting({ name }) {\n  return <h1>Hello, {name}!</h1>;\n}\n```\n\n## Passing Props\n\nPass props like HTML attributes:\n\n```jsx\n<Greeting name=\"Alice\" />\n<Greeting name=\"Bob\" />\n```\n\n## Receiving Props\n\nUse destructuring to receive props:\n\n```jsx\nfunction UserCard({ name, age, isOnline }) {\n  return (\n    <div>\n      <h2>{name}</h2>\n      <p>Age: {age}</p>\n      {isOnline && <span>🟢 Online</span>}\n    </div>\n  );\n}\n```\n\n## Multiple Props\n\n```jsx\n<UserCard\n  name=\"Alice\"\n  age={25}\n  isOnline={true}\n/>\n```\n\n**Note**: Strings use quotes, everything else uses curly braces!",
+      "codeExample": "function ProfileCard({ name, role, avatar }) {\n  return (\n    <div className=\"profile\">\n      <img src={avatar} alt={name} />\n      <h2>{name}</h2>\n      <p>{role}</p>\n    </div>\n  );\n}\n\nfunction App() {\n  return (\n    <div>\n      <ProfileCard\n        name=\"Alice\"\n        role=\"Developer\"\n        avatar=\"/alice.png\"\n      />\n      <ProfileCard\n        name=\"Bob\"\n        role=\"Designer\"\n        avatar=\"/bob.png\"\n      />\n    </div>\n  );\n}"
+    },
+    {
+      "id": "children-prop",
+      "moduleId": "components-props",
+      "title": "Children Prop",
+      "order": 3,
+      "xpReward": 25,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Special prop `children` captures content between opening/closing tags.\n- Allows component composition.\n- Useful for wrappers and layout components.\n\n---\n\n# The Children Prop\n\nThe `children` prop lets you pass content between component tags.\n\n## Basic Usage\n\n```jsx\nfunction Card({ children }) {\n  return (\n    <div className=\"card\">\n      {children}\n    </div>\n  );\n}\n\n// Usage\n<Card>\n  <h2>Title</h2>\n  <p>Any content here!</p>\n</Card>\n```\n\n## Why Use Children?\n\n- **Composition**: Build complex UIs from simple pieces\n- **Flexibility**: Content can be anything\n- **Wrapper components**: Cards, modals, layouts\n\n## Combining with Other Props\n\n```jsx\nfunction Alert({ type, children }) {\n  const colors = {\n    success: 'green',\n    error: 'red',\n    warning: 'orange',\n  };\n\n  return (\n    <div style={{ background: colors[type] }}>\n      {children}\n    </div>\n  );\n}\n\n<Alert type=\"success\">\n  <p>Operation completed!</p>\n</Alert>\n```",
+      "codeExample": "function Button({ variant, children }) {\n  const styles = {\n    primary: 'bg-blue-500 text-white',\n    secondary: 'bg-gray-200 text-black',\n    danger: 'bg-red-500 text-white',\n  };\n\n  return (\n    <button className={styles[variant]}>\n      {children}\n    </button>\n  );\n}\n\nfunction App() {\n  return (\n    <div>\n      <Button variant=\"primary\">Save</Button>\n      <Button variant=\"danger\">Delete</Button>\n      <Button variant=\"secondary\">\n        <span>⚙️</span> Settings\n      </Button>\n    </div>\n  );\n}"
+    },
+    {
+      "id": "default-props",
+      "moduleId": "components-props",
+      "title": "Default Props",
+      "order": 4,
+      "xpReward": 20,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Set default values in component parameters.\n- Prevents undefined errors.\n- Example: `function Btn({ color = 'blue' })`.\n\n---\n\n# Default Props\n\n## Setting Default Values\n\nYou can set default values for props when they're not provided.\n\n## Using Default Parameters\n\n```jsx\nfunction Button({ label = \"Click me\", color = \"blue\" }) {\n  return (\n    <button style={{ backgroundColor: color }}>\n      {label}\n    </button>\n  );\n}\n\n// Usage\n<Button />  // Uses defaults\n<Button label=\"Submit\" />  // Custom label, default color\n```\n\n## Why Use Defaults?\n\n- **Safer code**: No undefined errors\n- **Less boilerplate**: Don't need to pass every prop\n- **Self-documenting**: Shows expected values",
+      "codeExample": "function Avatar({\n  src = \"/default-avatar.png\",\n  size = 40,\n  alt = \"User avatar\"\n}) {\n  return (\n    <img\n      src={src}\n      alt={alt}\n      width={size}\n      height={size}\n      style={{ borderRadius: '50%' }}\n    />\n  );\n}\n\n// All these work:\n// <Avatar />\n// <Avatar src=\"/me.jpg\" />\n// <Avatar size={60} alt=\"My photo\" />"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "props-ex-1",
+      "lessonId": "props-intro",
+      "moduleId": "components-props",
+      "title": "Using Props",
+      "difficulty": "easy",
+      "xpReward": 25,
+      "description": "Create a component that uses props.",
+      "instructions": "Create a `Welcome` component that:\n1. Accepts a `name` prop\n2. Returns: \"Hello, {name}!\" in an h1",
+      "starterCode": "function Welcome(/* add props here */) {\n  // Return greeting with the name\n\n}",
+      "solution": "function Welcome({ name }) {\n  return <h1>Hello, {name}!</h1>;\n}",
+      "hints": [
+        "Destructure props in the function parameters: { name }",
+        "Use curly braces to embed the name variable in JSX"
+      ],
+      "validationPrompt": "Check if Welcome component accepts a name prop and displays \"Hello, {name}!\" in an h1"
+    },
+    {
+      "id": "props-ex-2",
+      "lessonId": "props-intro",
+      "moduleId": "components-props",
+      "title": "Multiple Props",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Work with multiple props and conditional rendering.",
+      "instructions": "Create a `Product` component that:\n1. Accepts `name` (string), `price` (number), and `inStock` (boolean) props\n2. Displays the name in an h3\n3. Displays the price in a paragraph as \"$X\"\n4. If inStock is true, show a green \"In Stock\" span, otherwise show red \"Out of Stock\"",
+      "starterCode": "function Product({ name, price, inStock }) {\n  // Display product info with conditional stock status\n\n}",
+      "solution": "function Product({ name, price, inStock }) {\n  return (\n    <div>\n      <h3>{name}</h3>\n      <p>${price}</p>\n      <span style={{ color: inStock ? 'green' : 'red' }}>\n        {inStock ? 'In Stock' : 'Out of Stock'}\n      </span>\n    </div>\n  );\n}",
+      "hints": [
+        "Use the ternary operator: condition ? valueIfTrue : valueIfFalse",
+        "You can use inline styles with the style prop"
+      ],
+      "validationPrompt": "Check if Product displays name, price with $, and conditionally shows stock status with appropriate colors"
+    },
+    {
+      "id": "props-ex-3",
+      "lessonId": "components-intro",
+      "moduleId": "components-props",
+      "title": "Button Component",
+      "difficulty": "easy",
+      "xpReward": 20,
+      "description": "Create a reusable button component.",
+      "instructions": "Create a `Button` component that:\n1. Accepts a `label` prop\n2. Returns a button element with the label as text",
+      "starterCode": "function Button({ label }) {\n  // Return button with label\n\n}",
+      "solution": "function Button({ label }) {\n  return <button>{label}</button>;\n}",
+      "hints": [
+        "Destructure label from props",
+        "Use curly braces to display the label"
+      ],
+      "validationPrompt": "Check if Button accepts label prop and displays it in a button"
+    },
+    {
+      "id": "props-ex-4",
+      "lessonId": "children-prop",
+      "moduleId": "components-props",
+      "title": "Card Container",
+      "difficulty": "medium",
+      "xpReward": 30,
+      "description": "Create a card that wraps any content.",
+      "instructions": "Create a `Card` component that:\n1. Accepts `title` and `children` props\n2. Displays title in an h2\n3. Renders children below the title\n4. Wraps everything in a div",
+      "starterCode": "function Card({ title, children }) {\n  // Return div with title and children\n\n}",
+      "solution": "function Card({ title, children }) {\n  return (\n    <div>\n      <h2>{title}</h2>\n      {children}\n    </div>\n  );\n}",
+      "hints": [
+        "children is a special prop for nested content",
+        "Just render {children} where you want the content"
+      ],
+      "validationPrompt": "Check if Card renders title in h2 and children below"
+    },
+    {
+      "id": "default-props-1",
+      "lessonId": "default-props",
+      "moduleId": "components-props",
+      "title": "Greeting with Default",
+      "difficulty": "easy",
+      "xpReward": 20,
+      "description": "Use default parameter value.",
+      "instructions": "Create a `Greeting` component that:\n1. Accepts name prop with default \"Guest\"\n2. Returns \"Hello, {name}!\"",
+      "starterCode": "function Greeting({ name }) {\n  // Add default and return greeting\n\n}",
+      "solution": "function Greeting({ name = \"Guest\" }) {\n  return <p>Hello, {name}!</p>;\n}",
+      "hints": [
+        "Add = \"Guest\" after name",
+        "Default is used when prop not provided"
+      ],
+      "validationPrompt": "Check if Greeting has default name of Guest"
+    }
+  ]
+}

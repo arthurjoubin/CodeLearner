@@ -375,7 +375,7 @@ Be encouraging but accurate. If mostly correct with minor issues, still mark as 
           isCorrect: false,
           feedback: 'Could not validate. Please try again.',
           hints: [],
-        }, env);
+        }, origin, env);
       }
 
       // POST /api/chat - Chat with AI tutor
@@ -430,6 +430,25 @@ Be more specific with each attempt. Don't give the answer directly.`;
         ], 150);
 
         return json({ hint: response }, origin, env);
+      }
+
+      // GET /api/leaderboard - Get top users by XP
+      if (path === '/api/leaderboard' && request.method === 'GET') {
+        const limit = parseInt(url.searchParams.get('limit') || '10');
+        const offset = parseInt(url.searchParams.get('offset') || '0');
+
+        const result = await env.DB.prepare(`
+          SELECT u.id, u.name, u.avatar_url, p.xp, p.level, p.streak
+          FROM users u
+          LEFT JOIN user_progress p ON u.id = p.user_id
+          ORDER BY p.xp DESC
+          LIMIT ${limit} OFFSET ${offset}
+        `).all();
+
+        const users = result.results as Array<{ id: string; name: string; avatar_url: string | null; xp: number; level: number; streak: number }>;
+        const total = await env.DB.prepare('SELECT COUNT(*) as count FROM users').first<{ count: number }>();
+
+        return json({ users, total: total?.count || 0 }, origin, env);
       }
 
       return error('Not found', origin, env, 404);

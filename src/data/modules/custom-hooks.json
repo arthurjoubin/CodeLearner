@@ -1,0 +1,116 @@
+{
+  "module": {
+    "id": "custom-hooks",
+    "title": "Custom Hooks",
+    "description": "Create reusable logic with custom React hooks",
+    "icon": "Settings",
+    "requiredXp": 2100,
+    "color": "from-amber-400 to-amber-600",
+    "courseId": "react"
+  },
+  "lessons": [
+    {
+      "id": "hooks-intro",
+      "moduleId": "custom-hooks",
+      "title": "Creating Custom Hooks",
+      "order": 1,
+      "xpReward": 35,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Reuse stateful logic across components.\n- Must start with \"use\".\n- Can call other hooks inside.\n\n---\n\n# Creating Custom Hooks\n\n## What are Custom Hooks?\n\nFunctions that use React hooks to encapsulate reusable logic.\n\n## Rules\n\n1. Name must start with \"use\"\n2. Can call other hooks\n3. Share stateful logic, not state itself\n\n## Example: useToggle\n\n```jsx\nfunction useToggle(initial = false) {\n  const [value, setValue] = useState(initial);\n  const toggle = () => setValue(v => !v);\n  return [value, toggle];\n}\n```",
+      "codeExample": "import { useState } from 'react';\n\nfunction useCounter(initialValue = 0) {\n  const [count, setCount] = useState(initialValue);\n\n  const increment = () => setCount(c => c + 1);\n  const decrement = () => setCount(c => c - 1);\n  const reset = () => setCount(initialValue);\n\n  return { count, increment, decrement, reset };\n}\n\nfunction Counter() {\n  const { count, increment, decrement, reset } = useCounter(10);\n\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={decrement}>-</button>\n      <button onClick={increment}>+</button>\n      <button onClick={reset}>Reset</button>\n    </div>\n  );\n}"
+    },
+    {
+      "id": "hooks-patterns",
+      "moduleId": "custom-hooks",
+      "title": "Common Hook Patterns",
+      "order": 2,
+      "xpReward": 40,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- Common uses: fetching data, localStorage.\n- Encapsulate complex logic.\n- Makes components cleaner.\n\n---\n\n# Common Hook Patterns\n\n## useLocalStorage\n\nPersist state to localStorage:\n\n```jsx\nfunction useLocalStorage(key, initialValue) {\n  const [value, setValue] = useState(() => {\n    const stored = localStorage.getItem(key);\n    return stored ? JSON.parse(stored) : initialValue;\n  });\n\n  useEffect(() => {\n    localStorage.setItem(key, JSON.stringify(value));\n  }, [key, value]);\n\n  return [value, setValue];\n}\n```\n\n## useFetch\n\nHandle data fetching with loading and error states.",
+      "codeExample": "import { useState, useEffect } from 'react';\n\nfunction useFetch(url) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n\n  useEffect(() => {\n    const fetchData = async () => {\n      try {\n        setLoading(true);\n        const response = await fetch(url);\n        const json = await response.json();\n        setData(json);\n      } catch (err) {\n        setError(err.message);\n      } finally {\n        setLoading(false);\n      }\n    };\n\n    fetchData();\n  }, [url]);\n\n  return { data, loading, error };\n}\n\nfunction UserList() {\n  const { data, loading, error } = useFetch('/api/users');\n\n  if (loading) return <p>Loading...</p>;\n  if (error) return <p>Error: {error}</p>;\n\n  return (\n    <ul>\n      {data?.map(user => <li key={user.id}>{user.name}</li>)}\n    </ul>\n  );\n}"
+    },
+    {
+      "id": "hooks-uselocalstorage",
+      "moduleId": "custom-hooks",
+      "title": "useLocalStorage Hook",
+      "order": 3,
+      "xpReward": 35,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Sync state with localStorage.\n- Initialize with function to read.\n- Update storage in `useEffect`.\n\n---\n\n# useLocalStorage Hook\n\n## Persisting State\n\nCreate a hook that syncs state with localStorage:\n\n```jsx\nfunction useLocalStorage(key, initialValue) {\n  const [value, setValue] = useState(() => {\n    const saved = localStorage.getItem(key);\n    return saved ? JSON.parse(saved) : initialValue;\n  });\n\n  useEffect(() => {\n    localStorage.setItem(key, JSON.stringify(value));\n  }, [key, value]);\n\n  return [value, setValue];\n}\n```\n\n## Usage\n\n```jsx\nfunction Settings() {\n  const [theme, setTheme] = useLocalStorage('theme', 'light');\n  // State persists across page reloads!\n}\n```",
+      "codeExample": "import { useState, useEffect } from 'react';\n\nfunction useLocalStorage(key, initialValue) {\n  const [value, setValue] = useState(() => {\n    try {\n      const item = localStorage.getItem(key);\n      return item ? JSON.parse(item) : initialValue;\n    } catch {\n      return initialValue;\n    }\n  });\n\n  useEffect(() => {\n    localStorage.setItem(key, JSON.stringify(value));\n  }, [key, value]);\n\n  return [value, setValue];\n}\n\n// Example usage\nfunction App() {\n  const [name, setName] = useLocalStorage('userName', '');\n  const [darkMode, setDarkMode] = useLocalStorage('darkMode', false);\n\n  return (\n    <div style={{\n      background: darkMode ? '#333' : '#fff',\n      color: darkMode ? '#fff' : '#333'\n    }}>\n      <input\n        value={name}\n        onChange={e => setName(e.target.value)}\n        placeholder=\"Your name (saved!)\"\n      />\n      <button onClick={() => setDarkMode(!darkMode)}>\n        Toggle Dark Mode\n      </button>\n    </div>\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "hooks-ex-1",
+      "lessonId": "hooks-intro",
+      "moduleId": "custom-hooks",
+      "title": "useToggle Hook",
+      "difficulty": "medium",
+      "xpReward": 30,
+      "description": "Create a useToggle custom hook",
+      "instructions": "Create a useToggle hook that manages a boolean state.\nIt should return [value, toggle] where toggle flips the value.\nUse it to create a show/hide feature.",
+      "starterCode": "import { useState } from 'react';\n\nfunction useToggle(initialValue = false) {\n  // Implement the hook\n}\n\nfunction ShowHide() {\n  const [isVisible, toggle] = useToggle(false);\n\n  return (\n    <div>\n      <button onClick={toggle}>\n        {isVisible ? 'Hide' : 'Show'}\n      </button>\n      {isVisible && <p>Now you see me!</p>}\n    </div>\n  );\n}",
+      "solution": "import { useState } from 'react';\n\nfunction useToggle(initialValue = false) {\n  const [value, setValue] = useState(initialValue);\n  const toggle = () => setValue(v => !v);\n  return [value, toggle];\n}\n\nfunction ShowHide() {\n  const [isVisible, toggle] = useToggle(false);\n\n  return (\n    <div>\n      <button onClick={toggle}>\n        {isVisible ? 'Hide' : 'Show'}\n      </button>\n      {isVisible && <p>Now you see me!</p>}\n    </div>\n  );\n}",
+      "hints": [
+        "Use useState inside useToggle",
+        "toggle should negate the current value",
+        "Return an array with value and toggle function"
+      ],
+      "validationPrompt": "Check if useToggle uses useState and returns array with toggle function"
+    },
+    {
+      "id": "hooks-ex-2",
+      "lessonId": "hooks-intro",
+      "moduleId": "custom-hooks",
+      "title": "useInput Hook",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Create a useInput hook for form inputs",
+      "instructions": "Create a useInput hook that manages input state.\nIt should return { value, onChange, reset }.\nreset should clear the input back to the initial value.",
+      "starterCode": "import { useState } from 'react';\n\nfunction useInput(initialValue = '') {\n  // Implement the hook\n}\n\nfunction NameForm() {\n  const nameInput = useInput('');\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    alert(`Hello, ${nameInput.value}!`);\n    nameInput.reset();\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input\n        value={nameInput.value}\n        onChange={nameInput.onChange}\n        placeholder=\"Enter name\"\n      />\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}",
+      "solution": "import { useState } from 'react';\n\nfunction useInput(initialValue = '') {\n  const [value, setValue] = useState(initialValue);\n\n  const onChange = (e) => setValue(e.target.value);\n  const reset = () => setValue(initialValue);\n\n  return { value, onChange, reset };\n}\n\nfunction NameForm() {\n  const nameInput = useInput('');\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    alert(`Hello, ${nameInput.value}!`);\n    nameInput.reset();\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input\n        value={nameInput.value}\n        onChange={nameInput.onChange}\n        placeholder=\"Enter name\"\n      />\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}",
+      "hints": [
+        "useState to store the value",
+        "onChange should update with e.target.value",
+        "reset sets value back to initialValue"
+      ],
+      "validationPrompt": "Check if useInput returns object with value, onChange and reset"
+    },
+    {
+      "id": "hooks-ex-3",
+      "lessonId": "hooks-patterns",
+      "moduleId": "custom-hooks",
+      "title": "usePrevious Hook",
+      "difficulty": "advanced",
+      "xpReward": 40,
+      "description": "Create a hook to track previous values",
+      "instructions": "Create a usePrevious hook that remembers the previous value.\nUse useRef and useEffect to track changes.\nShow both current and previous count values.",
+      "starterCode": "import { useState, useRef, useEffect } from 'react';\n\nfunction usePrevious(value) {\n  // Use useRef to store the previous value\n  // Use useEffect to update it after render\n}\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  const prevCount = usePrevious(count);\n\n  return (\n    <div>\n      <p>Current: {count}</p>\n      <p>Previous: {prevCount}</p>\n      <button onClick={() => setCount(c => c + 1)}>+</button>\n    </div>\n  );\n}",
+      "solution": "import { useState, useRef, useEffect } from 'react';\n\nfunction usePrevious(value) {\n  const ref = useRef();\n\n  useEffect(() => {\n    ref.current = value;\n  }, [value]);\n\n  return ref.current;\n}\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  const prevCount = usePrevious(count);\n\n  return (\n    <div>\n      <p>Current: {count}</p>\n      <p>Previous: {prevCount}</p>\n      <button onClick={() => setCount(c => c + 1)}>+</button>\n    </div>\n  );\n}",
+      "hints": [
+        "Create a ref with useRef()",
+        "useEffect runs after render to save current value",
+        "Return ref.current which has the old value"
+      ],
+      "validationPrompt": "Check if usePrevious uses useRef and useEffect to track previous value"
+    },
+    {
+      "id": "localstorage-1",
+      "lessonId": "hooks-uselocalstorage",
+      "moduleId": "custom-hooks",
+      "title": "Create useLocalStorage",
+      "difficulty": "advanced",
+      "xpReward": 50,
+      "description": "Build a localStorage hook.",
+      "instructions": "Create a `useLocalStorage` hook that:\n1. Takes key and initialValue parameters\n2. Reads from localStorage on init\n3. Saves to localStorage when value changes\n4. Returns [value, setValue]",
+      "starterCode": "import { useState, useEffect } from 'react';\n\nfunction useLocalStorage(key, initialValue) {\n  // Implement the hook\n\n}",
+      "solution": "import { useState, useEffect } from 'react';\n\nfunction useLocalStorage(key, initialValue) {\n  const [value, setValue] = useState(() => {\n    const saved = localStorage.getItem(key);\n    return saved ? JSON.parse(saved) : initialValue;\n  });\n\n  useEffect(() => {\n    localStorage.setItem(key, JSON.stringify(value));\n  }, [key, value]);\n\n  return [value, setValue];\n}\n",
+      "hints": [
+        "Use lazy initialization in useState",
+        "useEffect syncs to localStorage"
+      ],
+      "validationPrompt": "Check if useLocalStorage reads/writes localStorage with useEffect"
+    }
+  ]
+}

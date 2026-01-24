@@ -1,0 +1,87 @@
+{
+  "module": {
+    "id": "typescript-react",
+    "title": "TypeScript with React",
+    "description": "Add type safety to your React applications",
+    "icon": "Shield",
+    "requiredXp": 850,
+    "color": "from-cyan-400 to-cyan-600",
+    "courseId": "react"
+  },
+  "lessons": [
+    {
+      "id": "ts-basics",
+      "moduleId": "typescript-react",
+      "title": "TypeScript Basics for React",
+      "order": 1,
+      "xpReward": 30,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Adds static types to JS.\n- Catches errors at compile time.\n- Basic types: `string`, `number`, `boolean`, arrays.\n- `interface` defines object shapes.\n\n---\n\n# TypeScript Basics for React\n\nTypeScript adds **static types** to JavaScript, catching errors before runtime.\n\n## Why TypeScript?\n\n- Catch bugs during development\n- Better autocomplete in editors\n- Self-documenting code\n- Safer refactoring\n\n## Basic Types\n\n```typescript\n// Primitives\nlet name: string = 'Alice';\nlet age: number = 25;\nlet isActive: boolean = true;\n\n// Arrays\nlet numbers: number[] = [1, 2, 3];\nlet names: string[] = ['Alice', 'Bob'];\n\n// Objects\nlet user: { name: string; age: number } = {\n  name: 'Alice',\n  age: 25,\n};\n```\n\n## Interfaces\n\nDefine object shapes:\n\n```typescript\ninterface User {\n  name: string;\n  age: number;\n  email?: string;  // Optional property\n}\n\nconst user: User = { name: 'Alice', age: 25 };\n```\n\n## Type Inference\n\nTypeScript often infers types automatically:\n\n```typescript\nconst count = 0;  // TypeScript knows it's a number\nconst name = 'Alice';  // TypeScript knows it's a string\n```",
+      "codeExample": "// Define types for our data\ninterface Todo {\n  id: number;\n  text: string;\n  completed: boolean;\n}\n\n// TypeScript knows todos is Todo[]\nconst todos: Todo[] = [\n  { id: 1, text: 'Learn TypeScript', completed: false },\n  { id: 2, text: 'Use with React', completed: false },\n];\n\n// Function with typed parameters and return\nfunction toggleTodo(todos: Todo[], id: number): Todo[] {\n  return todos.map(todo =>\n    todo.id === id\n      ? { ...todo, completed: !todo.completed }\n      : todo\n  );\n}"
+    },
+    {
+      "id": "ts-components",
+      "moduleId": "typescript-react",
+      "title": "Typing React Components",
+      "order": 2,
+      "xpReward": 35,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- Defines props interface.\n- Use `React.ReactNode` for `children`.\n- State type: `useState<Type>(initial)`.\n- Event types: `React.ChangeEvent`, `React.MouseEvent`.\n\n---\n\n# Typing React Components\n\n## Typing Props\n\n```typescript\ninterface GreetingProps {\n  name: string;\n  age?: number;  // Optional\n}\n\nfunction Greeting({ name, age }: GreetingProps) {\n  return (\n    <div>\n      <h1>Hello, {name}!</h1>\n      {age && <p>Age: {age}</p>}\n    </div>\n  );\n}\n```\n\n## Typing Children\n\n```typescript\ninterface CardProps {\n  title: string;\n  children: React.ReactNode;\n}\n\nfunction Card({ title, children }: CardProps) {\n  return (\n    <div>\n      <h2>{title}</h2>\n      {children}\n    </div>\n  );\n}\n```\n\n## Typing State\n\n```typescript\nconst [count, setCount] = useState<number>(0);\nconst [user, setUser] = useState<User | null>(null);\nconst [items, setItems] = useState<string[]>([]);\n```\n\nOften TypeScript infers the type from the initial value!\n\n## Typing Events\n\n```typescript\nfunction handleChange(event: React.ChangeEvent<HTMLInputElement>) {\n  console.log(event.target.value);\n}\n\nfunction handleClick(event: React.MouseEvent<HTMLButtonElement>) {\n  console.log('Clicked!');\n}\n```",
+      "codeExample": "import { useState } from 'react';\n\ninterface TodoItemProps {\n  id: number;\n  text: string;\n  completed: boolean;\n  onToggle: (id: number) => void;\n}\n\nfunction TodoItem({ id, text, completed, onToggle }: TodoItemProps) {\n  return (\n    <li\n      onClick={() => onToggle(id)}\n      style={{ textDecoration: completed ? 'line-through' : 'none' }}\n    >\n      {text}\n    </li>\n  );\n}\n\nfunction TodoList() {\n  const [todos, setTodos] = useState<TodoItemProps[]>([]);\n\n  const handleToggle = (id: number) => {\n    setTodos(todos.map(todo =>\n      todo.id === id ? { ...todo, completed: !todo.completed } : todo\n    ));\n  };\n\n  return (\n    <ul>\n      {todos.map(todo => (\n        <TodoItem key={todo.id} {...todo} onToggle={handleToggle} />\n      ))}\n    </ul>\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ts-ex-1",
+      "lessonId": "ts-components",
+      "moduleId": "typescript-react",
+      "title": "Typed Props",
+      "difficulty": "medium",
+      "xpReward": 40,
+      "description": "Create a component with typed props.",
+      "instructions": "Create a typed `UserProfile` component:\n1. Define a `UserProfileProps` interface with:\n   - name: string\n   - age: number\n   - isAdmin: boolean (optional)\n2. Create the component using these props\n3. Display name and age, and show \"Admin\" badge if isAdmin is true",
+      "starterCode": "// Define interface here\n\nfunction UserProfile(/* typed props */) {\n  // Return user profile display\n\n}",
+      "solution": "interface UserProfileProps {\n  name: string;\n  age: number;\n  isAdmin?: boolean;\n}\n\nfunction UserProfile({ name, age, isAdmin }: UserProfileProps) {\n  return (\n    <div>\n      <h2>{name} {isAdmin && '(Admin)'}</h2>\n      <p>Age: {age}</p>\n    </div>\n  );\n}",
+      "hints": [
+        "Use interface to define the prop types",
+        "Use ? after property name to make it optional",
+        "Add the type annotation after the props destructuring"
+      ],
+      "validationPrompt": "Check if UserProfileProps interface is defined correctly and component uses typed props"
+    },
+    {
+      "id": "ts-ex-2",
+      "lessonId": "ts-basics",
+      "moduleId": "typescript-react",
+      "title": "Typed Function",
+      "difficulty": "easy",
+      "xpReward": 25,
+      "description": "Create a typed utility function.",
+      "instructions": "Create a function `formatPrice` that:\n1. Takes amount (number) as parameter\n2. Returns a string like \"$XX.XX\"\n3. Has proper TypeScript types",
+      "starterCode": "function formatPrice(amount) {\n  // Return formatted price\n\n}",
+      "solution": "function formatPrice(amount: number): string {\n  return \"$\" + amount.toFixed(2);\n}",
+      "hints": [
+        "Add : number after the parameter",
+        "Add : string before the opening brace"
+      ],
+      "validationPrompt": "Check if formatPrice has number param type and string return type"
+    },
+    {
+      "id": "ts-ex-3",
+      "lessonId": "ts-components",
+      "moduleId": "typescript-react",
+      "title": "Typed Component",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Create a fully typed React component.",
+      "instructions": "Create a typed `Badge` component:\n1. Define BadgeProps interface with text (string) and color (string)\n2. Component displays text in a span\n3. Uses color for style",
+      "starterCode": "interface BadgeProps {\n  // Define props\n}\n\nfunction Badge({ text, color }: BadgeProps) {\n  // Return styled span\n\n}",
+      "solution": "interface BadgeProps {\n  text: string;\n  color: string;\n}\n\nfunction Badge({ text, color }: BadgeProps) {\n  return <span style={{ backgroundColor: color }}>{text}</span>;\n}",
+      "hints": [
+        "Interface defines the shape of props",
+        "Use style prop for backgroundColor"
+      ],
+      "validationPrompt": "Check if BadgeProps interface is defined with text and color strings"
+    }
+  ]
+}

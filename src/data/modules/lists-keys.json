@@ -1,0 +1,99 @@
+{
+  "module": {
+    "id": "lists-keys",
+    "title": "Lists & Keys",
+    "description": "Render dynamic lists and understand the importance of keys",
+    "icon": "List",
+    "requiredXp": 1100,
+    "color": "from-indigo-400 to-indigo-600",
+    "courseId": "react"
+  },
+  "lessons": [
+    {
+      "id": "lists-rendering",
+      "moduleId": "lists-keys",
+      "title": "Rendering Lists",
+      "order": 1,
+      "xpReward": 25,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Use `.map()` to convert arrays to JSX.\n- Returns a new array of elements.\n- Always add a unique `key` prop.\n\n---\n\n# Rendering Lists in React\n\n## The map() Method\n\nUse JavaScript's `map()` to transform arrays into JSX:\n\n```jsx\nconst items = ['Apple', 'Banana', 'Cherry'];\n\nfunction FruitList() {\n  return (\n    <ul>\n      {items.map(item => <li>{item}</li>)}\n    </ul>\n  );\n}\n```\n\n## Why map()?\n\n- Transforms each array element into JSX\n- Returns a new array of elements\n- Perfect for dynamic lists",
+      "codeExample": "function ShoppingList() {\n  const items = ['Milk', 'Bread', 'Eggs', 'Butter'];\n\n  return (\n    <ul>\n      {items.map(item => (\n        <li>{item}</li>\n      ))}\n    </ul>\n  );\n}"
+    },
+    {
+      "id": "lists-keys",
+      "moduleId": "lists-keys",
+      "title": "Understanding Keys",
+      "order": 2,
+      "xpReward": 30,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Keys help React track item identity.\n- Must be unique among siblings.\n- Must be stable (no random keys).\n- Prefer IDs over array indices.\n\n---\n\n# Understanding Keys\n\n## Why Keys Matter\n\nKeys help React identify which items changed, were added, or removed.\n\n```jsx\n// Always add a key when mapping\n{items.map(item => (\n  <li key={item.id}>{item.name}</li>\n))}\n```\n\n## Key Rules\n\n1. Keys must be **unique** among siblings\n2. Keys should be **stable** (don't use random values)\n3. Don't use array **index** as key (usually)\n\n## Good vs Bad Keys\n\n```jsx\n// Bad - index can change\n{items.map((item, index) => <li key={index}>{item}</li>)}\n\n// Good - stable unique id\n{items.map(item => <li key={item.id}>{item.name}</li>)}\n```",
+      "codeExample": "function TodoList() {\n  const todos = [\n    { id: 1, text: 'Learn React' },\n    { id: 2, text: 'Build an app' },\n    { id: 3, text: 'Deploy it' },\n  ];\n\n  return (\n    <ul>\n      {todos.map(todo => (\n        <li key={todo.id}>{todo.text}</li>\n      ))}\n    </ul>\n  );\n}"
+    },
+    {
+      "id": "lists-filtering",
+      "moduleId": "lists-keys",
+      "title": "Filtering & Sorting Lists",
+      "order": 3,
+      "xpReward": 30,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `filter()` removes items.\n- `sort()` reorders items.\n- Chain operations: `.filter().sort().map()`.\n\n---\n\n# Filtering & Sorting Lists\n\n## Filtering with filter()\n\n```jsx\nconst completedTodos = todos.filter(todo => todo.completed);\n```\n\n## Sorting with sort()\n\n```jsx\nconst sortedItems = [...items].sort((a, b) => a.name.localeCompare(b.name));\n```\n\n## Combining Operations\n\nChain filter, sort, and map together:\n\n```jsx\n{items\n  .filter(item => item.active)\n  .sort((a, b) => b.priority - a.priority)\n  .map(item => <Item key={item.id} {...item} />)}\n```",
+      "codeExample": "function FilteredList() {\n  const products = [\n    { id: 1, name: 'Apple', price: 1.5, inStock: true },\n    { id: 2, name: 'Banana', price: 0.5, inStock: true },\n    { id: 3, name: 'Cherry', price: 3.0, inStock: false },\n  ];\n\n  const availableProducts = products\n    .filter(p => p.inStock)\n    .sort((a, b) => a.price - b.price);\n\n  return (\n    <ul>\n      {availableProducts.map(product => (\n        <li key={product.id}>\n          {product.name} - ${product.price}\n        </li>\n      ))}\n    </ul>\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "lists-ex-1",
+      "lessonId": "lists-rendering",
+      "moduleId": "lists-keys",
+      "title": "Render a List",
+      "difficulty": "easy",
+      "xpReward": 20,
+      "description": "Create a component that renders a list of items",
+      "instructions": "Create a ColorList component that renders an unordered list of colors.\nThe colors array is provided: ['Red', 'Green', 'Blue', 'Yellow'].\nUse map() to render each color as a list item.",
+      "starterCode": "function ColorList() {\n  const colors = ['Red', 'Green', 'Blue', 'Yellow'];\n\n  return (\n    // Render an ul with li items for each color\n  );\n}",
+      "solution": "function ColorList() {\n  const colors = ['Red', 'Green', 'Blue', 'Yellow'];\n\n  return (\n    <ul>\n      {colors.map(color => (\n        <li key={color}>{color}</li>\n      ))}\n    </ul>\n  );\n}",
+      "hints": [
+        "Use the map() method on the colors array",
+        "Return a <li> element for each color",
+        "Add a key prop to each li"
+      ],
+      "validationPrompt": "Check if component uses map() to render li elements inside a ul"
+    },
+    {
+      "id": "lists-ex-2",
+      "lessonId": "lists-keys",
+      "moduleId": "lists-keys",
+      "title": "Add Proper Keys",
+      "difficulty": "medium",
+      "xpReward": 25,
+      "description": "Add proper keys to a list of objects",
+      "instructions": "Fix the UserList component to use proper keys.\nEach user object has an id, name, and email.\nUse the user's id as the key instead of the array index.",
+      "starterCode": "function UserList() {\n  const users = [\n    { id: 1, name: 'Alice', email: 'alice@example.com' },\n    { id: 2, name: 'Bob', email: 'bob@example.com' },\n    { id: 3, name: 'Charlie', email: 'charlie@example.com' },\n  ];\n\n  return (\n    <ul>\n      {users.map((user, index) => (\n        <li key={index}>\n          {user.name} - {user.email}\n        </li>\n      ))}\n    </ul>\n  );\n}",
+      "solution": "function UserList() {\n  const users = [\n    { id: 1, name: 'Alice', email: 'alice@example.com' },\n    { id: 2, name: 'Bob', email: 'bob@example.com' },\n    { id: 3, name: 'Charlie', email: 'charlie@example.com' },\n  ];\n\n  return (\n    <ul>\n      {users.map(user => (\n        <li key={user.id}>\n          {user.name} - {user.email}\n        </li>\n      ))}\n    </ul>\n  );\n}",
+      "hints": [
+        "Use user.id as the key",
+        "Remove the index parameter",
+        "Each user has a unique id property"
+      ],
+      "validationPrompt": "Check if key={user.id} is used instead of key={index}"
+    },
+    {
+      "id": "lists-ex-3",
+      "lessonId": "lists-filtering",
+      "moduleId": "lists-keys",
+      "title": "Filter a List",
+      "difficulty": "medium",
+      "xpReward": 30,
+      "description": "Filter and display only active items",
+      "instructions": "Create a component that shows only active tasks.\nUse filter() before map() to show only tasks where active is true.",
+      "starterCode": "function ActiveTasks() {\n  const tasks = [\n    { id: 1, title: 'Learn React', active: true },\n    { id: 2, title: 'Do laundry', active: false },\n    { id: 3, title: 'Build app', active: true },\n    { id: 4, title: 'Clean room', active: false },\n  ];\n\n  return (\n    <ul>\n      {/* Filter to show only active tasks */}\n    </ul>\n  );\n}",
+      "solution": "function ActiveTasks() {\n  const tasks = [\n    { id: 1, title: 'Learn React', active: true },\n    { id: 2, title: 'Do laundry', active: false },\n    { id: 3, title: 'Build app', active: true },\n    { id: 4, title: 'Clean room', active: false },\n  ];\n\n  return (\n    <ul>\n      {tasks\n        .filter(task => task.active)\n        .map(task => (\n          <li key={task.id}>{task.title}</li>\n        ))}\n    </ul>\n  );\n}",
+      "hints": [
+        "Use filter() before map()",
+        "Filter tasks where task.active is true",
+        "Chain filter and map together"
+      ],
+      "validationPrompt": "Check if filter() is used to show only active tasks"
+    }
+  ]
+}

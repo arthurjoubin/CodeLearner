@@ -1,0 +1,104 @@
+{
+  "module": {
+    "id": "events",
+    "title": "Event Handling",
+    "description": "Respond to user interactions like clicks and inputs",
+    "icon": "MousePointer",
+    "requiredXp": 400,
+    "color": "from-orange-400 to-orange-600",
+    "courseId": "react"
+  },
+  "lessons": [
+    {
+      "id": "events-basics",
+      "moduleId": "events",
+      "title": "Event Handling Basics",
+      "order": 1,
+      "xpReward": 20,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- React uses camelCase for events (`onClick`).\n- Pass function references, don't execute them (`onClick={handleClick}`).\n- Common events: `onClick`, `onChange`, `onSubmit`.\n\n---\n\n# Event Handling in React\n\nReact handles events similarly to HTML, with a few differences.\n\n## Basic Syntax\n\n```jsx\n<button onClick={handleClick}>\n  Click me\n</button>\n```\n\n**Key differences from HTML:**\n- **camelCase**: `onClick`, not `onclick`\n- **Function reference**: Pass the function, don't call it\n\n## Common Events\n\n| Event | Description |\n|-------|-------------|\n| `onClick` | Mouse click |\n| `onChange` | Input value changed |\n| `onSubmit` | Form submitted |\n| `onMouseEnter` | Mouse enters element |\n| `onMouseLeave` | Mouse leaves element |\n| `onKeyDown` | Key pressed |\n| `onFocus` | Element gains focus |\n| `onBlur` | Element loses focus |\n\n## Inline vs Named Handlers\n\n```jsx\n// Inline (simple actions)\n<button onClick={() => setCount(count + 1)}>\n  Add\n</button>\n\n// Named (complex logic)\nfunction handleClick() {\n  console.log('Clicked!');\n  setCount(count + 1);\n}\n\n<button onClick={handleClick}>Add</button>\n```\n\n## Common Mistake\n\n```jsx\n// ❌ WRONG - Calls immediately!\n<button onClick={handleClick()}>\n\n// ✅ CORRECT - Passes reference\n<button onClick={handleClick}>\n```",
+      "codeExample": "import { useState } from 'react';\n\nfunction EventDemo() {\n  const [message, setMessage] = useState('');\n\n  const handleClick = () => {\n    setMessage('Button clicked!');\n  };\n\n  const handleMouseEnter = () => {\n    setMessage('Mouse entered!');\n  };\n\n  const handleMouseLeave = () => {\n    setMessage('Mouse left!');\n  };\n\n  return (\n    <div>\n      <button\n        onClick={handleClick}\n        onMouseEnter={handleMouseEnter}\n        onMouseLeave={handleMouseLeave}\n      >\n        Hover or Click me\n      </button>\n      <p>{message}</p>\n    </div>\n  );\n}"
+    },
+    {
+      "id": "events-object",
+      "moduleId": "events",
+      "title": "The Event Object",
+      "order": 2,
+      "xpReward": 25,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `event` object is passed to handlers.\n- `event.target.value` gets input value.\n- `event.preventDefault()` stops default browser behavior.\n- `event.stopPropagation()` stops event bubbling.\n\n---\n\n# The Event Object\n\nEvent handlers receive an event object with useful information.\n\n## Accessing the Event\n\n```jsx\nfunction handleClick(event) {\n  console.log(event.target);  // Element that was clicked\n  console.log(event.type);    // \"click\"\n}\n\n<button onClick={handleClick}>Click</button>\n```\n\n## Common Event Properties\n\n- `event.target` - The element that triggered the event\n- `event.target.value` - Input field value\n- `event.preventDefault()` - Stop default behavior\n- `event.stopPropagation()` - Stop bubbling\n\n## Form Events\n\n```jsx\nfunction handleChange(event) {\n  const value = event.target.value;\n  setInput(value);\n}\n\n<input onChange={handleChange} />\n```\n\n## Preventing Default Behavior\n\n```jsx\nfunction handleSubmit(event) {\n  event.preventDefault(); // Stop page reload\n  console.log('Form submitted!');\n}\n\n<form onSubmit={handleSubmit}>\n  <button type=\"submit\">Submit</button>\n</form>\n```",
+      "codeExample": "import { useState } from 'react';\n\nfunction Form() {\n  const [input, setInput] = useState('');\n  const [submitted, setSubmitted] = useState('');\n\n  const handleChange = (event) => {\n    setInput(event.target.value);\n  };\n\n  const handleSubmit = (event) => {\n    event.preventDefault();\n    setSubmitted(input);\n    setInput('');\n  };\n\n  return (\n    <div>\n      <form onSubmit={handleSubmit}>\n        <input\n          value={input}\n          onChange={handleChange}\n          placeholder=\"Type something...\"\n        />\n        <button type=\"submit\">Submit</button>\n      </form>\n      {submitted && <p>You submitted: {submitted}</p>}\n    </div>\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "events-ex-1",
+      "lessonId": "events-basics",
+      "moduleId": "events",
+      "title": "Click Handler",
+      "difficulty": "easy",
+      "xpReward": 25,
+      "description": "Handle a button click event.",
+      "instructions": "Create a `ClickMe` component that:\n1. Has a `clicked` state (boolean, starts false)\n2. Shows \"Not clicked yet\" when false\n3. Shows \"You clicked!\" when true\n4. Has a button that sets clicked to true",
+      "starterCode": "import { useState } from 'react';\n\nfunction ClickMe() {\n  // Create clicked state\n  // Return message and button\n\n}",
+      "solution": "import { useState } from 'react';\n\nfunction ClickMe() {\n  const [clicked, setClicked] = useState(false);\n\n  return (\n    <div>\n      <p>{clicked ? 'You clicked!' : 'Not clicked yet'}</p>\n      <button onClick={() => setClicked(true)}>\n        Click me\n      </button>\n    </div>\n  );\n}",
+      "hints": [
+        "Use useState(false) for the initial state",
+        "The onClick handler should call setClicked(true)"
+      ],
+      "validationPrompt": "Check if ClickMe tracks click state and shows appropriate message before/after clicking"
+    },
+    {
+      "id": "events-ex-2",
+      "lessonId": "events-object",
+      "moduleId": "events",
+      "title": "Controlled Input",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Create a controlled input field.",
+      "instructions": "Create a `NameInput` component that:\n1. Has a `name` state starting as empty string\n2. Has an input field that updates the name state on change\n3. Shows \"Hello, {name}!\" below the input (or \"Hello, stranger!\" if empty)",
+      "starterCode": "import { useState } from 'react';\n\nfunction NameInput() {\n  // Create name state\n  // Return input and greeting\n\n}",
+      "solution": "import { useState } from 'react';\n\nfunction NameInput() {\n  const [name, setName] = useState('');\n\n  return (\n    <div>\n      <input\n        value={name}\n        onChange={(e) => setName(e.target.value)}\n        placeholder=\"Enter your name\"\n      />\n      <p>Hello, {name || 'stranger'}!</p>\n    </div>\n  );\n}",
+      "hints": [
+        "Use value={name} to make it a controlled input",
+        "Access the input value with event.target.value",
+        "Use || to provide a default value"
+      ],
+      "validationPrompt": "Check if NameInput has controlled input that updates state and shows dynamic greeting"
+    },
+    {
+      "id": "events-ex-3",
+      "lessonId": "events-basics",
+      "moduleId": "events",
+      "title": "Hover Effect",
+      "difficulty": "easy",
+      "xpReward": 25,
+      "description": "Change text on mouse hover.",
+      "instructions": "Create a `HoverBox` component that:\n1. Has a hovered state (false)\n2. Shows \"Hover me!\" normally\n3. Shows \"Hello!\" when hovered\n4. Uses onMouseEnter and onMouseLeave",
+      "starterCode": "import { useState } from 'react';\n\nfunction HoverBox() {\n  // Create hover state and handlers\n\n}",
+      "solution": "import { useState } from 'react';\n\nfunction HoverBox() {\n  const [hovered, setHovered] = useState(false);\n  return (\n    <div\n      onMouseEnter={() => setHovered(true)}\n      onMouseLeave={() => setHovered(false)}\n    >\n      {hovered ? \"Hello!\" : \"Hover me!\"}\n    </div>\n  );\n}",
+      "hints": [
+        "onMouseEnter fires when mouse enters",
+        "onMouseLeave fires when mouse leaves"
+      ],
+      "validationPrompt": "Check if HoverBox changes text on hover using onMouseEnter/Leave"
+    },
+    {
+      "id": "events-ex-4",
+      "lessonId": "events-object",
+      "moduleId": "events",
+      "title": "Key Press Display",
+      "difficulty": "medium",
+      "xpReward": 30,
+      "description": "Display the last key pressed.",
+      "instructions": "Create a `KeyDisplay` component that:\n1. Has a lastKey state (empty string)\n2. Has an input with onKeyDown handler\n3. Displays \"Last key: {lastKey}\" below the input",
+      "starterCode": "import { useState } from 'react';\n\nfunction KeyDisplay() {\n  // Track key presses\n\n}",
+      "solution": "import { useState } from 'react';\n\nfunction KeyDisplay() {\n  const [lastKey, setLastKey] = useState(\"\");\n  return (\n    <div>\n      <input onKeyDown={(e) => setLastKey(e.key)} />\n      <p>Last key: {lastKey}</p>\n    </div>\n  );\n}",
+      "hints": [
+        "Use e.key to get the pressed key",
+        "onKeyDown fires on every key press"
+      ],
+      "validationPrompt": "Check if KeyDisplay shows the last pressed key using e.key"
+    }
+  ]
+}

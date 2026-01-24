@@ -1,0 +1,99 @@
+{
+  "module": {
+    "id": "context-api",
+    "title": "Context API",
+    "description": "Share state across components without prop drilling",
+    "icon": "Layers",
+    "requiredXp": 1750,
+    "color": "from-teal-400 to-teal-600",
+    "courseId": "react"
+  },
+  "lessons": [
+    {
+      "id": "context-intro",
+      "moduleId": "context-api",
+      "title": "Introduction to Context",
+      "order": 1,
+      "xpReward": 30,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Solves \"prop drilling\".\n- `createContext()` creates the context.\n- `useContext()` consumes it.\n- Useful for global data (theme, user).\n\n---\n\n# Introduction to Context\n\n## The Prop Drilling Problem\n\nPassing props through many levels is tedious:\n\n```jsx\n<App user={user}>\n  <Layout user={user}>\n    <Sidebar user={user}>\n      <UserInfo user={user} />\n    </Sidebar>\n  </Layout>\n</App>\n```\n\n## Context to the Rescue\n\nContext provides a way to pass data through the component tree without passing props.\n\n```jsx\nconst UserContext = createContext(null);\n```",
+      "codeExample": "import { createContext, useContext } from 'react';\n\nconst ThemeContext = createContext('light');\n\nfunction App() {\n  return (\n    <ThemeContext.Provider value=\"dark\">\n      <Toolbar />\n    </ThemeContext.Provider>\n  );\n}\n\nfunction Toolbar() {\n  return <ThemedButton />;\n}\n\nfunction ThemedButton() {\n  const theme = useContext(ThemeContext);\n  return (\n    <button style={{\n      background: theme === 'dark' ? '#333' : '#fff',\n      color: theme === 'dark' ? '#fff' : '#333',\n    }}>\n      I'm {theme} themed!\n    </button>\n  );\n}"
+    },
+    {
+      "id": "context-provider",
+      "moduleId": "context-api",
+      "title": "Creating Providers",
+      "order": 2,
+      "xpReward": 35,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Provider component wraps the part of the app that needs access.\n- Accepts a `value` prop.\n- Custom hooks (e.g., `useTheme`) simplify access.\n\n---\n\n# Creating Context Providers\n\n## Provider Pattern\n\nCreate a provider component that wraps your app:\n\n```jsx\nexport function ThemeProvider({ children }) {\n  const [theme, setTheme] = useState('light');\n\n  return (\n    <ThemeContext.Provider value={{ theme, setTheme }}>\n      {children}\n    </ThemeContext.Provider>\n  );\n}\n```\n\n## Custom Hook\n\nCreate a custom hook for easier consumption:\n\n```jsx\nexport function useTheme() {\n  return useContext(ThemeContext);\n}\n```",
+      "codeExample": "import { createContext, useContext, useState } from 'react';\n\nconst AuthContext = createContext(null);\n\nexport function AuthProvider({ children }) {\n  const [user, setUser] = useState(null);\n\n  const login = (userData) => setUser(userData);\n  const logout = () => setUser(null);\n\n  return (\n    <AuthContext.Provider value={{ user, login, logout }}>\n      {children}\n    </AuthContext.Provider>\n  );\n}\n\nexport function useAuth() {\n  return useContext(AuthContext);\n}"
+    },
+    {
+      "id": "context-patterns",
+      "moduleId": "context-api",
+      "title": "Context Best Practices",
+      "order": 3,
+      "xpReward": 35,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- Use for low-frequency updates (themes, auth).\n- Avoid for high-frequency updates (performance).\n- Split contexts (State vs Dispatch).\n\n---\n\n# Context Best Practices\n\n## When to Use Context\n\n- Theme data (dark/light mode)\n- User authentication\n- Locale/language settings\n- Feature flags\n\n## When NOT to Use Context\n\n- Frequently changing data (use state management)\n- Data only needed by one component\n- Performance-critical updates\n\n## Split Contexts\n\nSeparate state and dispatch to avoid unnecessary re-renders.",
+      "codeExample": "import { createContext, useContext, useReducer } from 'react';\n\nconst TodosContext = createContext(null);\nconst TodosDispatchContext = createContext(null);\n\nfunction todosReducer(todos, action) {\n  switch (action.type) {\n    case 'add':\n      return [...todos, { id: Date.now(), text: action.text }];\n    case 'delete':\n      return todos.filter(t => t.id !== action.id);\n    default:\n      throw new Error('Unknown action');\n  }\n}\n\nexport function TodosProvider({ children }) {\n  const [todos, dispatch] = useReducer(todosReducer, []);\n\n  return (\n    <TodosContext.Provider value={todos}>\n      <TodosDispatchContext.Provider value={dispatch}>\n        {children}\n      </TodosDispatchContext.Provider>\n    </TodosContext.Provider>\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "context-ex-1",
+      "lessonId": "context-intro",
+      "moduleId": "context-api",
+      "title": "Use Context",
+      "difficulty": "medium",
+      "xpReward": 30,
+      "description": "Consume a context value",
+      "instructions": "Complete the ThemedBox component to use the ThemeContext.\nApply different background colors based on the theme value.\ndark theme = black background, white text\nlight theme = white background, black text",
+      "starterCode": "import { createContext, useContext } from 'react';\n\nconst ThemeContext = createContext('light');\n\nfunction ThemedBox() {\n  // Get the theme from context\n\n  return (\n    <div style={{ padding: '20px' }}>\n      Current theme is displayed here\n    </div>\n  );\n}\n\nfunction App() {\n  return (\n    <ThemeContext.Provider value=\"dark\">\n      <ThemedBox />\n    </ThemeContext.Provider>\n  );\n}",
+      "solution": "import { createContext, useContext } from 'react';\n\nconst ThemeContext = createContext('light');\n\nfunction ThemedBox() {\n  const theme = useContext(ThemeContext);\n\n  return (\n    <div style={{\n      padding: '20px',\n      background: theme === 'dark' ? 'black' : 'white',\n      color: theme === 'dark' ? 'white' : 'black',\n    }}>\n      Current theme: {theme}\n    </div>\n  );\n}\n\nfunction App() {\n  return (\n    <ThemeContext.Provider value=\"dark\">\n      <ThemedBox />\n    </ThemeContext.Provider>\n  );\n}",
+      "hints": [
+        "Use useContext(ThemeContext) to get the theme",
+        "Apply conditional styles based on theme value",
+        "Check if theme equals dark"
+      ],
+      "validationPrompt": "Check if useContext is used and styles change based on theme"
+    },
+    {
+      "id": "context-ex-2",
+      "lessonId": "context-provider",
+      "moduleId": "context-api",
+      "title": "Create a Provider",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Create a context provider with state",
+      "instructions": "Complete the CounterProvider to share count state.\nThe provider should expose count, increment, and decrement.\nComplete the useCounter hook to consume the context.",
+      "starterCode": "import { createContext, useContext, useState } from 'react';\n\nconst CounterContext = createContext(null);\n\nfunction CounterProvider({ children }) {\n  // Add count state\n  // Create increment and decrement functions\n  // Return provider with value\n}\n\nfunction useCounter() {\n  // Return the context value\n}\n\nfunction Counter() {\n  const { count, increment, decrement } = useCounter();\n\n  return (\n    <div>\n      <button onClick={decrement}>-</button>\n      <span>{count}</span>\n      <button onClick={increment}>+</button>\n    </div>\n  );\n}",
+      "solution": "import { createContext, useContext, useState } from 'react';\n\nconst CounterContext = createContext(null);\n\nfunction CounterProvider({ children }) {\n  const [count, setCount] = useState(0);\n\n  const increment = () => setCount(c => c + 1);\n  const decrement = () => setCount(c => c - 1);\n\n  return (\n    <CounterContext.Provider value={{ count, increment, decrement }}>\n      {children}\n    </CounterContext.Provider>\n  );\n}\n\nfunction useCounter() {\n  return useContext(CounterContext);\n}\n\nfunction Counter() {\n  const { count, increment, decrement } = useCounter();\n\n  return (\n    <div>\n      <button onClick={decrement}>-</button>\n      <span>{count}</span>\n      <button onClick={increment}>+</button>\n    </div>\n  );\n}",
+      "hints": [
+        "Add useState for count in CounterProvider",
+        "Pass an object with count, increment, decrement to Provider value",
+        "useCounter should return useContext(CounterContext)"
+      ],
+      "validationPrompt": "Check if CounterProvider has state and passes count/increment/decrement"
+    },
+    {
+      "id": "context-ex-3",
+      "lessonId": "context-patterns",
+      "moduleId": "context-api",
+      "title": "Theme Toggle",
+      "difficulty": "advanced",
+      "xpReward": 40,
+      "description": "Build a complete theme toggle system",
+      "instructions": "Create a ThemeProvider that allows toggling between light and dark themes.\nInclude a toggleTheme function in the context value.\nThe ThemeToggle component should show the current theme and a button to toggle.",
+      "starterCode": "import { createContext, useContext, useState } from 'react';\n\nconst ThemeContext = createContext(null);\n\nfunction ThemeProvider({ children }) {\n  // Add theme state (default: 'light')\n  // Create toggleTheme function\n  // Return provider\n}\n\nfunction useTheme() {\n  return useContext(ThemeContext);\n}\n\nfunction ThemeToggle() {\n  const { theme, toggleTheme } = useTheme();\n\n  return (\n    <div>\n      <p>Current: {theme}</p>\n      <button onClick={toggleTheme}>Toggle Theme</button>\n    </div>\n  );\n}",
+      "solution": "import { createContext, useContext, useState } from 'react';\n\nconst ThemeContext = createContext(null);\n\nfunction ThemeProvider({ children }) {\n  const [theme, setTheme] = useState('light');\n\n  const toggleTheme = () => {\n    setTheme(prev => prev === 'light' ? 'dark' : 'light');\n  };\n\n  return (\n    <ThemeContext.Provider value={{ theme, toggleTheme }}>\n      {children}\n    </ThemeContext.Provider>\n  );\n}\n\nfunction useTheme() {\n  return useContext(ThemeContext);\n}\n\nfunction ThemeToggle() {\n  const { theme, toggleTheme } = useTheme();\n\n  return (\n    <div>\n      <p>Current: {theme}</p>\n      <button onClick={toggleTheme}>Toggle Theme</button>\n    </div>\n  );\n}",
+      "hints": [
+        "useState with initial value light",
+        "toggleTheme should flip between light and dark",
+        "Pass both theme and toggleTheme in provider value"
+      ],
+      "validationPrompt": "Check if ThemeProvider has toggleTheme function that switches between light/dark"
+    }
+  ]
+}

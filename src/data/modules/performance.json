@@ -1,0 +1,99 @@
+{
+  "module": {
+    "id": "performance",
+    "title": "Performance",
+    "description": "Optimize your React apps with memoization and best practices",
+    "icon": "Gauge",
+    "requiredXp": 2500,
+    "color": "from-rose-400 to-rose-600",
+    "courseId": "react"
+  },
+  "lessons": [
+    {
+      "id": "perf-memo",
+      "moduleId": "performance",
+      "title": "React.memo",
+      "order": 1,
+      "xpReward": 35,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `React.memo` memoizes a component.\n- Only re-renders if props change.\n- Optimization for pure components.\n\n---\n\n# React.memo\n\n## Preventing Unnecessary Re-renders\n\n`React.memo` is a higher-order component that memoizes a component:\n\n```jsx\nconst MemoizedComponent = React.memo(function MyComponent(props) {\n  // Only re-renders if props change\n});\n```\n\n## When to Use\n\n- Component renders often with same props\n- Component is expensive to render\n- Component is pure (same props = same output)",
+      "codeExample": "import { memo, useState } from 'react';\n\nconst ExpensiveComponent = memo(function ExpensiveComponent({ data }) {\n  console.log('ExpensiveComponent rendered');\n  return (\n    <div>\n      {data.map(item => (\n        <div key={item.id}>{item.name}</div>\n      ))}\n    </div>\n  );\n});\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  const data = [{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }];\n\n  return (\n    <div>\n      <button onClick={() => setCount(c => c + 1)}>\n        Count: {count}\n      </button>\n      <ExpensiveComponent data={data} />\n    </div>\n  );\n}"
+    },
+    {
+      "id": "perf-usememo",
+      "moduleId": "performance",
+      "title": "useMemo & useCallback",
+      "order": 2,
+      "xpReward": 40,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- `useMemo` caches a value.\n- `useCallback` caches a function.\n- Dependencies array controls re-calculation.\n\n---\n\n# useMemo & useCallback\n\n## useMemo\n\nMemoize expensive calculations:\n\n```jsx\nconst expensiveResult = useMemo(() => {\n  return computeExpensiveValue(a, b);\n}, [a, b]);\n```\n\n## useCallback\n\nMemoize functions to prevent child re-renders:\n\n```jsx\nconst handleClick = useCallback(() => {\n  doSomething(id);\n}, [id]);\n```",
+      "codeExample": "import { useState, useMemo, useCallback, memo } from 'react';\n\nconst Button = memo(function Button({ onClick, children }) {\n  console.log('Button rendered:', children);\n  return <button onClick={onClick}>{children}</button>;\n});\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  const [items, setItems] = useState([1, 2, 3, 4, 5]);\n\n  const expensiveSum = useMemo(() => {\n    console.log('Computing sum...');\n    return items.reduce((a, b) => a + b, 0);\n  }, [items]);\n\n  const handleIncrement = useCallback(() => {\n    setCount(c => c + 1);\n  }, []);\n\n  return (\n    <div>\n      <p>Sum: {expensiveSum}</p>\n      <p>Count: {count}</p>\n      <Button onClick={handleIncrement}>Increment</Button>\n    </div>\n  );\n}"
+    },
+    {
+      "id": "perf-best-practices",
+      "moduleId": "performance",
+      "title": "Performance Best Practices",
+      "order": 3,
+      "xpReward": 35,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- Measure before optimizing.\n- Keep state local.\n- Use keys properly.\n- Avoid creating objects inside render.\n\n---\n\n# Performance Best Practices\n\n## Key Principles\n\n1. **Measure first** - Use React DevTools Profiler\n2. **Avoid premature optimization**\n3. **Keep state local** when possible\n4. **Use keys properly** in lists\n\n## Common Issues\n\n- Creating objects/arrays in render\n- Anonymous functions in props\n- Missing dependency arrays\n- Over-fetching data",
+      "codeExample": "import { useState, useMemo, useCallback } from 'react';\n\nfunction OptimizedList() {\n  const [filter, setFilter] = useState('');\n  const [items] = useState([\n    { id: 1, name: 'Apple' },\n    { id: 2, name: 'Banana' },\n    { id: 3, name: 'Cherry' },\n  ]);\n\n  // Memoize filtered results\n  const filteredItems = useMemo(() => {\n    return items.filter(item =>\n      item.name.toLowerCase().includes(filter.toLowerCase())\n    );\n  }, [items, filter]);\n\n  // Memoize style object\n  const containerStyle = useMemo(() => ({\n    padding: '20px',\n    border: '1px solid #ccc',\n  }), []);\n\n  return (\n    <div style={containerStyle}>\n      <input\n        value={filter}\n        onChange={(e) => setFilter(e.target.value)}\n        placeholder=\"Filter...\"\n      />\n      <ul>\n        {filteredItems.map(item => (\n          <li key={item.id}>{item.name}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "perf-ex-1",
+      "lessonId": "perf-memo",
+      "moduleId": "performance",
+      "title": "Memoize Component",
+      "difficulty": "medium",
+      "xpReward": 30,
+      "description": "Use React.memo to prevent unnecessary re-renders",
+      "instructions": "The ExpensiveList re-renders whenever count changes.\nWrap it with React.memo to prevent this.\nAdd console.log to verify it only renders when items change.",
+      "starterCode": "import { useState, memo } from 'react';\n\nfunction ExpensiveList({ items }) {\n  console.log('ExpensiveList rendered');\n  return (\n    <ul>\n      {items.map(item => <li key={item}>{item}</li>)}\n    </ul>\n  );\n}\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  const items = ['A', 'B', 'C'];\n\n  return (\n    <div>\n      <button onClick={() => setCount(c => c + 1)}>\n        Count: {count}\n      </button>\n      <ExpensiveList items={items} />\n    </div>\n  );\n}",
+      "solution": "import { useState, memo } from 'react';\n\nconst ExpensiveList = memo(function ExpensiveList({ items }) {\n  console.log('ExpensiveList rendered');\n  return (\n    <ul>\n      {items.map(item => <li key={item}>{item}</li>)}\n    </ul>\n  );\n});\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  const items = ['A', 'B', 'C'];\n\n  return (\n    <div>\n      <button onClick={() => setCount(c => c + 1)}>\n        Count: {count}\n      </button>\n      <ExpensiveList items={items} />\n    </div>\n  );\n}",
+      "hints": [
+        "Wrap the component function with memo()",
+        "memo compares props and skips render if unchanged",
+        "const Component = memo(function...)"
+      ],
+      "validationPrompt": "Check if ExpensiveList is wrapped with memo"
+    },
+    {
+      "id": "perf-ex-2",
+      "lessonId": "perf-usememo",
+      "moduleId": "performance",
+      "title": "Use useMemo",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Memoize an expensive calculation",
+      "instructions": "The filteredItems calculation runs on every render.\nUse useMemo to memoize it so it only recalculates when items or filter changes.",
+      "starterCode": "import { useState, useMemo } from 'react';\n\nfunction FilteredList() {\n  const [filter, setFilter] = useState('');\n  const [count, setCount] = useState(0);\n  const items = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];\n\n  // This runs on EVERY render - expensive!\n  console.log('Filtering items...');\n  const filteredItems = items.filter(item =>\n    item.toLowerCase().includes(filter.toLowerCase())\n  );\n\n  return (\n    <div>\n      <input\n        value={filter}\n        onChange={(e) => setFilter(e.target.value)}\n        placeholder=\"Filter...\"\n      />\n      <button onClick={() => setCount(c => c + 1)}>Count: {count}</button>\n      <ul>\n        {filteredItems.map(item => <li key={item}>{item}</li>)}\n      </ul>\n    </div>\n  );\n}",
+      "solution": "import { useState, useMemo } from 'react';\n\nfunction FilteredList() {\n  const [filter, setFilter] = useState('');\n  const [count, setCount] = useState(0);\n  const items = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];\n\n  const filteredItems = useMemo(() => {\n    console.log('Filtering items...');\n    return items.filter(item =>\n      item.toLowerCase().includes(filter.toLowerCase())\n    );\n  }, [items, filter]);\n\n  return (\n    <div>\n      <input\n        value={filter}\n        onChange={(e) => setFilter(e.target.value)}\n        placeholder=\"Filter...\"\n      />\n      <button onClick={() => setCount(c => c + 1)}>Count: {count}</button>\n      <ul>\n        {filteredItems.map(item => <li key={item}>{item}</li>)}\n      </ul>\n    </div>\n  );\n}",
+      "hints": [
+        "Wrap the filter logic in useMemo()",
+        "Pass a dependency array with items and filter",
+        "Return the filtered result from useMemo"
+      ],
+      "validationPrompt": "Check if filteredItems uses useMemo with proper dependencies"
+    },
+    {
+      "id": "perf-ex-3",
+      "lessonId": "perf-usememo",
+      "moduleId": "performance",
+      "title": "Use useCallback",
+      "difficulty": "advanced",
+      "xpReward": 40,
+      "description": "Memoize a callback function",
+      "instructions": "The Button component re-renders because handleClick is recreated each time.\nUse useCallback to memoize handleClick.\nButton is already wrapped with memo.",
+      "starterCode": "import { useState, useCallback, memo } from 'react';\n\nconst Button = memo(function Button({ onClick, children }) {\n  console.log('Button rendered:', children);\n  return <button onClick={onClick}>{children}</button>;\n});\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  const [text, setText] = useState('');\n\n  // This is recreated every render!\n  const handleClick = () => {\n    setCount(c => c + 1);\n  };\n\n  return (\n    <div>\n      <input value={text} onChange={(e) => setText(e.target.value)} />\n      <p>Count: {count}</p>\n      <Button onClick={handleClick}>Increment</Button>\n    </div>\n  );\n}",
+      "solution": "import { useState, useCallback, memo } from 'react';\n\nconst Button = memo(function Button({ onClick, children }) {\n  console.log('Button rendered:', children);\n  return <button onClick={onClick}>{children}</button>;\n});\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  const [text, setText] = useState('');\n\n  const handleClick = useCallback(() => {\n    setCount(c => c + 1);\n  }, []);\n\n  return (\n    <div>\n      <input value={text} onChange={(e) => setText(e.target.value)} />\n      <p>Count: {count}</p>\n      <Button onClick={handleClick}>Increment</Button>\n    </div>\n  );\n}",
+      "hints": [
+        "Wrap handleClick with useCallback",
+        "Pass an empty dependency array since it uses setCount updater",
+        "useCallback prevents function recreation"
+      ],
+      "validationPrompt": "Check if handleClick is wrapped with useCallback"
+    }
+  ]
+}

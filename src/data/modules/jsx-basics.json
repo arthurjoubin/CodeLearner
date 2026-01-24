@@ -1,0 +1,192 @@
+{
+  "module": {
+    "id": "jsx-basics",
+    "title": "JSX Basics",
+    "description": "Learn the syntax that powers React components",
+    "icon": "Code",
+    "requiredXp": 0,
+    "color": "from-blue-400 to-blue-600",
+    "courseId": "react"
+  },
+  "lessons": [
+    {
+      "id": "jsx-intro",
+      "moduleId": "jsx-basics",
+      "title": "What is JSX?",
+      "order": 1,
+      "xpReward": 15,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- JSX stands for JavaScript XML.\n- It allows writing HTML-like code inside JavaScript.\n- JSX must be compiled into standard JavaScript.\n- It is NOT HTML, but looks like it.\n\n---\n\n# What is JSX?\n\nJSX stands for **JavaScript XML**. It's a syntax extension that lets you write HTML-like code in JavaScript.\n\n## Why JSX?\n\nReact uses JSX because:\n- It's **visual**: You can see the UI structure in your code\n- It's **powerful**: You can embed JavaScript expressions\n- It's **familiar**: If you know HTML, you're halfway there\n\n## Basic Syntax\n\n```jsx\n// This is JSX\nconst element = <h1>Hello, world!</h1>;\n```\n\nNotice how it looks like HTML but lives inside JavaScript? That's JSX!\n\n## JSX is NOT HTML\n\nWhile JSX looks like HTML, there are key differences:\n- Use `className` instead of `class`\n- Use `htmlFor` instead of `for`\n- All tags must be closed (`<img />` not `<img>`)\n- Use camelCase for attributes (`onClick`, `tabIndex`)\n\n## Embedding Expressions\n\nUse curly braces `{}` to embed JavaScript:\n\n```jsx\nconst name = \"React\";\nconst element = <h1>Hello, {name}!</h1>;\n// Renders: Hello, React!\n```\n\nYou can put any JavaScript expression inside the braces!",
+      "codeExample": "function Greeting() {\n  const name = \"Learner\";\n  const currentHour = new Date().getHours();\n\n  return (\n    <div>\n      <h1>Hello, {name}!</h1>\n      <p>It's {currentHour}:00 right now.</p>\n      <p>2 + 2 = {2 + 2}</p>\n    </div>\n  );\n}"
+    },
+    {
+      "id": "jsx-elements",
+      "moduleId": "jsx-basics",
+      "title": "JSX Elements",
+      "order": 2,
+      "xpReward": 20,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Creates elements like HTML tags variables.\n- Can be nested.\n- Must have exactly ONE root element.\n- Use Fragments `<></>` to group without adding a DOM node.\n\n---\n\n# JSX Elements\n\n## Creating Elements\n\nIn JSX, you create elements just like HTML tags:\n\n```jsx\nconst heading = <h1>Welcome</h1>;\nconst paragraph = <p>This is a paragraph.</p>;\nconst image = <img src=\"cat.jpg\" alt=\"A cat\" />;\n```\n\n## Nesting Elements\n\nElements can contain other elements:\n\n```jsx\nconst card = (\n  <div>\n    <h2>Card Title</h2>\n    <p>Card content goes here.</p>\n  </div>\n);\n```\n\n## The Single Root Rule\n\n**Important**: JSX must have ONE root element!\n\n```jsx\n// ❌ WRONG - Two root elements\nreturn (\n  <h1>Title</h1>\n  <p>Content</p>\n);\n\n// ✅ CORRECT - Wrapped in a div\nreturn (\n  <div>\n    <h1>Title</h1>\n    <p>Content</p>\n  </div>\n);\n\n// ✅ ALSO CORRECT - Using Fragment\nreturn (\n  <>\n    <h1>Title</h1>\n    <p>Content</p>\n  </>\n);\n```\n\n## Fragments\n\nUse `<></>` (Fragment) when you don't want an extra div in the DOM.",
+      "codeExample": "function Card() {\n  return (\n    <div className=\"card\">\n      <h2>My First Card</h2>\n      <p>This card has multiple elements!</p>\n      <button>Click me</button>\n    </div>\n  );\n}"
+    },
+    {
+      "id": "jsx-expressions",
+      "moduleId": "jsx-basics",
+      "title": "JavaScript in JSX",
+      "order": 3,
+      "xpReward": 25,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Use curly braces `{}` to embed JavaScript expressions.\n- Can execute math, variables, functions.\n- Cannot use statements like `if` or `for` inside braces.\n- Objects cannot be rendered directly.\n\n---\n\n# JavaScript Expressions in JSX\n\n## Using Curly Braces\n\nAnything inside `{}` is evaluated as JavaScript:\n\n```jsx\nconst price = 29.99;\nconst quantity = 3;\n\nreturn <p>Total: {price * quantity{'}'}</p>;\n// Renders: Total: 89.97\n```\n\n## What You Can Put in Curly Braces\n\n- **Variables**: `{name}`\n- **Math**: `{2 + 2}`\n- **Function calls**: `{getName()}`\n- **Ternary operators**: `{isLoggedIn ? \"Hi!\" : \"Login\"}`\n- **Array methods**: `{items.length}`\n\n## What You CANNOT Put in Curly Braces\n\n- **Statements**: No `if`, `for`, `while` directly\n- **Objects**: `{myObject}` won't render (objects aren't valid children)\n\n## Conditional Rendering\n\nUse ternary operators for inline conditions:\n\n```jsx\nfunction Greeting({ isLoggedIn }) {\n  return (\n    <div>\n      {isLoggedIn ? (\n        <h1>Welcome back!</h1>\n      ) : (\n        <h1>Please sign in</h1>\n      )}\n    </div>\n  );\n}\n```\n\n## Short-circuit Evaluation\n\nUse `&&` to conditionally render:\n\n```jsx\n{hasNotifications && <span>🔔</span>}\n```",
+      "codeExample": "function PriceTag() {\n  const price = 49.99;\n  const discount = 0.2;\n  const isOnSale = true;\n\n  return (\n    <div>\n      {isOnSale && <span>🏷️ SALE!</span>}\n      <p>Original: ${price}</p>\n      <p>\n        You pay: $\n        {isOnSale\n          ? (price * (1 - discount)).toFixed(2)\n          : price\n        }\n      </p>\n    </div>\n  );\n}"
+    },
+    {
+      "id": "jsx-conditionals",
+      "moduleId": "jsx-basics",
+      "title": "Conditional Rendering",
+      "order": 4,
+      "xpReward": 25,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `&&` for \"show if true\".\n- `? :` for \"if/else\".\n- Early return for completely different views.\n\n---\n\n# Conditional Rendering\n\n## Showing Content Conditionally\n\nIn React, you often need to show different content based on conditions.\n\n## Using && Operator\n\nShow something only if a condition is true:\n\n```jsx\nfunction Notification({ count }) {\n  return (\n    <div>\n      {count > 0 && <span>You have {count} messages</span>}\n    </div>\n  );\n}\n```\n\nIf `count > 0` is false, nothing is rendered.\n\n## Using Ternary Operator\n\nShow one thing or another:\n\n```jsx\nfunction Status({ isOnline }) {\n  return (\n    <span>{isOnline ? \"Online\" : \"Offline\"}</span>\n  );\n}\n```\n\n## Early Return\n\nReturn different JSX based on conditions:\n\n```jsx\nfunction UserGreeting({ user }) {\n  if (!user) {\n    return <p>Please log in</p>;\n  }\n  return <p>Welcome, {user.name}!</p>;\n}\n```",
+      "codeExample": "function Alert({ type, message }) {\n  if (!message) return null;\n\n  const colors = {\n    success: 'green',\n    error: 'red',\n    warning: 'orange'\n  };\n\n  return (\n    <div style={{ color: colors[type] || 'black' }}>\n      {type === 'error' && '⚠️ '}\n      {message}\n    </div>\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "jsx-ex-1",
+      "lessonId": "jsx-intro",
+      "moduleId": "jsx-basics",
+      "title": "Your First JSX",
+      "difficulty": "easy",
+      "xpReward": 20,
+      "description": "Create a simple component that displays a greeting.",
+      "instructions": "Create a component called `Greeting` that returns a heading with the text \"Welcome to React!\".\n\nThe component should render an h1 element.",
+      "starterCode": "function Greeting() {\n  // Return an h1 with \"Welcome to React!\"\n\n}",
+      "solution": "function Greeting() {\n  return <h1>Welcome to React!</h1>;\n}",
+      "hints": [
+        "Use the return keyword to return JSX",
+        "The h1 tag syntax is <h1>text here</h1>"
+      ],
+      "validationPrompt": "Check if the code defines a Greeting function that returns an h1 element containing \"Welcome to React!\""
+    },
+    {
+      "id": "jsx-ex-2",
+      "lessonId": "jsx-expressions",
+      "moduleId": "jsx-basics",
+      "title": "Embedding Expressions",
+      "difficulty": "easy",
+      "xpReward": 25,
+      "description": "Use JavaScript expressions inside JSX.",
+      "instructions": "Create a `ProductPrice` component that:\n1. Has a variable `price` set to 29.99\n2. Has a variable `quantity` set to 3\n3. Displays: \"Total: $X\" where X is price * quantity",
+      "starterCode": "function ProductPrice() {\n  // Create price and quantity variables\n  // Return a paragraph showing the total\n\n}",
+      "solution": "function ProductPrice() {\n  const price = 29.99;\n  const quantity = 3;\n  return <p>Total: ${price * quantity}</p>;\n}",
+      "hints": [
+        "Use const to declare variables",
+        "Use curly braces {} to embed JavaScript expressions in JSX",
+        "You can do math inside the curly braces"
+      ],
+      "validationPrompt": "Check if the code defines ProductPrice with price=29.99, quantity=3, and displays their product in a paragraph"
+    },
+    {
+      "id": "jsx-ex-3",
+      "lessonId": "jsx-elements",
+      "moduleId": "jsx-basics",
+      "title": "Building a Card",
+      "difficulty": "medium",
+      "xpReward": 30,
+      "description": "Create a card component with multiple elements.",
+      "instructions": "Create a `UserCard` component that returns a div containing:\n1. An h2 with \"John Doe\"\n2. A paragraph with \"Software Developer\"\n3. A span with the email \"john@example.com\"\n\nAll wrapped in a single div.",
+      "starterCode": "function UserCard() {\n  // Return a div containing h2, p, and span\n\n}",
+      "solution": "function UserCard() {\n  return (\n    <div>\n      <h2>John Doe</h2>\n      <p>Software Developer</p>\n      <span>john@example.com</span>\n    </div>\n  );\n}",
+      "hints": [
+        "Wrap multiple elements in a parent div",
+        "Use parentheses when returning multi-line JSX"
+      ],
+      "validationPrompt": "Check if the code returns a div with h2 \"John Doe\", p \"Software Developer\", and span \"john@example.com\""
+    },
+    {
+      "id": "jsx-ex-4",
+      "lessonId": "jsx-intro",
+      "moduleId": "jsx-basics",
+      "title": "Dynamic Greeting",
+      "difficulty": "easy",
+      "xpReward": 20,
+      "description": "Create a greeting with dynamic content.",
+      "instructions": "Create a `TimeGreeting` component that:\n1. Has a variable `hour` set to 14\n2. Displays \"Good afternoon!\" in a paragraph",
+      "starterCode": "function TimeGreeting() {\n  // Create hour variable and return greeting\n\n}",
+      "solution": "function TimeGreeting() {\n  const hour = 14;\n  return <p>Good afternoon!</p>;\n}",
+      "hints": [
+        "Use const to create the hour variable",
+        "Return a simple p element"
+      ],
+      "validationPrompt": "Check if TimeGreeting has hour=14 and displays Good afternoon"
+    },
+    {
+      "id": "jsx-ex-5",
+      "lessonId": "jsx-elements",
+      "moduleId": "jsx-basics",
+      "title": "Navigation Menu",
+      "difficulty": "medium",
+      "xpReward": 30,
+      "description": "Build a simple navigation with multiple links.",
+      "instructions": "Create a `NavMenu` component with:\n1. A nav element as parent\n2. Three anchor tags with texts: \"Home\", \"About\", \"Contact\"\n3. href attributes: \"/\", \"/about\", \"/contact\"",
+      "starterCode": "function NavMenu() {\n  // Return nav with three links\n\n}",
+      "solution": "function NavMenu() {\n  return (\n    <nav>\n      <a href=\"/\">Home</a>\n      <a href=\"/about\">About</a>\n      <a href=\"/contact\">Contact</a>\n    </nav>\n  );\n}",
+      "hints": [
+        "Use nav as the wrapper element",
+        "Each a tag needs an href attribute"
+      ],
+      "validationPrompt": "Check if NavMenu has nav with 3 anchor tags for Home, About, Contact"
+    },
+    {
+      "id": "jsx-ex-6",
+      "lessonId": "jsx-expressions",
+      "moduleId": "jsx-basics",
+      "title": "User Profile Display",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Display user information using expressions.",
+      "instructions": "Create a `UserProfile` component that:\n1. Has variables: name = \"Alice\", age = 28, city = \"Paris\"\n2. Displays: \"{name}, {age} years old, from {city}\" in a paragraph",
+      "starterCode": "function UserProfile() {\n  // Create variables and display info\n\n}",
+      "solution": "function UserProfile() {\n  const name = \"Alice\";\n  const age = 28;\n  const city = \"Paris\";\n  return <p>{name}, {age} years old, from {city}</p>;\n}",
+      "hints": [
+        "Create three const variables",
+        "Use curly braces to embed each variable"
+      ],
+      "validationPrompt": "Check if UserProfile displays Alice, 28 years old, from Paris"
+    },
+    {
+      "id": "jsx-cond-1",
+      "lessonId": "jsx-conditionals",
+      "moduleId": "jsx-basics",
+      "title": "Show if True",
+      "difficulty": "easy",
+      "xpReward": 20,
+      "description": "Use && to conditionally render.",
+      "instructions": "Create a `Notification` component that:\n1. Accepts a `hasNew` prop (boolean)\n2. Shows \"New notification!\" only if hasNew is true\n3. Uses the && operator",
+      "starterCode": "function Notification({ hasNew }) {\n  // Show message only if hasNew\n\n}",
+      "solution": "function Notification({ hasNew }) {\n  return <div>{hasNew && <span>New notification!</span>}</div>;\n}",
+      "hints": [
+        "Use && with the condition first",
+        "If false, nothing renders"
+      ],
+      "validationPrompt": "Check if Notification uses && to conditionally show message"
+    },
+    {
+      "id": "jsx-cond-2",
+      "lessonId": "jsx-conditionals",
+      "moduleId": "jsx-basics",
+      "title": "Login Status",
+      "difficulty": "easy",
+      "xpReward": 25,
+      "description": "Use ternary for two states.",
+      "instructions": "Create a `LoginStatus` component that:\n1. Accepts `isLoggedIn` prop (boolean)\n2. Shows \"Welcome back!\" if true\n3. Shows \"Please log in\" if false\n4. Uses ternary operator",
+      "starterCode": "function LoginStatus({ isLoggedIn }) {\n  // Show different message based on login state\n\n}",
+      "solution": "function LoginStatus({ isLoggedIn }) {\n  return <p>{isLoggedIn ? \"Welcome back!\" : \"Please log in\"}</p>;\n}",
+      "hints": [
+        "Use condition ? true : false syntax",
+        "Put it inside curly braces"
+      ],
+      "validationPrompt": "Check if LoginStatus uses ternary to show different messages"
+    }
+  ]
+}

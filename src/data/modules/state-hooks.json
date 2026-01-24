@@ -1,0 +1,175 @@
+{
+  "module": {
+    "id": "state-hooks",
+    "title": "State with useState",
+    "description": "Make your components interactive with state",
+    "icon": "Database",
+    "requiredXp": 250,
+    "color": "from-green-400 to-green-600",
+    "courseId": "react"
+  },
+  "lessons": [
+    {
+      "id": "state-intro",
+      "moduleId": "state-hooks",
+      "title": "Introduction to State",
+      "order": 1,
+      "xpReward": 25,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- State is data that changes over time within a component.\n- `useState` hook initializes state.\n- Returns `[currentValue, functionToUpdate]`.\n- Always use the setter function; never mutate state directly.\n\n---\n\n# Introduction to State\n\nState is data that **changes over time** and affects what's rendered.\n\n## State vs Props\n\n| Props | State |\n|-------|-------|\n| Passed from parent | Managed inside component |\n| Read-only | Can be updated |\n| Component receives them | Component owns them |\n\n## The useState Hook\n\nReact provides `useState` to add state to components:\n\n```jsx\nimport { useState } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n\n  return <p>Count: {count}</p>;\n}\n```\n\n## How useState Works\n\n```jsx\nconst [value, setValue] = useState(initialValue);\n```\n\n- `value`: Current state value\n- `setValue`: Function to update the state\n- `initialValue`: Starting value\n\n## Updating State\n\n**Always use the setter function!** Never modify state directly.\n\n```jsx\n// ❌ WRONG\ncount = count + 1;\n\n// ✅ CORRECT\nsetCount(count + 1);\n```\n\nWhen you call the setter, React **re-renders** the component with the new value.",
+      "codeExample": "import { useState } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>\n        Increment\n      </button>\n      <button onClick={() => setCount(count - 1)}>\n        Decrement\n      </button>\n      <button onClick={() => setCount(0)}>\n        Reset\n      </button>\n    </div>\n  );\n}"
+    },
+    {
+      "id": "state-objects",
+      "moduleId": "state-hooks",
+      "title": "State with Objects",
+      "order": 2,
+      "xpReward": 30,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- State can be objects or arrays.\n- Updates must create NEW objects/arrays (immutability).\n- Use spread syntax `...` to copy existing properties.\n- React compares references to detect changes.\n\n---\n\n# State with Objects and Arrays\n\nState can hold any value: numbers, strings, booleans, objects, arrays.\n\n## Object State\n\n```jsx\nconst [user, setUser] = useState({\n  name: 'Alice',\n  age: 25,\n  email: 'alice@example.com'\n});\n```\n\n## Updating Object State\n\n**Important**: Create a new object, don't mutate!\n\n```jsx\n// ❌ WRONG - Mutating\nuser.name = 'Bob';\nsetUser(user);\n\n// ✅ CORRECT - New object with spread\nsetUser({ ...user, name: 'Bob' });\n```\n\n## Array State\n\n```jsx\nconst [items, setItems] = useState(['Apple', 'Banana']);\n\n// Add item\nsetItems([...items, 'Cherry']);\n\n// Remove item\nsetItems(items.filter(item => item !== 'Banana'));\n\n// Update item\nsetItems(items.map(item =>\n  item === 'Apple' ? 'Green Apple' : item\n));\n```\n\n## Why No Mutation?\n\nReact detects changes by comparing references. If you mutate, the reference stays the same and React won't re-render!",
+      "codeExample": "import { useState } from 'react';\n\nfunction TodoList() {\n  const [todos, setTodos] = useState([\n    { id: 1, text: 'Learn React', done: false },\n    { id: 2, text: 'Build an app', done: false },\n  ]);\n\n  const toggleTodo = (id) => {\n    setTodos(todos.map(todo =>\n      todo.id === id\n        ? { ...todo, done: !todo.done }\n        : todo\n    ));\n  };\n\n  return (\n    <ul>\n      {todos.map(todo => (\n        <li\n          key={todo.id}\n          onClick={() => toggleTodo(todo.id)}\n          style={{\n            textDecoration: todo.done ? 'line-through' : 'none'\n          }}\n        >\n          {todo.text}\n        </li>\n      ))}\n    </ul>\n  );\n}"
+    },
+    {
+      "id": "multiple-state",
+      "moduleId": "state-hooks",
+      "title": "Multiple State Variables",
+      "order": 3,
+      "xpReward": 25,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- You can use multiple `useState` hooks.\n- Split state for independent values.\n- Group state for values that change together.\n\n---\n\n# Multiple State Variables\n\nYou can use `useState` multiple times in a component!\n\n## When to Split State\n\nSplit state when values **change independently**:\n\n```jsx\nfunction Form() {\n  const [name, setName] = useState('');\n  const [email, setEmail] = useState('');\n  const [age, setAge] = useState(0);\n\n  // Each can update independently\n}\n```\n\n## When to Group State\n\nGroup state when values **change together**:\n\n```jsx\nfunction MouseTracker() {\n  const [position, setPosition] = useState({ x: 0, y: 0 });\n\n  // x and y always update together\n  setPosition({ x: event.clientX, y: event.clientY });\n}\n```\n\n## Common Patterns\n\n### Form with multiple fields\n```jsx\nconst [form, setForm] = useState({\n  username: '',\n  password: '',\n});\n\nconst handleChange = (field, value) => {\n  setForm({ ...form, [field]: value });\n};\n```\n\n### Loading states\n```jsx\nconst [data, setData] = useState(null);\nconst [loading, setLoading] = useState(true);\nconst [error, setError] = useState(null);\n```",
+      "codeExample": "import { useState } from 'react';\n\nfunction RegistrationForm() {\n  const [username, setUsername] = useState('');\n  const [email, setEmail] = useState('');\n  const [agreed, setAgreed] = useState(false);\n\n  const isValid = username.length > 0\n    && email.includes('@')\n    && agreed;\n\n  return (\n    <form>\n      <input\n        placeholder=\"Username\"\n        value={username}\n        onChange={e => setUsername(e.target.value)}\n      />\n      <input\n        placeholder=\"Email\"\n        value={email}\n        onChange={e => setEmail(e.target.value)}\n      />\n      <label>\n        <input\n          type=\"checkbox\"\n          checked={agreed}\n          onChange={e => setAgreed(e.target.checked)}\n        />\n        I agree to terms\n      </label>\n      <button disabled={!isValid}>\n        Register\n      </button>\n    </form>\n  );\n}"
+    },
+    {
+      "id": "state-arrays",
+      "moduleId": "state-hooks",
+      "title": "State with Arrays",
+      "order": 4,
+      "xpReward": 30,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Use arrays in state for lists.\n- Add: `[...old, new]`. Remove: `.filter()`.\n- NEVER mutate the array directly.\n\n---\n\n# State with Arrays\n\n## Managing Lists in State\n\nArrays are common in React state for lists, todos, etc.\n\n## Adding Items\n\n```jsx\nconst [items, setItems] = useState([]);\n\n// Add new item\nsetItems([...items, newItem]);\n```\n\n## Removing Items\n\n```jsx\n// Remove by index\nsetItems(items.filter((_, i) => i !== indexToRemove));\n\n// Remove by id\nsetItems(items.filter(item => item.id !== idToRemove));\n```\n\n## Updating Items\n\n```jsx\nsetItems(items.map(item =>\n  item.id === targetId\n    ? { ...item, done: true }\n    : item\n));\n```\n\n## Key Rule: Never Mutate!\n\nAlways create a new array, never modify the existing one.",
+      "codeExample": "import { useState } from 'react';\n\nfunction TodoList() {\n  const [todos, setTodos] = useState([\n    { id: 1, text: 'Learn React', done: false }\n  ]);\n  const [input, setInput] = useState('');\n\n  const addTodo = () => {\n    if (!input.trim()) return;\n    setTodos([...todos, {\n      id: Date.now(),\n      text: input,\n      done: false\n    }]);\n    setInput('');\n  };\n\n  const toggleTodo = (id) => {\n    setTodos(todos.map(t =>\n      t.id === id ? { ...t, done: !t.done } : t\n    ));\n  };\n\n  const deleteTodo = (id) => {\n    setTodos(todos.filter(t => t.id !== id));\n  };\n\n  return (\n    <div>\n      <input\n        value={input}\n        onChange={e => setInput(e.target.value)}\n      />\n      <button onClick={addTodo}>Add</button>\n      <ul>\n        {todos.map(t => (\n          <li key={t.id}>\n            <span\n              onClick={() => toggleTodo(t.id)}\n              style={{ textDecoration: t.done ? 'line-through' : 'none' }}\n            >\n              {t.text}\n            </span>\n            <button onClick={() => deleteTodo(t.id)}>×</button>\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "state-ex-1",
+      "lessonId": "state-intro",
+      "moduleId": "state-hooks",
+      "title": "Simple Counter",
+      "difficulty": "easy",
+      "xpReward": 30,
+      "description": "Create a counter using useState.",
+      "instructions": "Create a `Counter` component that:\n1. Has a count state starting at 0\n2. Displays the current count\n3. Has a button that increments the count when clicked",
+      "starterCode": "import { useState } from 'react';\n\nfunction Counter() {\n  // Create count state\n  // Return count display and increment button\n\n}",
+      "solution": "import { useState } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>\n        Increment\n      </button>\n    </div>\n  );\n}",
+      "hints": [
+        "Use useState(0) to create state starting at 0",
+        "Destructure as [count, setCount]",
+        "Use onClick with an arrow function to update state"
+      ],
+      "validationPrompt": "Check if Counter uses useState, displays count, and has a button that increments it"
+    },
+    {
+      "id": "state-ex-2",
+      "lessonId": "state-objects",
+      "moduleId": "state-hooks",
+      "title": "Toggle Component",
+      "difficulty": "easy",
+      "xpReward": 30,
+      "description": "Create a toggle switch.",
+      "instructions": "Create a `Toggle` component that:\n1. Has an `isOn` state starting as false\n2. Shows \"ON\" when true, \"OFF\" when false\n3. Has a button that toggles the state",
+      "starterCode": "import { useState } from 'react';\n\nfunction Toggle() {\n  // Create isOn state\n  // Return status and toggle button\n\n}",
+      "solution": "import { useState } from 'react';\n\nfunction Toggle() {\n  const [isOn, setIsOn] = useState(false);\n\n  return (\n    <div>\n      <p>{isOn ? 'ON' : 'OFF'}</p>\n      <button onClick={() => setIsOn(!isOn)}>\n        Toggle\n      </button>\n    </div>\n  );\n}",
+      "hints": [
+        "Use useState(false) for a boolean state",
+        "Use the ! operator to flip a boolean: !isOn"
+      ],
+      "validationPrompt": "Check if Toggle has boolean state, displays ON/OFF based on state, and button toggles it"
+    },
+    {
+      "id": "state-ex-3",
+      "lessonId": "state-intro",
+      "moduleId": "state-hooks",
+      "title": "Like Button",
+      "difficulty": "easy",
+      "xpReward": 25,
+      "description": "Create a like button with count.",
+      "instructions": "Create a `LikeButton` component that:\n1. Has a likes state starting at 0\n2. Shows \"❤️ {likes}\"\n3. Increments likes when clicked",
+      "starterCode": "import { useState } from 'react';\n\nfunction LikeButton() {\n  // Create likes state and button\n\n}",
+      "solution": "import { useState } from 'react';\n\nfunction LikeButton() {\n  const [likes, setLikes] = useState(0);\n  return (\n    <button onClick={() => setLikes(likes + 1)}>\n      ❤️ {likes}\n    </button>\n  );\n}",
+      "hints": [
+        "Use useState(0) for initial likes",
+        "Put heart emoji and likes in the button"
+      ],
+      "validationPrompt": "Check if LikeButton has useState and increments on click"
+    },
+    {
+      "id": "state-ex-4",
+      "lessonId": "state-objects",
+      "moduleId": "state-hooks",
+      "title": "Theme Switcher",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Toggle between light and dark theme.",
+      "instructions": "Create a `ThemeSwitcher` component that:\n1. Has a theme state starting as \"light\"\n2. Displays \"Current theme: {theme}\"\n3. Has a button that switches between \"light\" and \"dark\"",
+      "starterCode": "import { useState } from 'react';\n\nfunction ThemeSwitcher() {\n  // Create theme state and toggle\n\n}",
+      "solution": "import { useState } from 'react';\n\nfunction ThemeSwitcher() {\n  const [theme, setTheme] = useState(\"light\");\n  return (\n    <div>\n      <p>Current theme: {theme}</p>\n      <button onClick={() => setTheme(theme === \"light\" ? \"dark\" : \"light\")}>\n        Toggle\n      </button>\n    </div>\n  );\n}",
+      "hints": [
+        "Use ternary operator to toggle",
+        "Check if theme === \"light\" to decide next value"
+      ],
+      "validationPrompt": "Check if ThemeSwitcher toggles between light and dark"
+    },
+    {
+      "id": "state-ex-5",
+      "lessonId": "multiple-state",
+      "moduleId": "state-hooks",
+      "title": "User Form State",
+      "difficulty": "medium",
+      "xpReward": 40,
+      "description": "Manage multiple form inputs with state.",
+      "instructions": "Create a `UserForm` component with:\n1. name state (empty string)\n2. email state (empty string)\n3. Two inputs that update their respective states\n4. Display \"Name: {name}, Email: {email}\" below",
+      "starterCode": "import { useState } from 'react';\n\nfunction UserForm() {\n  // Create two states and two inputs\n\n}",
+      "solution": "import { useState } from 'react';\n\nfunction UserForm() {\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  return (\n    <div>\n      <input value={name} onChange={(e) => setName(e.target.value)} placeholder=\"Name\" />\n      <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder=\"Email\" />\n      <p>Name: {name}, Email: {email}</p>\n    </div>\n  );\n}",
+      "hints": [
+        "Create separate useState for each field",
+        "Use e.target.value in onChange"
+      ],
+      "validationPrompt": "Check if UserForm has two controlled inputs for name and email"
+    },
+    {
+      "id": "state-arr-1",
+      "lessonId": "state-arrays",
+      "moduleId": "state-hooks",
+      "title": "Add to List",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Add items to an array state.",
+      "instructions": "Create a `ColorList` component that:\n1. Has colors state: [\"red\", \"blue\"]\n2. Has button \"Add Green\" that adds \"green\" to the list\n3. Displays all colors in a ul",
+      "starterCode": "import { useState } from 'react';\n\nfunction ColorList() {\n  // Create state and add functionality\n\n}",
+      "solution": "import { useState } from 'react';\n\nfunction ColorList() {\n  const [colors, setColors] = useState([\"red\", \"blue\"]);\n\n  return (\n    <div>\n      <button onClick={() => setColors([...colors, \"green\"])}>\n        Add Green\n      </button>\n      <ul>\n        {colors.map((c, i) => <li key={i}>{c}</li>)}\n      </ul>\n    </div>\n  );\n}",
+      "hints": [
+        "Use spread: [...colors, newItem]",
+        "Never push to existing array"
+      ],
+      "validationPrompt": "Check if ColorList uses spread to add green to array"
+    },
+    {
+      "id": "state-arr-2",
+      "lessonId": "state-arrays",
+      "moduleId": "state-hooks",
+      "title": "Remove from List",
+      "difficulty": "medium",
+      "xpReward": 40,
+      "description": "Remove items from array state.",
+      "instructions": "Create a `TagList` component that:\n1. Has tags state: [\"react\", \"javascript\", \"css\"]\n2. Shows each tag with a \"×\" button\n3. Clicking × removes that tag",
+      "starterCode": "import { useState } from 'react';\n\nfunction TagList() {\n  // Create state with remove functionality\n\n}",
+      "solution": "import { useState } from 'react';\n\nfunction TagList() {\n  const [tags, setTags] = useState([\"react\", \"javascript\", \"css\"]);\n\n  const removeTag = (index) => {\n    setTags(tags.filter((_, i) => i !== index));\n  };\n\n  return (\n    <div>\n      {tags.map((tag, i) => (\n        <span key={i}>\n          {tag} <button onClick={() => removeTag(i)}>×</button>\n        </span>\n      ))}\n    </div>\n  );\n}",
+      "hints": [
+        "Use filter to exclude by index",
+        "filter((_, i) => i !== index)"
+      ],
+      "validationPrompt": "Check if TagList uses filter to remove items by index"
+    }
+  ]
+}

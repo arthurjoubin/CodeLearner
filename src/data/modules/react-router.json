@@ -1,0 +1,99 @@
+{
+  "module": {
+    "id": "react-router",
+    "title": "React Router",
+    "description": "Add navigation and routing to your React applications",
+    "icon": "Navigation",
+    "requiredXp": 3000,
+    "color": "from-violet-400 to-violet-600",
+    "courseId": "react"
+  },
+  "lessons": [
+    {
+      "id": "router-basics",
+      "moduleId": "react-router",
+      "title": "Router Basics",
+      "order": 1,
+      "xpReward": 30,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `BrowserRouter` wraps the app.\n- `Routes` contains `Route` definitions.\n- `Link` replaces `<a>` tags.\n\n---\n\n# React Router Basics\n\n## Installation\n\n```bash\nnpm install react-router-dom\n```\n\n## Basic Setup\n\n```jsx\nimport { BrowserRouter, Routes, Route } from 'react-router-dom';\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n        <Route path=\"/about\" element={<About />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}\n```",
+      "codeExample": "import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';\n\nfunction Home() {\n  return <h1>Home Page</h1>;\n}\n\nfunction About() {\n  return <h1>About Page</h1>;\n}\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <nav>\n        <Link to=\"/\">Home</Link>\n        <Link to=\"/about\">About</Link>\n      </nav>\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n        <Route path=\"/about\" element={<About />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}"
+    },
+    {
+      "id": "router-params",
+      "moduleId": "react-router",
+      "title": "Route Parameters",
+      "order": 2,
+      "xpReward": 35,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Define params in path: `/user/:id`.\n- Access with `useParams()`.\n- Enables dynamic pages.\n\n---\n\n# Route Parameters\n\n## Dynamic Routes\n\nUse `:param` syntax for dynamic segments:\n\n```jsx\n<Route path=\"/user/:userId\" element={<UserProfile />} />\n```\n\n## useParams Hook\n\nAccess parameters in your component:\n\n```jsx\nimport { useParams } from 'react-router-dom';\n\nfunction UserProfile() {\n  const { userId } = useParams();\n  return <h1>User: {userId}</h1>;\n}\n```",
+      "codeExample": "import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom';\n\nfunction ProductList() {\n  const products = [\n    { id: 1, name: 'Laptop' },\n    { id: 2, name: 'Phone' },\n  ];\n\n  return (\n    <ul>\n      {products.map(p => (\n        <li key={p.id}>\n          <Link to={`/product/${p.id}`}>{p.name}</Link>\n        </li>\n      ))}\n    </ul>\n  );\n}\n\nfunction ProductDetail() {\n  const { productId } = useParams();\n  return <h1>Product ID: {productId}</h1>;\n}\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <Routes>\n        <Route path=\"/\" element={<ProductList />} />\n        <Route path=\"/product/:productId\" element={<ProductDetail />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}"
+    },
+    {
+      "id": "router-navigation",
+      "moduleId": "react-router",
+      "title": "Programmatic Navigation",
+      "order": 3,
+      "xpReward": 35,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- `useNavigate` hook for programmatic navigation.\n- `navigate('/path')`.\n- `navigate(-1)` for back.\n\n---\n\n# Programmatic Navigation\n\n## useNavigate Hook\n\nNavigate programmatically after an action:\n\n```jsx\nimport { useNavigate } from 'react-router-dom';\n\nfunction LoginForm() {\n  const navigate = useNavigate();\n\n  const handleSubmit = async (e) => {\n    e.preventDefault();\n    await login();\n    navigate('/dashboard');\n  };\n}\n```\n\n## Navigation Options\n\n- `navigate('/path')` - Go to path\n- `navigate(-1)` - Go back\n- `navigate('/path', { replace: true })` - Replace history",
+      "codeExample": "import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';\nimport { useState } from 'react';\n\nfunction Login() {\n  const navigate = useNavigate();\n  const [error, setError] = useState('');\n\n  const handleLogin = (e) => {\n    e.preventDefault();\n    // Simulate login\n    const success = Math.random() > 0.5;\n    if (success) {\n      navigate('/dashboard', { replace: true });\n    } else {\n      setError('Login failed!');\n    }\n  };\n\n  return (\n    <form onSubmit={handleLogin}>\n      <h1>Login</h1>\n      {error && <p style={{color: 'red'}}>{error}</p>}\n      <button type=\"submit\">Login</button>\n    </form>\n  );\n}\n\nfunction Dashboard() {\n  const navigate = useNavigate();\n  return (\n    <div>\n      <h1>Dashboard</h1>\n      <button onClick={() => navigate(-1)}>Go Back</button>\n    </div>\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "router-ex-1",
+      "lessonId": "router-basics",
+      "moduleId": "react-router",
+      "title": "Basic Routes",
+      "difficulty": "easy",
+      "xpReward": 25,
+      "description": "Set up basic routing",
+      "instructions": "Complete the App component with routing.\nAdd routes for Home (/) and About (/about).\nAdd navigation links to both pages.",
+      "starterCode": "import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';\n\nfunction Home() {\n  return <h1>Home</h1>;\n}\n\nfunction About() {\n  return <h1>About</h1>;\n}\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <nav>\n        {/* Add Links here */}\n      </nav>\n      <Routes>\n        {/* Add Routes here */}\n      </Routes>\n    </BrowserRouter>\n  );\n}",
+      "solution": "import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';\n\nfunction Home() {\n  return <h1>Home</h1>;\n}\n\nfunction About() {\n  return <h1>About</h1>;\n}\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <nav>\n        <Link to=\"/\">Home</Link>\n        <Link to=\"/about\">About</Link>\n      </nav>\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n        <Route path=\"/about\" element={<About />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}",
+      "hints": [
+        "Use Link component for navigation",
+        "Use Route with path and element props",
+        "Wrap Routes around all Route components"
+      ],
+      "validationPrompt": "Check if Routes contains two Route components with correct paths"
+    },
+    {
+      "id": "router-ex-2",
+      "lessonId": "router-params",
+      "moduleId": "react-router",
+      "title": "Dynamic Routes",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Use route parameters",
+      "instructions": "Add a dynamic route for user profiles: /user/:userId\nCreate a UserProfile component that displays the userId from the URL.\nAdd links to view User 1 and User 2.",
+      "starterCode": "import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom';\n\nfunction Home() {\n  return (\n    <div>\n      <h1>Users</h1>\n      {/* Add links to /user/1 and /user/2 */}\n    </div>\n  );\n}\n\nfunction UserProfile() {\n  // Get userId from URL params\n\n  return <h1>User Profile: {/* show userId */}</h1>;\n}\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n        {/* Add user profile route */}\n      </Routes>\n    </BrowserRouter>\n  );\n}",
+      "solution": "import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom';\n\nfunction Home() {\n  return (\n    <div>\n      <h1>Users</h1>\n      <Link to=\"/user/1\">User 1</Link>\n      <Link to=\"/user/2\">User 2</Link>\n    </div>\n  );\n}\n\nfunction UserProfile() {\n  const { userId } = useParams();\n\n  return <h1>User Profile: {userId}</h1>;\n}\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n        <Route path=\"/user/:userId\" element={<UserProfile />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}",
+      "hints": [
+        "Use :userId in the route path",
+        "useParams() returns an object with route parameters",
+        "Destructure userId from useParams()"
+      ],
+      "validationPrompt": "Check if route has :userId param and UserProfile uses useParams"
+    },
+    {
+      "id": "router-ex-3",
+      "lessonId": "router-navigation",
+      "moduleId": "react-router",
+      "title": "Programmatic Navigation",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Navigate after form submission",
+      "instructions": "Complete the LoginForm to navigate to /dashboard after clicking login.\nUse the useNavigate hook.\nAlso add a button on Dashboard to go back.",
+      "starterCode": "import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';\n\nfunction LoginForm() {\n  // Get navigate function\n\n  const handleLogin = () => {\n    // Navigate to /dashboard\n  };\n\n  return (\n    <div>\n      <h1>Login</h1>\n      <button onClick={handleLogin}>Login</button>\n    </div>\n  );\n}\n\nfunction Dashboard() {\n  // Get navigate function\n\n  return (\n    <div>\n      <h1>Dashboard</h1>\n      {/* Add button to go back */}\n    </div>\n  );\n}\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <Routes>\n        <Route path=\"/\" element={<LoginForm />} />\n        <Route path=\"/dashboard\" element={<Dashboard />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}",
+      "solution": "import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';\n\nfunction LoginForm() {\n  const navigate = useNavigate();\n\n  const handleLogin = () => {\n    navigate('/dashboard');\n  };\n\n  return (\n    <div>\n      <h1>Login</h1>\n      <button onClick={handleLogin}>Login</button>\n    </div>\n  );\n}\n\nfunction Dashboard() {\n  const navigate = useNavigate();\n\n  return (\n    <div>\n      <h1>Dashboard</h1>\n      <button onClick={() => navigate(-1)}>Go Back</button>\n    </div>\n  );\n}\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <Routes>\n        <Route path=\"/\" element={<LoginForm />} />\n        <Route path=\"/dashboard\" element={<Dashboard />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}",
+      "hints": [
+        "Call useNavigate() to get navigate function",
+        "navigate('/path') goes to that path",
+        "navigate(-1) goes back one step"
+      ],
+      "validationPrompt": "Check if useNavigate is used for navigation to dashboard"
+    }
+  ]
+}

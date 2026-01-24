@@ -1,0 +1,117 @@
+{
+  "module": {
+    "id": "forms-validation",
+    "title": "Forms & Validation",
+    "description": "Build interactive forms with proper validation",
+    "icon": "FileInput",
+    "requiredXp": 1400,
+    "color": "from-pink-400 to-pink-600",
+    "courseId": "react"
+  },
+  "lessons": [
+    {
+      "id": "forms-controlled",
+      "moduleId": "forms-validation",
+      "title": "Controlled Components",
+      "order": 1,
+      "xpReward": 25,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Form elements controlled by React state.\n- `value` prop is state.\n- `onChange` updates state.\n- Single source of truth.\n\n---\n\n# Controlled Components\n\n## What is a Controlled Component?\n\nA form element whose value is controlled by React state.\n\n```jsx\nfunction NameForm() {\n  const [name, setName] = useState('');\n\n  return (\n    <input\n      value={name}\n      onChange={(e) => setName(e.target.value)}\n    />\n  );\n}\n```\n\n## Benefits\n\n- Single source of truth\n- Instant validation\n- Conditional form logic",
+      "codeExample": "import { useState } from 'react';\n\nfunction LoginForm() {\n  const [email, setEmail] = useState('');\n  const [password, setPassword] = useState('');\n\n  return (\n    <form>\n      <input\n        type=\"email\"\n        value={email}\n        onChange={(e) => setEmail(e.target.value)}\n        placeholder=\"Email\"\n      />\n      <input\n        type=\"password\"\n        value={password}\n        onChange={(e) => setPassword(e.target.value)}\n        placeholder=\"Password\"\n      />\n      <button type=\"submit\">Login</button>\n    </form>\n  );\n}"
+    },
+    {
+      "id": "forms-validation",
+      "moduleId": "forms-validation",
+      "title": "Form Validation",
+      "order": 2,
+      "xpReward": 35,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Real-time validation updates errors as user types.\n- Check validation on submit.\n- Disable submit button if form is invalid.\n\n---\n\n# Form Validation\n\n## Real-time Validation\n\nValidate as the user types:\n\n```jsx\nconst [email, setEmail] = useState('');\nconst [error, setError] = useState('');\n\nconst handleChange = (e) => {\n  const value = e.target.value;\n  setEmail(value);\n\n  if (!value.includes('@')) {\n    setError('Invalid email');\n  } else {\n    setError('');\n  }\n};\n```\n\n## Submit Validation\n\nValidate on form submission to check all fields at once.",
+      "codeExample": "import { useState } from 'react';\n\nfunction SignupForm() {\n  const [email, setEmail] = useState('');\n  const [error, setError] = useState('');\n\n  const validateEmail = (email) => {\n    if (!email) return 'Email is required';\n    if (!email.includes('@')) return 'Invalid email format';\n    return '';\n  };\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    const emailError = validateEmail(email);\n    if (emailError) {\n      setError(emailError);\n      return;\n    }\n    alert('Form submitted!');\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input\n        value={email}\n        onChange={(e) => setEmail(e.target.value)}\n        placeholder=\"Email\"\n      />\n      {error && <p style={{color: 'red'}}>{error}</p>}\n      <button type=\"submit\">Sign Up</button>\n    </form>\n  );\n}"
+    },
+    {
+      "id": "forms-multiple",
+      "moduleId": "forms-validation",
+      "title": "Multiple Form Fields",
+      "order": 3,
+      "xpReward": 35,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Use a single state object for multiple fields.\n- Update using spread syntax: `...prev`.\n- Use `[e.target.name]` property access.\n\n---\n\n# Managing Multiple Fields\n\n## Single State Object\n\nInstead of separate useState for each field:\n\n```jsx\nconst [form, setForm] = useState({\n  name: '',\n  email: '',\n  message: '',\n});\n\nconst handleChange = (e) => {\n  const { name, value } = e.target;\n  setForm(prev => ({ ...prev, [name]: value }));\n};\n```\n\nThis pattern scales well for complex forms!",
+      "codeExample": "import { useState } from 'react';\n\nfunction ContactForm() {\n  const [form, setForm] = useState({\n    name: '',\n    email: '',\n    message: '',\n  });\n\n  const handleChange = (e) => {\n    const { name, value } = e.target;\n    setForm(prev => ({ ...prev, [name]: value }));\n  };\n\n  return (\n    <form>\n      <input\n        name=\"name\"\n        value={form.name}\n        onChange={handleChange}\n        placeholder=\"Name\"\n      />\n      <input\n        name=\"email\"\n        value={form.email}\n        onChange={handleChange}\n        placeholder=\"Email\"\n      />\n      <textarea\n        name=\"message\"\n        value={form.message}\n        onChange={handleChange}\n        placeholder=\"Message\"\n      />\n      <button type=\"submit\">Send</button>\n    </form>\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "forms-ex-1",
+      "lessonId": "forms-controlled",
+      "moduleId": "forms-validation",
+      "title": "Controlled Input",
+      "difficulty": "easy",
+      "xpReward": 20,
+      "description": "Create a controlled text input",
+      "instructions": "Create a NameInput component with a controlled input.\nDisplay the current value below the input as: \"Hello, {name}!\"\nIf empty, display \"Hello, stranger!\"",
+      "starterCode": "import { useState } from 'react';\n\nfunction NameInput() {\n  // Add state for the name\n\n  return (\n    <div>\n      {/* Add controlled input */}\n      {/* Display greeting below */}\n    </div>\n  );\n}",
+      "solution": "import { useState } from 'react';\n\nfunction NameInput() {\n  const [name, setName] = useState('');\n\n  return (\n    <div>\n      <input\n        value={name}\n        onChange={(e) => setName(e.target.value)}\n        placeholder=\"Enter your name\"\n      />\n      <p>Hello, {name || 'stranger'}!</p>\n    </div>\n  );\n}",
+      "hints": [
+        "Use useState to store the name",
+        "Set value and onChange on the input",
+        "Use a conditional for the greeting"
+      ],
+      "validationPrompt": "Check if useState is used and input has value and onChange props"
+    },
+    {
+      "id": "forms-ex-2",
+      "lessonId": "forms-validation",
+      "moduleId": "forms-validation",
+      "title": "Email Validation",
+      "difficulty": "medium",
+      "xpReward": 30,
+      "description": "Add validation to an email input",
+      "instructions": "Add email validation to the form.\nShow an error message if the email doesn't contain '@'.\nThe error should appear below the input in red.",
+      "starterCode": "import { useState } from 'react';\n\nfunction EmailForm() {\n  const [email, setEmail] = useState('');\n  // Add error state\n\n  const handleChange = (e) => {\n    const value = e.target.value;\n    setEmail(value);\n    // Add validation logic\n  };\n\n  return (\n    <div>\n      <input\n        type=\"email\"\n        value={email}\n        onChange={handleChange}\n        placeholder=\"Enter email\"\n      />\n      {/* Show error if invalid */}\n    </div>\n  );\n}",
+      "solution": "import { useState } from 'react';\n\nfunction EmailForm() {\n  const [email, setEmail] = useState('');\n  const [error, setError] = useState('');\n\n  const handleChange = (e) => {\n    const value = e.target.value;\n    setEmail(value);\n    if (value && !value.includes('@')) {\n      setError('Please enter a valid email');\n    } else {\n      setError('');\n    }\n  };\n\n  return (\n    <div>\n      <input\n        type=\"email\"\n        value={email}\n        onChange={handleChange}\n        placeholder=\"Enter email\"\n      />\n      {error && <p style={{color: 'red'}}>{error}</p>}\n    </div>\n  );\n}",
+      "hints": [
+        "Add a second useState for the error",
+        "Check if email includes @ in handleChange",
+        "Conditionally render the error message"
+      ],
+      "validationPrompt": "Check if error state exists and validation checks for @ symbol"
+    },
+    {
+      "id": "forms-ex-3",
+      "lessonId": "forms-multiple",
+      "moduleId": "forms-validation",
+      "title": "Multi-Field Form",
+      "difficulty": "medium",
+      "xpReward": 35,
+      "description": "Create a form with multiple controlled fields",
+      "instructions": "Create a registration form with username and password fields.\nUse a single state object to manage both fields.\nUse a single handleChange function for both inputs.",
+      "starterCode": "import { useState } from 'react';\n\nfunction RegisterForm() {\n  // Use a single state object for both fields\n\n  const handleChange = (e) => {\n    // Handle changes for any field\n  };\n\n  return (\n    <form>\n      <input name=\"username\" placeholder=\"Username\" />\n      <input name=\"password\" type=\"password\" placeholder=\"Password\" />\n      <button type=\"submit\">Register</button>\n    </form>\n  );\n}",
+      "solution": "import { useState } from 'react';\n\nfunction RegisterForm() {\n  const [form, setForm] = useState({\n    username: '',\n    password: '',\n  });\n\n  const handleChange = (e) => {\n    const { name, value } = e.target;\n    setForm(prev => ({ ...prev, [name]: value }));\n  };\n\n  return (\n    <form>\n      <input\n        name=\"username\"\n        value={form.username}\n        onChange={handleChange}\n        placeholder=\"Username\"\n      />\n      <input\n        name=\"password\"\n        type=\"password\"\n        value={form.password}\n        onChange={handleChange}\n        placeholder=\"Password\"\n      />\n      <button type=\"submit\">Register</button>\n    </form>\n  );\n}",
+      "hints": [
+        "Use an object in useState with username and password",
+        "Use e.target.name to identify which field changed",
+        "Spread previous state and update the specific field"
+      ],
+      "validationPrompt": "Check if single state object is used with spread operator in handleChange"
+    },
+    {
+      "id": "forms-ex-4",
+      "lessonId": "forms-validation",
+      "moduleId": "forms-validation",
+      "title": "Submit Validation",
+      "difficulty": "advanced",
+      "xpReward": 40,
+      "description": "Validate form on submission",
+      "instructions": "Add submit validation to the form.\nCheck that both username (min 3 chars) and password (min 6 chars) are valid.\nShow errors and prevent submission if invalid.",
+      "starterCode": "import { useState } from 'react';\n\nfunction ValidatedForm() {\n  const [form, setForm] = useState({ username: '', password: '' });\n  const [errors, setErrors] = useState({});\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    // Add validation logic\n    // Set errors if invalid\n    // Alert 'Success!' if valid\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input\n        name=\"username\"\n        value={form.username}\n        onChange={(e) => setForm({...form, username: e.target.value})}\n        placeholder=\"Username\"\n      />\n      {errors.username && <p style={{color:'red'}}>{errors.username}</p>}\n      <input\n        name=\"password\"\n        type=\"password\"\n        value={form.password}\n        onChange={(e) => setForm({...form, password: e.target.value})}\n        placeholder=\"Password\"\n      />\n      {errors.password && <p style={{color:'red'}}>{errors.password}</p>}\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}",
+      "solution": "import { useState } from 'react';\n\nfunction ValidatedForm() {\n  const [form, setForm] = useState({ username: '', password: '' });\n  const [errors, setErrors] = useState({});\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    const newErrors = {};\n\n    if (form.username.length < 3) {\n      newErrors.username = 'Username must be at least 3 characters';\n    }\n    if (form.password.length < 6) {\n      newErrors.password = 'Password must be at least 6 characters';\n    }\n\n    setErrors(newErrors);\n\n    if (Object.keys(newErrors).length === 0) {\n      alert('Success!');\n    }\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input\n        name=\"username\"\n        value={form.username}\n        onChange={(e) => setForm({...form, username: e.target.value})}\n        placeholder=\"Username\"\n      />\n      {errors.username && <p style={{color:'red'}}>{errors.username}</p>}\n      <input\n        name=\"password\"\n        type=\"password\"\n        value={form.password}\n        onChange={(e) => setForm({...form, password: e.target.value})}\n        placeholder=\"Password\"\n      />\n      {errors.password && <p style={{color:'red'}}>{errors.password}</p>}\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}",
+      "hints": [
+        "Create an errors object in handleSubmit",
+        "Check length of username and password",
+        "Only alert Success if no errors"
+      ],
+      "validationPrompt": "Check if handleSubmit validates both fields with length checks"
+    }
+  ]
+}

@@ -7,6 +7,9 @@ import LessonPage from './pages/LessonPage';
 import ExercisePage from './pages/ExercisePage';
 import LabPage from './pages/LabPage';
 import LabsSelectionPage from './pages/LabsSelectionPage';
+import LeaderboardPage from './pages/LeaderboardPage';
+import HelpPage from './pages/HelpPage';
+import FeedbackPage from './pages/FeedbackPage';
 import { useUser } from './context/UserContext';
 
 function App() {
@@ -34,6 +37,9 @@ function App() {
           <Route path="/exercise/:exerciseId" element={<ExercisePage />} />
           <Route path="/labs" element={<LabsSelectionPage />} />
           <Route path="/labs/:labId" element={<LabPage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/help" element={<HelpPage />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>
