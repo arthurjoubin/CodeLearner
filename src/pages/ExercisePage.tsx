@@ -6,17 +6,18 @@ import { api } from '../services/api';
 import Editor from '@monaco-editor/react';
 import {
   ArrowLeft,
-  ArrowRight,
   Play,
   CheckCircle,
   XCircle,
   Lightbulb,
   Star,
-  Heart,
   Loader,
   RotateCcw,
   Maximize,
   X,
+  ChevronDown,
+  ChevronUp,
+  List,
 } from 'lucide-react';
 import LivePreview from '../components/LivePreview';
 
@@ -38,6 +39,7 @@ export default function ExercisePage() {
   const [attemptCount, setAttemptCount] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showExercisesDropdown, setShowExercisesDropdown] = useState(false);
 
   const alreadyCompleted = exerciseId ? isExerciseCompleted(exerciseId) : false;
 
@@ -64,7 +66,6 @@ export default function ExercisePage() {
 
   const currentIndex = lessonExercises.findIndex(e => e.id === exercise.id);
   const nextExercise = lessonExercises[currentIndex + 1];
-  const prevExercise = lessonExercises[currentIndex - 1];
 
   // Simple local validation as fallback
   const simpleValidate = (code: string, solution: string): boolean => {
@@ -160,12 +161,43 @@ export default function ExercisePage() {
     <div className="h-[calc(100vh-120px)] flex flex-col page-enter">
       {/* Header compact */}
       <div className="flex items-center justify-between mb-3 pb-2 border-b-2 border-black">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Link to={`/lesson/${lesson.id}`} className="p-1.5 border-2 border-black hover:bg-gray-100">
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <div>
-            <p className="text-[10px] text-gray-500 font-bold uppercase">Exercise {currentIndex + 1}/{lessonExercises.length}</p>
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <button
+                onClick={() => setShowExercisesDropdown(!showExercisesDropdown)}
+                className="btn-primary text-xs py-1 px-2 inline-flex items-center gap-1"
+              >
+                <List className="w-3.5 h-3.5" />
+                {currentIndex + 1}/{lessonExercises.length}
+                {showExercisesDropdown ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              </button>
+              {showExercisesDropdown && (
+                <div className="absolute left-0 top-full mt-1 bg-white border-2 border-black z-10 min-w-[180px] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-h-[200px] overflow-y-auto">
+                  {lessonExercises.map((ex, index) => {
+                    const exCompleted = exerciseId ? isExerciseCompleted(ex.id) : false;
+                    return (
+                      <Link
+                        key={ex.id}
+                        to={`/exercise/${ex.id}`}
+                        onClick={() => setShowExercisesDropdown(false)}
+                        className={`flex items-center gap-2 px-3 py-2 border-b border-black last:border-b-0 ${ex.id === exercise.id ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
+                      >
+                        {exCompleted ? (
+                          <CheckCircle className="w-4 h-4 text-primary-500 shrink-0" />
+                        ) : (
+                          <div className="w-4 h-4 border-2 border-black shrink-0" />
+                        )}
+                        <span className="text-xs font-bold uppercase">{index + 1}. {ex.title}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
             <h1 className="text-base font-black text-black">{exercise.title}</h1>
           </div>
         </div>
@@ -173,10 +205,6 @@ export default function ExercisePage() {
           <span className="xp-badge text-xs py-0.5">
             <Star className="w-3 h-3" />{exercise.xpReward}
           </span>
-          <div className={`flex items-center gap-1 text-xs px-2 py-1 border-2 border-black font-bold ${user.hearts <= 2 ? 'bg-red-100 text-red-600' : 'bg-white'}`}>
-            <Heart className={`w-3 h-3 ${user.hearts <= 2 ? 'fill-red-500' : ''}`} />
-            {user.hearts}
-          </div>
           {alreadyCompleted && (
             <div className="bg-primary-500 p-1 border-2 border-black">
               <CheckCircle className="w-4 h-4 text-white" />
@@ -186,7 +214,7 @@ export default function ExercisePage() {
       </div>
 
       {/* Main grid */}
-      <div className="flex-1 grid lg:grid-cols-2 gap-3 min-h-0 overflow-hidden">
+      <div className="flex-1 grid lg:grid-cols-2 gap-3 min-h-0">
         {/* Left: Instructions + Editor */}
         <div className="flex flex-col gap-3 min-h-0">
           {/* Instructions */}
@@ -247,7 +275,7 @@ export default function ExercisePage() {
             </div>
           </div>
 
-          {/* Actions - 3 buttons */}
+          {/* Actions - 2 buttons */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <button
               onClick={handleValidate}
@@ -269,7 +297,7 @@ export default function ExercisePage() {
         </div>
 
         {/* Right: Preview + Feedback */}
-        <div className="flex flex-col gap-3 min-h-0 overflow-hidden">
+        <div className="flex flex-col gap-3 min-h-0">
           {/* Feedback */}
           {feedback && (
             <div className={`p-3 border-2 flex items-start gap-2 flex-shrink-0 ${feedback.isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
@@ -299,24 +327,6 @@ export default function ExercisePage() {
             <div className="flex-1 bg-white relative min-h-[150px]">
               <LivePreview code={code} />
             </div>
-          </div>
-
-          {/* Navigation */}
-          <div className="flex items-center justify-between flex-shrink-0">
-            {prevExercise ? (
-              <Link to={`/exercise/${prevExercise.id}`} className="btn-secondary text-xs py-1.5 inline-flex items-center gap-1">
-                <ArrowLeft className="w-3 h-3" /> Prev
-              </Link>
-            ) : <div />}
-            {nextExercise ? (
-              <Link to={`/exercise/${nextExercise.id}`} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1">
-                Next <ArrowRight className="w-3 h-3" />
-              </Link>
-            ) : (
-              <Link to={`/lesson/${lesson.id}`} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1">
-                Back <ArrowRight className="w-3 h-3" />
-              </Link>
-            )}
           </div>
         </div>
       </div>

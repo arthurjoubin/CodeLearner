@@ -10,6 +10,8 @@ import {
   Code2,
   ChevronDown,
   ChevronUp,
+  List,
+  Lock,
 } from 'lucide-react';
 import ReactMarkdown from './ReactMarkdown';
 import DifficultyBadge from '../components/DifficultyBadge';
@@ -25,6 +27,7 @@ export default function LessonPage() {
 
   const [completed, setCompleted] = useState(false);
   const [showExercisesDropdown, setShowExercisesDropdown] = useState(false);
+  const [showLessonsDropdown, setShowLessonsDropdown] = useState(false);
 
   if (!lesson || !module || !user) {
     return (
@@ -40,7 +43,6 @@ export default function LessonPage() {
   const alreadyCompleted = isLessonCompleted(lesson.id);
   const currentIndex = moduleLessons.findIndex(l => l.id === lesson.id);
   const nextLesson = moduleLessons[currentIndex + 1];
-  const prevLesson = moduleLessons[currentIndex - 1];
 
   const allExercisesCompleted = exercises.length === 0 || exercises.every(ex => isExerciseCompleted(ex.id));
   const completedExercisesCount = exercises.filter(ex => isExerciseCompleted(ex.id)).length;
@@ -51,6 +53,18 @@ export default function LessonPage() {
       completeLesson(lesson.id);
     }
     setCompleted(true);
+  };
+
+  const isLessonEffectivelyDone = (lid: string) => {
+    if (isLessonCompleted(lid)) return true;
+    const exs = getExercisesForLesson(lid);
+    return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
+  };
+
+  const isLessonUnlocked = (_lid: string, index: number) => {
+    if (index === 0) return true;
+    const prevLesson = moduleLessons[index - 1];
+    return prevLesson && isLessonEffectivelyDone(prevLesson.id);
   };
 
   return (
@@ -127,13 +141,43 @@ export default function LessonPage() {
         )}
       </div>
 
-      {/* Bottom Nav */}
-      <div className="flex items-center justify-between gap-2">
-        {prevLesson ? (
-          <Link to={`/lesson/${prevLesson.id}`} className="btn-secondary text-xs py-1.5 inline-flex items-center gap-1.5">
-            <ArrowLeft className="w-3.5 h-3.5" /> Previous
-          </Link>
-        ) : <div />}
+      {/* Bottom Nav - Lessons Dropdown */}
+      <div className="flex items-center justify-end gap-2">
+        <div className="relative">
+          <button
+            onClick={() => setShowLessonsDropdown(!showLessonsDropdown)}
+            className="btn-primary text-xs py-1.5 px-3 inline-flex items-center gap-1.5"
+          >
+            <List className="w-3.5 h-3.5" />
+            {currentIndex + 1}/{moduleLessons.length}
+            {showLessonsDropdown ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+          {showLessonsDropdown && (
+            <div className="absolute right-0 bottom-full mb-1 bg-white border-2 border-black z-10 min-w-[200px] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-h-[200px] overflow-y-auto">
+              {moduleLessons.map((lessonItem, index) => {
+                const lessonCompleted = isLessonCompleted(lessonItem.id);
+                const unlocked = isLessonUnlocked(lessonItem.id, index);
+                return (
+                  <div
+                    key={lessonItem.id}
+                    className={`flex items-center gap-2 px-3 py-2 border-b border-black last:border-b-0 ${!unlocked ? 'bg-gray-50' : lessonItem.id === lesson.id ? 'bg-gray-100' : ''}`}
+                  >
+                    {unlocked ? (
+                      lessonCompleted ? (
+                        <CheckCircle className="w-4 h-4 text-primary-500 shrink-0" />
+                      ) : (
+                        <div className="w-4 h-4 border-2 border-black shrink-0" />
+                      )
+                    ) : (
+                      <Lock className="w-4 h-4 text-gray-400 shrink-0" />
+                    )}
+                    <span className={`text-xs font-bold uppercase ${!unlocked ? 'text-gray-400' : ''}`}>{index + 1}. {lessonItem.title}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         {(!completed && !alreadyCompleted && !allExercisesCompleted) ? (
           <button onClick={handleComplete} className="btn-primary text-xs py-1.5 inline-flex items-center gap-1.5">

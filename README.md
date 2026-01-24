@@ -9,7 +9,7 @@ An interactive learning platform to master React and TypeScript, featuring gamif
 - **Hands-on Exercises**: Write code and see it render in real-time
 - **AI-Powered Validation**: Code is validated by DeepSeek AI with helpful feedback
 - **AI Tutor**: Ask questions about concepts during lessons
-- **Gamification**: XP, levels, hearts, streaks to keep you motivated
+- **Gamification**: XP, levels, streaks to keep you motivated
 
 ## Getting Started
 

@@ -1,114 +1,73 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { modules, getLessonsForModule, getExercisesForLesson } from '../data/modules';
-import { Lock, CheckCircle, Code, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, Layers, Settings, Gauge, Navigation, Star, Flame } from 'lucide-react';
+import { Star, Flame, Zap, Code, Play } from 'lucide-react';
 
-const iconMap: Record<string, React.ElementType> = {
-  Code, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, Layers, Settings, Gauge, Navigation,
-};
+const learningPaths = [
+  { id: 'react', title: 'React', description: 'Apprenez React et TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png' },
+  { id: 'python', title: 'Python', description: 'Apprenez les bases de Python et la programmation', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png' },
+  { id: 'javascript', title: 'JavaScript', description: 'Maîtrisez JavaScript avant React', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png' },
+  { id: 'fastapi', title: 'FastAPI', description: 'Construisez des APIs modernes avec FastAPI', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png' },
+  { id: 'git', title: 'Git', description: 'Maîtrisez le contrôle de version avec Git', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png' },
+];
 
 export default function HomePage() {
-  const { user, updateStreak, isLessonCompleted, isExerciseCompleted } = useUser();
+  const { user, updateStreak } = useUser();
   updateStreak();
 
   if (!user) return null;
 
-  const isLessonEffectivelyDone = (lessonId: string) => {
-    if (isLessonCompleted(lessonId)) return true;
-    const exercises = getExercisesForLesson(lessonId);
-    return exercises.length > 0 && exercises.every(e => isExerciseCompleted(e.id));
-  };
-
-  // Check if a module is complete (all lessons done)
-  const isModuleComplete = (moduleId: string) => {
-    const lessons = getLessonsForModule(moduleId);
-    return lessons.length > 0 && lessons.every(l => isLessonEffectivelyDone(l.id));
-  };
-
   return (
     <div className="page-enter">
-      {/* Welcome */}
-      <div className="bg-black text-white border-3 border-black p-5 mb-6">
-        <h1 className="text-2xl font-black mb-1 uppercase">Welcome back, {user.name}!</h1>
-        <p className="text-gray-400 text-sm">{user.xp} XP earned</p>
+      <div className="mb-8">
+        <h1 className="text-3xl font-black text-black uppercase mb-2">Choose your Learning Path</h1>
+        <p className="text-gray-600">Start your coding journey with one of our curated paths</p>
       </div>
 
-      {/* Modules */}
-      <h2 className="text-xl font-black text-black mb-4 uppercase border-b-2 border-black pb-2 flex items-center gap-2">
-        <Zap className="w-5 h-5" /> Learning Path
-      </h2>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {modules.map((module, index) => {
-          // Unlock: first module always unlocked, others need previous module complete
-          const prevModule = index > 0 ? modules[index - 1] : null;
-          const isUnlocked = index === 0 || (prevModule && isModuleComplete(prevModule.id));
-
-          const lessons = getLessonsForModule(module.id);
-          const completedLessons = lessons.filter(l => isLessonEffectivelyDone(l.id)).length;
-          const totalLessons = lessons.length;
-          const progress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
-          const isComplete = progress === 100;
-
-          const Icon = iconMap[module.icon] || Code;
-
-          if (!isUnlocked) {
-            return (
-              <div
-                key={module.id}
-                className="border-2 border-gray-200 bg-gray-50 p-4 relative"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-gray-200 flex items-center justify-center text-gray-400 font-bold">
-                    {index + 1}
-                  </div>
-                  <div className="w-10 h-10 bg-gray-200 flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-gray-400" />
-                  </div>
-                </div>
-                <h3 className="font-bold text-gray-400 mb-1 uppercase">{module.title}</h3>
-                <p className="text-xs text-gray-400 mb-3">{module.description}</p>
-                <div className="flex items-center gap-2 text-xs text-gray-400">
-                  <Lock className="w-3 h-3" />
-                  <span>Complete the previous module</span>
-                </div>
-              </div>
-            );
-          }
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-8">
+        {learningPaths.map((path) => {
+          const isAvailable = path.id === 'react';
 
           return (
             <Link
-              key={module.id}
-              to={`/module/${module.id}`}
-              style={{ animationDelay: `${index * 50}ms` }}
-              className={`border-2 border-black p-4 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal ${isComplete ? 'bg-primary-50 border-primary-500' : 'bg-white'
-                }`}
+              key={path.id}
+              to={isAvailable ? `/learning-path/${path.id}` : '#'}
+              className={`border-2 border-black p-6 relative transition-all ${isAvailable 
+                ? 'bg-white hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal cursor-pointer' 
+                : 'bg-gray-100 opacity-60 grayscale cursor-not-allowed'
+              }`}
             >
-              <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 flex items-center justify-center font-bold border-2 border-black ${isComplete ? 'bg-primary-500 text-white' : 'bg-black text-white'
-                  }`}>
-                  {isComplete ? <CheckCircle className="w-5 h-5" /> : index + 1}
+              {!isAvailable && (
+                <div className="absolute top-3 right-3">
+                  <span className="px-2 py-0.5 bg-gray-300 text-gray-600 text-[10px] font-bold uppercase tracking-wider border border-gray-400">
+                    Coming Soon
+                  </span>
                 </div>
-                <div className="w-10 h-10 bg-yellow-400 flex items-center justify-center border-2 border-black">
-                  <Icon className="w-5 h-5 text-black" />
+              )}
+              <div className="flex items-center gap-4 mb-4">
+                <img 
+                  src={path.logo} 
+                  alt={path.title} 
+                  className="w-14 h-14 object-contain"
+                />
+                <div>
+                  <h3 className="font-bold text-xl uppercase">{path.title}</h3>
+                  {isAvailable && (
+                    <span className="text-xs text-green-600 font-bold">Available</span>
+                  )}
                 </div>
               </div>
-
-              <h3 className="font-bold text-black mb-1 uppercase">{module.title}</h3>
-              <p className="text-xs text-gray-600 mb-3">{module.description}</p>
-
-              {/* Progress */}
-              <div className="h-2.5 bg-gray-200 border border-black mb-1 overflow-hidden">
-                <div className="h-full bg-primary-500 transition-all duration-300" style={{ width: `${progress}%` }} />
-              </div>
-              <p className="text-[10px] text-gray-500 font-bold">{completedLessons}/{totalLessons} lessons • {progress}%</p>
+              <p className="text-sm mb-4 text-gray-600">{path.description}</p>
+              {isAvailable && (
+                <div className="flex items-center gap-2 text-sm font-bold text-primary-600">
+                  <Play className="w-4 h-4" />
+                  Start Learning
+                </div>
+              )}
             </Link>
           );
         })}
       </div>
 
-      {/* Stats */}
       <div className="mt-6 grid grid-cols-4 gap-3">
         {[
           { label: 'XP', value: user.xp, icon: Star },

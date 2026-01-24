@@ -9,8 +9,6 @@ interface UserContextType {
   login: () => void;
   logout: () => Promise<void>;
   addXp: (amount: number) => void;
-  loseHeart: () => boolean;
-  refillHearts: () => void;
   completeLesson: (lessonId: string) => void;
   completeExercise: (exerciseId: string) => void;
   updateStreak: () => void;
@@ -28,8 +26,6 @@ const GUEST_USER: User = {
   name: 'Guest',
   xp: 0,
   level: 1,
-  hearts: 5,
-  maxHearts: 5,
   streak: 0,
   lastActiveDate: new Date().toISOString().split('T')[0],
   completedLessons: [],
@@ -102,20 +98,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       const newLevel = getLevelFromXp(newXp).level;
       return { ...prev, xp: newXp, level: newLevel };
     });
-  }, []);
-
-  const loseHeart = useCallback(() => {
-    let success = false;
-    setUser(prev => {
-      if (!prev || prev.hearts <= 0) return prev;
-      success = true;
-      return { ...prev, hearts: prev.hearts - 1 };
-    });
-    return success;
-  }, []);
-
-  const refillHearts = useCallback(() => {
-    setUser(prev => prev ? { ...prev, hearts: prev.maxHearts } : prev);
   }, []);
 
   const completeLesson = useCallback((lessonId: string) => {
@@ -201,8 +183,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         addXp,
-        loseHeart,
-        refillHearts,
         completeLesson,
         completeExercise,
         updateStreak,

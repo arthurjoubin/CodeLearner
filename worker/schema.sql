@@ -12,8 +12,6 @@ CREATE TABLE IF NOT EXISTS user_progress (
   user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
   xp INTEGER DEFAULT 0,
   level INTEGER DEFAULT 1,
-  hearts INTEGER DEFAULT 5,
-  max_hearts INTEGER DEFAULT 5,
   streak INTEGER DEFAULT 0,
   last_active_date TEXT,
   completed_lessons TEXT DEFAULT '[]',

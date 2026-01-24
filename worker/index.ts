@@ -10,8 +10,6 @@ interface UserProgress {
   user_id: string;
   xp: number;
   level: number;
-  hearts: number;
-  max_hearts: number;
   streak: number;
   last_active_date: string | null;
   completed_lessons: string;
@@ -101,8 +99,6 @@ function toUserFormat(userId: string, email: string, name: string, avatarUrl: st
     avatarUrl,
     xp: 0,
     level: 1,
-    hearts: 5,
-    maxHearts: 5,
     streak: 0,
     lastActiveDate: null as string | null,
     completedLessons: [] as string[],
@@ -117,8 +113,6 @@ function toUserFormat(userId: string, email: string, name: string, avatarUrl: st
     ...base,
     xp: progress.xp,
     level: progress.level,
-    hearts: progress.hearts,
-    maxHearts: progress.max_hearts,
     streak: progress.streak,
     lastActiveDate: progress.last_active_date,
     completedLessons: JSON.parse(progress.completed_lessons || '[]'),
@@ -296,8 +290,6 @@ export default {
           name?: string;
           xp?: number;
           level?: number;
-          hearts?: number;
-          maxHearts?: number;
           streak?: number;
           lastActiveDate?: string;
           completedLessons?: string[];
@@ -311,8 +303,6 @@ export default {
           UPDATE user_progress SET
             xp = ?,
             level = ?,
-            hearts = ?,
-            max_hearts = ?,
             streak = ?,
             last_active_date = ?,
             completed_lessons = ?,
@@ -323,8 +313,6 @@ export default {
         `).bind(
           body.xp ?? 0,
           body.level ?? 1,
-          body.hearts ?? 5,
-          body.maxHearts ?? 5,
           body.streak ?? 0,
           body.lastActiveDate ?? null,
           JSON.stringify(body.completedLessons ?? []),

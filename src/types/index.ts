@@ -5,8 +5,6 @@ export interface User {
   avatarUrl?: string;
   xp: number;
   level: number;
-  hearts: number;
-  maxHearts: number;
   streak: number;
   lastActiveDate: string;
   completedLessons: string[];

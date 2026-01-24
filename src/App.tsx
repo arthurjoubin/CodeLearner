@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
+import LearningPathPage from './pages/LearningPathPage';
 import ModulePage from './pages/ModulePage';
 import LessonPage from './pages/LessonPage';
 import ExercisePage from './pages/ExercisePage';
@@ -27,6 +28,7 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/learning-path/:pathId" element={<LearningPathPage />} />
           <Route path="/module/:moduleId" element={<ModulePage />} />
           <Route path="/lesson/:lessonId" element={<LessonPage />} />
           <Route path="/exercise/:exerciseId" element={<ExercisePage />} />

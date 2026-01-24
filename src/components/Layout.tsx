@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getLevelFromXp } from '../types';
-import { Heart, Flame, Star, Zap, FlaskConical, LogIn, LogOut } from 'lucide-react';
+import { Flame, Star, Zap, FlaskConical, LogIn, LogOut, ChevronRight } from 'lucide-react';
+import { modules } from '../data/modules';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -9,10 +10,52 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const { user, isGuest, login, logout } = useUser();
+  const location = useLocation();
 
   if (!user) return null;
 
   const levelInfo = getLevelFromXp(user.xp);
+
+  const { pathname } = location;
+
+  const getBreadcrumbInfo = () => {
+    const pathMatch = pathname.match(/\/learning-path\/([^/?]+)/);
+    if (pathMatch) {
+      const pathId = pathMatch[1];
+      const titles: Record<string, string> = {
+        react: 'React',
+        python: 'Python',
+        javascript: 'JavaScript',
+        fastapi: 'FastAPI',
+        git: 'Git',
+      };
+      return { pathTitle: titles[pathId] || pathId, pathId, moduleTitle: null, lessonTitle: null };
+    }
+
+    const moduleMatch = pathname.match(/\/module\/([^/?]+)/);
+    if (moduleMatch) {
+      const moduleId = moduleMatch[1];
+      const module = modules.find(m => m.id === moduleId);
+      if (module) {
+        return { pathTitle: 'React', pathId: 'react', moduleTitle: module.title, lessonTitle: null };
+      }
+    }
+
+    const lessonMatch = pathname.match(/\/lesson\/([^/?]+)/);
+    if (lessonMatch) {
+      const lessonId = lessonMatch[1];
+      for (const mod of modules) {
+        const lesson = mod.lessons.find(l => l.id === lessonId);
+        if (lesson) {
+          return { pathTitle: 'React', pathId: 'react', moduleTitle: mod.title, lessonTitle: lesson.title };
+        }
+      }
+    }
+
+    return { pathTitle: null, pathId: null, moduleTitle: null, lessonTitle: null };
+  };
+
+  const { pathTitle, pathId, moduleTitle, lessonTitle } = getBreadcrumbInfo();
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -30,6 +73,27 @@ export default function Layout({ children }: LayoutProps) {
               </span>
             </Link>
 
+            {/* Breadcrumb */}
+            {pathTitle && (
+              <div className="flex items-center gap-1 text-xs font-bold overflow-x-auto">
+                <Link to="/" className="bg-black text-white px-1.5 py-0.5 hover:bg-gray-800 transition-colors">Home</Link>
+                <ChevronRight className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                <Link to={`/learning-path/${pathId}`} className="text-primary-600 hover:underline">{pathTitle}</Link>
+                {moduleTitle && (
+                  <>
+                    <ChevronRight className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                    <span className="text-gray-600 uppercase truncate">{moduleTitle}</span>
+                  </>
+                )}
+                {lessonTitle && (
+                  <>
+                    <ChevronRight className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                    <span className="text-gray-500 truncate">{lessonTitle}</span>
+                  </>
+                )}
+              </div>
+            )}
+
             {/* Stats */}
             <div className="flex items-center gap-1.5 sm:gap-3">
               <Link to="/labs" className="p-1.5 hover:bg-gray-100 transition-colors" title="Labs">
@@ -40,16 +104,6 @@ export default function Layout({ children }: LayoutProps) {
               <div className="flex items-center gap-1 bg-orange-100 px-1.5 sm:px-2 py-1 text-xs font-bold">
                 <Flame className="w-4 h-4 text-orange-500" />
                 <span className="hidden sm:inline">{user.streak}</span>
-              </div>
-
-              {/* Hearts - hidden on very small screens */}
-              <div className="hidden xs:flex items-center gap-0.5">
-                {Array.from({ length: user.maxHearts }).map((_, i) => (
-                  <Heart
-                    key={i}
-                    className={`w-4 h-4 ${i < user.hearts ? 'text-red-500 fill-red-500' : 'text-gray-300'}`}
-                  />
-                ))}
               </div>
 
               {/* XP */}
