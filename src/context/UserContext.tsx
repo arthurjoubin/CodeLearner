@@ -19,20 +19,23 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-const DEFAULT_USER: User = {
-  id: 'user-1',
-  name: 'Learner',
-  xp: 0,
-  level: 1,
-  hearts: 5,
-  maxHearts: 5,
-  streak: 0,
-  lastActiveDate: new Date().toISOString().split('T')[0],
-  completedLessons: [],
-  completedExercises: [],
-  moduleProgress: {},
-  labProgress: {},
-};
+function getDefaultUser(): User {
+  return {
+    id: api.getUserId(),
+    email: `${api.getUserId()}@local.user`,
+    name: 'Learner',
+    xp: 0,
+    level: 1,
+    hearts: 5,
+    maxHearts: 5,
+    streak: 0,
+    lastActiveDate: new Date().toISOString().split('T')[0],
+    completedLessons: [],
+    completedExercises: [],
+    moduleProgress: {},
+    labProgress: {},
+  };
+}
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -52,13 +55,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     try {
       const userData = await api.getUser();
       setUser({
-        ...DEFAULT_USER,
+        ...getDefaultUser(),
         ...userData,
         labProgress: userData.labProgress || {},
       });
     } catch {
       // If no user exists, create default
-      const newUser = { ...DEFAULT_USER };
+      const newUser = { ...getDefaultUser() };
       setUser(newUser);
       // api.saveUser will be called by useEffect
     } finally {

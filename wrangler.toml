@@ -1,0 +1,11 @@
+name = "codelearner-api"
+main = "worker/index.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+ENVIRONMENT = "production"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "codelearner-db"
+database_id = "dc626557-f2fb-48c7-85b7-1dd1c805624a"

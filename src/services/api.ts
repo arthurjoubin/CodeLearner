@@ -1,11 +1,26 @@
 import { User, ChatMessage, ValidationResult } from '../types';
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.PROD
+  ? 'https://codelearner-api.arthurjoubin.workers.dev/api'
+  : '/api';
+
+// Get or create a unique user ID for this browser
+function getUserId(): string {
+  let id = localStorage.getItem('codelearner_user_id');
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem('codelearner_user_id', id);
+  }
+  return id;
+}
 
 export const api = {
+  getUserId,
+
   // User endpoints
   async getUser(): Promise<User> {
-    const res = await fetch(`${API_BASE}/user`);
+    const userId = getUserId();
+    const res = await fetch(`${API_BASE}/user/${userId}`);
     if (!res.ok) throw new Error('Failed to fetch user');
     return res.json();
   },
