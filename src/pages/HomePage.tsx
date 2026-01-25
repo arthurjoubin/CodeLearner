@@ -4,8 +4,8 @@ import { lessons, modules, getModulesForCourse } from '../data/modules';
 import { ArrowRight } from 'lucide-react';
 
 const learningPaths = [
-  { id: 'web-stack', title: 'VIBECODER BASIS', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png' },
-  { id: 'react', title: 'React', description: 'Learn React and TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png' },
+  { id: 'web-stack', title: 'VIBECODER BASIS', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const },
+  { id: 'react', title: 'React', description: 'Learn React and TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', difficulty: 'medium' as const },
   { id: 'python', title: 'Python', description: 'Learn Python basics and programming', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png' },
   { id: 'fastapi', title: 'FastAPI', description: 'Build modern APIs with FastAPI', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png' },
   { id: 'git', title: 'Git', description: 'Master version control with Git', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png' },
@@ -16,6 +16,8 @@ interface CourseResume {
   courseTitle: string;
   nextLesson: { id: string; title: string; moduleId: string };
   progress: number;
+  completedLessonsCount: number;
+  totalLessonsCount: number;
 }
 
 export default function HomePage() {
@@ -40,12 +42,12 @@ export default function HomePage() {
   
   const getCourseProgress = (courseId: string): CourseResume | null => {
     const courseModules = getModulesForCourse(courseId);
-    const courseLessons = courseModules.flatMap(m => 
+    const courseLessons = courseModules.flatMap(m =>
       lessons.filter(l => l.moduleId === m.id).map(l => ({ ...l, moduleId: m.id }))
     );
-    
+
     if (courseLessons.length === 0) return null;
-    
+
     const sortedLessons = courseLessons.sort((a, b) => {
       const moduleA = courseModules.find(m => m.id === a.moduleId);
       const moduleB = courseModules.find(m => m.id === b.moduleId);
@@ -54,28 +56,36 @@ export default function HomePage() {
       if (orderA !== orderB) return orderA - orderB;
       return a.order - b.order;
     });
-    
+
+    const completed = sortedLessons.filter(l => completedLessons.includes(l.id)).length;
+
     for (const lesson of sortedLessons) {
       if (!completedLessons.includes(lesson.id)) {
-        const completed = sortedLessons.filter(l => completedLessons.includes(l.id)).length;
         return {
           courseId,
           courseTitle: learningPaths.find(p => p.id === courseId)?.title || courseId,
           nextLesson: { id: lesson.id, title: lesson.title, moduleId: lesson.moduleId },
-          progress: Math.round((completed / sortedLessons.length) * 100)
+          progress: Math.round((completed / sortedLessons.length) * 100),
+          completedLessonsCount: completed,
+          totalLessonsCount: sortedLessons.length
         };
       }
     }
-    
+
     return {
       courseId,
       courseTitle: learningPaths.find(p => p.id === courseId)?.title || courseId,
       nextLesson: { id: sortedLessons[0].id, title: sortedLessons[0].title, moduleId: sortedLessons[0].moduleId },
-      progress: 100
+      progress: 100,
+      completedLessonsCount: sortedLessons.length,
+      totalLessonsCount: sortedLessons.length
     };
   };
 
-  const resumes = courseIds.map(id => getCourseProgress(id)).filter(Boolean) as CourseResume[];
+  const resumes = (courseIds
+    .map(id => getCourseProgress(id))
+    .filter((r): r is CourseResume => r !== null)
+    .sort((a, b) => b.progress - a.progress));
   
   const getPathProgress = (courseId: string): number => {
     const resume = resumes.find(r => r.courseId === courseId);
@@ -100,41 +110,49 @@ export default function HomePage() {
             <span className="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
           </div>
           <div className="space-y-3 mt-3">
-            {resumes.map(resume => (
-              <Link
-                key={resume.courseId}
-                to={`/lesson/${resume.nextLesson.id}`}
-                className="block p-4 border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group bg-white"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="relative w-12 h-12">
-                    <svg className="w-12 h-12 transform -rotate-90">
-                      <circle cx="24" cy="24" r="20" stroke="#d1d5db" strokeWidth="3" fill="none" />
-                      <circle 
-                        cx="24" cy="24" r="20" 
-                        stroke="#22c55e" 
-                        strokeWidth="3" 
-                        fill="none"
-                        strokeDasharray={125.6}
-                        strokeDashoffset={125.6 - (125.6 * Math.max(1, resume.progress)) / 100}
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800">
-                      {Math.max(1, resume.progress)}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />
-                      <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.courseTitle}</span>
+            {resumes.map(resume => {
+              const pathData = learningPaths.find(p => p.id === resume.courseId);
+              return (
+                <Link
+                  key={resume.courseId}
+                  to={`/lesson/${resume.nextLesson.id}`}
+                  className="block p-4 border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group bg-white"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="relative w-12 h-12">
+                      <svg className="w-12 h-12 transform -rotate-90">
+                        <circle cx="24" cy="24" r="20" stroke="#d1d5db" strokeWidth="3" fill="none" />
+                        <circle
+                          cx="24" cy="24" r="20"
+                          stroke="#22c55e"
+                          strokeWidth="3"
+                          fill="none"
+                          strokeDasharray={125.6}
+                          strokeDashoffset={125.6 - (125.6 * Math.max(1, resume.progress)) / 100}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800">
+                        {resume.completedLessonsCount}/{resume.totalLessonsCount}
+                      </span>
                     </div>
-                    <p className="text-sm text-gray-700 ml-4">{resume.nextLesson.title}</p>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <div className="w-2 h-2 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />
+                        <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.courseTitle}</span>
+                        {pathData?.difficulty && (
+                          <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-300 ml-auto group-hover:border-primary-500 transition-colors">
+                            {pathData.difficulty}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-700 ml-4">{resume.nextLesson.title}</p>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-primary-600" />
                   </div>
-                  <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-primary-600" />
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}
@@ -150,7 +168,7 @@ export default function HomePage() {
         {learningPaths.map((path) => {
           const isAvailable = path.id === 'react' || path.id === 'web-stack';
           const resume = resumes.find(r => r.courseId === path.id);
-          const progress = resume 
+          const progress = resume
             ? Math.max(1, getPathProgress(path.id))
             : getPathProgress(path.id);
 
@@ -158,8 +176,8 @@ export default function HomePage() {
             <Link
               key={path.id}
               to={isAvailable ? `/learning-path/${path.id}` : '#'}
-              className={`border-2 border-gray-300 p-3 relative transition-all flex-shrink-0 w-32 rounded-lg bg-white ${isAvailable 
-                ? 'hover:border-primary-500 hover:shadow-md cursor-pointer' 
+              className={`border-2 border-gray-300 p-3 relative transition-all flex-shrink-0 w-32 rounded-lg bg-white ${isAvailable
+                ? 'hover:border-primary-500 hover:shadow-md cursor-pointer'
                 : 'opacity-60 grayscale cursor-not-allowed'
               }`}
             >
@@ -187,10 +205,17 @@ export default function HomePage() {
                   </span>
                 </div>
               )}
+              {path.difficulty && (
+                <div className="absolute top-1.5 right-1.5">
+                  <span className="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[8px] font-bold uppercase tracking-wider border border-gray-300 rounded">
+                    {path.difficulty}
+                  </span>
+                </div>
+              )}
               <div className="flex items-center gap-2">
-                <img 
-                  src={path.logo} 
-                  alt={path.title} 
+                <img
+                  src={path.logo}
+                  alt={path.title}
                   className="w-6 h-6 object-contain"
                 />
                 <h3 className="font-bold text-xs uppercase text-gray-900 group-hover:text-primary-700 transition-colors">{path.title}</h3>

@@ -35,7 +35,13 @@ export default function LearningPathPage() {
     git: 'Git',
   };
 
+  const learningPathDifficulty: Record<string, string> = {
+    'web-stack': 'beginner',
+    react: 'medium',
+  };
+
   const pathTitle = learningPathTitles[pathId || ''] || 'Learning Path';
+  const pathDifficulty = learningPathDifficulty[pathId || ''];
   const courseModules = getModulesForCourse(pathId || '');
 
   const isLessonEffectivelyDone = (lessonId: string) => {
@@ -60,7 +66,14 @@ export default function LearningPathPage() {
 
       <div className="mb-6">
         <div className="relative inline-block group">
-          <h1 className="text-2xl font-black text-gray-900 uppercase">{pathTitle}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-black text-gray-900 uppercase">{pathTitle}</h1>
+            {pathDifficulty && (
+              <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider border border-gray-300 rounded">
+                {pathDifficulty}
+              </span>
+            )}
+          </div>
           <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
         </div>
         <p className="text-gray-700 mt-1">Master {pathTitle} from basics to advanced</p>
