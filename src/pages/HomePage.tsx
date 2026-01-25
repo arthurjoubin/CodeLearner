@@ -141,7 +141,13 @@ export default function HomePage() {
                         <div className="w-2 h-2 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />
                         <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.courseTitle}</span>
                         {pathData?.difficulty && (
-                          <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-300 ml-auto group-hover:border-primary-500 transition-colors">
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded border ml-auto transition-colors ${
+                            pathData.difficulty === 'beginner'
+                              ? 'bg-green-100 text-green-700 border-green-300 group-hover:border-green-500'
+                              : pathData.difficulty === 'medium'
+                                ? 'bg-yellow-100 text-yellow-700 border-yellow-300 group-hover:border-yellow-500'
+                                : 'bg-red-100 text-red-700 border-red-300 group-hover:border-red-500'
+                          }`}>
                             {pathData.difficulty}
                           </span>
                         )}
@@ -205,13 +211,6 @@ export default function HomePage() {
                   </span>
                 </div>
               )}
-              {path.difficulty && (
-                <div className="absolute top-1.5 right-1.5">
-                  <span className="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[8px] font-bold uppercase tracking-wider border border-gray-300 rounded">
-                    {path.difficulty}
-                  </span>
-                </div>
-              )}
               <div className="flex items-center gap-2">
                 <img
                   src={path.logo}
@@ -220,6 +219,17 @@ export default function HomePage() {
                 />
                 <h3 className="font-bold text-xs uppercase text-gray-900 group-hover:text-primary-700 transition-colors">{path.title}</h3>
               </div>
+              {path.difficulty && (
+                <span className={`mt-1.5 inline-block px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider rounded ${
+                  path.difficulty === 'beginner'
+                    ? 'bg-green-100 text-green-700 border border-green-300'
+                    : path.difficulty === 'medium'
+                      ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
+                      : 'bg-red-100 text-red-700 border border-red-300'
+                }`}>
+                  {path.difficulty}
+                </span>
+              )}
               <div className="w-2 h-2 bg-primary-500 rounded-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity" />
             </Link>
           );
