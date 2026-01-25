@@ -26,7 +26,7 @@ export default function QuizPage({
   lessonExercises,
   isExerciseCompleted
 }: QuizPageProps) {
-  const { user, isGuest, addXp, completeExercise, loading } = useUser();
+  const { user, isGuest, addXp, completeExercise, completeLesson, isLessonCompleted, loading } = useUser();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -79,6 +79,12 @@ export default function QuizPage({
       if (!alreadyCompleted) {
         addXp(exercise.xpReward);
         completeExercise(exercise.id);
+        // Auto-complete lesson if this was the last exercise
+        const otherExercises = lessonExercises.filter(e => e.id !== exercise.id);
+        const allOthersDone = otherExercises.every(e => isExerciseCompleted(e.id));
+        if (allOthersDone && !isLessonCompleted(lesson.id)) {
+          completeLesson(lesson.id);
+        }
       }
       setCompleted(true);
     } else {
