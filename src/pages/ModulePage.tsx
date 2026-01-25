@@ -138,32 +138,34 @@ export default function ModulePage() {
               key={lesson.id}
               className={`border-2 rounded-lg p-4 transition-all hover:shadow-md ${isComplete ? 'border-primary-500 bg-primary-50/50' : 'border-gray-300 bg-white hover:border-primary-500'}`}
             >
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 flex items-center justify-center font-bold border-2 rounded-lg ${isComplete ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-gray-800 border-gray-300'}`}>
-                  {isComplete ? <CheckCircle className="w-5 h-5" /> : index + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary-500 rounded-full" />
-                    <h3 className="font-bold text-gray-900 uppercase text-sm truncate">{lesson.title}</h3>
+              <div className="flex items-start sm:items-center gap-3 flex-col sm:flex-row">
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <div className={`w-10 h-10 flex-shrink-0 flex items-center justify-center font-bold border-2 rounded-lg ${isComplete ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-gray-800 border-gray-300'}`}>
+                    {isComplete ? <CheckCircle className="w-5 h-5" /> : index + 1}
                   </div>
-                  <div className="flex items-center gap-3 mt-1 ml-4">
-                    <span className="text-xs text-gray-700 font-bold">{lesson.xpReward} XP</span>
-                    {exercises.length > 0 && (
-                      <span className="text-xs text-gray-600">{exercises.length} exercise{exercises.length > 1 ? 's' : ''}</span>
-                    )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary-500 rounded-full flex-shrink-0" />
+                      <h3 className="font-bold text-gray-900 uppercase text-sm truncate">{lesson.title}</h3>
+                    </div>
+                    <div className="flex items-center gap-3 mt-1 ml-4">
+                      <span className="text-xs text-gray-700 font-bold">{lesson.xpReward} XP</span>
+                      {exercises.length > 0 && (
+                        <span className="text-xs text-gray-600">{exercises.length} exercise{exercises.length > 1 ? 's' : ''}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto justify-end sm:justify-start ml-0 sm:ml-auto">
                   <button
                     onClick={() => handleShowEssential(lesson.id)}
-                    className="p-2 text-gray-600 hover:text-primary-700 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 text-gray-600 hover:text-primary-700 hover:bg-gray-100 rounded-lg transition-colors hidden sm:flex"
                     title="Essential to know"
                   >
                     <BookOpen className="w-4 h-4" />
                   </button>
                   {exercises.length > 0 && (
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 hidden sm:flex">
                       {exercises.map((exercise) => (
                         <div
                           key={exercise.id}

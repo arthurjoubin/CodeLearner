@@ -23,7 +23,7 @@ import LivePreview from '../components/LivePreview';
 
 export default function ExercisePage() {
   const { exerciseId } = useParams<{ exerciseId: string }>();
-  const { user, isGuest, addXp, completeExercise, isExerciseCompleted, loading } = useUser();
+  const { user, isGuest, addXp, completeExercise, completeLesson, isExerciseCompleted, isLessonCompleted, loading } = useUser();
 
   const exercise = exerciseId ? getExercise(exerciseId) : undefined;
   const lesson = exercise ? getLesson(exercise.lessonId) : undefined;
@@ -128,6 +128,12 @@ export default function ExercisePage() {
         if (!alreadyCompleted) {
           addXp(exercise.xpReward);
           completeExercise(exercise.id);
+          // Auto-complete lesson if this was the last exercise
+          const otherExercises = lessonExercises.filter(e => e.id !== exercise.id);
+          const allOthersDone = otherExercises.every(e => isExerciseCompleted(e.id));
+          if (allOthersDone && lesson && !isLessonCompleted(lesson.id)) {
+            completeLesson(lesson.id);
+          }
         }
         setFeedback({ isCorrect: true, message: result.feedback || 'Well done!' });
         setCompleted(true);
@@ -144,6 +150,12 @@ export default function ExercisePage() {
         if (!alreadyCompleted) {
           addXp(exercise.xpReward);
           completeExercise(exercise.id);
+          // Auto-complete lesson if this was the last exercise
+          const otherExercises = lessonExercises.filter(e => e.id !== exercise.id);
+          const allOthersDone = otherExercises.every(e => isExerciseCompleted(e.id));
+          if (allOthersDone && lesson && !isLessonCompleted(lesson.id)) {
+            completeLesson(lesson.id);
+          }
         }
         setFeedback({ isCorrect: true, message: 'Well done!' });
         setCompleted(true);

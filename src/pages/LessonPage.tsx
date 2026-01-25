@@ -87,7 +87,7 @@ export default function LessonPage() {
       </div>
 
       <div className="mb-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="relative inline-block group">
             <h1 className="text-xl font-black text-gray-900 uppercase">{lesson.title}</h1>
             <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
@@ -122,7 +122,13 @@ export default function LessonPage() {
         </div>
       </div>
 
-      <div className="border-2 border-gray-300 bg-white rounded-lg p-5 mb-6">
+      <div className={`border-2 rounded-lg p-5 mb-6 ${alreadyCompleted ? 'border-primary-300 bg-primary-50/30' : 'border-gray-300 bg-white'}`}>
+        {alreadyCompleted && (
+          <div className="flex items-center gap-2 mb-4 pb-3 border-b border-primary-200">
+            <CheckCircle className="w-4 h-4 text-primary-600" />
+            <span className="text-sm font-bold text-primary-700">Lesson completed</span>
+          </div>
+        )}
         <ReactMarkdown content={lesson.content} />
 
         {lesson.codeExample && (
@@ -138,37 +144,41 @@ export default function LessonPage() {
       </div>
 
       {exercises.length > 0 && (
-        <div className="mb-6 flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-primary-500 rounded-full" />
-            <p className="text-sm font-bold text-gray-900 uppercase">Exercises</p>
+        <div className="mb-6 space-y-3">
+          {/* Exercise pills - scrollable on mobile */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-1 px-1">
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="w-2 h-2 bg-primary-500 rounded-full" />
+              <p className="text-sm font-bold text-gray-900 uppercase">Exercises</p>
+            </div>
+            <div className="flex gap-2 flex-shrink-0">
+              {exercises.map((exercise) => {
+                const exCompleted = isExerciseCompleted(exercise.id);
+                return (
+                  <Link
+                    key={exercise.id}
+                    to={`/exercise/${exercise.id}`}
+                    className={`inline-flex items-center gap-2 px-3 py-1.5 text-sm font-bold rounded-lg border-2 transition-colors whitespace-nowrap ${exCompleted ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-gray-900 border-gray-300 hover:border-primary-500'}`}
+                  >
+                    {exCompleted ? <CheckCircle className="w-3.5 h-3.5" /> : <Code2 className="w-3.5 h-3.5" />}
+                    {exercise.title}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-          <div className="flex gap-2">
-            {exercises.map((exercise) => {
-              const exCompleted = isExerciseCompleted(exercise.id);
-              return (
-                <Link
-                  key={exercise.id}
-                  to={`/exercise/${exercise.id}`}
-                  className={`inline-flex items-center gap-2 px-3 py-1.5 text-sm font-bold rounded-lg border-2 transition-colors ${exCompleted ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-gray-900 border-gray-300 hover:border-primary-500'}`}
-                >
-                  {exCompleted ? <CheckCircle className="w-3.5 h-3.5" /> : <Code2 className="w-3.5 h-3.5" />}
-                  {exercise.title}
-                </Link>
-              );
-            })}
-          </div>
-          <div className="flex items-center gap-3 ml-auto relative">
+          {/* Actions - stacked on mobile */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end relative">
             <button
               onClick={() => setShowLessonsDropdown(!showLessonsDropdown)}
-              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-bold border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors bg-white"
+              className="inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-bold border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors bg-white"
             >
               <List className="w-4 h-4" />
-              {module.title}
-              {showLessonsDropdown ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              <span className="truncate">{module.title}</span>
+              {showLessonsDropdown ? <ChevronUp className="w-4 h-4 flex-shrink-0" /> : <ChevronDown className="w-4 h-4 flex-shrink-0" />}
             </button>
             {showLessonsDropdown && (
-              <div className="absolute bottom-full mb-2 right-0 bg-white border-2 border-gray-300 rounded-lg z-10 min-w-[220px] shadow-lg max-h-[250px] overflow-y-auto">
+              <div className="absolute bottom-full mb-2 left-0 sm:left-auto sm:right-0 bg-white border-2 border-gray-300 rounded-lg z-10 w-full sm:min-w-[220px] sm:w-auto shadow-lg max-h-[250px] overflow-y-auto">
                 {moduleLessons.map((lessonItem) => {
                   const lessonCompleted = isLessonCompleted(lessonItem.id);
                   const unlocked = moduleLessons.indexOf(lessonItem) === 0 || moduleLessons.slice(0, moduleLessons.indexOf(lessonItem)).some(l => isLessonEffectivelyDone(l.id));
@@ -198,15 +208,15 @@ export default function LessonPage() {
             )}
 
             {(!completed && !alreadyCompleted && !allExercisesCompleted) ? (
-              <button onClick={handleComplete} className="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors">
+              <button onClick={handleComplete} className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors">
                 <CheckCircle className="w-4 h-4" /> Complete +{lesson.xpReward} XP
               </button>
             ) : nextLesson ? (
-              <Link to={`/lesson/${nextLesson.id}`} className="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold bg-gray-900 text-white rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors">
+              <Link to={`/lesson/${nextLesson.id}`} className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-gray-900 text-white rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors">
                 Next Lesson <ArrowRight className="w-4 h-4" />
               </Link>
             ) : (
-              <Link to={`/module/${module.id}`} className="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors">
+              <Link to={`/module/${module.id}`} className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors">
                 <BookOpen className="w-4 h-4" /> Back to Module
               </Link>
             )}

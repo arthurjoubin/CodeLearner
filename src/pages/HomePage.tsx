@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { lessons, modules, getModulesForCourse } from '../data/modules';
+import { lessons, modules, getModulesForCourse, getExercisesForLesson } from '../data/modules';
 import { ArrowRight } from 'lucide-react';
 
 const learningPaths = [
@@ -38,8 +38,16 @@ export default function HomePage() {
   if (!user) return null;
 
   const completedLessons = user.completedLessons || [];
+  const completedExercises = user.completedExercises || [];
   const courseIds = [...new Set(modules.map(m => m.courseId))];
-  
+
+  // A lesson is "effectively done" if it's completed OR all its exercises are done
+  const isLessonEffectivelyDone = (lessonId: string) => {
+    if (completedLessons.includes(lessonId)) return true;
+    const exs = getExercisesForLesson(lessonId);
+    return exs.length > 0 && exs.every(e => completedExercises.includes(e.id));
+  };
+
   const getCourseProgress = (courseId: string): CourseResume | null => {
     const courseModules = getModulesForCourse(courseId);
     const courseLessons = courseModules.flatMap(m =>
@@ -57,10 +65,10 @@ export default function HomePage() {
       return a.order - b.order;
     });
 
-    const completed = sortedLessons.filter(l => completedLessons.includes(l.id)).length;
+    const completed = sortedLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
 
     for (const lesson of sortedLessons) {
-      if (!completedLessons.includes(lesson.id)) {
+      if (!isLessonEffectivelyDone(lesson.id)) {
         return {
           courseId,
           courseTitle: learningPaths.find(p => p.id === courseId)?.title || courseId,
@@ -93,11 +101,11 @@ export default function HomePage() {
       return Math.max(1, resume.progress);
     }
     const courseModules = getModulesForCourse(courseId);
-    const courseLessons = courseModules.flatMap(m => 
+    const courseLessons = courseModules.flatMap(m =>
       lessons.filter(l => l.moduleId === m.id)
     );
     if (courseLessons.length === 0) return 0;
-    const completed = courseLessons.filter(l => completedLessons.includes(l.id)).length;
+    const completed = courseLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
     return Math.round((completed / courseLessons.length) * 100);
   };
 
