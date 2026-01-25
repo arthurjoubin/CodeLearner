@@ -141,7 +141,10 @@ function Variation1({ resumes }: { resumes: CourseResume[] }) {
   return (
     <div className="bg-white border-2 border-black rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
       <div className="bg-white px-4 py-3 border-b-2 border-black flex items-center justify-between">
-        <span className="font-bold uppercase text-sm tracking-wider">Original Style</span>
+        <div className="flex items-center gap-2">
+          <span className="bg-black text-white text-xs font-bold px-2 py-0.5 rounded">1</span>
+          <span className="font-bold uppercase text-sm tracking-wider">Original Style</span>
+        </div>
         <div className="flex gap-1">
           <div className="w-2 h-2 rounded-full bg-primary-500"></div>
           <div className="w-2 h-2 rounded-full bg-gray-300"></div>
@@ -184,7 +187,10 @@ function Variation2({ resumes }: { resumes: CourseResume[] }) {
   return (
     <div className="bg-gray-900 rounded-lg overflow-hidden">
       <div className="bg-gray-800 px-4 py-3 flex items-center justify-between">
-        <span className="text-gray-400 font-mono text-sm uppercase">Dark Mode</span>
+        <div className="flex items-center gap-2">
+          <span className="bg-primary-500 text-black text-xs font-bold px-2 py-0.5 rounded">2</span>
+          <span className="text-gray-400 font-mono text-sm uppercase">Dark Mode</span>
+        </div>
         <div className="w-2 h-2 rounded-full bg-primary-500"></div>
       </div>
       <div className="p-5 space-y-4">
@@ -220,7 +226,8 @@ function Variation2({ resumes }: { resumes: CourseResume[] }) {
 function Variation3({ resumes }: { resumes: CourseResume[] }) {
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-      <div className="bg-primary-500 px-5 py-4">
+      <div className="bg-primary-500 px-5 py-4 flex items-center gap-2">
+        <span className="bg-black text-white text-xs font-bold px-2 py-0.5 rounded">3</span>
         <h2 className="text-2xl font-bold text-white tracking-widest">
           HACK<span className="text-black">UP</span>
         </h2>
@@ -256,7 +263,8 @@ function Variation3({ resumes }: { resumes: CourseResume[] }) {
 function Variation4({ resumes }: { resumes: CourseResume[] }) {
   return (
     <div className="bg-white border-4 border-black rounded-lg overflow-hidden">
-      <div className="bg-black px-4 py-3">
+      <div className="bg-black px-4 py-3 flex items-center gap-2">
+        <span className="bg-primary-500 text-black text-xs font-bold px-2 py-0.5 rounded">4</span>
         <h2 className="text-xl font-bold text-white tracking-widest">
           HACK<span className="text-primary-500">UP</span>
         </h2>
@@ -297,7 +305,8 @@ function Variation4({ resumes }: { resumes: CourseResume[] }) {
 function Variation5({ resumes }: { resumes: CourseResume[] }) {
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white rounded-xl border border-gray-200 overflow-hidden">
-      <div className="px-5 py-4 border-b border-gray-100">
+      <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+        <span className="bg-black text-white text-xs font-bold px-2 py-0.5 rounded">5</span>
         <HackupTitle />
       </div>
       <div className="p-5 space-y-4">
@@ -353,6 +362,7 @@ function Variation6({ resumes }: { resumes: CourseResume[] }) {
           <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
           <div className="w-3 h-3 rounded-full bg-primary-500"></div>
         </div>
+        <span className="text-gray-500 text-sm font-mono">6</span>
         <span className="text-gray-500 text-sm font-mono">hackup.app</span>
       </div>
       <div className="p-5 space-y-4">
@@ -393,6 +403,7 @@ function Variation7({ resumes }: { resumes: CourseResume[] }) {
     <div className="bg-gray-900 rounded-xl overflow-hidden">
       <div className="px-5 py-4 border-b border-gray-700">
         <div className="flex items-center gap-2">
+          <span className="bg-primary-500 text-black text-xs font-bold px-2 py-0.5 rounded">7</span>
           <div className="w-3 h-3 rounded-full bg-primary-500"></div>
           <span className="text-white font-mono text-sm">HACKUP</span>
         </div>
@@ -428,7 +439,8 @@ function Variation7({ resumes }: { resumes: CourseResume[] }) {
 function Variation8({ resumes }: { resumes: CourseResume[] }) {
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-      <div className="bg-gradient-to-r from-black to-gray-800 px-5 py-6 text-center">
+      <div className="bg-gradient-to-r from-black to-gray-800 px-5 py-6 text-center relative">
+        <span className="absolute top-2 right-2 bg-primary-500 text-black text-xs font-bold px-2 py-0.5 rounded">8</span>
         <h2 className="text-3xl font-black text-white tracking-tighter">
           HACK<span className="text-primary-500">UP</span>
         </h2>
@@ -467,11 +479,10 @@ function Variation8({ resumes }: { resumes: CourseResume[] }) {
 function Variation9({ resumes }: { resumes: CourseResume[] }) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-100">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
-          <span className="font-medium text-gray-700 text-sm">Continue Learning</span>
-        </div>
+      <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+        <span className="bg-primary-500 text-black text-xs font-bold px-2 py-0.5 rounded">9</span>
+        <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
+        <span className="font-medium text-gray-700 text-sm">Continue Learning</span>
       </div>
       <div className="p-5">
         <div className="mb-6">
@@ -508,7 +519,8 @@ function Variation9({ resumes }: { resumes: CourseResume[] }) {
 function Variation10({ resumes }: { resumes: CourseResume[] }) {
   return (
     <div className="bg-gray-50 rounded-xl border-2 border-gray-200 overflow-hidden">
-      <div className="px-5 py-4 bg-white border-b border-gray-100">
+      <div className="px-5 py-4 bg-white border-b border-gray-100 flex items-center gap-2">
+        <span className="bg-black text-white text-xs font-bold px-2 py-0.5 rounded">10</span>
         <HackupTitle />
       </div>
       <div className="p-5 space-y-4">
@@ -541,6 +553,7 @@ function Variation11({ resumes }: { resumes: CourseResume[] }) {
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="bg-black px-5 py-4">
         <h2 className="text-2xl font-bold text-white tracking-widest flex items-center gap-2">
+          <span className="bg-primary-500 text-black text-xs font-bold px-2 py-0.5 rounded">11</span>
           HACK<span className="text-primary-500">UP</span>
           <span className="text-xs bg-primary-500 text-black px-2 py-0.5 rounded">BETA</span>
         </h2>
@@ -579,6 +592,7 @@ function Variation12({ resumes }: { resumes: CourseResume[] }) {
       <div className="p-5">
         <div className="flex items-center justify-between mb-6">
           <div className="relative inline-block group">
+            <span className="absolute -top-6 left-0 bg-primary-500 text-black text-xs font-bold px-2 py-0.5 rounded">12</span>
             <h2 className="text-2xl font-bold text-white tracking-widest">
               HACK<span className="text-primary-500">UP</span>
             </h2>
@@ -615,7 +629,8 @@ function Variation12({ resumes }: { resumes: CourseResume[] }) {
 function Variation13({ resumes }: { resumes: CourseResume[] }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-      <div className="px-5 py-4 border-b border-gray-100">
+      <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+        <span className="bg-black text-white text-xs font-bold px-2 py-0.5 rounded">13</span>
         <HackupTitle />
       </div>
       <div className="p-5">
@@ -665,7 +680,8 @@ function Variation13({ resumes }: { resumes: CourseResume[] }) {
 function Variation14({ resumes }: { resumes: CourseResume[] }) {
   return (
     <div className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden">
-      <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+      <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center gap-2">
+        <span className="bg-primary-500 text-black text-xs font-bold px-2 py-0.5 rounded">14</span>
         <span className="font-bold text-gray-700 text-sm uppercase tracking-wide">Learning Paths</span>
       </div>
       <div className="p-5 space-y-4">
@@ -697,7 +713,8 @@ function Variation14({ resumes }: { resumes: CourseResume[] }) {
 function Variation15({ resumes }: { resumes: CourseResume[] }) {
   return (
     <div className="bg-gray-100 rounded-xl overflow-hidden">
-      <div className="px-5 py-4 bg-white">
+      <div className="px-5 py-4 bg-white flex items-center gap-2">
+        <span className="bg-black text-white text-xs font-bold px-2 py-0.5 rounded">15</span>
         <HackupTitle />
       </div>
       <div className="p-5 space-y-4">
@@ -737,7 +754,8 @@ function Variation15({ resumes }: { resumes: CourseResume[] }) {
 function Variation16({ resumes }: { resumes: CourseResume[] }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-      <div className="px-5 py-4 border-b border-gray-100">
+      <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+        <span className="bg-primary-500 text-black text-xs font-bold px-2 py-0.5 rounded">16</span>
         <HackupTitle />
       </div>
       <div className="p-5">
