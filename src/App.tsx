@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
+import DesignVariationsPage from './pages/DesignVariationsPage';
 import LearningPathPage from './pages/LearningPathPage';
 import ModulePage from './pages/ModulePage';
 import LessonPage from './pages/LessonPage';
@@ -17,6 +18,7 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/design-variations" element={<DesignVariationsPage />} />
           <Route path="/learning-path/:pathId" element={<LearningPathPage />} />
           <Route path="/module/:moduleId" element={<ModulePage />} />
           <Route path="/lesson/:lessonId" element={<LessonPage />} />
