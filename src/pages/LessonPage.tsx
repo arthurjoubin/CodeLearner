@@ -65,10 +65,8 @@ export default function LessonPage() {
   const completedExercisesCount = exercises.filter(ex => isExerciseCompleted(ex.id)).length;
 
   const handleComplete = () => {
-    if (!alreadyCompleted) {
-      addXp(lesson.xpReward);
-      completeLesson(lesson.id);
-    }
+    addXp(lesson.xpReward);
+    completeLesson(lesson.id);
     setCompleted(true);
   };
 
@@ -176,15 +174,25 @@ export default function LessonPage() {
                 )}
               </div>
             )}
-            {!alreadyCompleted && (
+            <div className="relative inline-block group">
               <button
                 onClick={handleComplete}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-600 text-white font-bold border-2 border-primary-600 hover:bg-primary-700 transition-colors text-xs"
+                disabled={alreadyCompleted || (exercises.length > 0 && completedExercisesCount !== exercises.length)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 font-bold border-2 transition-colors text-xs ${
+                  alreadyCompleted || (exercises.length === 0 || completedExercisesCount === exercises.length)
+                    ? 'bg-primary-600 text-white border-primary-600 hover:bg-primary-700 cursor-pointer'
+                    : 'bg-gray-300 text-gray-600 border-gray-400 cursor-not-allowed'
+                }`}
               >
                 <CheckCircle className="w-3.5 h-3.5" />
                 Complete Course
               </button>
-            )}
+              {exercises.length > 0 && completedExercisesCount !== exercises.length && (
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-2 py-1 rounded text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  Your exercices first! 😅
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

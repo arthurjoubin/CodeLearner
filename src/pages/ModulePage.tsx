@@ -87,14 +87,14 @@ export default function ModulePage() {
 
           if (!isUnlocked) {
             return (
-              <div key={lesson.id} className="border-2 border-gray-300 bg-gray-100 p-4 rounded-lg opacity-60">
+              <div key={lesson.id} className="border-2 border-gray-300 bg-gray-100 p-4 rounded-lg opacity-60 grayscale cursor-not-allowed" title="Complete previous lesson first">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gray-300 flex items-center justify-center text-gray-600 font-bold rounded-lg">
+                  <div className="w-10 h-10 bg-gray-300 flex items-center justify-center text-gray-500 font-bold rounded-lg">
                     {index + 1}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-gray-600 uppercase text-sm truncate">{lesson.title}</h3>
-                    <p className="text-xs text-gray-500">Locked</p>
+                    <h3 className="font-bold text-gray-500 uppercase text-sm truncate">{lesson.title}</h3>
+                    <p className="text-xs text-gray-400">Locked</p>
                   </div>
                   <Lock className="w-4 h-4 text-gray-400" />
                 </div>
