@@ -15,34 +15,32 @@ export default function ReactMarkdown({ content }: ReactMarkdownProps) {
   const parseMarkdown = (text: string): string => {
     const placeholders: string[] = [];
 
-    // 0. Special "Essential to know" card
-    let processedText = text.replace(/# Essential to know\n([\s\S]*?)\n---/g, (_, content) => {
-      const placeholder = `__ESSENTIAL_BLOCK_${placeholders.length}__`;
+    let processedText = text;
 
-      // We need to parse the inner content (lists) of the essential block
-      // But we can do a simple pass for the list items here since we know the format
+    // 0. Special "Essential to know" card
+    processedText = processedText.replace(/# Essential to know\n([\s\S]*?)\n---/g, (_, content) => {
+      const placeholder = `__ESSENTIAL_BLOCK_${placeholders.length}__`;
       const listItems = content
         .trim()
         .split('\n')
         .map((line: string) => {
           const cleanLine = line.replace(/^- /, '').trim();
           if (!cleanLine) return '';
-          // Handle bold text in list items
           const withBold = cleanLine.replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold">$1</strong>');
-          return `<li class="flex items-start gap-2 text-sm text-gray-700 mb-1">
-            <span class="text-primary-500 font-bold mt-1">→</span>
+          return `<li class="flex items-start gap-2 text-sm text-gray-700">
+            <span class="text-primary-600 font-bold mt-0.5">•</span>
             <span>${withBold}</span>
           </li>`;
         })
         .join('');
 
       const html = `
-        <div class="mb-6 p-4 bg-gray-50 border-2 border-black border-dashed">
-          <h3 class="text-sm font-black uppercase mb-3 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-500"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <div class="mb-4 p-4 bg-primary-50 border-2 border-primary-200 rounded-lg">
+          <h3 class="text-sm font-bold uppercase text-gray-900 mb-2 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 bg-primary-600 rounded-full"></span>
             Essential to know
           </h3>
-          <ul class="flex flex-col gap-1">
+          <ul class="flex flex-col gap-0">
             ${listItems}
           </ul>
         </div>
@@ -54,7 +52,7 @@ export default function ReactMarkdown({ content }: ReactMarkdownProps) {
     // 1. Code blocks
     processedText = processedText.replace(/```(\w+)?\s*\n?([\s\S]*?)```/g, (_, _lang, code) => {
       const placeholder = `__CODE_BLOCK_${placeholders.length}__`;
-      const html = `<pre class="bg-gray-900 text-gray-100 p-3 overflow-x-auto text-xs my-3 border-2 border-black font-mono leading-relaxed"><code>${escapeHtml(code.trim())}</code></pre>`;
+      const html = `<pre class="bg-gray-900 text-gray-100 p-3 overflow-x-auto text-sm rounded-lg border-2 border-gray-700 font-mono my-3"><code>${escapeHtml(code.trim())}</code></pre>`;
       placeholders.push(html);
       return placeholder;
     });
@@ -62,16 +60,16 @@ export default function ReactMarkdown({ content }: ReactMarkdownProps) {
     // 2. Inline code
     processedText = processedText.replace(/`([^`]+)`/g, (_, code) => {
       const placeholder = `__INLINE_CODE_${placeholders.length}__`;
-      const html = `<code class="bg-yellow-100 text-black px-1 py-0.5 border border-black/30 text-xs">${escapeHtml(code)}</code>`;
+      const html = `<code class="bg-gray-100 text-primary-700 px-1.5 py-0.5 rounded font-mono text-xs">${escapeHtml(code)}</code>`;
       placeholders.push(html);
       return placeholder;
     });
 
-    // 3. Headers - compact
+    // 3. Headers
     processedText = processedText
-      .replace(/^### (.+)$/gm, '<h3 class="text-sm font-bold text-black mt-4 mb-1">$1</h3>')
-      .replace(/^## (.+)$/gm, '<h2 class="text-base font-bold text-black mt-5 mb-2">$1</h2>')
-      .replace(/^# (.+)$/gm, '<h1 class="text-lg font-bold text-black mt-3 mb-2">$1</h1>');
+      .replace(/^### (.+)$/gm, '<h3 class="text-sm font-bold text-gray-900 mt-4 mb-1">$1</h3>')
+      .replace(/^## (.+)$/gm, '<h2 class="text-base font-bold text-gray-900 mt-4 mb-1">$1</h2>')
+      .replace(/^# (.+)$/gm, '<h1 class="text-lg font-bold text-gray-900 mt-3 mb-2">$1</h1>');
 
     // 4. Bold and italic
     processedText = processedText
@@ -82,10 +80,60 @@ export default function ReactMarkdown({ content }: ReactMarkdownProps) {
     processedText = processedText
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary-600 underline" target="_blank">$1</a>');
 
-    // 6. Lists
-    processedText = processedText
-      .replace(/^\- (.+)$/gm, '<li class="ml-4 list-disc text-sm leading-relaxed">$1</li>')
-      .replace(/^(\d+)\. (.+)$/gm, '<li class="ml-4 list-decimal text-sm leading-relaxed">$2</li>');
+    // 6. Lists - grouped approach to avoid spacing issues
+    const lines = processedText.split('\n');
+    const newLines: string[] = [];
+    let inList = false;
+    let listType = '';
+    let listItems: string[] = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const unorderedMatch = line.match(/^(\s*)- (.+)$/);
+      const orderedMatch = line.match(/^(\s*)(\d+)\. (.+)$/);
+
+      if (unorderedMatch) {
+        if (!inList || listType !== 'ul') {
+          if (inList) {
+            newLines.push(`<ul class="list-none space-y-0 ml-2">${listItems.join('')}</ul>`);
+            listItems = [];
+          }
+          listType = 'ul';
+          inList = true;
+        }
+        listItems.push(`<li class="flex items-start gap-2 text-sm text-gray-700">
+          <span class="text-primary-600 font-bold mt-0.5">•</span>
+          <span>${unorderedMatch[2]}</span>
+        </li>`);
+      } else if (orderedMatch) {
+        if (!inList || listType !== 'ol') {
+          if (inList) {
+            newLines.push(`<ul class="list-none space-y-0 ml-2">${listItems.join('')}</ul>`);
+            listItems = [];
+          }
+          listType = 'ol';
+          inList = true;
+        }
+        listItems.push(`<li class="flex items-start gap-2 text-sm text-gray-700">
+          <span class="text-primary-600 font-bold mt-0.5">${orderedMatch[2]}.</span>
+          <span>${orderedMatch[3]}</span>
+        </li>`);
+      } else {
+        if (inList) {
+          newLines.push(`<ul class="list-none space-y-0 ml-2">${listItems.join('')}</ul>`);
+          listItems = [];
+          inList = false;
+          listType = '';
+        }
+        newLines.push(line);
+      }
+    }
+
+    if (inList) {
+      newLines.push(`<ul class="list-none space-y-0 ml-2">${listItems.join('')}</ul>`);
+    }
+
+    processedText = newLines.join('\n');
 
     // 7. Paragraphs
     processedText = processedText
@@ -93,10 +141,10 @@ export default function ReactMarkdown({ content }: ReactMarkdownProps) {
       .map(p => {
         const trimmed = p.trim();
         if (!trimmed) return '';
-        if (trimmed.startsWith('__CODE_BLOCK_') || trimmed.startsWith('__ESSENTIAL_BLOCK_') || trimmed.startsWith('<h') || trimmed.startsWith('<li')) {
+        if (trimmed.startsWith('__CODE_BLOCK_') || trimmed.startsWith('__ESSENTIAL_BLOCK_') || trimmed.startsWith('<h') || trimmed.startsWith('<ul')) {
           return trimmed;
         }
-        return `<p class="text-sm leading-relaxed text-gray-700 mb-2">${trimmed.replace(/\n/g, '<br/>')}</p>`;
+        return `<p class="text-sm leading-relaxed text-gray-700">${trimmed.replace(/\n/g, '<br/>')}</p>`;
       })
       .join('');
 

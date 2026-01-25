@@ -1,28 +1,45 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { getModule, getLessonsForModule, getExercisesForLesson } from '../data/modules';
-import { ArrowLeft, BookOpen, CheckCircle, Play, Star, Lock } from 'lucide-react';
-import DifficultyBadge from '../components/DifficultyBadge';
+import { getModule, getLessonsForModule, getExercisesForLesson, getLesson } from '../data/modules';
+import { ArrowLeft, CheckCircle, Lock, BookOpen, X, Code } from 'lucide-react';
 
 export default function ModulePage() {
   const { moduleId } = useParams<{ moduleId: string }>();
   const { user, isLessonCompleted, isExerciseCompleted, loading } = useUser();
+  const [showEssentialPopup, setShowEssentialPopup] = useState(false);
+  const [essentialContent, setEssentialContent] = useState('');
 
   const module = moduleId ? getModule(moduleId) : undefined;
   const lessons = moduleId ? getLessonsForModule(moduleId) : [];
 
   const isLessonEffectivelyDone = (lessonId: string) => {
     if (isLessonCompleted(lessonId)) return true;
-    const exercises = getExercisesForLesson(lessonId);
-    return exercises.length > 0 && exercises.every(e => isExerciseCompleted(e.id));
+    const exs = getExercisesForLesson(lessonId);
+    return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
+  };
+
+  const completedLessonsCount = lessons.filter(l => isLessonEffectivelyDone(l.id)).length;
+  const moduleProgress = lessons.length > 0
+    ? Math.round((completedLessonsCount / lessons.length) * 100)
+    : 0;
+
+  const handleShowEssential = (lessonId: string) => {
+    const lesson = getLesson(lessonId);
+    if (lesson) {
+      const content = lesson.content;
+      const essentialPart = content.split('---')[0].trim();
+      setEssentialContent(essentialPart);
+      setShowEssentialPopup(true);
+    }
   };
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-120px)] flex items-center justify-center">
+      <div className="loading-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
+          <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-gray-700">Loading...</p>
         </div>
       </div>
     );
@@ -30,18 +47,18 @@ export default function ModulePage() {
 
   if (!module) {
     return (
-      <div className="text-center py-12">
-        <p className="text-black font-bold">Module not found</p>
-        <Link to="/" className="text-black underline font-bold uppercase">Go back home</Link>
+      <div className="text-center py-8">
+        <p className="text-gray-900 font-bold">Module not found</p>
+        <Link to="/" className="text-primary-600 underline font-bold uppercase text-xs">Go back home</Link>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="text-center py-12">
-        <p className="text-black font-bold">Please sign in to access this module</p>
-        <Link to="/" className="text-black underline font-bold uppercase">Go back home</Link>
+      <div className="text-center py-8">
+        <p className="text-gray-900 font-bold">Please sign in</p>
+        <Link to="/" className="text-primary-600 underline font-bold uppercase text-xs">Go back home</Link>
       </div>
     );
   }
@@ -49,106 +66,130 @@ export default function ModulePage() {
   return (
     <div className="page-enter">
       <div className="relative inline-block group mb-4">
-        <Link to={`/learning-path/${module.courseId}`} className="inline-flex items-center gap-2 text-black font-bold uppercase hover:text-primary-600 transition-colors">
+        <Link to={`/learning-path/${module.courseId}`} className="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back
         </Link>
         <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-20 duration-200" />
       </div>
 
-      <div className="bg-black text-white border-2 border-black p-5 mb-6">
-        <h1 className="text-2xl font-black mb-1 uppercase">{module.title}</h1>
-        <p className="text-gray-400 text-sm">{module.description}</p>
+      <div className="mb-6">
+        <div className="relative inline-block group">
+          <h1 className="text-2xl font-black text-gray-900 uppercase">{module.title}</h1>
+          <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+        </div>
+        <p className="text-gray-700 mt-1">{module.description}</p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="flex items-center gap-4 mb-6">
+        <div className="relative w-10 h-10">
+          <svg className="w-10 h-10 transform -rotate-90">
+            <circle cx="20" cy="20" r="17" stroke="#d1d5db" strokeWidth="3" fill="none" />
+            <circle 
+              cx="20" cy="20" r="17" 
+              stroke="#22c55e" 
+              strokeWidth="3" 
+              fill="none"
+              strokeDasharray={106.8}
+              strokeDashoffset={106.8 - (106.8 * Math.max(1, moduleProgress)) / 100}
+              strokeLinecap="round"
+            />
+          </svg>
+          <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800">
+            {Math.max(1, moduleProgress)}
+          </span>
+        </div>
+        <div>
+          <p className="text-xs text-gray-700 font-bold">{completedLessonsCount}/{lessons.length} lessons</p>
+          <p className="text-[10px] text-gray-600 font-bold uppercase">Progress</p>
+        </div>
+      </div>
+
+      <div className="space-y-3">
         {lessons.map((lesson, index) => {
           const exercises = getExercisesForLesson(lesson.id);
           const lessonDone = isLessonCompleted(lesson.id);
           const exercisesDone = exercises.filter(e => isExerciseCompleted(e.id)).length;
           const allExercisesDone = exercises.length === 0 || exercisesDone === exercises.length;
           const isAnythingDone = lessonDone || allExercisesDone;
+          const isComplete = isAnythingDone;
 
           const prevLesson = index > 0 ? lessons[index - 1] : null;
           const isUnlocked = index === 0 || (prevLesson && isLessonEffectivelyDone(prevLesson.id));
 
           if (!isUnlocked) {
             return (
-              <div key={lesson.id} className="border-2 border-gray-200 bg-gray-50 p-4 opacity-60">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gray-200 flex items-center justify-center text-gray-400 font-bold">
+              <div key={lesson.id} className="border-2 border-gray-300 bg-gray-100 p-4 rounded-lg opacity-60">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gray-300 flex items-center justify-center text-gray-600 font-bold rounded-lg">
                     {index + 1}
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-gray-400 uppercase">{lesson.title}</h3>
-                    <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
-                      <Lock className="w-3 h-3" />
-                      <span>Complete previous lesson</span>
-                    </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-gray-600 uppercase text-sm truncate">{lesson.title}</h3>
+                    <p className="text-xs text-gray-500">Locked</p>
                   </div>
+                  <Lock className="w-4 h-4 text-gray-400" />
                 </div>
               </div>
             );
           }
 
-          const progressPercent = exercises.length > 0
-            ? Math.round((exercisesDone / exercises.length) * 100)
-            : lessonDone ? 100 : 0;
-
           return (
             <div
               key={lesson.id}
-              className={`border-2 border-black p-3 transition-all hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-brutal-sm ${isAnythingDone ? 'bg-primary-50' : 'bg-white'}`}
+              className={`border-2 rounded-lg p-4 transition-all hover:shadow-md ${isComplete ? 'border-primary-500 bg-primary-50/50' : 'border-gray-300 bg-white hover:border-primary-500'}`}
             >
-              <div className="flex items-start gap-3">
-                <div className={`w-8 h-8 flex items-center justify-center font-bold border-2 border-black flex-shrink-0 text-sm transition-colors ${lessonDone ? 'bg-primary-500 text-white' : 'bg-white text-black group-hover:bg-primary-500 group-hover:text-white'
-                  }`}>
-                  {lessonDone ? <CheckCircle className="w-4 h-4" /> : index + 1}
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 flex items-center justify-center font-bold border-2 rounded-lg ${isComplete ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-gray-800 border-gray-300'}`}>
+                  {isComplete ? <CheckCircle className="w-5 h-5" /> : index + 1}
                 </div>
-
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-black uppercase text-sm mb-1.5 group-hover:text-primary-600 transition-colors">{lesson.title}</h3>
-                  <div className="flex items-center flex-wrap gap-1.5 mb-2">
-                    <DifficultyBadge difficulty={lesson.difficulty} size="sm" />
-                    <span className="xp-badge text-xs py-0.5">
-                      <Star className="w-3 h-3" />{lesson.xpReward}
-                    </span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-primary-500 rounded-full" />
+                    <h3 className="font-bold text-gray-900 uppercase text-sm truncate">{lesson.title}</h3>
                   </div>
-
-                  <div className="mb-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wide">Progress</span>
-                      <span className="text-[9px] font-bold text-primary-600">{progressPercent}%</span>
-                    </div>
-                    <div className="w-full h-2.5 bg-gray-200 border border-black overflow-hidden">
-                      <div
-                        className="h-full bg-primary-500 transition-all duration-300"
-                        style={{ width: `${progressPercent}%` }}
-                      />
-                    </div>
+                  <div className="flex items-center gap-3 mt-1 ml-4">
+                    <span className="text-xs text-gray-700 font-bold">{lesson.xpReward} XP</span>
+                    {exercises.length > 0 && (
+                      <span className="text-xs text-gray-600">{exercises.length} exercise{exercises.length > 1 ? 's' : ''}</span>
+                    )}
                   </div>
-
-                  <div className="mb-2">
-                    <Link to={`/lesson/${lesson.id}`} className={`btn-primary text-xs py-1.5 inline-flex items-center gap-1.5 w-full justify-center ${isAnythingDone ? 'bg-primary-500 hover:bg-primary-600' : ''}`}>
-                      <BookOpen className="w-3.5 h-3.5" />
-                      {isAnythingDone ? '↺ Redo' : 'Start'}
-                    </Link>
-                  </div>
-
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleShowEssential(lesson.id)}
+                    className="p-2 text-gray-600 hover:text-primary-700 hover:bg-gray-100 rounded-lg transition-colors"
+                    title="Essential to know"
+                  >
+                    <BookOpen className="w-4 h-4" />
+                  </button>
                   {exercises.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {exercises.map((exercise, i) => (
-                        <Link
+                    <div className="flex gap-1">
+                      {exercises.map((exercise) => (
+                        <div
                           key={exercise.id}
-                          to={`/exercise/${exercise.id}`}
-                          className={`text-xs py-1 px-2 border-2 border-black font-bold inline-flex items-center gap-1 transition-all hover:translate-x-[-1px] hover:translate-y-[-1px] ${isExerciseCompleted(exercise.id) ? 'bg-primary-500 text-white' : 'bg-white hover:bg-gray-100'
-                            }`}
-                        >
-                          {isExerciseCompleted(exercise.id) ? <CheckCircle className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-                          Ex {i + 1}
-                        </Link>
+                          className={`w-2.5 h-2.5 rounded-full ${isExerciseCompleted(exercise.id) ? 'bg-primary-500' : 'bg-gray-400'}`}
+                        />
                       ))}
                     </div>
                   )}
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to={`/lesson/${lesson.id}`}
+                      className="flex items-center gap-1.5 px-3 py-2 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 transition-colors text-sm"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      Course
+                    </Link>
+                    {exercises.length > 0 && (
+                      <Link
+                        to={`/exercise/${exercises[0].id}`}
+                        className="flex items-center gap-1.5 px-3 py-2 bg-gray-900 text-white font-bold rounded-lg hover:bg-gray-800 transition-colors text-sm"
+                      >
+                        <Code className="w-4 h-4" />
+                        Exercises
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -157,8 +198,31 @@ export default function ModulePage() {
       </div>
 
       {lessons.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-8 text-gray-600">
           <p className="font-bold">Coming soon...</p>
+        </div>
+      )}
+
+      {showEssentialPopup && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowEssentialPopup(false)}>
+          <div className="bg-gradient-to-b from-gray-50 to-white rounded-lg border-2 border-gray-300 p-5 max-w-md w-full max-h-[70vh] overflow-y-auto shadow-lg" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-gray-200">
+              <div className="w-1.5 h-1.5 bg-primary-500 rounded-full" />
+              <h3 className="font-bold uppercase text-gray-900">Essential to know</h3>
+              <button onClick={() => setShowEssentialPopup(false)} className="ml-auto p-1.5 hover:bg-gray-200 rounded transition-colors">
+                <X className="w-4 h-4 text-gray-600" />
+              </button>
+            </div>
+            <div className="prose prose-sm max-w-none text-gray-700 space-y-1" dangerouslySetInnerHTML={{ 
+              __html: essentialContent
+                .replace(/^# Essential to know\n/, '')
+                .replace(/^# (.+)$/gm, '<strong>$1</strong>')
+                .replace(/^- /m, '<span class="text-primary-500 font-bold">•</span> ')
+                .replace(/\n- /g, '\n<span class="text-primary-500 font-bold">•</span> ')
+                .replace(/\n/g, '<br/>')
+                .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1 rounded text-primary-600 font-mono text-xs">$1</code>')
+            }} />
+          </div>
         </div>
       )}
     </div>

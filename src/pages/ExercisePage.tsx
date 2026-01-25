@@ -8,7 +8,7 @@ import Editor from '@monaco-editor/react';
 import QuizPage from './QuizPage';
 import {
   ArrowLeft,
-  Send,
+  ArrowRight,
   CheckCircle,
   XCircle,
   Lightbulb,
@@ -17,9 +17,7 @@ import {
   RotateCcw,
   Maximize,
   X,
-  ChevronDown,
-  ChevronUp,
-  List,
+  BookOpen,
 } from 'lucide-react';
 import LivePreview from '../components/LivePreview';
 
@@ -41,7 +39,6 @@ export default function ExercisePage() {
   const [attemptCount, setAttemptCount] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showExercisesDropdown, setShowExercisesDropdown] = useState(false);
 
   const alreadyCompleted = exerciseId ? isExerciseCompleted(exerciseId) : false;
 
@@ -59,10 +56,10 @@ export default function ExercisePage() {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-120px)] flex items-center justify-center">
+      <div className="loading-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
+          <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-gray-700">Loading...</p>
         </div>
       </div>
     );
@@ -70,23 +67,22 @@ export default function ExercisePage() {
 
   if (!exercise || !lesson || !module) {
     return (
-      <div className="text-center py-12">
-        <p className="text-black font-bold">Exercise not found</p>
-        <Link to="/" className="text-black underline font-bold uppercase">Go back home</Link>
+      <div className="text-center py-8">
+        <p className="text-gray-900 font-bold">Exercise not found</p>
+        <Link to="/" className="text-primary-600 underline font-bold uppercase text-xs">Go back home</Link>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="text-center py-12">
-        <p className="text-black font-bold">Please sign in to access this exercise</p>
-        <Link to="/" className="text-black underline font-bold uppercase">Go back home</Link>
+      <div className="text-center py-8">
+        <p className="text-gray-900 font-bold">Please sign in to access this exercise</p>
+        <Link to="/" className="text-primary-600 underline font-bold uppercase text-xs">Go back home</Link>
       </div>
     );
   }
 
-  // Route to QuizPage for quiz exercises
   if (isQuizExercise(exercise)) {
     return (
       <QuizPage
@@ -101,18 +97,12 @@ export default function ExercisePage() {
   const currentIndex = lessonExercises.findIndex(e => e.id === exercise.id);
   const nextExercise = lessonExercises[currentIndex + 1];
 
-  // Simple local validation as fallback
   const simpleValidate = (code: string, solution: string): boolean => {
-    // Normalize code for comparison
     const normalize = (s: string) => s.replace(/\s+/g, ' ').replace(/['"`]/g, '"').trim().toLowerCase();
     const normalizedCode = normalize(code);
     const normalizedSolution = normalize(solution);
-
-    // Check if key parts of solution are in the code
     const solutionParts = normalizedSolution.split(/[;{}()]/g).filter(p => p.trim().length > 5);
     const matchedParts = solutionParts.filter(part => normalizedCode.includes(part.trim()));
-
-    // Accept if at least 60% of solution parts are present
     return matchedParts.length >= solutionParts.length * 0.6;
   };
 
@@ -148,7 +138,6 @@ export default function ExercisePage() {
         });
       }
     } catch {
-      // Fallback: use simple local validation
       const isCorrect = simpleValidate(code, exercise.solution);
 
       if (isCorrect) {
@@ -193,71 +182,48 @@ export default function ExercisePage() {
 
   return (
     <div className="min-h-[calc(100vh-120px)] lg:h-[calc(100vh-120px)] flex flex-col page-enter pb-20 lg:pb-0">
-      {/* Header compact */}
-      <div className="flex items-center justify-between mb-3 pb-2 border-b-2 border-black">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <Link to={`/lesson/${lesson.id}`} className="p-1.5 border-2 border-black hover:bg-gray-100 shrink-0">
-            <ArrowLeft className="w-4 h-4" />
-          </Link>
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            <div className="relative shrink-0">
-              <button
-                onClick={() => setShowExercisesDropdown(!showExercisesDropdown)}
-                className="btn-primary text-xs py-1 px-2 inline-flex items-center gap-1"
-              >
-                <List className="w-3.5 h-3.5" />
-                {currentIndex + 1}/{lessonExercises.length}
-                {showExercisesDropdown ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-              </button>
-              {showExercisesDropdown && (
-                <div className="absolute left-0 top-full mt-1 bg-white border-2 border-black z-10 min-w-[180px] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-h-[200px] overflow-y-auto">
-                  {lessonExercises.map((ex, index) => {
-                    const exCompleted = exerciseId ? isExerciseCompleted(ex.id) : false;
-                    return (
-                      <Link
-                        key={ex.id}
-                        to={`/exercise/${ex.id}`}
-                        onClick={() => setShowExercisesDropdown(false)}
-                        className={`flex items-center gap-2 px-3 py-2 border-b border-black last:border-b-0 ${ex.id === exercise.id ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
-                      >
-                        {exCompleted ? (
-                          <CheckCircle className="w-4 h-4 text-primary-500 shrink-0" />
-                        ) : (
-                          <div className="w-4 h-4 border-2 border-black shrink-0" />
-                        )}
-                        <span className="text-xs font-bold uppercase">{index + 1}. {ex.title}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
+      <div className="relative inline-block group mb-4">
+        <Link to={`/lesson/${lesson.id}`} className="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Back
+        </Link>
+        <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-20 duration-200" />
+      </div>
+
+      <div className="mb-6">
+        <div className="flex items-center justify-between">
+          <div className="relative inline-block group">
+            <h1 className="text-xl font-black text-gray-900 uppercase">{exercise.title}</h1>
+            <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg border-2 border-gray-300">
+              <Star className="w-4 h-4 text-yellow-500" />
+              <span className="text-sm font-bold text-gray-800">{exercise.xpReward} XP</span>
             </div>
-            <h1 className="text-sm lg:text-base font-black text-black truncate">{exercise.title}</h1>
+            {alreadyCompleted && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-primary-100 rounded-lg border-2 border-primary-500">
+                <CheckCircle className="w-4 h-4 text-primary-600" />
+                <span className="text-sm font-bold text-primary-700">Completed</span>
+              </div>
+            )}
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="xp-badge text-xs py-0.5">
-            <Star className="w-3 h-3" />{exercise.xpReward}
-          </span>
-          {alreadyCompleted && (
-            <div className="bg-primary-500 p-1 border-2 border-black">
-              <CheckCircle className="w-4 h-4 text-white" />
-            </div>
-          )}
+        <div className="flex items-center gap-3 mt-2">
+          <span className="text-xs font-bold text-gray-700 uppercase">{module.title}</span>
+          <span className="text-gray-400">/</span>
+          <span className="text-xs font-bold text-gray-700 uppercase">{lesson.title}</span>
+          <span className="text-gray-400">/</span>
+          <span className="text-sm font-medium text-gray-900">{currentIndex + 1}/{lessonExercises.length} exercises</span>
         </div>
       </div>
 
-      {/* Main grid */}
-      <div className="lg:flex-1 grid lg:grid-cols-2 gap-3 lg:min-h-0">
-        {/* Left: Instructions + Editor */}
-        <div className="flex flex-col gap-3 lg:min-h-0">
-          {/* Instructions */}
-          <div className="bg-white border-2 border-black p-3 flex-shrink-0">
-            <p className="text-[10px] font-bold uppercase text-gray-500 mb-1">Instructions</p>
-            <p className="text-sm leading-relaxed">{exercise.instructions}</p>
+      <div className="lg:flex-1 grid lg:grid-cols-2 gap-4 lg:min-h-0">
+        <div className="flex flex-col gap-4 lg:min-h-0">
+          <div className="border-2 border-gray-300 bg-white rounded-lg p-4">
+            <p className="text-xs font-bold text-gray-500 uppercase mb-2">Instructions</p>
+            <p className="text-sm leading-relaxed text-gray-700">{exercise.instructions}</p>
           </div>
 
-          {/* Backdrop for expanded mode */}
           {isExpanded && (
             <div
               className="fixed inset-0 bg-black/80 z-40 backdrop-blur-sm"
@@ -265,27 +231,26 @@ export default function ExercisePage() {
             />
           )}
 
-          {/* Editor */}
-          <div className={`${isExpanded ? 'fixed inset-4 lg:inset-8 z-50 bg-gray-900 shadow-2xl border-4 border-black flex flex-col' : 'lg:flex-1 border-2 border-black bg-gray-900 flex flex-col h-[300px] lg:h-auto lg:min-h-[250px]'}`}>
-            <div className={`flex items-center justify-between px-3 py-1.5 bg-black text-white text-xs ${isExpanded ? 'mb-0 py-3' : ''}`}>
+          <div className={`${isExpanded ? 'fixed inset-4 lg:inset-8 z-50 bg-gray-900 shadow-2xl border-2 border-gray-300 flex flex-col' : 'lg:flex-1 border-2 border-gray-300 bg-gray-900 flex flex-col h-[300px] lg:h-auto lg:min-h-[250px]'}`}>
+            <div className={`flex items-center justify-between px-4 py-2 bg-gray-800 text-white text-sm ${isExpanded ? '' : ''}`}>
               <span className="font-bold uppercase flex items-center gap-2">
-                Editor {isExpanded && <span className="text-gray-400 font-normal normal-case">- Full Screen Mode</span>}
+                Editor {isExpanded && <span className="text-gray-400 font-normal normal-case ml-2">- Full Screen Mode</span>}
               </span>
-              <div className="flex items-center gap-1">
-                <button onClick={() => { setCode(exercise.starterCode); setFeedback(null); }} className="p-1 hover:bg-gray-700" title="Reset">
-                  <RotateCcw className="w-3 h-3" />
+              <div className="flex items-center gap-2">
+                <button onClick={() => { setCode(exercise.starterCode); setFeedback(null); }} className="p-1.5 hover:bg-gray-700 rounded transition-colors" title="Reset">
+                  <RotateCcw className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
-                  className={`p-1 hover:bg-gray-700 flex items-center gap-1 ${isExpanded ? 'bg-red-600 hover:bg-red-700 px-2' : ''}`}
+                  className={`p-1.5 hover:bg-gray-700 flex items-center gap-1.5 ${isExpanded ? 'bg-red-600 hover:bg-red-700 px-2 rounded' : ''}`}
                   title={isExpanded ? "Close" : "Expand"}
                 >
                   {isExpanded ? (
                     <>
-                      <X className="w-3 h-3" />
+                      <X className="w-4 h-4" />
                       <span className="font-bold">Close</span>
                     </>
-                  ) : <Maximize className="w-3 h-3" />}
+                  ) : <Maximize className="w-4 h-4" />}
                 </button>
               </div>
             </div>
@@ -309,27 +274,26 @@ export default function ExercisePage() {
             </div>
           </div>
 
-          {/* Actions - Desktop only (mobile has fixed bar) */}
           <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
             <button
               onClick={handleValidate}
               disabled={isValidating}
-              className="btn-primary py-2 px-4 flex items-center gap-2"
+              className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors"
             >
-              {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
               Validate Code
             </button>
             <button
               onClick={handleGetHint}
               disabled={isLoadingHint}
-              className="btn-secondary py-2 px-4 flex items-center gap-2"
+              className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
             >
               {isLoadingHint ? <Loader className="w-4 h-4 animate-spin" /> : <Lightbulb className="w-4 h-4" />}
               Hint
             </button>
             <button
               onClick={() => { setCode(exercise.starterCode); setFeedback(null); }}
-              className="btn-secondary py-2 px-4 flex items-center gap-2"
+              className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
               title="Reset code to original"
             >
               <RotateCcw className="w-4 h-4" />
@@ -338,33 +302,29 @@ export default function ExercisePage() {
           </div>
         </div>
 
-        {/* Right: Preview + Feedback */}
-        <div className="flex flex-col gap-3 lg:min-h-0">
-          {/* Feedback - Desktop only (mobile has toast) */}
+        <div className="flex flex-col gap-4 lg:min-h-0">
           {feedback && (
-            <div className={`hidden lg:flex p-3 border-2 items-start gap-2 flex-shrink-0 ${feedback.isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
-              {feedback.isCorrect ? <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" /> : <XCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />}
+            <div className={`hidden lg:flex p-4 border-2 items-start gap-3 flex-shrink-0 rounded-lg ${feedback.isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
+              {feedback.isCorrect ? <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" /> : <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />}
               <div>
-                <p className={`font-bold text-xs uppercase ${feedback.isCorrect ? 'text-green-700' : 'text-red-700'}`}>
+                <p className={`font-bold text-sm uppercase ${feedback.isCorrect ? 'text-green-700' : 'text-red-700'}`}>
                   {feedback.isCorrect ? 'Correct!' : 'Not quite'}
                 </p>
-                <p className={`text-xs ${feedback.isCorrect ? 'text-green-600' : 'text-red-600'}`}>{feedback.message}</p>
+                <p className={`text-sm ${feedback.isCorrect ? 'text-green-600' : 'text-red-600'}`}>{feedback.message}</p>
               </div>
             </div>
           )}
 
-          {/* Hint - Desktop only (mobile has toast) */}
           {showHint && hint && (
-            <div className="hidden lg:flex p-3 border-2 border-yellow-500 bg-yellow-50 items-start gap-2 flex-shrink-0">
-              <Lightbulb className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-yellow-700">{hint}</p>
+            <div className="hidden lg:flex p-4 border-2 border-yellow-500 bg-yellow-50 items-start gap-3 flex-shrink-0 rounded-lg">
+              <Lightbulb className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-yellow-700">{hint}</p>
             </div>
           )}
 
-          {/* Preview */}
-          <div className="lg:flex-1 border-2 border-black flex flex-col h-[200px] lg:h-auto lg:min-h-[200px]">
-            <div className="px-3 py-1.5 bg-gray-100 border-b-2 border-black">
-              <span className="text-xs font-bold uppercase">Preview</span>
+          <div className="lg:flex-1 border-2 border-gray-300 bg-white rounded-lg flex flex-col h-[200px] lg:h-auto lg:min-h-[200px]">
+            <div className="px-4 py-2 bg-gray-100 border-b-2 border-gray-300">
+              <span className="text-sm font-bold uppercase text-gray-800">Preview</span>
             </div>
             <div className="flex-1 bg-white relative overflow-auto">
               <LivePreview code={code} />
@@ -373,10 +333,9 @@ export default function ExercisePage() {
         </div>
       </div>
 
-      {/* Mobile toast for feedback */}
       {feedback && !completed && (
-        <div className={`lg:hidden fixed top-20 left-4 right-4 p-3 border-2 z-30 shadow-brutal animate-pop ${feedback.isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
-          <div className="flex items-start gap-2">
+        <div className={`lg:hidden fixed top-20 left-4 right-4 p-4 border-2 z-30 rounded-lg ${feedback.isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
+          <div className="flex items-start gap-3">
             {feedback.isCorrect ? <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" /> : <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />}
             <div className="flex-1 min-w-0">
               <p className={`font-bold text-sm uppercase ${feedback.isCorrect ? 'text-green-700' : 'text-red-700'}`}>
@@ -391,10 +350,9 @@ export default function ExercisePage() {
         </div>
       )}
 
-      {/* Mobile toast for hint */}
       {showHint && hint && (
-        <div className="lg:hidden fixed top-20 left-4 right-4 p-3 border-2 border-yellow-500 bg-yellow-50 z-30 shadow-brutal animate-pop">
-          <div className="flex items-start gap-2">
+        <div className="lg:hidden fixed top-20 left-4 right-4 p-4 border-2 border-yellow-500 bg-yellow-50 z-30 rounded-lg">
+          <div className="flex items-start gap-3">
             <Lightbulb className="w-5 h-5 text-yellow-600 flex-shrink-0" />
             <p className="text-sm text-yellow-700 flex-1">{hint}</p>
             <button onClick={() => setShowHint(false)} className="p-1 hover:bg-black/10 rounded">
@@ -404,21 +362,20 @@ export default function ExercisePage() {
         </div>
       )}
 
-      {/* Mobile fixed action bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black p-3 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 p-3 z-30 shadow-lg">
         <div className="flex items-center gap-2 max-w-screen-xl mx-auto">
           <button
             onClick={handleValidate}
             disabled={isValidating}
-            className="btn-primary flex-1 py-3 px-4 flex items-center justify-center gap-2 text-sm"
+            className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors flex-1 justify-center"
           >
-            {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
             Validate Code
           </button>
           <button
             onClick={handleGetHint}
             disabled={isLoadingHint}
-            className="btn-secondary py-3 px-4 flex items-center justify-center gap-2 text-sm"
+            className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
           >
             {isLoadingHint ? <Loader className="w-4 h-4 animate-spin" /> : <Lightbulb className="w-4 h-4" />}
             Hint
@@ -426,46 +383,42 @@ export default function ExercisePage() {
         </div>
       </div>
 
-      {/* Success modal - celebratory */}
       {completed && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-4 border-black p-8 text-center max-w-sm animate-pop shadow-brutal">
-            {/* Confetti effect */}
-            <div className="text-6xl mb-4">🎉</div>
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 text-center max-w-sm border-2 border-gray-300 shadow-xl">
+            <div className="text-5xl mb-3">🎉</div>
+            <h2 className="text-xl font-black uppercase text-green-600 mb-1">Well Done!</h2>
+            <p className="text-gray-600 mb-4 text-sm">You completed this exercise</p>
 
-            <h2 className="text-2xl font-black mb-2 uppercase text-green-600">Well Done!</h2>
-            <p className="text-gray-600 mb-4">You completed this exercise</p>
-
-            {/* XP Badge */}
             {!alreadyCompleted && (
-              <div className="inline-flex items-center gap-2 bg-yellow-400 text-black px-4 py-2 border-2 border-black font-black text-lg mb-6">
+              <div className="inline-flex items-center gap-2 bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg border-2 border-yellow-300 font-bold text-lg mb-4">
                 <Star className="w-5 h-5" />
                 +{exercise.xpReward} XP
               </div>
             )}
             {alreadyCompleted && (
-              <p className="text-sm text-gray-500 mb-6">Already completed</p>
+              <p className="text-sm text-gray-500 mb-4">Already completed</p>
             )}
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               {nextExercise ? (
                 <Link
                   to={`/exercise/${nextExercise.id}`}
-                  className="bg-black text-white font-bold py-3 px-6 border-2 border-black uppercase hover:bg-gray-800 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-bold py-2.5 px-4 rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors"
                 >
-                  Next Exercise →
+                  Next Exercise <ArrowRight className="w-4 h-4" />
                 </Link>
               ) : (
                 <Link
                   to={`/lesson/${lesson.id}`}
-                  className="bg-black text-white font-bold py-3 px-6 border-2 border-black uppercase hover:bg-gray-800 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 bg-gray-900 text-white font-bold py-2.5 px-4 rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors"
                 >
-                  Continue →
+                  <BookOpen className="w-4 h-4" /> Continue
                 </Link>
               )}
               <button
                 onClick={() => setCompleted(false)}
-                className="text-sm text-gray-500 hover:text-black underline"
+                className="text-sm text-gray-500 hover:text-gray-900 font-medium"
               >
                 Stay on this exercise
               </button>

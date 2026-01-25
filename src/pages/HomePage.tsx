@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { lessons, modules, getModulesForCourse } from '../data/modules';
-import { Play } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const learningPaths = [
   { id: 'web-stack', title: 'VIBECODER BASIS', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png' },
@@ -24,10 +24,10 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-120px)] flex items-center justify-center">
+      <div className="loading-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-700">Loading...</p>
         </div>
       </div>
     );
@@ -92,31 +92,46 @@ export default function HomePage() {
   };
 
   return (
-    <div className="page-enter">
+    <div className="page-enter bg-gradient-to-b from-gray-100 to-white min-h-[calc(100vh-120px)]">
       {resumes.length > 0 && (
         <div className="mb-8">
           <div className="relative inline-block group">
-            <h2 className="font-bold text-sm uppercase text-gray-500">Continue Learning</h2>
+            <h2 className="font-bold text-sm uppercase text-gray-700">Continue Learning</h2>
             <span className="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
           </div>
-          <div className="space-y-2 mt-3">
+          <div className="space-y-3 mt-3">
             {resumes.map(resume => (
               <Link
                 key={resume.courseId}
                 to={`/lesson/${resume.nextLesson.id}`}
-                className="block border-2 border-black p-3 bg-white hover:bg-gray-50 transition-all group relative"
+                className="block p-4 border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group bg-white"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-black text-white flex items-center justify-center font-bold text-sm group-hover:bg-primary-500 transition-colors">
-                      {Math.max(1, resume.progress)}%
-                    </div>
-                    <div>
-                      <span className="font-bold text-sm uppercase text-black group-hover:text-primary-600 transition-colors">{resume.courseTitle}</span>
-                      <p className="text-xs text-gray-600">{resume.nextLesson.title}</p>
-                    </div>
+                <div className="flex items-center gap-4">
+                  <div className="relative w-12 h-12">
+                    <svg className="w-12 h-12 transform -rotate-90">
+                      <circle cx="24" cy="24" r="20" stroke="#d1d5db" strokeWidth="3" fill="none" />
+                      <circle 
+                        cx="24" cy="24" r="20" 
+                        stroke="#22c55e" 
+                        strokeWidth="3" 
+                        fill="none"
+                        strokeDasharray={125.6}
+                        strokeDashoffset={125.6 - (125.6 * Math.max(1, resume.progress)) / 100}
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                    <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800">
+                      {Math.max(1, resume.progress)}
+                    </span>
                   </div>
-                  <Play className="w-5 h-5 text-black group-hover:text-primary-600 transition-colors" />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />
+                      <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.courseTitle}</span>
+                    </div>
+                    <p className="text-sm text-gray-700 ml-4">{resume.nextLesson.title}</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-primary-600" />
                 </div>
               </Link>
             ))}
@@ -126,7 +141,7 @@ export default function HomePage() {
 
       <div className="mb-4">
         <div className="relative inline-block group">
-          <h2 className="font-bold text-sm uppercase text-gray-500">Learning Paths</h2>
+          <h2 className="font-bold text-sm uppercase text-gray-700">Learning Paths</h2>
           <span className="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
         </div>
       </div>
@@ -143,31 +158,31 @@ export default function HomePage() {
             <Link
               key={path.id}
               to={isAvailable ? `/learning-path/${path.id}` : '#'}
-              className={`border-2 border-black p-3 relative transition-all flex-shrink-0 w-32 ${isAvailable 
-                ? 'bg-white hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal cursor-pointer' 
-                : 'bg-gray-100 opacity-60 grayscale cursor-not-allowed'
+              className={`border-2 border-gray-300 p-3 relative transition-all flex-shrink-0 w-32 rounded-lg bg-white ${isAvailable 
+                ? 'hover:border-primary-500 hover:shadow-md cursor-pointer' 
+                : 'opacity-60 grayscale cursor-not-allowed'
               }`}
             >
               {!isAvailable && (
                 <div className="absolute bottom-1.5 right-1.5">
-                  <span className="px-1.5 py-0.5 bg-gray-300 text-gray-600 text-[8px] font-bold uppercase tracking-wider border border-gray-400">
+                  <span className="px-1.5 py-0.5 bg-gray-300 text-gray-700 text-[8px] font-bold uppercase tracking-wider border border-gray-400 rounded">
                     Soon
                   </span>
                 </div>
               )}
               {isAvailable && resume && resume.progress < 100 && (
-                <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 bg-primary-500 text-white text-[8px] font-bold uppercase tracking-wider">
+                <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 bg-primary-500 text-white text-[8px] font-bold uppercase tracking-wider rounded">
                   {progress}%
                 </div>
               )}
               {isAvailable && resume && resume.progress === 100 && (
-                <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 bg-primary-500 text-white text-[8px] font-bold uppercase tracking-wider">
+                <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 bg-primary-500 text-white text-[8px] font-bold uppercase tracking-wider rounded">
                   ✓
                 </div>
               )}
               {isAvailable && !resume && (
                 <div className="absolute bottom-1.5 right-1.5">
-                  <span className="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[8px] font-bold uppercase tracking-wider border border-gray-300">
+                  <span className="px-1.5 py-0.5 bg-gray-200 text-gray-700 text-[8px] font-bold uppercase tracking-wider border border-gray-300 rounded">
                     New
                   </span>
                 </div>
@@ -178,31 +193,41 @@ export default function HomePage() {
                   alt={path.title} 
                   className="w-6 h-6 object-contain"
                 />
-                <h3 className="font-bold text-xs uppercase text-black">{path.title}</h3>
+                <h3 className="font-bold text-xs uppercase text-gray-900 group-hover:text-primary-700 transition-colors">{path.title}</h3>
               </div>
+              <div className="w-2 h-2 bg-primary-500 rounded-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity" />
             </Link>
           );
         })}
       </div>
 
       <div className="relative inline-block group mt-8">
-        <h2 className="font-bold text-sm uppercase text-gray-500">Our Method</h2>
+        <h2 className="font-bold text-sm uppercase text-gray-700">Our Method</h2>
         <span className="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
       </div>
 
-      <div className="border-2 border-black p-3 mt-3">
-        <div className="grid md:grid-cols-3 gap-4 text-xs">
-          <div className="pr-3 md:border-r md:border-gray-300 md:last:border-r-0">
-            <span className="font-bold text-black block mb-0.5">Learn by Doing</span>
-            <p className="text-gray-600">Theory meets practice. Every lesson combines concepts with hands-on exercises.</p>
+      <div className="border-2 border-gray-300 rounded-lg p-3 mt-3 bg-white">
+        <div className="grid md:grid-cols-3 gap-4 text-sm">
+          <div className="pr-3 md:border-r md:border-gray-200 md:last:border-r-0">
+            <div className="flex items-center gap-2 mb-0.5">
+              <div className="w-2 h-2 bg-primary-500 rounded-full" />
+              <span className="font-bold text-gray-900 block">Learn by Doing</span>
+            </div>
+            <p className="text-gray-700 ml-4">Theory meets practice. Every lesson combines concepts with hands-on exercises.</p>
           </div>
-          <div className="pr-3 md:border-r md:border-gray-300 md:last:border-r-0 md:pl-2">
-            <span className="font-bold text-black block mb-0.5">Progress Through Practice</span>
-            <p className="text-gray-600">Build real skills step by step. Your experience grows as you complete lessons and exercises.</p>
+          <div className="pr-3 md:border-r md:border-gray-200 md:last:border-r-0 md:pl-2">
+            <div className="flex items-center gap-2 mb-0.5">
+              <div className="w-2 h-2 bg-primary-500 rounded-full" />
+              <span className="font-bold text-gray-900 block">Progress Through Practice</span>
+            </div>
+            <p className="text-gray-700 ml-4">Build real skills step by step. Your experience grows as you complete lessons and exercises.</p>
           </div>
           <div className="md:pl-2">
-            <span className="font-bold text-black block mb-0.5">Stay Active</span>
-            <p className="text-gray-600">No passive watching. You code, you test, you learn by taking action.</p>
+            <div className="flex items-center gap-2 mb-0.5">
+              <div className="w-2 h-2 bg-primary-500 rounded-full" />
+              <span className="font-bold text-gray-900 block">Stay Active</span>
+            </div>
+            <p className="text-gray-700 ml-4">No passive watching. You code, you test, you learn by taking action.</p>
           </div>
         </div>
       </div>
