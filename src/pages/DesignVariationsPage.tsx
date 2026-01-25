@@ -3,11 +3,7 @@ import { useUser } from '../context/UserContext';
 import { lessons, modules, getModulesForCourse } from '../data/modules';
 import { 
   ChevronRight, ArrowRight, ArrowUpRight, Play, 
-  Code2, Brain, Target, Rocket, BookOpen,
-  Trophy, Flame, FlaskConical, Settings,
-  Home, Users, Clock, Star, Grid, Layout,
-  Maximize2, Sparkle, GraduationCap, Lightbulb,
-  TrendingUp, Check, Minus, Plus, Menu, X
+  Code2, GraduationCap, Clock, Check
 } from 'lucide-react';
 
 const learningPaths = [
