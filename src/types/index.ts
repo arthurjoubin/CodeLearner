@@ -4,6 +4,7 @@ export interface User {
   name: string;
   avatarUrl?: string;
   xp: number;
+  recentXp: number;
   level: number;
   streak: number;
   lastActiveDate: string;

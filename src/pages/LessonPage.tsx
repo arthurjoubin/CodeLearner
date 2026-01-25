@@ -3,7 +3,6 @@ import { useParams, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getLesson, getModule, getExercisesForLesson, getLessonsForModule } from '../data/modules';
 import {
-  ArrowLeft,
   ArrowRight,
   CheckCircle,
   Code2,
@@ -12,8 +11,10 @@ import {
   List,
   Lock,
   BookOpen,
+  Star,
 } from 'lucide-react';
 import ReactMarkdown from './ReactMarkdown';
+import Breadcrumb from '../components/Breadcrumb';
 
 export default function LessonPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -26,6 +27,7 @@ export default function LessonPage() {
 
   const [completed, setCompleted] = useState(false);
   const [showLessonsDropdown, setShowLessonsDropdown] = useState(false);
+  const [showExercisesDropdown, setShowExercisesDropdown] = useState(false);
 
   if (loading) {
     return (
@@ -60,11 +62,10 @@ export default function LessonPage() {
   const currentIndex = moduleLessons.findIndex(l => l.id === lesson.id);
   const nextLesson = moduleLessons[currentIndex + 1];
 
-  const allExercisesCompleted = exercises.length === 0 || exercises.every(ex => isExerciseCompleted(ex.id));
   const completedExercisesCount = exercises.filter(ex => isExerciseCompleted(ex.id)).length;
 
   const handleComplete = () => {
-    if (!alreadyCompleted && allExercisesCompleted) {
+    if (!alreadyCompleted) {
       addXp(lesson.xpReward);
       completeLesson(lesson.id);
     }
@@ -79,50 +80,116 @@ export default function LessonPage() {
 
   return (
     <div className="page-enter">
-      <div className="relative inline-block group mb-4">
-        <Link to={`/module/${module.id}`} className="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back
-        </Link>
-        <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-20 duration-200" />
-      </div>
-
       <div className="mb-6">
+        <Breadcrumb items={[
+          { label: 'React', href: '/learning-path/react' },
+          { label: module.title, href: `/module/${module.id}` },
+        ]} />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="relative inline-block group">
             <h1 className="text-xl font-black text-gray-900 uppercase">{lesson.title}</h1>
             <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
           </div>
-          {exercises.length > 0 && (
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5">
-                <div className="flex gap-1">
-                  {exercises.map((exercise) => (
-                    <div
-                      key={exercise.id}
-                      className={`w-2.5 h-2.5 rounded-full ${isExerciseCompleted(exercise.id) ? 'bg-primary-600' : 'bg-gray-400'}`}
-                    />
-                  ))}
-                </div>
-                <span className="text-xs font-bold text-gray-600">{completedExercisesCount}/{exercises.length}</span>
-              </div>
-              <Link
-                to={`/exercise/${exercises[0].id}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white font-bold rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors text-xs"
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <button
+                onClick={() => setShowLessonsDropdown(!showLessonsDropdown)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white text-gray-900 font-bold border-2 border-gray-300 hover:border-gray-900 transition-colors text-xs"
               >
-                <Code2 className="w-3.5 h-3.5" />
-                Exercises
-              </Link>
+                <List className="w-3.5 h-3.5" />
+                Lessons
+                {showLessonsDropdown ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              </button>
+              {showLessonsDropdown && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setShowLessonsDropdown(false)} />
+                  <div className="absolute top-full right-0 mt-1 bg-white border-2 border-gray-300 rounded-lg z-20 min-w-[200px] shadow-lg max-h-[250px] overflow-y-auto">
+                    <div className="px-3 py-2 border-b border-gray-200 bg-gray-50">
+                      <span className="text-xs font-bold text-gray-700 uppercase">{module.title}</span>
+                    </div>
+                    {moduleLessons.map((mLesson, idx) => {
+                      const lessonCompleted = isLessonCompleted(mLesson.id);
+                      const unlocked = idx === 0 || moduleLessons.slice(0, idx).some(l => isLessonEffectivelyDone(l.id));
+                      return (
+                        <Link
+                          key={mLesson.id}
+                          to={unlocked ? `/lesson/${mLesson.id}` : '#'}
+                          onClick={() => { if (unlocked) setShowLessonsDropdown(false); }}
+                          className={`flex items-center gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0 ${!unlocked ? 'bg-gray-50 opacity-60 cursor-not-allowed' : 'hover:bg-primary-50'}`}
+                        >
+                          {!unlocked ? (
+                            <Lock className="w-4 h-4 text-gray-400 shrink-0" />
+                          ) : lessonCompleted ? (
+                            <CheckCircle className="w-4 h-4 text-primary-600 shrink-0" />
+                          ) : (
+                            <div className="w-4 h-4 border-2 border-gray-300 rounded shrink-0" />
+                          )}
+                          <span className={`text-sm font-bold ${!unlocked ? 'text-gray-400' : lessonCompleted ? 'text-primary-700' : 'text-gray-900'}`}>
+                            {idx + 1}. {mLesson.title}
+                          </span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
             </div>
-          )}
-        </div>
-        <div className="flex items-center gap-3 mt-2 ml-1">
-          <span className="text-xs font-bold text-gray-700 uppercase">{module.title}</span>
-          <span className="text-gray-400">/</span>
-          <span className="text-sm font-medium text-gray-900">{currentIndex + 1}/{moduleLessons.length} lessons</span>
+            {exercises.length > 0 && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowExercisesDropdown(!showExercisesDropdown)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white font-bold border-2 border-gray-900 hover:bg-gray-800 transition-colors text-xs"
+                >
+                  <Code2 className="w-3.5 h-3.5" />
+                  Exercises ({completedExercisesCount}/{exercises.length})
+                  {showExercisesDropdown ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                </button>
+                {showExercisesDropdown && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setShowExercisesDropdown(false)} />
+                    <div className="absolute top-full right-0 mt-1 bg-white border-2 border-gray-300 rounded-lg z-20 min-w-[200px] shadow-lg max-h-[200px] overflow-y-auto">
+                      <div className="px-3 py-2 border-b border-gray-200 bg-gray-50">
+                        <span className="text-xs font-bold text-gray-700 uppercase">{lesson.title}</span>
+                      </div>
+                      {exercises.map((exercise) => {
+                        const exCompleted = isExerciseCompleted(exercise.id);
+                        return (
+                          <Link
+                            key={exercise.id}
+                            to={`/exercise/${exercise.id}`}
+                            onClick={() => setShowExercisesDropdown(false)}
+                            className={`flex items-center gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 ${exCompleted ? 'bg-primary-50' : ''}`}
+                          >
+                            {exCompleted ? (
+                              <CheckCircle className="w-4 h-4 text-primary-600 shrink-0" />
+                            ) : (
+                              <div className="w-4 h-4 border-2 border-gray-300 rounded shrink-0" />
+                            )}
+                            <span className={`text-sm font-bold ${exCompleted ? 'text-primary-700' : 'text-gray-900'}`}>
+                              {exercise.title}
+                            </span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+            {!alreadyCompleted && (
+              <button
+                onClick={handleComplete}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-600 text-white font-bold border-2 border-primary-600 hover:bg-primary-700 transition-colors text-xs"
+              >
+                <CheckCircle className="w-3.5 h-3.5" />
+                Complete Course
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className={`border-2 rounded-lg p-5 mb-6 ${alreadyCompleted ? 'border-primary-300 bg-primary-50/30' : 'border-gray-300 bg-white'}`}>
+      <div className={`border-2 rounded-lg p-5 ${alreadyCompleted ? 'border-primary-300 bg-primary-50/30' : 'border-gray-300 bg-white'}`}>
         {alreadyCompleted && (
           <div className="flex items-center gap-2 mb-4 pb-3 border-b border-primary-200">
             <CheckCircle className="w-4 h-4 text-primary-600" />
@@ -143,108 +210,27 @@ export default function LessonPage() {
         )}
       </div>
 
-      {exercises.length > 0 && (
-        <div className="mb-6 space-y-3">
-          {/* Exercise pills - scrollable on mobile */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-1 px-1">
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <div className="w-2 h-2 bg-primary-500 rounded-full" />
-              <p className="text-sm font-bold text-gray-900 uppercase">Exercises</p>
-            </div>
-            <div className="flex gap-2 flex-shrink-0">
-              {exercises.map((exercise) => {
-                const exCompleted = isExerciseCompleted(exercise.id);
-                return (
-                  <Link
-                    key={exercise.id}
-                    to={`/exercise/${exercise.id}`}
-                    className={`inline-flex items-center gap-2 px-3 py-1.5 text-sm font-bold rounded-lg border-2 transition-colors whitespace-nowrap ${exCompleted ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-gray-900 border-gray-300 hover:border-primary-500'}`}
-                  >
-                    {exCompleted ? <CheckCircle className="w-3.5 h-3.5" /> : <Code2 className="w-3.5 h-3.5" />}
-                    {exercise.title}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-          {/* Actions - stacked on mobile */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end relative">
-            <button
-              onClick={() => setShowLessonsDropdown(!showLessonsDropdown)}
-              className="inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-bold border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors bg-white"
-            >
-              <List className="w-4 h-4" />
-              <span className="truncate">{module.title}</span>
-              {showLessonsDropdown ? <ChevronUp className="w-4 h-4 flex-shrink-0" /> : <ChevronDown className="w-4 h-4 flex-shrink-0" />}
-            </button>
-            {showLessonsDropdown && (
-              <div className="absolute bottom-full mb-2 left-0 sm:left-auto sm:right-0 bg-white border-2 border-gray-300 rounded-lg z-10 w-full sm:min-w-[220px] sm:w-auto shadow-lg max-h-[250px] overflow-y-auto">
-                {moduleLessons.map((lessonItem) => {
-                  const lessonCompleted = isLessonCompleted(lessonItem.id);
-                  const unlocked = moduleLessons.indexOf(lessonItem) === 0 || moduleLessons.slice(0, moduleLessons.indexOf(lessonItem)).some(l => isLessonEffectivelyDone(l.id));
-                  return (
-                    <Link
-                      key={lessonItem.id}
-                      to={`/lesson/${lessonItem.id}`}
-                      onClick={() => setShowLessonsDropdown(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 border-b-2 border-gray-100 last:border-b-0 ${!unlocked ? 'bg-gray-50' : 'hover:bg-primary-50'}`}
-                    >
-                      {unlocked ? (
-                        lessonCompleted ? (
-                          <CheckCircle className="w-4 h-4 text-primary-600 shrink-0" />
-                        ) : (
-                          <div className="w-4 h-4 border-2 border-gray-300 rounded shrink-0" />
-                        )
-                      ) : (
-                        <Lock className="w-4 h-4 text-gray-400 shrink-0" />
-                      )}
-                      <span className={`text-sm font-bold uppercase ${!unlocked ? 'text-gray-400' : 'text-gray-900'}`}>
-                        {lessonItem.title}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-
-            {(!completed && !alreadyCompleted && !allExercisesCompleted) ? (
-              <button onClick={handleComplete} className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors">
-                <CheckCircle className="w-4 h-4" /> Complete +{lesson.xpReward} XP
-              </button>
-            ) : nextLesson ? (
-              <Link to={`/lesson/${nextLesson.id}`} className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-gray-900 text-white rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors">
-                Next Lesson <ArrowRight className="w-4 h-4" />
-              </Link>
-            ) : (
-              <Link to={`/module/${module.id}`} className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors">
-                <BookOpen className="w-4 h-4" /> Back to Module
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
-
       {completed && !alreadyCompleted && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-6 text-center max-w-xs border-2 border-gray-300 shadow-xl">
-            <CheckCircle className="w-12 h-12 text-primary-500 mx-auto mb-3" />
-            <h2 className="text-lg font-black uppercase text-gray-900 mb-1">Completed!</h2>
-            <p className="text-sm font-bold text-yellow-600 mb-4">+{lesson.xpReward} XP</p>
+          <div className="bg-white border-4 border-primary-500 p-8 text-center max-w-sm animate-pop shadow-brutal">
+            <div className="text-6xl mb-4">🎉</div>
+            <h2 className="text-2xl font-black uppercase text-primary-600 mb-1">WELL DONE!</h2>
+            <p className="text-gray-700 mb-2">Course completed</p>
+            <div className="inline-flex items-center gap-2 bg-yellow-400 text-black px-4 py-2 border-2 border-black font-black text-lg mb-6">
+              <Star className="w-5 h-5" />
+              +{lesson.xpReward} XP
+            </div>
             <div className="flex flex-col gap-2">
-              {exercises.length > 0 && !allExercisesCompleted ? (
-                <Link to={`/exercise/${exercises[0].id}`} className="px-4 py-2.5 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700">
-                  Do the exercises
-                </Link>
-              ) : nextLesson ? (
-                <Link to={`/lesson/${nextLesson.id}`} className="px-4 py-2.5 text-sm font-bold bg-gray-900 text-white rounded-lg border-2 border-gray-900 hover:bg-gray-800">
-                  Next Lesson <ArrowRight className="w-4 h-4" />
+              {nextLesson ? (
+                <Link to={`/lesson/${nextLesson.id}`} className="w-full py-3 bg-gray-900 text-white font-black uppercase border-2 border-black hover:bg-gray-800 transition-colors">
+                  Next Lesson <ArrowRight className="w-4 h-4 inline ml-1" />
                 </Link>
               ) : (
-                <Link to={`/module/${module.id}`} className="px-4 py-2.5 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700">
-                  <BookOpen className="w-4 h-4 mr-1" /> Back to Module
+                <Link to={`/module/${module.id}`} className="w-full py-3 bg-primary-600 text-white font-black uppercase border-2 border-black hover:bg-primary-700 transition-colors">
+                  <BookOpen className="w-4 h-4 inline mr-1" /> Back to Module
                 </Link>
               )}
-              <button onClick={() => setCompleted(false)} className="px-4 py-2.5 text-sm font-bold border-2 border-gray-300 rounded-lg hover:bg-gray-50">
+              <button onClick={() => setCompleted(false)} className="w-full py-3 font-black uppercase border-2 border-gray-300 hover:bg-gray-50 transition-colors">
                 Review
               </button>
             </div>

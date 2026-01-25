@@ -29,7 +29,6 @@ export default function LearningPathPage() {
   const learningPathTitles: Record<string, string> = {
     react: 'React',
     'web-stack': 'Web Stack Essentials',
-    python: 'Python',
     javascript: 'JavaScript',
     fastapi: 'FastAPI',
     git: 'Git',

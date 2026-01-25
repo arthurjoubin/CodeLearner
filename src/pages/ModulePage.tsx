@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getModule, getLessonsForModule, getExercisesForLesson, getLesson } from '../data/modules';
-import { ArrowLeft, CheckCircle, Lock, BookOpen, X, Code } from 'lucide-react';
+import { CheckCircle, Lock, BookOpen, X, Code, ChevronDown, ChevronUp } from 'lucide-react';
+import Breadcrumb from '../components/Breadcrumb';
 
 export default function ModulePage() {
   const { moduleId } = useParams<{ moduleId: string }>();
   const { user, isLessonCompleted, isExerciseCompleted, loading } = useUser();
   const [showEssentialPopup, setShowEssentialPopup] = useState(false);
   const [essentialContent, setEssentialContent] = useState('');
+  const [showExercisesDropdown, setShowExercisesDropdown] = useState<string | null>(null);
 
   const module = moduleId ? getModule(moduleId) : undefined;
   const lessons = moduleId ? getLessonsForModule(moduleId) : [];
@@ -18,11 +20,6 @@ export default function ModulePage() {
     const exs = getExercisesForLesson(lessonId);
     return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
   };
-
-  const completedLessonsCount = lessons.filter(l => isLessonEffectivelyDone(l.id)).length;
-  const moduleProgress = lessons.length > 0
-    ? Math.round((completedLessonsCount / lessons.length) * 100)
-    : 0;
 
   const handleShowEssential = (lessonId: string) => {
     const lesson = getLesson(lessonId);
@@ -65,43 +62,15 @@ export default function ModulePage() {
 
   return (
     <div className="page-enter">
-      <div className="relative inline-block group mb-4">
-        <Link to={`/learning-path/${module.courseId}`} className="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back
-        </Link>
-        <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-20 duration-200" />
-      </div>
-
       <div className="mb-6">
+        <Breadcrumb items={[
+          { label: 'React', href: '/learning-path/react' },
+        ]} />
         <div className="relative inline-block group">
           <h1 className="text-2xl font-black text-gray-900 uppercase">{module.title}</h1>
           <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
         </div>
         <p className="text-gray-700 mt-1">{module.description}</p>
-      </div>
-
-      <div className="flex items-center gap-4 mb-6">
-        <div className="relative w-10 h-10">
-          <svg className="w-10 h-10 transform -rotate-90">
-            <circle cx="20" cy="20" r="17" stroke="#d1d5db" strokeWidth="3" fill="none" />
-            <circle 
-              cx="20" cy="20" r="17" 
-              stroke="#22c55e" 
-              strokeWidth="3" 
-              fill="none"
-              strokeDasharray={106.8}
-              strokeDashoffset={106.8 - (106.8 * Math.max(1, moduleProgress)) / 100}
-              strokeLinecap="round"
-            />
-          </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800">
-            {Math.max(1, moduleProgress)}
-          </span>
-        </div>
-        <div>
-          <p className="text-xs text-gray-700 font-bold">{completedLessonsCount}/{lessons.length} lessons</p>
-          <p className="text-[10px] text-gray-600 font-bold uppercase">Progress</p>
-        </div>
       </div>
 
       <div className="space-y-3">
@@ -150,9 +119,6 @@ export default function ModulePage() {
                     </div>
                     <div className="flex items-center gap-3 mt-1 ml-4">
                       <span className="text-xs text-gray-700 font-bold">{lesson.xpReward} XP</span>
-                      {exercises.length > 0 && (
-                        <span className="text-xs text-gray-600">{exercises.length} exercise{exercises.length > 1 ? 's' : ''}</span>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -164,16 +130,6 @@ export default function ModulePage() {
                   >
                     <BookOpen className="w-4 h-4" />
                   </button>
-                  {exercises.length > 0 && (
-                    <div className="flex gap-1 hidden sm:flex">
-                      {exercises.map((exercise) => (
-                        <div
-                          key={exercise.id}
-                          className={`w-2.5 h-2.5 rounded-full ${isExerciseCompleted(exercise.id) ? 'bg-primary-500' : 'bg-gray-400'}`}
-                        />
-                      ))}
-                    </div>
-                  )}
                   <div className="flex items-center gap-2">
                     <Link
                       to={`/lesson/${lesson.id}`}
@@ -183,13 +139,43 @@ export default function ModulePage() {
                       Course
                     </Link>
                     {exercises.length > 0 && (
-                      <Link
-                        to={`/exercise/${exercises[0].id}`}
-                        className="flex items-center gap-1.5 px-3 py-2 bg-gray-900 text-white font-bold rounded-lg hover:bg-gray-800 transition-colors text-sm"
-                      >
-                        <Code className="w-4 h-4" />
-                        Exercises
-                      </Link>
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowExercisesDropdown(showExercisesDropdown === lesson.id ? null : lesson.id)}
+                          className="flex items-center gap-1.5 px-3 py-2 bg-gray-900 text-white font-bold rounded-lg hover:bg-gray-800 transition-colors text-sm"
+                        >
+                          <Code className="w-4 h-4" />
+                          Exercises
+                          {showExercisesDropdown === lesson.id ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                        </button>
+                        {showExercisesDropdown === lesson.id && (
+                          <>
+                            <div className="fixed inset-0 z-10" onClick={() => setShowExercisesDropdown(null)} />
+                            <div className="absolute top-full right-0 mt-1 bg-white border-2 border-gray-300 rounded-lg z-20 min-w-[200px] shadow-lg max-h-[200px] overflow-y-auto">
+                              {exercises.map((exercise) => {
+                                const exCompleted = isExerciseCompleted(exercise.id);
+                                return (
+                                  <Link
+                                    key={exercise.id}
+                                    to={`/exercise/${exercise.id}`}
+                                    onClick={() => setShowExercisesDropdown(null)}
+                                    className={`flex items-center gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 ${exCompleted ? 'bg-primary-50' : ''}`}
+                                  >
+                                    {exCompleted ? (
+                                      <CheckCircle className="w-4 h-4 text-primary-600 shrink-0" />
+                                    ) : (
+                                      <div className="w-4 h-4 border-2 border-gray-300 rounded shrink-0" />
+                                    )}
+                                    <span className={`text-sm font-medium ${exCompleted ? 'text-primary-700' : 'text-gray-900'}`}>
+                                      {exercise.title}
+                                    </span>
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          </>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

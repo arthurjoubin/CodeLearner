@@ -7,7 +7,6 @@ import { isQuizExercise, isCodeExercise } from '../types';
 import Editor from '@monaco-editor/react';
 import QuizPage from './QuizPage';
 import {
-  ArrowLeft,
   ArrowRight,
   CheckCircle,
   XCircle,
@@ -20,6 +19,7 @@ import {
   BookOpen,
 } from 'lucide-react';
 import LivePreview from '../components/LivePreview';
+import Breadcrumb from '../components/Breadcrumb';
 
 export default function ExercisePage() {
   const { exerciseId } = useParams<{ exerciseId: string }>();
@@ -193,15 +193,13 @@ export default function ExercisePage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-120px)] lg:h-[calc(100vh-120px)] flex flex-col page-enter pb-20 lg:pb-0">
-      <div className="relative inline-block group mb-4">
-        <Link to={`/lesson/${lesson.id}`} className="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back
-        </Link>
-        <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-20 duration-200" />
-      </div>
-
+    <div className="min-h-[calc(100vh-120px)] flex flex-col page-enter">
       <div className="mb-6">
+        <Breadcrumb items={[
+          { label: 'React', href: '/learning-path/react' },
+          { label: module.title, href: `/module/${module.id}` },
+          { label: lesson.title, href: `/lesson/${lesson.id}` },
+        ]} />
         <div className="flex items-center justify-between">
           <div className="relative inline-block group">
             <h1 className="text-xl font-black text-gray-900 uppercase">{exercise.title}</h1>
@@ -218,19 +216,12 @@ export default function ExercisePage() {
                 <span className="text-sm font-bold text-primary-700">Completed</span>
               </div>
             )}
-          </div>
-        </div>
-        <div className="flex items-center gap-3 mt-2">
-          <span className="text-xs font-bold text-gray-700 uppercase">{module.title}</span>
-          <span className="text-gray-400">/</span>
-          <span className="text-xs font-bold text-gray-700 uppercase">{lesson.title}</span>
-          <span className="text-gray-400">/</span>
-          <span className="text-sm font-medium text-gray-900">{currentIndex + 1}/{lessonExercises.length} exercises</span>
-        </div>
-      </div>
+           </div>
+         </div>
+       </div>
 
-      <div className="lg:flex-1 grid lg:grid-cols-2 gap-4 lg:min-h-0">
-        <div className="flex flex-col gap-4 lg:min-h-0">
+      <div className="lg:flex-1 grid lg:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-4">
           <div className="border-2 border-gray-300 bg-white rounded-lg p-4">
             <p className="text-xs font-bold text-gray-500 uppercase mb-2">Instructions</p>
             <p className="text-sm leading-relaxed text-gray-700">{exercise.instructions}</p>

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { getModule } from '../data/modules';
 import type { QuizExercise, Lesson, Exercise } from '../types';
 import {
-  ArrowLeft,
   CheckCircle,
   XCircle,
   Star,
@@ -12,6 +12,7 @@ import {
   List,
   ArrowRight,
 } from 'lucide-react';
+import Breadcrumb from '../components/Breadcrumb';
 
 interface QuizPageProps {
   exercise: QuizExercise;
@@ -27,6 +28,7 @@ export default function QuizPage({
   isExerciseCompleted
 }: QuizPageProps) {
   const { user, isGuest, addXp, completeExercise, completeLesson, isLessonCompleted, loading } = useUser();
+  const module = getModule(lesson.moduleId);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -108,9 +110,6 @@ export default function QuizPage({
     <div className="min-h-[calc(100vh-120px)] flex flex-col page-enter pb-20 lg:pb-0">
       <div className="flex items-center justify-between mb-3 pb-2 border-b-2 border-black">
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <Link to={`/lesson/${lesson.id}`} className="p-1.5 border-2 border-black hover:bg-gray-100 shrink-0">
-            <ArrowLeft className="w-4 h-4" />
-          </Link>
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <div className="relative shrink-0">
               <button
@@ -158,6 +157,14 @@ export default function QuizPage({
           )}
         </div>
       </div>
+
+      {module && (
+        <Breadcrumb items={[
+          { label: 'React', href: '/learning-path/react' },
+          { label: module.title, href: `/module/${module.id}` },
+          { label: lesson.title, href: `/lesson/${lesson.id}` },
+        ]} />
+      )}
 
       <div className="mb-4">
         <div className="flex justify-between text-xs mb-1">

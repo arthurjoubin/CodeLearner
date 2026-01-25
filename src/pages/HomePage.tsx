@@ -6,7 +6,6 @@ import { ArrowRight } from 'lucide-react';
 const learningPaths = [
   { id: 'web-stack', title: 'VIBECODER BASIS', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const },
   { id: 'react', title: 'React', description: 'Learn React and TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', difficulty: 'medium' as const },
-  { id: 'python', title: 'Python', description: 'Learn Python basics and programming', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png' },
   { id: 'fastapi', title: 'FastAPI', description: 'Build modern APIs with FastAPI', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png' },
   { id: 'git', title: 'Git', description: 'Master version control with Git', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png' },
 ];
@@ -190,7 +189,7 @@ export default function HomePage() {
             <Link
               key={path.id}
               to={isAvailable ? `/learning-path/${path.id}` : '#'}
-              className={`border-2 border-gray-300 p-3 relative transition-all flex-shrink-0 w-32 rounded-lg bg-white ${isAvailable
+              className={`border-2 border-gray-300 p-3 relative transition-all flex-shrink-0 w-44 rounded-lg bg-white ${isAvailable
                 ? 'hover:border-primary-500 hover:shadow-md cursor-pointer'
                 : 'opacity-60 grayscale cursor-not-allowed'
               }`}

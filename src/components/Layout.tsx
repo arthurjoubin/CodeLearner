@@ -1,9 +1,8 @@
-import { useState, useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getLevelFromXp } from '../types';
-import { Flame, FlaskConical, LogIn, LogOut, ChevronRight, Trophy, HelpCircle, Lightbulb, Menu, X } from 'lucide-react';
-import { modules, lessons } from '../data/modules';
+import { Flame, FlaskConical, LogIn, LogOut, Trophy, HelpCircle, Lightbulb, Menu, X } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,52 +10,9 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const { user, isGuest, login, logout, loading } = useUser();
-  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [levelPopupOpen, setLevelPopupOpen] = useState(false);
   const [streakPopupOpen, setStreakPopupOpen] = useState(false);
-
-  const { pathname } = location;
-
-  const breadcrumbInfo = useMemo(() => {
-    const pathMatch = pathname.match(/\/learning-path\/([^/?]+)/);
-    if (pathMatch) {
-      const pathId = pathMatch[1];
-      const titles: Record<string, string> = {
-        react: 'React',
-        python: 'Python',
-        javascript: 'JavaScript',
-        fastapi: 'FastAPI',
-        git: 'Git',
-      };
-      return { pathTitle: titles[pathId] || pathId, pathId, moduleTitle: null, lessonTitle: null };
-    }
-
-    const moduleMatch = pathname.match(/\/module\/([^/?]+)/);
-    if (moduleMatch) {
-      const moduleId = moduleMatch[1];
-      const module = modules.find(m => m.id === moduleId);
-      if (module) {
-        return { pathTitle: 'React', pathId: 'react', moduleTitle: module.title, lessonTitle: null };
-      }
-    }
-
-    const lessonMatch = pathname.match(/\/lesson\/([^/?]+)/);
-    if (lessonMatch) {
-      const lessonId = lessonMatch[1];
-      const lesson = lessons.find(l => l.id === lessonId);
-      if (lesson) {
-        const module = modules.find(m => m.id === lesson.moduleId);
-        if (module) {
-          return { pathTitle: 'React', pathId: 'react', moduleTitle: module.title, lessonTitle: lesson.title };
-        }
-      }
-    }
-
-    return { pathTitle: null, pathId: null, moduleTitle: null, lessonTitle: null };
-  }, [pathname]);
-
-  const { pathTitle, pathId, moduleTitle, lessonTitle } = breadcrumbInfo;
 
   if (loading) {
     return (
@@ -76,7 +32,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col relative">
       <header className="bg-white border-b border-gray-300 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-3 py-2">
+        <div className="max-w-6xl mx-auto px-3 py-3">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 group">
               <div className="relative">
@@ -85,27 +41,8 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             </Link>
 
-            {pathTitle && (
-              <div className="hidden md:flex items-center gap-1 text-xs font-bold overflow-x-auto">
-                <div className="w-1.5 h-1.5 bg-primary-500 rounded-full" />
-                <Link to={`/learning-path/${pathId}`} className="text-gray-900 hover:text-primary-600">{pathTitle}</Link>
-                {moduleTitle && (
-                  <>
-                    <ChevronRight className="w-3 h-3 text-gray-500 flex-shrink-0" />
-                    <span className="text-gray-800 uppercase truncate">{moduleTitle}</span>
-                  </>
-                )}
-                {lessonTitle && (
-                  <>
-                    <ChevronRight className="w-3 h-3 text-gray-500 flex-shrink-0" />
-                    <span className="text-gray-700 truncate">{lessonTitle}</span>
-                  </>
-                )}
-              </div>
-            )}
-
-            <div className="flex items-center gap-1 sm:gap-2">
-              <Link to="/labs" className="flex items-center gap-1 px-1.5 py-1 group relative" title="Labs">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Link to="/labs" className="flex items-center gap-1.5 px-2 py-1.5 group relative" title="Labs">
                 <span className="text-xs font-medium hidden sm:inline text-gray-900 group-hover:text-primary-600 transition-colors">Lab</span>
                 <FlaskConical className="w-4 h-4 text-gray-700 group-hover:text-primary-600 transition-colors" />
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
@@ -114,9 +51,9 @@ export default function Layout({ children }: LayoutProps) {
               <div className="relative">
                 <button
                   onClick={() => setStreakPopupOpen(!streakPopupOpen)}
-                  className="flex items-center gap-1 bg-gray-900 text-white px-1.5 sm:px-2 py-1 text-xs font-bold hover:bg-gray-700 transition-colors rounded"
+                  className="flex items-center gap-1.5 bg-gray-900 text-white px-2 sm:px-2.5 py-1.5 text-sm font-bold hover:bg-gray-700 transition-colors rounded"
                 >
-                  <Flame className="w-3.5 h-3.5" />
+                  <Flame className="w-4 h-4" />
                   <span className="hidden sm:inline">{user.streak}</span>
                 </button>
                 {streakPopupOpen && (
@@ -141,19 +78,25 @@ export default function Layout({ children }: LayoutProps) {
               <div className="relative">
                 <button
                   onClick={() => setLevelPopupOpen(!levelPopupOpen)}
-                  className="flex items-center gap-1 border border-gray-300 px-1.5 sm:px-2 py-1 text-xs font-bold hover:bg-gray-900 hover:text-white transition-colors rounded bg-white"
+                  className="flex items-center gap-1.5 border border-gray-300 px-2 sm:px-2.5 py-1.5 text-sm font-bold hover:bg-gray-900 hover:text-white transition-colors rounded bg-white"
                 >
-                  <span className="hidden sm:inline">Lv.{levelInfo.level}</span>
-                  <span className="sm:hidden">Lv{levelInfo.level}</span>
+                  <span className="hidden sm:inline">Lvl {levelInfo.level}</span>
+                  <span className="sm:hidden">Lvl{levelInfo.level}</span>
                 </button>
                 {levelPopupOpen && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setLevelPopupOpen(false)} />
-                    <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-300 rounded-lg z-50">
+                    <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-300 rounded-lg z-50">
                       <div className="bg-gray-900 text-white px-3 py-2 font-bold uppercase text-sm flex items-center gap-2 rounded-t-lg">
                         ⭐ Earn XP
                       </div>
-                      <div className="p-2 space-y-1 text-sm">
+                      <div className="p-3 space-y-2 text-sm">
+                        {user.recentXp > 0 && (
+                          <div className="bg-primary-50 border border-primary-200 rounded px-3 py-2 mb-2">
+                            <div className="text-primary-700 font-bold">Recent Session</div>
+                            <div className="text-primary-600">+{user.recentXp} XP earned</div>
+                          </div>
+                        )}
                         <div className="flex justify-between">
                           <span className="text-gray-700">Lesson</span>
                           <span className="font-mono font-bold text-primary-600">+50</span>
@@ -169,6 +112,13 @@ export default function Layout({ children }: LayoutProps) {
                         <div className="flex justify-between">
                           <span className="text-gray-700">Path</span>
                           <span className="font-mono font-bold text-primary-600">+2000</span>
+                        </div>
+                        <hr className="border-gray-200 my-2" />
+                        <div className="text-center">
+                          <div className="text-xs text-gray-500">Next level in</div>
+                          <div className="font-mono font-bold text-gray-900">
+                            {levelInfo.maxXp === Infinity ? '∞' : levelInfo.maxXp - user.xp} XP
+                          </div>
                         </div>
                       </div>
                     </div>

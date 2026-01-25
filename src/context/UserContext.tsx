@@ -25,6 +25,7 @@ const GUEST_USER: User = {
   id: 'guest',
   name: 'Guest',
   xp: 0,
+  recentXp: 0,
   level: 1,
   streak: 0,
   lastActiveDate: new Date().toISOString().split('T')[0],
@@ -96,7 +97,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       if (!prev) return prev;
       const newXp = prev.xp + amount;
       const newLevel = getLevelFromXp(newXp).level;
-      return { ...prev, xp: newXp, level: newLevel };
+      return { ...prev, xp: newXp, recentXp: amount, level: newLevel };
     });
   }, []);
 
