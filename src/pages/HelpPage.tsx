@@ -9,7 +9,7 @@ export default function HelpPage() {
       </div>
 
       <div className="space-y-6">
-        <div className="border-2 border-black bg-white transition-all hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-brutal-sm">
+        <div className="border border-gray-300 bg-white rounded-lg transition-all hover:shadow-md">
           <div className="bg-black text-white px-4 py-3 font-bold uppercase text-sm flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Lessons
@@ -30,7 +30,7 @@ export default function HelpPage() {
           </div>
         </div>
 
-        <div className="border-2 border-black bg-white transition-all hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-brutal-sm">
+        <div className="border border-gray-300 bg-white rounded-lg transition-all hover:shadow-md">
           <div className="bg-black text-white px-4 py-3 font-bold uppercase text-sm flex items-center gap-2">
             <Code2 className="w-4 h-4" />
             Exercises
@@ -55,7 +55,7 @@ export default function HelpPage() {
           </div>
         </div>
 
-        <div className="border-2 border-black bg-white transition-all hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-brutal-sm">
+        <div className="border border-gray-300 bg-white rounded-lg transition-all hover:shadow-md">
           <div className="bg-black text-white px-4 py-3 font-bold uppercase text-sm flex items-center gap-2">
             <Star className="w-4 h-4" />
             Earn XP
@@ -80,7 +80,7 @@ export default function HelpPage() {
           </div>
         </div>
 
-        <div className="border-2 border-black bg-white transition-all hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-brutal-sm">
+        <div className="border border-gray-300 bg-white rounded-lg transition-all hover:shadow-md">
           <div className="bg-black text-white px-4 py-3 font-bold uppercase text-sm flex items-center gap-2">
             <Flame className="w-4 h-4" />
             Streak

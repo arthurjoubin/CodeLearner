@@ -8,6 +8,7 @@ import Editor from '@monaco-editor/react';
 import QuizPage from './QuizPage';
 import {
   ArrowRight,
+  ArrowLeft,
   CheckCircle,
   XCircle,
   Lightbulb,
@@ -126,7 +127,6 @@ export default function ExercisePage() {
       if (result.isCorrect) {
         if (!alreadyCompleted) {
           completeExercise(exercise.id);
-          // Auto-complete lesson if this was the last exercise
           const otherExercises = lessonExercises.filter(e => e.id !== exercise.id);
           const allOthersDone = otherExercises.every(e => isExerciseCompleted(e.id));
           if (allOthersDone && lesson && !isLessonCompleted(lesson.id)) {
@@ -147,7 +147,6 @@ export default function ExercisePage() {
       if (isCorrect) {
         if (!alreadyCompleted) {
           completeExercise(exercise.id);
-          // Auto-complete lesson if this was the last exercise
           const otherExercises = lessonExercises.filter(e => e.id !== exercise.id);
           const allOthersDone = otherExercises.every(e => isExerciseCompleted(e.id));
           if (allOthersDone && lesson && !isLessonCompleted(lesson.id)) {
@@ -190,7 +189,7 @@ export default function ExercisePage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-120px)] flex flex-col page-enter">
+    <div className="page-enter">
       <div className="mb-6">
         <Breadcrumb items={[
           { label: 'React', href: '/learning-path/react' },
@@ -199,38 +198,17 @@ export default function ExercisePage() {
         ]} />
         <div className="flex items-center justify-between gap-4">
           <div className="relative inline-block group min-w-0 flex-1">
-            <h1 className="text-xl font-black text-gray-900 uppercase truncate">{exercise.title}</h1>
+            <h1 className="text-xl font-bold text-gray-900 truncate">{exercise.title}</h1>
             <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
           </div>
 
-          {/* Exercise navigation */}
-          <div className="flex items-center gap-2 flex-shrink-0 border-2 border-gray-300 bg-white rounded-lg px-3 py-2">
-            <span className="text-xs font-bold text-gray-500 uppercase">Exercises</span>
-            <div className="flex items-center gap-1.5">
-              {lessonExercises.map((ex, idx) => {
-                const isDone = isExerciseCompleted(ex.id);
-                const isCurrent = ex.id === exercise.id;
-                return (
-                  <Link
-                    key={ex.id}
-                    to={`/exercise/${ex.id}`}
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border-2 ${
-                      isCurrent
-                        ? isDone
-                          ? 'bg-primary-500 border-primary-500 text-white'
-                          : 'bg-gray-900 border-gray-900 text-white'
-                        : isDone
-                          ? 'bg-primary-100 border-primary-500 text-primary-700 hover:bg-primary-200'
-                          : 'bg-white border-gray-300 text-gray-600 hover:border-gray-400'
-                    }`}
-                    title={`Exercise ${idx + 1}: ${ex.title}${isDone ? ' (completed)' : ''}`}
-                  >
-                    {isDone && !isCurrent ? <CheckCircle className="w-3.5 h-3.5" /> : idx + 1}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
+          <Link
+            to={`/lesson/${lesson.id}`}
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Go back to lesson
+          </Link>
         </div>
 
         {alreadyCompleted && (

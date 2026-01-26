@@ -35,7 +35,7 @@ export default function LabsSelectionPage() {
       </div>
 
       {/* Labs Grid */}
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {labs.map((lab, index) => {
           const isLocked = user.level < lab.requiredLevel;
           const status = user.labProgress?.[lab.id];
@@ -47,7 +47,7 @@ export default function LabsSelectionPage() {
             return (
               <div
                 key={lab.id}
-                className="border border-gray-200 bg-gradient-to-b from-gray-50 to-white p-5 opacity-60 rounded-lg"
+                className="border border-gray-200 bg-gradient-to-b from-gray-50 to-white p-3 sm:p-5 opacity-60 rounded-lg"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-gray-200 flex items-center justify-center text-gray-400 rounded-lg">
@@ -75,7 +75,7 @@ export default function LabsSelectionPage() {
             <Link
               key={lab.id}
               to={`/labs/${lab.id}`}
-              className={`border border-gray-200 rounded-lg p-5 transition-all hover:border-primary-500 hover:shadow-md bg-gradient-to-b from-gray-50 to-white ${isCompleted ? '' : ''}`}
+              className={`border border-gray-200 rounded-lg p-3 sm:p-5 transition-all hover:border-primary-500 hover:shadow-md bg-gradient-to-b from-gray-50 to-white ${isCompleted ? '' : ''}`}
             >
               <div className="flex items-start gap-4">
                 <div className={`w-12 h-12 flex items-center justify-center border border-gray-200 rounded-lg transition-colors ${isCompleted ? 'bg-primary-500 text-white' : 'bg-primary-100 group-hover:bg-primary-500 group-hover:text-white'}`}>

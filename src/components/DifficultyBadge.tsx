@@ -4,7 +4,7 @@ interface DifficultyBadgeProps {
 }
 
 export default function DifficultyBadge({ difficulty, size = 'md' }: DifficultyBadgeProps) {
-  const baseClasses = 'font-bold uppercase border-2 border-black inline-block';
+  const baseClasses = 'font-bold uppercase border border-gray-300 inline-block';
 
   const sizeClasses = size === 'sm'
     ? 'px-1.5 py-0.5 text-xs'

@@ -192,25 +192,25 @@ export default function LessonPage() {
 
       {completed && !alreadyCompleted && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-4 border-primary-500 p-8 text-center max-w-sm animate-pop shadow-brutal">
+          <div className="bg-white border-4 border-primary-500 p-8 text-center max-w-sm animate-pop shadow-lg rounded-xl">
             <div className="text-6xl mb-4">🎉</div>
             <h2 className="text-2xl font-black uppercase text-primary-600 mb-1">WELL DONE!</h2>
             <p className="text-gray-700 mb-2">Course completed</p>
-            <div className="inline-flex items-center gap-2 bg-yellow-400 text-black px-4 py-2 border-2 border-black font-black text-lg mb-6">
+            <div className="inline-flex items-center gap-2 bg-yellow-400 text-black px-4 py-2 rounded-lg border-2 border-yellow-500 font-bold text-sm mb-6">
               <Star className="w-5 h-5" />
               +{getXpReward(lesson.xpReward)} XP
             </div>
             <div className="flex flex-col gap-2">
               {nextLesson ? (
-                <Link to={`/lesson/${nextLesson.id}`} className="w-full py-3 bg-gray-900 text-white font-black uppercase border-2 border-black hover:bg-gray-800 transition-colors">
+                <Link to={`/lesson/${nextLesson.id}`} className="w-full py-3 bg-gray-900 text-white font-bold uppercase rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors">
                   Next Lesson <ArrowRight className="w-4 h-4 inline ml-1" />
                 </Link>
               ) : (
-                <Link to={`/module/${module.id}`} className="w-full py-3 bg-primary-600 text-white font-black uppercase border-2 border-black hover:bg-primary-700 transition-colors">
+                <Link to={`/module/${module.id}`} className="w-full py-3 bg-primary-600 text-white font-bold uppercase rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors">
                   <BookOpen className="w-4 h-4 inline mr-1" /> Back to Module
                 </Link>
               )}
-              <button onClick={() => setCompleted(false)} className="w-full py-3 font-black uppercase border-2 border-gray-300 hover:bg-gray-50 transition-colors">
+              <button onClick={() => setCompleted(false)} className="w-full py-3 font-bold uppercase border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                 Review
               </button>
             </div>

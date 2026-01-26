@@ -1,16 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { getModule } from '../data/modules';
 import type { QuizExercise, Lesson, Exercise } from '../types';
 import {
   CheckCircle,
   XCircle,
   ArrowRight,
-  ChevronLeft,
-  ChevronRight,
+  ArrowLeft,
 } from 'lucide-react';
-import Breadcrumb from '../components/Breadcrumb';
 
 interface QuizPageProps {
   exercise: QuizExercise;
@@ -26,7 +23,6 @@ export default function QuizPage({
   isExerciseCompleted
 }: QuizPageProps) {
   const { user, isGuest, completeExercise, completeLesson, isLessonCompleted, loading } = useUser();
-  const module = getModule(lesson.moduleId);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -103,77 +99,35 @@ export default function QuizPage({
   const progressPercent = ((currentQuestionIndex + (showFeedback ? 1 : 0)) / exercise.questions.length) * 100;
 
   return (
-    <div className="min-h-[calc(100vh-120px)] flex flex-col page-enter pb-20 lg:pb-0">
-      <div className="flex items-center justify-between gap-4 mb-3 pb-2 border-b-2 border-gray-200">
+    <div className="max-w-2xl mx-auto page-enter pb-20 lg:pb-0">
+      <div className="flex items-center justify-between gap-4 mb-3">
         <div className="relative inline-block group min-w-0 flex-1">
-          <h1 className="text-xl font-black text-gray-900 uppercase truncate">{exercise.title}</h1>
+          <h1 className="text-lg font-bold text-gray-900 truncate">{exercise.title}</h1>
           <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
         </div>
 
-        {/* Exercise navigation */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <Link
-            to={currentIndex > 0 ? `/exercise/${lessonExercises[currentIndex - 1].id}` : '#'}
-            className={`p-1.5 rounded border-2 transition-colors ${currentIndex > 0 ? 'border-gray-300 hover:border-primary-500 hover:bg-primary-50' : 'border-gray-200 text-gray-300 cursor-not-allowed'}`}
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Link>
-
-          <div className="flex items-center gap-1.5">
-            {lessonExercises.map((ex, idx) => {
-              const isDone = isExerciseCompleted(ex.id);
-              const isCurrent = ex.id === exercise.id;
-              return (
-                <Link
-                  key={ex.id}
-                  to={`/exercise/${ex.id}`}
-                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border-2 ${
-                    isCurrent
-                      ? isDone
-                        ? 'bg-primary-500 border-primary-500 text-white'
-                        : 'bg-gray-900 border-gray-900 text-white'
-                      : isDone
-                        ? 'bg-primary-100 border-primary-500 text-primary-700 hover:bg-primary-200'
-                        : 'bg-white border-gray-300 text-gray-600 hover:border-gray-400'
-                  }`}
-                  title={`Exercise ${idx + 1}: ${ex.title}${isDone ? ' (completed)' : ''}`}
-                >
-                  {isDone && !isCurrent ? <CheckCircle className="w-3.5 h-3.5" /> : idx + 1}
-                </Link>
-              );
-            })}
-          </div>
-
-          <Link
-            to={currentIndex < lessonExercises.length - 1 ? `/exercise/${lessonExercises[currentIndex + 1].id}` : '#'}
-            className={`p-1.5 rounded border-2 transition-colors ${currentIndex < lessonExercises.length - 1 ? 'border-gray-300 hover:border-primary-500 hover:bg-primary-50' : 'border-gray-200 text-gray-300 cursor-not-allowed'}`}
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Link>
-        </div>
+        <Link
+          to={`/lesson/${lesson.id}`}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </Link>
       </div>
 
       {alreadyCompleted && (
-        <div className="mb-3 inline-flex items-center gap-2 px-3 py-1.5 bg-primary-50 rounded-lg border border-primary-200 text-sm text-primary-700">
+        <div className="mb-3 inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg border border-gray-200 text-sm text-gray-600">
           <CheckCircle className="w-4 h-4" />
-          <span>You've already completed this quiz</span>
+          <span>Quiz already completed</span>
         </div>
       )}
 
-      {module && (
-        <Breadcrumb items={[
-          { label: 'React', href: '/learning-path/react' },
-          { label: module.title, href: `/module/${module.id}` },
-          { label: lesson.title, href: `/lesson/${lesson.id}` },
-        ]} />
-      )}
-
-      <div className="mb-4">
-        <div className="flex justify-between text-xs mb-1">
-          <span className="font-bold">Question {currentQuestionIndex + 1} of {exercise.questions.length}</span>
-          <span className="text-gray-600">{Math.round(progressPercent)}% complete</span>
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-gray-600">Question {currentQuestionIndex + 1} of {exercise.questions.length}</span>
+          <span className="text-sm font-medium text-primary-600">{Math.round(progressPercent)}%</span>
         </div>
-        <div className="h-2 bg-gray-200 border border-black">
+        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
           <div
             className="h-full bg-primary-500 transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
@@ -182,111 +136,116 @@ export default function QuizPage({
       </div>
 
       {exercise.instructions && (
-        <div className="bg-gray-50 border-2 border-black p-3 mb-4">
-          <p className="text-sm">{exercise.instructions}</p>
+        <div className="bg-primary-50 border border-primary-100 px-4 py-2 mb-4 rounded-lg">
+          <p className="text-sm text-primary-800">{exercise.instructions}</p>
         </div>
       )}
 
-      <div className="flex-1 flex flex-col">
-        <div className="bg-white border-2 border-black p-6 flex-1">
-          <h2 className="text-lg font-black mb-6">{currentQuestion.question}</h2>
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
+          <h2 className="text-lg font-semibold text-gray-900">
+            <span className="text-primary-600 mr-1">Question:</span>
+            {currentQuestion.question}
+          </h2>
+        </div>
 
-          <div className="space-y-3">
-            {currentQuestion.options.map((option, index) => {
-              const isSelected = selectedAnswer === index;
-              const isCorrect = index === currentQuestion.correctAnswer;
-              const showCorrect = showFeedback && isCorrect;
-              const showIncorrect = showFeedback && isSelected && !isCorrect;
+        <div className="px-6 py-4 space-y-2">
+          {currentQuestion.options.map((option, index) => {
+            const isSelected = selectedAnswer === index;
+            const isCorrect = index === currentQuestion.correctAnswer;
+            const showCorrect = showFeedback && isCorrect;
+            const showIncorrect = showFeedback && isSelected && !isCorrect;
 
-              return (
-                <button
-                  key={index}
-                  onClick={() => handleSelectAnswer(index)}
-                  disabled={showFeedback}
-                  className={`w-full text-left p-4 border-2 transition-all flex items-center gap-3 ${
-                    showCorrect
-                      ? 'border-green-500 bg-green-50'
-                      : showIncorrect
-                      ? 'border-red-500 bg-red-50'
-                      : isSelected
-                      ? 'border-black bg-gray-100'
-                      : 'border-gray-300 hover:border-black hover:bg-gray-50'
-                  } ${showFeedback ? 'cursor-default' : 'cursor-pointer'}`}
-                >
-                  <span className={`w-8 h-8 flex items-center justify-center border-2 font-bold text-sm shrink-0 ${
-                    showCorrect
-                      ? 'border-green-500 bg-green-500 text-white'
-                      : showIncorrect
-                      ? 'border-red-500 bg-red-500 text-white'
-                      : isSelected
-                      ? 'border-black bg-black text-white'
-                      : 'border-gray-400'
-                  }`}>
-                    {String.fromCharCode(65 + index)}
-                  </span>
-                  <span className="font-medium">{option}</span>
-                  {showCorrect && <CheckCircle className="w-5 h-5 text-green-600 ml-auto" />}
-                  {showIncorrect && <XCircle className="w-5 h-5 text-red-600 ml-auto" />}
-                </button>
-              );
-            })}
-          </div>
+            return (
+              <button
+                key={index}
+                onClick={() => handleSelectAnswer(index)}
+                disabled={showFeedback}
+                className={`w-full text-left p-3.5 border rounded-lg transition-all flex items-center gap-3 ${
+                  showCorrect
+                    ? 'border-green-500 bg-green-50'
+                    : showIncorrect
+                    ? 'border-red-500 bg-red-50'
+                    : isSelected
+                    ? 'border-gray-900 bg-gray-50'
+                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                } ${showFeedback ? 'cursor-default' : 'cursor-pointer'}`}
+              >
+                <span className={`w-7 h-7 flex items-center justify-center border font-semibold text-sm shrink-0 rounded ${
+                  showCorrect
+                    ? 'border-green-500 bg-green-500 text-white'
+                    : showIncorrect
+                    ? 'border-red-500 bg-red-500 text-white'
+                    : isSelected
+                    ? 'border-gray-900 bg-gray-900 text-white'
+                    : 'border-gray-300 text-gray-600'
+                }`}>
+                  {String.fromCharCode(65 + index)}
+                </span>
+                <span className="text-sm text-gray-700">{option}</span>
+                {showCorrect && <CheckCircle className="w-5 h-5 text-green-600 ml-auto" />}
+                {showIncorrect && <XCircle className="w-5 h-5 text-red-600 ml-auto" />}
+              </button>
+            );
+          })}
+        </div>
 
-          {showFeedback && (
-            <div className={`mt-6 p-4 border-2 ${
-              selectedAnswer === currentQuestion.correctAnswer
-                ? 'border-green-500 bg-green-50'
-                : 'border-red-500 bg-red-50'
-            }`}>
-              <div className="flex items-start gap-2">
-                {selectedAnswer === currentQuestion.correctAnswer ? (
-                  <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-                ) : (
-                  <XCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                )}
-                <div>
-                  <p className={`font-bold text-sm ${
-                    selectedAnswer === currentQuestion.correctAnswer ? 'text-green-700' : 'text-red-700'
-                  }`}>
-                    {selectedAnswer === currentQuestion.correctAnswer ? 'Correct!' : 'Not quite'}
-                  </p>
-                  <p className={`text-sm mt-1 ${
-                    selectedAnswer === currentQuestion.correctAnswer ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {currentQuestion.explanation}
-                  </p>
-                </div>
+        {showFeedback && (
+          <div className="mx-6 mb-6 p-4 border rounded-lg ${
+            selectedAnswer === currentQuestion.correctAnswer
+              ? 'border-green-200 bg-green-50'
+              : 'border-red-200 bg-red-50'
+          }">
+            <div className="flex items-start gap-3">
+              {selectedAnswer === currentQuestion.correctAnswer ? (
+                <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+              ) : (
+                <XCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+              )}
+              <div>
+                <p className={`font-semibold text-sm ${
+                  selectedAnswer === currentQuestion.correctAnswer ? 'text-green-700' : 'text-red-700'
+                }`}>
+                  {selectedAnswer === currentQuestion.correctAnswer ? 'Correct!' : 'Incorrect'}
+                </p>
+                <p className={`text-sm mt-1 ${
+                  selectedAnswer === currentQuestion.correctAnswer ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {currentQuestion.explanation}
+                </p>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
+      </div>
 
-        <div className="mt-4 flex gap-3">
-          {!showFeedback ? (
-            <button
-              onClick={handleSubmitAnswer}
-              disabled={selectedAnswer === null}
-              className={`btn-primary flex-1 py-3 flex items-center justify-center gap-2 ${
-                selectedAnswer === null ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              Submit Answer
-            </button>
-          ) : (
-            <button
-              onClick={handleNextQuestion}
-              className="btn-primary flex-1 py-3 flex items-center justify-center gap-2"
-            >
-              {isLastQuestion ? 'Finish Quiz' : 'Next Question'}
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          )}
-        </div>
+      <div className="mt-4 flex gap-3">
+        {!showFeedback ? (
+          <button
+            onClick={handleSubmitAnswer}
+            disabled={selectedAnswer === null}
+            className={`flex-1 py-2.5 px-4 rounded-lg font-medium transition-colors ${
+              selectedAnswer === null
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-900 text-white hover:bg-gray-800'
+            }`}
+          >
+            Submit Answer
+          </button>
+        ) : (
+          <button
+            onClick={handleNextQuestion}
+            className="flex-1 py-2.5 px-4 rounded-lg font-medium bg-gray-900 text-white hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+          >
+            {isLastQuestion ? 'Finish Quiz' : 'Next Question'}
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {completed && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-4 border-black p-8 text-center max-w-sm animate-pop shadow-brutal">
+          <div className="bg-white border-4 border-primary-500 p-8 text-center max-w-sm animate-pop shadow-lg">
             <div className="text-6xl mb-4">
               {correctCount === exercise.questions.length ? '🎉' : correctCount >= exercise.questions.length / 2 ? '👍' : '📚'}
             </div>
@@ -296,7 +255,7 @@ export default function QuizPage({
               You got <span className="font-bold">{correctCount}</span> out of <span className="font-bold">{exercise.questions.length}</span> correct
             </p>
 
-            <div className="w-full bg-gray-200 h-3 border border-black mb-4">
+            <div className="w-full bg-gray-200 h-3 rounded-full mb-4 overflow-hidden">
               <div
                 className={`h-full ${correctCount === exercise.questions.length ? 'bg-green-500' : correctCount >= exercise.questions.length / 2 ? 'bg-yellow-500' : 'bg-red-500'}`}
                 style={{ width: `${(correctCount / exercise.questions.length) * 100}%` }}
@@ -311,14 +270,14 @@ export default function QuizPage({
               {nextExercise ? (
                 <Link
                   to={`/exercise/${nextExercise.id}`}
-                  className="bg-black text-white font-bold py-3 px-6 border-2 border-black uppercase hover:bg-gray-800 transition-colors"
+                  className="bg-gray-900 text-white font-bold py-3 px-6 rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors"
                 >
                   Next Exercise →
                 </Link>
               ) : (
                 <Link
                   to={`/lesson/${lesson.id}`}
-                  className="bg-black text-white font-bold py-3 px-6 border-2 border-black uppercase hover:bg-gray-800 transition-colors"
+                  className="bg-gray-900 text-white font-bold py-3 px-6 rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors"
                 >
                   Continue →
                 </Link>
