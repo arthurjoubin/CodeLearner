@@ -110,18 +110,18 @@ export default function ModulePage() {
             >
               <div className="flex items-start sm:items-center gap-3 flex-col sm:flex-row">
                 <div className="flex items-center gap-3 w-full sm:w-auto">
-                  <div className={`w-10 h-10 flex-shrink-0 flex items-center justify-center font-bold border-2 rounded-lg ${isComplete ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-gray-800 border-gray-300'}`}>
+                  <Link to={`/lesson/${lesson.id}`} className={`w-10 h-10 flex-shrink-0 flex items-center justify-center font-bold border-2 rounded-lg transition-all hover:shadow-md ${isComplete ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-gray-800 border-gray-300 hover:border-primary-500'}`}>
                     {isComplete ? <CheckCircle className="w-5 h-5" /> : index + 1}
-                  </div>
-                  <div className="flex-1 min-w-0">
+                  </Link>
+                  <Link to={`/lesson/${lesson.id}`} className="flex-1 min-w-0 group">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-primary-500 rounded-full flex-shrink-0" />
-                      <h3 className="font-bold text-gray-900 uppercase text-sm truncate">{lesson.title}</h3>
+                      <h3 className="font-bold text-gray-900 uppercase text-sm truncate group-hover:text-primary-600 transition-colors">{lesson.title}</h3>
                     </div>
                     <div className="flex items-center gap-3 mt-1 ml-4">
                       <span className="text-xs text-gray-700 font-bold">{lesson.xpReward || 100} XP</span>
                     </div>
-                  </div>
+                  </Link>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto justify-end sm:justify-start ml-0 sm:ml-auto">
                   <button
