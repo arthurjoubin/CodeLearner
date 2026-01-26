@@ -202,7 +202,7 @@ export default function ModulePage() {
                   }
                   return line;
                 })
-                .join('')
+                .join('\n')
                 .replace(/\n/g, '<br/>')
             }} />
           </div>
