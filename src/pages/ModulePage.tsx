@@ -190,10 +190,20 @@ export default function ModulePage() {
               __html: essentialContent
                 .replace(/^# Essential to know\n/, '')
                 .replace(/^# (.+)$/gm, '<strong>$1</strong>')
-                .replace(/^- /, '')
-                .replace(/\n- /g, '\n<span class="text-primary-500 font-bold">•</span> ')
+                .split('\n')
+                .map(line => {
+                  const trimmed = line.trim();
+                  if (!trimmed) return '';
+                  if (trimmed.startsWith('- ')) {
+                    const content = trimmed.substring(2);
+                    const withCode = content.replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1 rounded text-primary-600 font-mono text-xs">$1</code>');
+                    const withBold = withCode.replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold">$1</strong>');
+                    return `<span class="text-primary-500 font-bold">•</span> <span>${withBold}</span>`;
+                  }
+                  return line;
+                })
+                .join('')
                 .replace(/\n/g, '<br/>')
-                .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1 rounded text-primary-600 font-mono text-xs">$1</code>')
             }} />
           </div>
         </div>
