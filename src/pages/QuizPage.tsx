@@ -6,11 +6,9 @@ import type { QuizExercise, Lesson, Exercise } from '../types';
 import {
   CheckCircle,
   XCircle,
-  Star,
-  ChevronDown,
-  ChevronUp,
-  List,
   ArrowRight,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
 
@@ -27,7 +25,7 @@ export default function QuizPage({
   lessonExercises,
   isExerciseCompleted
 }: QuizPageProps) {
-  const { user, isGuest, addXp, completeExercise, completeLesson, isLessonCompleted, loading } = useUser();
+  const { user, isGuest, completeExercise, completeLesson, isLessonCompleted, loading } = useUser();
   const module = getModule(lesson.moduleId);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -35,7 +33,6 @@ export default function QuizPage({
   const [showFeedback, setShowFeedback] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
   const [completed, setCompleted] = useState(false);
-  const [showExercisesDropdown, setShowExercisesDropdown] = useState(false);
 
   if (loading) {
     return (
@@ -79,7 +76,6 @@ export default function QuizPage({
   const handleNextQuestion = () => {
     if (isLastQuestion) {
       if (!alreadyCompleted) {
-        addXp(exercise.xpReward);
         completeExercise(exercise.id);
         // Auto-complete lesson if this was the last exercise
         const otherExercises = lessonExercises.filter(e => e.id !== exercise.id);
@@ -108,55 +104,61 @@ export default function QuizPage({
 
   return (
     <div className="min-h-[calc(100vh-120px)] flex flex-col page-enter pb-20 lg:pb-0">
-      <div className="flex items-center justify-between mb-3 pb-2 border-b-2 border-black">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            <div className="relative shrink-0">
-              <button
-                onClick={() => setShowExercisesDropdown(!showExercisesDropdown)}
-                className="btn-primary text-xs py-1 px-2 inline-flex items-center gap-1"
-              >
-                <List className="w-3.5 h-3.5" />
-                {currentIndex + 1}/{lessonExercises.length}
-                {showExercisesDropdown ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-              </button>
-              {showExercisesDropdown && (
-                <div className="absolute left-0 top-full mt-1 bg-white border-2 border-black z-10 min-w-[180px] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-h-[200px] overflow-y-auto">
-                  {lessonExercises.map((ex, index) => {
-                    const exCompleted = isExerciseCompleted(ex.id);
-                    return (
-                      <Link
-                        key={ex.id}
-                        to={`/exercise/${ex.id}`}
-                        onClick={() => setShowExercisesDropdown(false)}
-                        className={`flex items-center gap-2 px-3 py-2 border-b border-black last:border-b-0 ${ex.id === exercise.id ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
-                      >
-                        {exCompleted ? (
-                          <CheckCircle className="w-4 h-4 text-primary-500 shrink-0" />
-                        ) : (
-                          <div className="w-4 h-4 border-2 border-black shrink-0" />
-                        )}
-                        <span className="text-xs font-bold uppercase">{index + 1}. {ex.title}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-            <h1 className="text-sm lg:text-base font-black text-black truncate">{exercise.title}</h1>
-          </div>
+      <div className="flex items-center justify-between gap-4 mb-3 pb-2 border-b-2 border-gray-200">
+        <div className="relative inline-block group min-w-0 flex-1">
+          <h1 className="text-xl font-black text-gray-900 uppercase truncate">{exercise.title}</h1>
+          <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="xp-badge text-xs py-0.5">
-            <Star className="w-3 h-3" />{exercise.xpReward}
-          </span>
-          {alreadyCompleted && (
-            <div className="bg-primary-500 p-1 border-2 border-black">
-              <CheckCircle className="w-4 h-4 text-white" />
-            </div>
-          )}
+
+        {/* Exercise navigation */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Link
+            to={currentIndex > 0 ? `/exercise/${lessonExercises[currentIndex - 1].id}` : '#'}
+            className={`p-1.5 rounded border-2 transition-colors ${currentIndex > 0 ? 'border-gray-300 hover:border-primary-500 hover:bg-primary-50' : 'border-gray-200 text-gray-300 cursor-not-allowed'}`}
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </Link>
+
+          <div className="flex items-center gap-1.5">
+            {lessonExercises.map((ex, idx) => {
+              const isDone = isExerciseCompleted(ex.id);
+              const isCurrent = ex.id === exercise.id;
+              return (
+                <Link
+                  key={ex.id}
+                  to={`/exercise/${ex.id}`}
+                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border-2 ${
+                    isCurrent
+                      ? isDone
+                        ? 'bg-primary-500 border-primary-500 text-white'
+                        : 'bg-gray-900 border-gray-900 text-white'
+                      : isDone
+                        ? 'bg-primary-100 border-primary-500 text-primary-700 hover:bg-primary-200'
+                        : 'bg-white border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}
+                  title={`Exercise ${idx + 1}: ${ex.title}${isDone ? ' (completed)' : ''}`}
+                >
+                  {isDone && !isCurrent ? <CheckCircle className="w-3.5 h-3.5" /> : idx + 1}
+                </Link>
+              );
+            })}
+          </div>
+
+          <Link
+            to={currentIndex < lessonExercises.length - 1 ? `/exercise/${lessonExercises[currentIndex + 1].id}` : '#'}
+            className={`p-1.5 rounded border-2 transition-colors ${currentIndex < lessonExercises.length - 1 ? 'border-gray-300 hover:border-primary-500 hover:bg-primary-50' : 'border-gray-200 text-gray-300 cursor-not-allowed'}`}
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
+
+      {alreadyCompleted && (
+        <div className="mb-3 inline-flex items-center gap-2 px-3 py-1.5 bg-primary-50 rounded-lg border border-primary-200 text-sm text-primary-700">
+          <CheckCircle className="w-4 h-4" />
+          <span>You've already completed this quiz</span>
+        </div>
+      )}
 
       {module && (
         <Breadcrumb items={[
@@ -301,12 +303,6 @@ export default function QuizPage({
               />
             </div>
 
-            {!alreadyCompleted && (
-              <div className="inline-flex items-center gap-2 bg-yellow-400 text-black px-4 py-2 border-2 border-black font-black text-lg mb-6">
-                <Star className="w-5 h-5" />
-                +{exercise.xpReward} XP
-              </div>
-            )}
             {alreadyCompleted && (
               <p className="text-sm text-gray-500 mb-6">Already completed</p>
             )}

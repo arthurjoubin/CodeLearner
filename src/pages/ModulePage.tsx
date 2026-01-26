@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getModule, getLessonsForModule, getExercisesForLesson, getLesson } from '../data/modules';
-import { CheckCircle, Lock, BookOpen, X, Code, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle, Lock, BookOpen, X } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
 
 export default function ModulePage() {
@@ -10,7 +10,7 @@ export default function ModulePage() {
   const { user, isLessonCompleted, isExerciseCompleted, loading } = useUser();
   const [showEssentialPopup, setShowEssentialPopup] = useState(false);
   const [essentialContent, setEssentialContent] = useState('');
-  const [showExercisesDropdown, setShowExercisesDropdown] = useState<string | null>(null);
+  const [essentialTitle, setEssentialTitle] = useState('');
 
   const module = moduleId ? getModule(moduleId) : undefined;
   const lessons = moduleId ? getLessonsForModule(moduleId) : [];
@@ -26,6 +26,7 @@ export default function ModulePage() {
     if (lesson) {
       const content = lesson.content;
       const essentialPart = content.split('---')[0].trim();
+      setEssentialTitle(lesson.title);
       setEssentialContent(essentialPart);
       setShowEssentialPopup(true);
     }
@@ -118,7 +119,7 @@ export default function ModulePage() {
                       <h3 className="font-bold text-gray-900 uppercase text-sm truncate">{lesson.title}</h3>
                     </div>
                     <div className="flex items-center gap-3 mt-1 ml-4">
-                      <span className="text-xs text-gray-700 font-bold">{lesson.xpReward} XP</span>
+                      <span className="text-xs text-gray-700 font-bold">{lesson.xpReward || 100} XP</span>
                     </div>
                   </div>
                 </div>
@@ -130,54 +131,38 @@ export default function ModulePage() {
                   >
                     <BookOpen className="w-4 h-4" />
                   </button>
-                  <div className="flex items-center gap-2">
-                    <Link
-                      to={`/lesson/${lesson.id}`}
-                      className="flex items-center gap-1.5 px-3 py-2 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 transition-colors text-sm"
-                    >
-                      <BookOpen className="w-4 h-4" />
-                      Course
-                    </Link>
-                    {exercises.length > 0 && (
-                      <div className="relative">
-                        <button
-                          onClick={() => setShowExercisesDropdown(showExercisesDropdown === lesson.id ? null : lesson.id)}
-                          className="flex items-center gap-1.5 px-3 py-2 bg-gray-900 text-white font-bold rounded-lg hover:bg-gray-800 transition-colors text-sm"
-                        >
-                          <Code className="w-4 h-4" />
-                          Exercises
-                          {showExercisesDropdown === lesson.id ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                        </button>
-                        {showExercisesDropdown === lesson.id && (
-                          <>
-                            <div className="fixed inset-0 z-10" onClick={() => setShowExercisesDropdown(null)} />
-                            <div className="absolute top-full right-0 mt-1 bg-white border-2 border-gray-300 rounded-lg z-20 min-w-[200px] shadow-lg max-h-[200px] overflow-y-auto">
-                              {exercises.map((exercise) => {
-                                const exCompleted = isExerciseCompleted(exercise.id);
-                                return (
-                                  <Link
-                                    key={exercise.id}
-                                    to={`/exercise/${exercise.id}`}
-                                    onClick={() => setShowExercisesDropdown(null)}
-                                    className={`flex items-center gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 ${exCompleted ? 'bg-primary-50' : ''}`}
-                                  >
-                                    {exCompleted ? (
-                                      <CheckCircle className="w-4 h-4 text-primary-600 shrink-0" />
-                                    ) : (
-                                      <div className="w-4 h-4 border-2 border-gray-300 rounded shrink-0" />
-                                    )}
-                                    <span className={`text-sm font-medium ${exCompleted ? 'text-primary-700' : 'text-gray-900'}`}>
-                                      {exercise.title}
-                                    </span>
-                                  </Link>
-                                );
-                              })}
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        to={`/lesson/${lesson.id}`}
+                        className="inline-flex items-center h-[46px] px-4 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 transition-colors text-xs uppercase"
+                      >
+                        Read Lesson
+                      </Link>
+                      {exercises.length > 0 && (
+                        <div className="inline-flex items-center gap-2 border-2 border-gray-300 bg-white rounded-lg px-3 py-2">
+                          <span className="text-xs font-bold text-gray-500 uppercase">Exercises</span>
+                          <div className="flex items-center gap-1.5">
+                            {exercises.map((ex, idx) => {
+                              const exCompleted = isExerciseCompleted(ex.id);
+                              return (
+                                <Link
+                                  key={ex.id}
+                                  to={`/exercise/${ex.id}`}
+                                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border-2 ${
+                                    exCompleted
+                                      ? 'bg-primary-100 border-primary-500 text-primary-700 hover:bg-primary-200'
+                                      : 'bg-white border-gray-300 text-gray-600 hover:border-gray-400'
+                                  }`}
+                                  title={`Exercise ${idx + 1}: ${ex.title}${exCompleted ? ' (completed)' : ''}`}
+                                >
+                                  {exCompleted ? <CheckCircle className="w-3.5 h-3.5" /> : idx + 1}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                 </div>
               </div>
             </div>
@@ -196,7 +181,7 @@ export default function ModulePage() {
           <div className="bg-gradient-to-b from-gray-50 to-white rounded-lg border-2 border-gray-300 p-5 max-w-md w-full max-h-[70vh] overflow-y-auto shadow-lg" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-gray-200">
               <div className="w-1.5 h-1.5 bg-primary-500 rounded-full" />
-              <h3 className="font-bold uppercase text-gray-900">Essential to know</h3>
+              <h3 className="font-bold uppercase text-gray-900">{essentialTitle}</h3>
               <button onClick={() => setShowEssentialPopup(false)} className="ml-auto p-1.5 hover:bg-gray-200 rounded transition-colors">
                 <X className="w-4 h-4 text-gray-600" />
               </button>
@@ -205,7 +190,7 @@ export default function ModulePage() {
               __html: essentialContent
                 .replace(/^# Essential to know\n/, '')
                 .replace(/^# (.+)$/gm, '<strong>$1</strong>')
-                .replace(/^- /m, '<span class="text-primary-500 font-bold">•</span> ')
+                .replace(/^- /, '')
                 .replace(/\n- /g, '\n<span class="text-primary-500 font-bold">•</span> ')
                 .replace(/\n/g, '<br/>')
                 .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1 rounded text-primary-600 font-mono text-xs">$1</code>')

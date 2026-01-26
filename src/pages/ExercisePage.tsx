@@ -11,7 +11,6 @@ import {
   CheckCircle,
   XCircle,
   Lightbulb,
-  Star,
   Loader,
   RotateCcw,
   Maximize,
@@ -23,7 +22,7 @@ import Breadcrumb from '../components/Breadcrumb';
 
 export default function ExercisePage() {
   const { exerciseId } = useParams<{ exerciseId: string }>();
-  const { user, isGuest, addXp, completeExercise, completeLesson, isExerciseCompleted, isLessonCompleted, loading } = useUser();
+  const { user, isGuest, completeExercise, completeLesson, isExerciseCompleted, isLessonCompleted, loading } = useUser();
 
   const exercise = exerciseId ? getExercise(exerciseId) : undefined;
   const lesson = exercise ? getLesson(exercise.lessonId) : undefined;
@@ -126,7 +125,6 @@ export default function ExercisePage() {
 
       if (result.isCorrect) {
         if (!alreadyCompleted) {
-          addXp(exercise.xpReward);
           completeExercise(exercise.id);
           // Auto-complete lesson if this was the last exercise
           const otherExercises = lessonExercises.filter(e => e.id !== exercise.id);
@@ -148,7 +146,6 @@ export default function ExercisePage() {
 
       if (isCorrect) {
         if (!alreadyCompleted) {
-          addXp(exercise.xpReward);
           completeExercise(exercise.id);
           // Auto-complete lesson if this was the last exercise
           const otherExercises = lessonExercises.filter(e => e.id !== exercise.id);
@@ -200,25 +197,49 @@ export default function ExercisePage() {
           { label: module.title, href: `/module/${module.id}` },
           { label: lesson.title, href: `/lesson/${lesson.id}` },
         ]} />
-        <div className="flex items-center justify-between">
-          <div className="relative inline-block group">
-            <h1 className="text-xl font-black text-gray-900 uppercase">{exercise.title}</h1>
+        <div className="flex items-center justify-between gap-4">
+          <div className="relative inline-block group min-w-0 flex-1">
+            <h1 className="text-xl font-black text-gray-900 uppercase truncate">{exercise.title}</h1>
             <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg border-2 border-gray-300">
-              <Star className="w-4 h-4 text-yellow-500" />
-              <span className="text-sm font-bold text-gray-800">{exercise.xpReward} XP</span>
+
+          {/* Exercise navigation */}
+          <div className="flex items-center gap-2 flex-shrink-0 border-2 border-gray-300 bg-white rounded-lg px-3 py-2">
+            <span className="text-xs font-bold text-gray-500 uppercase">Exercises</span>
+            <div className="flex items-center gap-1.5">
+              {lessonExercises.map((ex, idx) => {
+                const isDone = isExerciseCompleted(ex.id);
+                const isCurrent = ex.id === exercise.id;
+                return (
+                  <Link
+                    key={ex.id}
+                    to={`/exercise/${ex.id}`}
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border-2 ${
+                      isCurrent
+                        ? isDone
+                          ? 'bg-primary-500 border-primary-500 text-white'
+                          : 'bg-gray-900 border-gray-900 text-white'
+                        : isDone
+                          ? 'bg-primary-100 border-primary-500 text-primary-700 hover:bg-primary-200'
+                          : 'bg-white border-gray-300 text-gray-600 hover:border-gray-400'
+                    }`}
+                    title={`Exercise ${idx + 1}: ${ex.title}${isDone ? ' (completed)' : ''}`}
+                  >
+                    {isDone && !isCurrent ? <CheckCircle className="w-3.5 h-3.5" /> : idx + 1}
+                  </Link>
+                );
+              })}
             </div>
-            {alreadyCompleted && (
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-primary-100 rounded-lg border-2 border-primary-500">
-                <CheckCircle className="w-4 h-4 text-primary-600" />
-                <span className="text-sm font-bold text-primary-700">Completed</span>
-              </div>
-            )}
-           </div>
-         </div>
-       </div>
+          </div>
+        </div>
+
+        {alreadyCompleted && (
+          <div className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 bg-primary-50 rounded-lg border border-primary-200 text-sm text-primary-700">
+            <CheckCircle className="w-4 h-4" />
+            <span>You've already completed this exercise</span>
+          </div>
+        )}
+      </div>
 
       <div className="lg:flex-1 grid lg:grid-cols-2 gap-4">
         <div className="flex flex-col gap-4">
@@ -391,17 +412,9 @@ export default function ExercisePage() {
           <div className="bg-white rounded-lg p-6 text-center max-w-sm border-2 border-gray-300 shadow-xl">
             <div className="text-5xl mb-3">🎉</div>
             <h2 className="text-xl font-black uppercase text-green-600 mb-1">Well Done!</h2>
-            <p className="text-gray-600 mb-4 text-sm">You completed this exercise</p>
-
-            {!alreadyCompleted && (
-              <div className="inline-flex items-center gap-2 bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg border-2 border-yellow-300 font-bold text-lg mb-4">
-                <Star className="w-5 h-5" />
-                +{exercise.xpReward} XP
-              </div>
-            )}
-            {alreadyCompleted && (
-              <p className="text-sm text-gray-500 mb-4">Already completed</p>
-            )}
+            <p className="text-gray-600 mb-4 text-sm">
+              {alreadyCompleted ? 'Exercise already completed' : 'You completed this exercise'}
+            </p>
 
             <div className="flex flex-col gap-2">
               {nextExercise ? (

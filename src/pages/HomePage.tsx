@@ -109,7 +109,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="page-enter bg-gradient-to-b from-gray-100 to-white min-h-[calc(100vh-120px)]">
+    <div className="page-enter bg-gradient-to-b from-gray-100 to-white min-h-[calc(100vh-120px)] pb-4">
       {resumes.length > 0 && (
         <div className="mb-8">
           <div className="relative inline-block group">

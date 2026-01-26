@@ -55,7 +55,7 @@ export interface Lesson {
   title: string;
   content: string;
   codeExample?: string;
-  xpReward: number;
+  xpReward?: number;
   order: number;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
 }
@@ -74,7 +74,7 @@ export interface CodeExercise {
   solution: string;
   hints: string[];
   validationPrompt: string;
-  xpReward: number;
+  xpReward?: number;
   difficulty: 'easy' | 'medium' | 'hard' | 'advanced';
 }
 
@@ -96,7 +96,7 @@ export interface QuizExercise {
   description?: string;
   instructions?: string;
   questions: QuizQuestion[];
-  xpReward: number;
+  xpReward?: number;
   difficulty: 'easy' | 'medium' | 'hard' | 'advanced';
 }
 
@@ -133,17 +133,29 @@ export interface LevelInfo {
   maxXp: number;
 }
 
+export const DEFAULT_XP_REWARD = 100;
+
 export const LEVELS: LevelInfo[] = [
-  { level: 1, title: 'React Novice', minXp: 0, maxXp: 100 },
-  { level: 2, title: 'JSX Explorer', minXp: 100, maxXp: 250 },
-  { level: 3, title: 'Component Crafter', minXp: 250, maxXp: 500 },
-  { level: 4, title: 'State Manager', minXp: 500, maxXp: 800 },
-  { level: 5, title: 'Hook Hunter', minXp: 800, maxXp: 1200 },
-  { level: 6, title: 'Effect Expert', minXp: 1200, maxXp: 1700 },
-  { level: 7, title: 'TypeScript Tamer', minXp: 1700, maxXp: 2300 },
-  { level: 8, title: 'React Warrior', minXp: 2300, maxXp: 3000 },
-  { level: 9, title: 'Frontend Hero', minXp: 3000, maxXp: 4000 },
-  { level: 10, title: 'React Master', minXp: 4000, maxXp: Infinity },
+  { level: 1, title: 'Novice', minXp: 0, maxXp: 300 },
+  { level: 2, title: 'Apprentice', minXp: 300, maxXp: 600 },
+  { level: 3, title: 'Practitioner', minXp: 600, maxXp: 1000 },
+  { level: 4, title: 'Professional', minXp: 1000, maxXp: 1500 },
+  { level: 5, title: 'Expert', minXp: 1500, maxXp: 2300 },
+  { level: 6, title: 'Specialist', minXp: 2300, maxXp: 3500 },
+  { level: 7, title: 'Master', minXp: 3500, maxXp: 5300 },
+  { level: 8, title: 'Scholar', minXp: 5300, maxXp: 8000 },
+  { level: 9, title: 'Sage', minXp: 8000, maxXp: 12000 },
+  { level: 10, title: 'Architect', minXp: 12000, maxXp: 18000 },
+  { level: 11, title: 'Visionary', minXp: 18000, maxXp: 27000 },
+  { level: 12, title: 'Legend', minXp: 27000, maxXp: 40500 },
+  { level: 13, title: 'Pioneer', minXp: 40500, maxXp: 60800 },
+  { level: 14, title: 'Trailblazer', minXp: 60800, maxXp: 91200 },
+  { level: 15, title: 'Guardian', minXp: 91200, maxXp: 136800 },
+  { level: 16, title: 'Keeper', minXp: 136800, maxXp: 205200 },
+  { level: 17, title: 'Elder', minXp: 205200, maxXp: 307800 },
+  { level: 18, title: 'Oracle', minXp: 307800, maxXp: 461700 },
+  { level: 19, title: 'Titan', minXp: 461700, maxXp: 692600 },
+  { level: 20, title: 'Godlike', minXp: 692600, maxXp: Infinity },
 ];
 
 export function getLevelFromXp(xp: number): LevelInfo {
@@ -156,4 +168,8 @@ export function getXpProgress(xp: number): number {
   const xpInLevel = xp - level.minXp;
   const xpNeeded = level.maxXp - level.minXp;
   return Math.round((xpInLevel / xpNeeded) * 100);
+}
+
+export function getXpReward(xpReward?: number): number {
+  return xpReward ?? DEFAULT_XP_REWARD;
 }
