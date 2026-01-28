@@ -1,0 +1,104 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import { getCollection } from 'astro:content';
+
+const blogPosts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+
+
+const deals = (await getCollection('deals')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+function formatDate(date: Date) {
+	return date.toLocaleDateString('en-US', {
+		day: 'numeric',
+		month: 'short',
+		year: 'numeric'
+	});
+}
+---
+
+<MainLayout title="Resources - LLM & Vibecoding News">
+	<div class="page-enter">
+		<div class="mb-8">
+			<div class="relative inline-block group">
+				<h1 class="font-bold text-xl text-gray-900">Resources</h1>
+				<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+			</div>
+			<p class="text-gray-600 mt-2">LLM news, tool comparisons, and vibecoding insights</p>
+		</div>
+
+		<div class="grid md:grid-cols-2 gap-6 mb-8">
+			<div class="p-5 border-2 border-gray-300 rounded-lg bg-white hover:border-primary-500 transition-all cursor-pointer" onclick="window.location.href='/resources/tools'">
+				<div class="flex items-center justify-between">
+					<div>
+						<h2 class="font-bold text-gray-900">TOOLS COMPARISON TABLE</h2>
+						<p class="text-xs text-gray-600 mt-1">View and compare all AI tools at a glance</p>
+					</div>
+					<span class="px-3 py-1.5 bg-gray-900 text-white text-xs font-bold uppercase rounded hover:bg-primary-600 transition-colors">
+						View Table →
+					</span>
+				</div>
+			</div>
+
+			<a
+				href="/resources/deals"
+				class="block p-5 border-2 border-yellow-300 rounded-lg bg-yellow-50 hover:border-yellow-500 hover:shadow-md transition-all group relative overflow-hidden"
+			>
+				<div class="absolute top-0 right-0 w-20 h-20 bg-yellow-400 rounded-full -mr-10 -mt-10 opacity-20" />
+				<div class="flex items-center justify-between relative z-10">
+					<div>
+						<div class="flex items-center gap-2 mb-1">
+							<span class="text-[10px] px-2 py-0.5 bg-yellow-500 text-white rounded uppercase font-bold">HOT</span>
+							<span class="text-xs text-gray-600">{deals.length} active deals</span>
+						</div>
+						<h2 class="font-bold text-gray-900 group-hover:text-yellow-700 transition-colors">AI Tools Deals & Discounts</h2>
+						<p class="text-xs text-gray-600 mt-1">Limited-time offers on Cursor, MiniMax, and more</p>
+					</div>
+					<span class="px-3 py-1.5 bg-yellow-500 text-white text-xs font-bold uppercase rounded group-hover:bg-yellow-600 transition-colors">
+						See Deals →
+					</span>
+				</div>
+			</a>
+		</div>
+
+		<div>
+			<div class="relative inline-block group mb-4">
+				<h2 class="font-bold text-sm uppercase text-gray-700 flex items-center gap-2">
+					<span class="w-2 h-2 bg-primary-500 rounded-full" />
+					ARTICLES
+				</h2>
+				<span class="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+			</div>
+			<div class="grid gap-4">
+				{blogPosts.map((post) => (
+					<a
+						href={`/resources/blog/${post.slug}`}
+						class="block p-4 border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group bg-white"
+					>
+						<div class="flex items-start gap-4">
+							<div class="flex-1 min-w-0">
+								<div class="flex items-center gap-2 mb-2">
+									<span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 uppercase font-bold">
+										{post.data.tags[0]}
+									</span>
+									<span class="text-[10px] text-gray-500">{formatDate(post.data.pubDate)}</span>
+								</div>
+								<h3 class="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">
+									{post.data.title}
+								</h3>
+								<p class="text-sm text-gray-600 mt-1">{post.data.description}</p>
+							</div>
+						</div>
+					</a>
+				))}
+			</div>
+		</div>
+	</div>
+</MainLayout>
+
+<style>
+</style>
