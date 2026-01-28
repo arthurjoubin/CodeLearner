@@ -1,0 +1,14 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import ExercisePage from '../../pages/_ExercisePage';
+
+export function getStaticPaths() {
+  return [];
+}
+
+const { exerciseId } = Astro.params;
+---
+
+<MainLayout title={`Exercise - ${exerciseId}`}>
+	<ExercisePage client:load exerciseId={exerciseId} />
+</MainLayout>

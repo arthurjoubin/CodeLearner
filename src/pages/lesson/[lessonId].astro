@@ -1,0 +1,16 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import LessonPage from '../../pages/_LessonPage';
+
+export function getStaticPaths() {
+  // In a real migration, we might fetch this from a data source. 
+  // For now, we allow dynamic routing if we use SSR (output: 'server' in config).
+  return [];
+}
+
+const { lessonId } = Astro.params;
+---
+
+<MainLayout title={`Lesson - ${lessonId}`}>
+	<LessonPage client:load lessonId={lessonId} />
+</MainLayout>

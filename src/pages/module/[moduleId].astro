@@ -1,0 +1,14 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import ModulePage from '../../pages/_ModulePage';
+
+export function getStaticPaths() {
+  return [];
+}
+
+const { moduleId } = Astro.params;
+---
+
+<MainLayout title={`Module - ${moduleId}`}>
+	<ModulePage client:load moduleId={moduleId} />
+</MainLayout>

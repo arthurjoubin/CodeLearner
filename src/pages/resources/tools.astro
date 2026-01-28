@@ -1,0 +1,136 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import { getCollection } from 'astro:content';
+
+const comparisons = (await getCollection('comparisons')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const allTools = comparisons.flatMap(comp => comp.data.tools);
+const uniqueTools = [...new Set(allTools)];
+
+function formatDate(date: Date) {
+	return date.toLocaleDateString('fr-FR', {
+		day: 'numeric',
+		month: 'short',
+		year: 'numeric'
+	});
+}
+
+const toolCategories: Record<string, string> = {
+	'Cursor': 'IDE',
+	'Claude Code': 'Agent',
+	'Copilot Workspace': 'IDE',
+	'Devin': 'Agent',
+	'GPT-4': 'LLM',
+	'Claude 3.5': 'LLM',
+	'Gemini Pro': 'LLM',
+	'DeepSeek Coder': 'LLM',
+	'Bolt.new': 'Vibe Framework',
+	'Lovable': 'Vibe Framework',
+	'V0': 'UI Generator',
+	'Windsurf': 'IDE',
+};
+
+const toolDescriptions: Record<string, string> = {
+	'Cursor': 'IDE AI avec VS Code fork',
+	'Claude Code': 'Agent CLI autonome Anthropic',
+	'Copilot Workspace': 'GitHub coding agent',
+	'Devin': 'Agent IA autonome de Cognition',
+	'GPT-4': 'Modèle OpenAI premium',
+	'Claude 3.5': 'Anthropic Sonnet optimal',
+	'Gemini Pro': 'Google modèle multimodal',
+	'DeepSeek Coder': 'Open source Chinese model',
+	'Bolt.new': 'Full-stack AI IDE',
+	'Lovable': 'Vibe coding accessible',
+	'V0': 'UI components generator',
+	'Windsurf': 'IDE flow-state AI',
+};
+---
+
+<MainLayout title="Tools Comparison - LLM & AI Tools">
+	<div class="page-enter">
+		<div class="mb-8">
+			<div class="relative inline-block group mb-2">
+				<h1 class="font-bold text-xl text-gray-900">AI Tools Comparison</h1>
+				<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+			</div>
+			<p class="text-gray-600 text-sm">Comparaison complète des outils IA pour développeurs</p>
+		</div>
+
+		<div class="mb-6 flex items-center gap-2 overflow-x-auto pb-2">
+			{uniqueTools.map((tool) => (
+				<span class="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded border border-gray-200 whitespace-nowrap">
+					{tool}
+				</span>
+			))}
+		</div>
+
+		<div class="overflow-x-auto border-2 border-gray-300 rounded-lg">
+			<table class="w-full text-sm">
+				<thead class="bg-gray-50">
+					<tr>
+						<th class="text-left p-3 font-bold text-gray-900 border-b-2 border-gray-300">Outil</th>
+						<th class="text-left p-3 font-bold text-gray-900 border-b-2 border-gray-300">Catégorie</th>
+						<th class="text-left p-3 font-bold text-gray-900 border-b-2 border-gray-300">Description</th>
+						<th class="text-left p-3 font-bold text-gray-900 border-b-2 border-gray-300">Comparatifs</th>
+					</tr>
+				</thead>
+				<tbody>
+					{uniqueTools.map((tool, index) => {
+						const relatedComparisons = comparisons.filter(c => c.data.tools.includes(tool));
+						return (
+							<tr class={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+								<td class="p-3 border-b border-gray-200">
+									<span class="font-bold text-gray-900">{tool}</span>
+								</td>
+								<td class="p-3 border-b border-gray-200">
+									<span class="text-xs px-2 py-0.5 bg-primary-50 text-primary-700 rounded border border-primary-200 uppercase font-bold">
+										{toolCategories[tool] || 'Other'}
+									</span>
+								</td>
+								<td class="p-3 border-b border-gray-200 text-gray-600 text-xs">
+									{toolDescriptions[tool]}
+								</td>
+								<td class="p-3 border-b border-gray-200">
+									<div class="flex flex-wrap gap-1">
+										{relatedComparisons.map(comp => (
+											<a
+												href={`/resources/comparisons/${comp.slug}`}
+												class="text-[10px] px-1.5 py-0.5 bg-gray-900 text-white rounded hover:bg-primary-500 transition-colors"
+											>
+												{comp.data.title.split(' ')[0]}
+											</a>
+										))}
+									</div>
+								</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		</div>
+
+		<div class="mt-8 grid md:grid-cols-2 gap-4">
+			{comparisons.map(comp => (
+				<a
+					href={`/resources/comparisons/${comp.slug}`}
+					class="block p-4 border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group bg-white"
+				>
+					<div class="flex items-center gap-2 mb-2">
+						{comp.data.tools.slice(0, 4).map(tool => (
+							<span class="text-[10px] px-1.5 py-0.5 bg-gray-900 text-white rounded border border-gray-700 uppercase font-bold">
+								{tool}
+							</span>
+						))}
+					</div>
+					<h3 class="font-bold text-gray-900 group-hover:text-primary-700 transition-colors text-sm">{comp.data.title}</h3>
+					<p class="text-xs text-gray-600 mt-1">{comp.data.description}</p>
+					<div class="mt-2 pt-2 border-t border-gray-100">
+						<p class="text-xs text-primary-600 italic">"{comp.data.verdict}"</p>
+					</div>
+				</a>
+			))}
+		</div>
+	</div>
+</MainLayout>

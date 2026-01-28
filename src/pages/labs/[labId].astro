@@ -1,0 +1,14 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import LabPage from '../../pages/_LabPage';
+
+export function getStaticPaths() {
+  return [];
+}
+
+const { labId } = Astro.params;
+---
+
+<MainLayout title={`Lab - ${labId}`}>
+	<LabPage client:load labId={labId} />
+</MainLayout>

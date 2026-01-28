@@ -1,0 +1,14 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import LearningPathPage from '../../pages/_LearningPathPage';
+
+export function getStaticPaths() {
+  return [];
+}
+
+const { pathId } = Astro.params;
+---
+
+<MainLayout title={`Learning Path - ${pathId}`}>
+	<LearningPathPage client:load pathId={pathId} />
+</MainLayout>

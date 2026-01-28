@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+// Link replaced for Astro compatibility
+
 import { ChevronRight } from 'lucide-react';
 
 interface BreadcrumbItem {
@@ -17,12 +18,12 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
         <div key={index} className="flex items-center gap-1">
           {index > 0 && <ChevronRight className="w-3 h-3 text-gray-400 flex-shrink-0" />}
           {item.href ? (
-            <Link
-              to={item.href}
+            <a
+              href={item.href}
               className="text-gray-700 hover:text-primary-600 transition-colors uppercase"
             >
               {item.label}
-            </Link>
+            </a>
           ) : (
             <span className="text-gray-800 uppercase">{item.label}</span>
           )}

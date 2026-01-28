@@ -1,0 +1,23 @@
+# Migration Task: React to Astro
+
+- [x] Planning and Initialization
+    - [/] Analyze existing structure (routes: /, /lesson/:id, /exercise/:id, /labs, etc.)
+    - [x] Install Astro
+    - [x] Configure Astro (React integration, Tailwind)
+- [x] Integration and Setup
+    - [x] Create Astro layouts (MainLayout)
+    - [x] Move global styles (index.css)
+- [x] Component Porting
+    - [x] Port pages to Astro (using client:load for interactivity)
+        - [x] Home /
+        - [x] Lesson /lesson/:id
+        - [x] Exercise /exercise/:id
+        - [x] Labs /labs
+    - [x] Replace `react-router-dom` with standard <a> links or Astro routing
+- [x] Backend and Services
+    - [x] Ensure backend compatibility (api.ts points to hardcoded worker, works for now)
+    - [x] Migrate `wrangler` config if necessary (Api is separate, Astro builds to node/static)
+- [x] Verification
+    - [x] Verify routing
+    - [x] Verify interactivity (UserContext wrapped)
+    - [x] Build check

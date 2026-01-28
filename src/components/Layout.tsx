@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useUser } from '../context/UserContext';
+// Link will be replaced by standard anchor tags for Astro compatibility
+
+import { useUser, UserProvider } from '../context/UserContext';
 import { getLevelFromXp, getXpProgress } from '../types';
-import { Flame, FlaskConical, Trophy, Lightbulb, Menu, X, LogOut } from 'lucide-react';
+import { Flame, FlaskConical, Trophy, Lightbulb, Menu, X, LogOut, BookOpen, Tag, Github, Twitter, Mail } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-export default function Layout({ children }: LayoutProps) {
+// Wrapped in internal component to allow usage of useUser in the parent
+function LayoutContent({ children }: LayoutProps) {
   const { user, logout, loading } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const [levelPopupOpen, setLevelPopupOpen] = useState(false);
@@ -34,18 +36,18 @@ export default function Layout({ children }: LayoutProps) {
       <header className="bg-white border-b border-gray-300 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-3 py-3">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 group">
+            <a href="/" className="flex items-center gap-2 group">
               <div className="relative">
                 <span className="text-xl font-bold tracking-widest text-gray-900">HACK<span className="text-primary-500">UP</span></span>
                 <div className="absolute -bottom-0.5 left-0 w-6 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
               </div>
-            </Link>
+            </a>
 
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <Link to="/labs" className="flex items-center gap-1 px-2 py-1.5 border border-transparent hover:border-gray-300 rounded transition-colors group" title="Labs">
+              <a href="/labs" className="flex items-center gap-1 px-2 py-1.5 border border-transparent hover:border-gray-300 rounded transition-colors group" title="Labs">
                 <FlaskConical className="w-4 h-4 text-gray-600 group-hover:text-primary-600 transition-colors" />
                 <span className="text-xs font-bold hidden sm:inline text-gray-700 group-hover:text-primary-600 transition-colors uppercase">Lab</span>
-              </Link>
+              </a>
 
               <div className="relative">
                 <button
@@ -170,20 +172,34 @@ export default function Layout({ children }: LayoutProps) {
                     <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
                     <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-300 rounded-lg z-50">
                       <div className="py-1">
-                        <Link
-                          to="/leaderboard"
+                        <a
+                          href="/leaderboard"
                           onClick={() => setMenuOpen(false)}
                           className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                           <Trophy className="w-4 h-4" /> Leaderboard
-                        </Link>
-                        <Link
-                          to="/learning-path/react"
+                        </a>
+                        <a
+                          href="/learning-path/react"
                           onClick={() => setMenuOpen(false)}
                           className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                           <Lightbulb className="w-4 h-4" /> Learning Path
-                        </Link>
+                        </a>
+                        <a
+                          href="/resources"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <BookOpen className="w-4 h-4" /> Resources
+                        </a>
+                        <a
+                          href="/resources/deals"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50"
+                        >
+                          <Tag className="w-4 h-4" /> Deals
+                        </a>
                         <hr className="my-1 border-gray-200" />
                         <button
                           onClick={() => { logout(); setMenuOpen(false); }}
@@ -204,6 +220,45 @@ export default function Layout({ children }: LayoutProps) {
       <main className="flex-1 max-w-6xl mx-auto px-3 pt-4 w-full">
         {children}
       </main>
+
+      <footer className="border-t border-gray-300 mt-auto">
+        <div className="max-w-6xl mx-auto px-3 py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <span className="font-bold tracking-widest text-gray-900">HACK<span className="text-primary-500">UP</span></span>
+              <span className="text-xs text-gray-500">© 2025</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <a href="/resources" className="text-xs font-bold text-gray-600 hover:text-primary-600 transition-colors uppercase">Resources</a>
+              <a href="/resources/deals" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors uppercase">Deals</a>
+              <a href="/leaderboard" className="text-xs font-bold text-gray-600 hover:text-primary-600 transition-colors uppercase">Leaderboard</a>
+              <a href="/labs" className="text-xs font-bold text-gray-600 hover:text-primary-600 transition-colors uppercase">Labs</a>
+            </div>
+            <div className="flex items-center gap-3">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900 transition-colors">
+                <Github className="w-4 h-4" />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900 transition-colors">
+                <Twitter className="w-4 h-4" />
+              </a>
+              <a href="mailto:hello@hackup.dev" className="text-gray-500 hover:text-gray-900 transition-colors">
+                <Mail className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+            <div className="mt-4 pt-4 border-t border-gray-100 text-center">
+            <p className="text-[10px] text-gray-500 uppercase font-bold">Learn to code, one day at a time</p>
+          </div>
+        </div>
+      </footer>
     </div>
+  );
+}
+
+export default function Layout({ children }: LayoutProps) {
+  return (
+    <UserProvider>
+      <LayoutContent>{children}</LayoutContent>
+    </UserProvider>
   );
 }
