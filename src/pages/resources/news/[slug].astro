@@ -1,0 +1,121 @@
+---
+import MainLayout from '../../../layouts/MainLayout.astro';
+import { getCollection, getEntry } from 'astro:content';
+import { ArrowLeft, ArrowRight, Calendar, User, Tag } from 'lucide-react';
+
+export async function getStaticPaths() {
+	const news = await getCollection('news');
+	return news.map(post => ({
+		params: { slug: post.slug },
+		props: { slug: post.slug },
+	}));
+}
+
+const { slug } = Astro.params;
+const post = await getEntry('news', slug!);
+
+if (!post) {
+	return Astro.redirect('/resources/news');
+}
+
+const { Content } = await post.render();
+
+const tools = await getCollection('tools');
+const llms = await getCollection('llms');
+
+function formatDate(date: Date) {
+	return date.toLocaleDateString('en-US', {
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric'
+	});
+}
+
+function getToolPath(toolName: string) {
+	const isLlm = llms.some(l => l.data.name === toolName);
+	const s = toolName.toLowerCase().replace(/\s+/g, '-');
+	return isLlm ? `/resources/llms/${s}` : `/resources/tools/${s}`;
+}
+---
+
+<MainLayout title={post.data.title}>
+	<div class="page-enter max-w-3xl mx-auto">
+		<div class="flex items-center gap-2 mb-6 text-xs">
+			<a href="/resources" class="text-gray-500 hover:text-primary-600 uppercase font-bold transition-colors">Resources</a>
+			<span class="text-gray-300">/</span>
+			<a href="/resources/news" class="text-gray-500 hover:text-primary-600 uppercase font-bold transition-colors">News</a>
+			<span class="text-gray-300">/</span>
+			<span class="text-gray-900 font-medium truncate max-w-[200px]">{post.data.title}</span>
+		</div>
+
+		<article class="bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
+			<div class="p-6 border-b-2 border-gray-200">
+				<div class="flex flex-wrap items-center gap-2 mb-4">
+					{post.data.tags.map((tag) => (
+						<span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">
+							{tag}
+						</span>
+					))}
+				</div>
+				
+				<h1 class="font-bold text-2xl text-gray-900 leading-tight mb-4">{post.data.title}</h1>
+				
+				<div class="flex items-center gap-4 text-xs text-gray-500">
+					<span class="font-medium text-gray-700">{post.data.author}</span>
+					<span>{formatDate(post.data.pubDate)}</span>
+				</div>
+			</div>
+
+			<div class="p-6">
+				<div class="prose prose-sm max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 prose-strong:font-bold prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-primary-700 prose-code:font-mono prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-xl prose-pre:p-4">
+					<Content />
+				</div>
+			</div>
+		</article>
+
+		{post.data.mentionedTools && post.data.mentionedTools.length > 0 && (
+			<div class="mt-6 p-4 bg-white border-2 border-gray-300 rounded-lg">
+				<h3 class="font-bold text-gray-900 text-sm uppercase mb-3">Mentioned in this article</h3>
+				<div class="flex flex-wrap gap-2">
+					{post.data.mentionedTools.map(toolName => {
+						const isLlm = llms.some(l => l.data.name === toolName);
+						return (
+							<a 
+								href={getToolPath(toolName)}
+								class="text-xs px-3 py-1.5 bg-gray-100 text-gray-700 rounded font-bold uppercase hover:bg-gray-200 transition-colors flex items-center gap-1"
+							>
+								{toolName}
+								<ArrowRight class="w-3 h-3" />
+							</a>
+						);
+					})}
+				</div>
+			</div>
+		)}
+
+		<div class="mt-6 p-4 bg-white border-2 border-gray-300 rounded-lg">
+			<p class="text-sm text-gray-700 mb-3">Enjoyed this article?</p>
+			<div class="flex flex-wrap gap-2">
+				<a 
+					href="/resources/news" 
+					class="text-xs font-bold uppercase px-3 py-1.5 bg-gray-900 text-white rounded hover:bg-gray-800 transition-colors flex items-center gap-1"
+				>
+					<ArrowLeft class="w-3 h-3" />
+					More News
+				</a>
+				<a 
+					href="/resources/tools" 
+					class="text-xs font-bold uppercase px-3 py-1.5 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+				>
+					Tools
+				</a>
+				<a 
+					href="/resources/llms" 
+					class="text-xs font-bold uppercase px-3 py-1.5 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+				>
+					LLMs
+				</a>
+			</div>
+		</div>
+	</div>
+</MainLayout>

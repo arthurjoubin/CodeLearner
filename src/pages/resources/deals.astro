@@ -6,14 +6,6 @@ const deals = (await getCollection('deals')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
-function formatDate(date: Date) {
-	return date.toLocaleDateString('en-US', {
-		day: 'numeric',
-		month: 'short',
-		year: 'numeric'
-	});
-}
-
 function isExpiringSoon(expireDate?: Date): boolean {
 	if (!expireDate) return false;
 	const now = new Date();
@@ -22,85 +14,64 @@ function isExpiringSoon(expireDate?: Date): boolean {
 }
 ---
 
-<MainLayout title="Deals - AI Tools Promotions">
-	<div class="page-enter">
-		<div class="mb-8">
-			<div class="relative inline-block group mb-2">
-				<h1 class="font-bold text-xl text-gray-900">HOT DEALS</h1>
-				<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+<MainLayout title="Deals">
+	<div class="page-enter max-w-4xl mx-auto">
+		<div class="mb-4">
+			<a href="/resources" class="text-xs text-gray-500 hover:text-primary-600 uppercase font-bold flex items-center gap-1 mb-3">
+				<span class="w-1.5 h-1.5 bg-primary-500 rounded-full" />
+				Back to Resources
+			</a>
+			<div class="flex items-center justify-between">
+				<div class="relative inline-block">
+					<h1 class="text-xl font-black text-gray-900 uppercase">Hot Deals</h1>
+					<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500" />
+				</div>
+				<div class="flex gap-2 text-xs">
+					<a href="/resources/tools" class="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100 transition-colors">Tools</a>
+					<a href="/resources/llms" class="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100 transition-colors">LLMs</a>
+					<a href="/resources/news" class="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100 transition-colors">News</a>
+				</div>
 			</div>
-			<p class="text-gray-600 text-sm">Limited-time offers on AI tools and coding platforms</p>
+			<p class="text-sm text-gray-500 mt-1">Limited-time offers on AI tools</p>
 		</div>
 
-		<div class="grid gap-4">
-			{deals.map((deal) => (
-				<a
-					href={deal.data.url}
-					target="_blank"
-					rel="noopener noreferrer"
-					class="block p-5 border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group bg-white relative overflow-hidden"
-				>
-					{deal.data.expireDate && isExpiringSoon(deal.data.expireDate) && (
-						<div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-3 py-1 uppercase">
-							Expiring Soon
-						</div>
-					)}
+		<table class="w-full text-sm">
+			<thead>
+				<tr class="border-b-2 border-gray-300">
+					<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs w-24">Discount</th>
+					<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Deal</th>
+					<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs w-24">Original</th>
+					<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs w-24">Price</th>
+					<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs w-20">Status</th>
+				</tr>
+			</thead>
+			<tbody>
+				{deals.map((deal) => (
+					<tr class="border-b border-gray-200 hover:bg-gray-50">
+						<td class="py-2 px-3">
+							<span class="text-[10px] px-2 py-0.5 bg-gray-900 text-white rounded font-bold uppercase">{deal.data.discount}</span>
+						</td>
+						<td class="py-2 px-3">
+							<a href={deal.data.url} target="_blank" rel="noopener noreferrer" class="font-bold text-gray-900 hover:text-primary-600 truncate block">{deal.data.title}</a>
+						</td>
+						<td class="py-2 px-3 text-gray-500 line-through">{deal.data.originalPrice}</td>
+						<td class="py-2 px-3 font-bold text-gray-900">{deal.data.discountedPrice}</td>
+						<td class="py-2 px-3">
+							{deal.data.expireDate && isExpiringSoon(deal.data.expireDate) ? (
+								<span class="text-[10px] px-2 py-0.5 bg-red-100 text-red-600 rounded font-bold uppercase">Soon</span>
+							) : (
+								<span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">Active</span>
+							)}
+						</td>
+					</tr>
+				))}
+			</tbody>
+		</table>
 
-					<div class="flex flex-col md:flex-row gap-4">
-						<div class="flex-1">
-							<div class="flex items-center gap-2 mb-2">
-								<span class="text-[10px] px-2 py-0.5 bg-primary-500 text-white rounded border border-primary-600 uppercase font-bold">
-									{deal.data.discount}
-								</span>
-								{deal.data.affiliate && (
-									<span class="text-[10px] px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded border border-yellow-300 uppercase font-bold">
-										Affiliate
-									</span>
-								)}
-								<span class="text-[10px] text-gray-500">{formatDate(deal.data.pubDate)}</span>
-							</div>
-							<h3 class="font-bold text-gray-900 group-hover:text-primary-700 transition-colors text-lg">
-								{deal.data.title}
-							</h3>
-							<p class="text-sm text-gray-600 mt-1">{deal.data.description}</p>
-
-							<div class="flex flex-wrap gap-1 mt-3">
-								{deal.data.tools.map((tool) => (
-									<span class="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-700 rounded border border-gray-200">
-										{tool}
-									</span>
-								))}
-							</div>
-						</div>
-
-						<div class="flex flex-col items-end justify-center min-w-[140px]">
-							<div class="text-center">
-								<p class="text-xs text-gray-500 line-through">{deal.data.originalPrice}</p>
-								<p class="text-2xl font-bold text-primary-600">{deal.data.discountedPrice}</p>
-								{deal.data.expireDate && (
-									<p class="text-[10px] text-red-600 font-medium mt-1">
-										Expires {formatDate(deal.data.expireDate)}
-									</p>
-								)}
-							</div>
-						</div>
-					</div>
-
-					<div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
-						<span class="text-xs text-gray-500">Click to claim offer →</span>
-						<span class="text-xs font-bold text-primary-600 group-hover:translate-x-1 transition-transform">
-							GET DEAL
-						</span>
-					</div>
-				</a>
-			))}
-		</div>
-
-		<div class="mt-8 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg">
-			<h3 class="font-bold text-gray-900 text-sm uppercase mb-2">Submit a Deal</h3>
-			<p class="text-xs text-gray-600">
-				Know of a great AI tool deal? Send us a tip and we'll feature it.
-			</p>
-		</div>
+		{deals.length === 0 && (
+			<div class="p-4 bg-white border-2 border-gray-300 rounded-lg text-center">
+				<p class="text-gray-500">No active deals at the moment.</p>
+			</div>
+		)}
 	</div>
 </MainLayout>
