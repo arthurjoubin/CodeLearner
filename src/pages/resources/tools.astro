@@ -1,6 +1,7 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
 import { getCollection } from 'astro:content';
+import ResourceTabs from '../../components/ResourceTabs.astro';
 
 const tools = await getCollection('tools');
 const toolsByCategory = tools.reduce((acc, tool) => {
@@ -15,7 +16,7 @@ const categories = Object.keys(toolsByCategory).sort();
 
 <MainLayout title="AI Tools">
 	<div class="page-enter max-w-5xl mx-auto">
-		<div class="mb-4">
+		<div class="mb-6">
 			<a href="/resources" class="text-xs text-gray-500 hover:text-primary-600 uppercase font-bold flex items-center gap-1 mb-3">
 				<span class="w-1.5 h-1.5 bg-primary-500 rounded-full" />
 				Back to Resources
@@ -25,39 +26,36 @@ const categories = Object.keys(toolsByCategory).sort();
 					<h1 class="text-xl font-black text-gray-900 uppercase">AI Tools</h1>
 					<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500" />
 				</div>
-				<div class="flex gap-2 text-xs">
-					<a href="/resources/llms" class="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100 transition-colors">LLMs</a>
-					<a href="/resources/news" class="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100 transition-colors">News</a>
-					<a href="/resources/deals" class="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100 transition-colors">Deals</a>
-				</div>
 			</div>
 			<p class="text-sm text-gray-500 mt-1">{tools.length} tools across {categories.length} categories</p>
 		</div>
 
-		<table class="w-full text-sm">
-			<thead>
-				<tr class="border-b-2 border-gray-300">
-					<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Tool</th>
-					<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Category</th>
-					<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Description</th>
-					<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Pricing</th>
-				</tr>
-			</thead>
-			<tbody>
-				{tools.map((tool) => {
-					const toolSlug = tool.slug;
-					return (
-						<tr class="border-b border-gray-200 hover:bg-gray-50">
-							<td class="py-2 px-3">
-								<a href={`/resources/tools/${toolSlug}`} class="font-bold text-gray-900 hover:text-primary-600">{tool.data.name}</a>
-							</td>
-							<td class="py-2 px-3 text-gray-600">{tool.data.category}</td>
-							<td class="py-2 px-3 text-gray-600 truncate max-w-xs">{tool.data.description}</td>
-							<td class="py-2 px-3 text-gray-600">{tool.data.pricing.split(' ')[0]}</td>
-						</tr>
-					);
-				})}
-			</tbody>
-		</table>
+		<ResourceTabs active="tools" />
+
+		<div class="bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
+			<table class="w-full text-sm">
+				<thead>
+					<tr class="border-b-2 border-gray-300 bg-gray-50">
+						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Tool</th>
+						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs w-40">Category</th>
+						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					{tools.map((tool) => {
+						const toolSlug = tool.slug;
+						return (
+							<tr class="border-b border-gray-200 last:border-0 hover:bg-gray-100 transition-colors cursor-pointer" onclick={`window.location.href='/resources/tools/${toolSlug}'`}>
+								<td class="py-2 px-3">
+									<span class="font-bold text-gray-900">{tool.data.name}</span>
+								</td>
+								<td class="py-2 px-3 text-gray-600">{tool.data.category}</td>
+								<td class="py-2 px-3 text-gray-600">{tool.data.description}</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		</div>
 	</div>
 </MainLayout>

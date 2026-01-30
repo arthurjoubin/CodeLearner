@@ -210,11 +210,11 @@ function LayoutContent({ children }: LayoutProps) {
                           <BookOpen className="w-4 h-4" /> Resources
                         </a>
                         <a
-                          href="/resources/deals"
+                          href="/resources/devfinds"
                           onClick={() => setMenuOpen(false)}
                           className="flex items-center gap-2 px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50"
                         >
-                          <Tag className="w-4 h-4" /> Deals
+                          <Tag className="w-4 h-4" /> Dev Finds
                         </a>
                         <hr className="my-1 border-gray-200" />
                         <button
@@ -247,7 +247,7 @@ function LayoutContent({ children }: LayoutProps) {
             </div>
             <div className="flex items-center gap-4">
               <a href="/resources" className="text-xs font-bold text-gray-600 hover:text-primary-600 transition-colors uppercase">Resources</a>
-              <a href="/resources/deals" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors uppercase">Deals</a>
+              <a href="/resources/devfinds" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors uppercase">Dev Finds</a>
               <a href="/leaderboard" className="text-xs font-bold text-gray-600 hover:text-primary-600 transition-colors uppercase">Leaderboard</a>
               <a href="/labs" className="text-xs font-bold text-gray-600 hover:text-primary-600 transition-colors uppercase">Labs</a>
             </div>

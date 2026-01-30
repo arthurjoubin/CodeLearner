@@ -1,7 +1,7 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
 import { getCollection } from 'astro:content';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Newspaper, Command, Brain, Tag } from 'lucide-react';
 
 const news = (await getCollection('news')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -9,7 +9,7 @@ const news = (await getCollection('news')).sort(
 
 const latestNews = news.slice(0, 3);
 
-const deals = (await getCollection('deals')).sort(
+const devfinds = (await getCollection('devfinds')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
@@ -28,8 +28,11 @@ function formatDate(date: Date) {
 <MainLayout title="Resources">
 	<div class="page-enter max-w-5xl mx-auto">
 		<div class="mb-6">
-			<h1 class="text-xl font-black text-gray-900 uppercase">Resources</h1>
-			<p class="text-sm text-gray-500">AI news, tools, and deals</p>
+			<div class="relative inline-block">
+				<h1 class="text-xl font-black text-gray-900 uppercase">Resources</h1>
+				<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500" />
+			</div>
+			<p class="text-sm text-gray-500 mt-1">AI news, tools, and Dev Finds</p>
 		</div>
 
 		<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
@@ -38,7 +41,9 @@ function formatDate(date: Date) {
 				class="group p-4 bg-white border-2 border-gray-300 rounded-lg hover:border-gray-900 transition-all"
 			>
 				<div class="flex items-center gap-3">
-					<span class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center font-black text-gray-700">N</span>
+					<span class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+						<Newspaper class="w-5 h-5 text-gray-700" />
+					</span>
 					<div class="flex-1">
 						<h3 class="font-bold text-gray-900 text-sm uppercase">Latest News</h3>
 						<p class="text-xs text-gray-500">{news.length} articles</p>
@@ -52,7 +57,9 @@ function formatDate(date: Date) {
 				class="group p-4 bg-white border-2 border-gray-300 rounded-lg hover:border-gray-900 transition-all"
 			>
 				<div class="flex items-center gap-3">
-					<span class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center font-black text-gray-700">T</span>
+					<span class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+						<Command class="w-5 h-5 text-gray-700" />
+					</span>
 					<div class="flex-1">
 						<h3 class="font-bold text-gray-900 text-sm uppercase">AI Tools</h3>
 						<p class="text-xs text-gray-500">{tools.length} tools</p>
@@ -66,7 +73,9 @@ function formatDate(date: Date) {
 				class="group p-4 bg-white border-2 border-gray-300 rounded-lg hover:border-gray-900 transition-all"
 			>
 				<div class="flex items-center gap-3">
-					<span class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center font-black text-gray-700">L</span>
+					<span class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+						<Brain class="w-5 h-5 text-gray-700" />
+					</span>
 					<div class="flex-1">
 						<h3 class="font-bold text-gray-900 text-sm uppercase">LLM Models</h3>
 						<p class="text-xs text-gray-500">{llms.length} models</p>
@@ -76,14 +85,16 @@ function formatDate(date: Date) {
 			</a>
 
 			<a
-				href="/resources/deals"
+				href="/resources/devfinds"
 				class="group p-4 bg-white border-2 border-gray-300 rounded-lg hover:border-gray-900 transition-all"
 			>
 				<div class="flex items-center gap-3">
-					<span class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center font-black text-gray-700">%</span>
+					<span class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+						<Tag class="w-5 h-5 text-gray-700" />
+					</span>
 					<div class="flex-1">
-						<h3 class="font-bold text-gray-900 text-sm uppercase">Deals</h3>
-						<p class="text-xs text-gray-500">{deals.length} active</p>
+						<h3 class="font-bold text-gray-900 text-sm uppercase">Dev Finds</h3>
+						<p class="text-xs text-gray-500">{devfinds.length} active</p>
 					</div>
 					<ArrowRight class="w-4 h-4 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all" />
 				</div>
@@ -92,7 +103,10 @@ function formatDate(date: Date) {
 
 		<div class="mb-8">
 			<div class="flex items-center justify-between mb-4">
-				<h2 class="font-bold text-gray-900 text-sm uppercase">Latest News</h2>
+				<div class="relative inline-block">
+					<h2 class="font-bold text-gray-900 text-sm uppercase">Latest News</h2>
+					<span class="absolute -bottom-0.5 left-0 w-10 h-0.5 bg-primary-500" />
+				</div>
 				<a href="/resources/news" class="text-xs font-bold uppercase text-primary-600 hover:text-primary-700 transition-colors flex items-center gap-1">
 					View all
 					<ArrowRight class="w-3 h-3" />

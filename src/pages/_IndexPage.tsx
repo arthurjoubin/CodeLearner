@@ -32,39 +32,39 @@ function ExerciseDemoFlow() {
 
 function LandingContent() {
   return (
-    <div className="page-enter -mx-3 -mt-4">
+    <div className="page-enter min-h-screen bg-gray-50">
       {/* Hero */}
-      <section className="bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-6xl mx-auto px-4 py-14 md:py-20">
+      <section className="pt-6 pb-8">
+        <div className="max-w-6xl mx-auto px-4 py-8 md:py-10">
           <div className="max-w-3xl">
-            <div className="inline-block px-3 py-1 bg-primary-100 border border-primary-300 rounded text-xs font-bold uppercase text-primary-700 mb-5">
-              Free &amp; Open Platform
+            <div className="inline-block px-3 py-1 bg-primary-100 border border-primary-300 rounded text-xs font-bold uppercase text-primary-700 mb-2">
+              Interactive Learning
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-5">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4">
               Learn to code<br />
               <span className="text-primary-500">by doing.</span>
             </h1>
-            <p className="text-base md:text-lg text-gray-600 mb-8 max-w-xl leading-relaxed">
+            <p className="text-base md:text-lg text-gray-600 mb-6 max-w-xl leading-relaxed">
               No videos. No passive tutorials. Write real code from lesson one, get instant AI feedback, and track your progression.
             </p>
           </div>
 
           {/* Animated code demo */}
-          <div className="mt-16 md:mt-20">
+          <div className="mt-8 md:mt-10">
             <ExerciseDemoFlow />
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section className="py-12 md:py-16 scroll-mt-16">
+      <section className="py-8 md:py-10 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="relative inline-block group mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Why HackUp?</h2>
+          <div className="relative inline-block group mb-6">
+            <h2 className="text-xl md:text-3xl font-bold text-gray-900">Why HackUp?</h2>
             <span className="absolute -bottom-1 left-0 w-12 h-1 bg-primary-500 transition-all group-hover:w-full duration-300" />
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-4">
             <div className="border-2 border-gray-300 rounded-lg p-5 bg-white hover:border-primary-500 hover:shadow-md transition-all group">
               <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary-500 transition-colors">
                 <svg className="w-5 h-5 text-primary-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,10 +99,10 @@ function LandingContent() {
       </section>
 
       {/* Learning Paths */}
-      <section className="py-12 md:py-16 border-y border-gray-200">
+      <section className="py-8 md:py-10 border-y border-gray-200">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="relative inline-block group mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Learning Paths</h2>
+          <div className="relative inline-block group mb-6">
+            <h2 className="text-xl md:text-3xl font-bold text-gray-900">Learning Paths</h2>
             <span className="absolute -bottom-1 left-0 w-12 h-1 bg-primary-500 transition-all group-hover:w-full duration-300" />
           </div>
 

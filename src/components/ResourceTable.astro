@@ -1,0 +1,30 @@
+---
+interface Props {
+  headers: { label: string; width?: string; align?: 'left' | 'center' | 'right' }[];
+  emptyMessage?: string;
+}
+
+const { headers, emptyMessage } = Astro.props;
+---
+
+<table class="w-full text-sm">
+  <thead>
+    <tr class="border-b-2 border-gray-300">
+      {headers.map((header) => (
+        <th
+          class:list={[
+            'text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs',
+            header.width && `w-[${header.width}]`,
+            header.align === 'center' && 'text-center',
+            header.align === 'right' && 'text-right',
+          ]}
+        >
+          {header.label}
+        </th>
+      ))}
+    </tr>
+  </thead>
+  <tbody>
+    <slot name="row" />
+  </tbody>
+</table>

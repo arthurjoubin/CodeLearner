@@ -23,7 +23,7 @@ const comparisons = defineCollection({
 	}),
 });
 
-const deals = defineCollection({
+const devfinds = defineCollection({
 	type: 'content',
 	schema: z.object({
 		title: z.string(),
@@ -71,4 +71,4 @@ const llms = defineCollection({
 	}),
 });
 
-export const collections = { news, comparisons, deals, tools, llms };
+export const collections = { news, comparisons, devfinds, tools, llms };

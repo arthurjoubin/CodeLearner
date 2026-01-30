@@ -1,7 +1,8 @@
 ---
 import MainLayout from '../../../layouts/MainLayout.astro';
 import { getCollection, getEntry } from 'astro:content';
-import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import ResourceTabs from '../../../components/ResourceTabs.astro';
 
 export async function getStaticPaths() {
 	const llms = await getCollection('llms');
@@ -21,7 +22,7 @@ if (!llm) {
 const { Content } = await llm.render();
 
 const allNews = await getCollection('news');
-const allDeals = await getCollection('deals');
+const allDevfinds = await getCollection('devfinds');
 
 const llmName = llm.data.name;
 
@@ -31,7 +32,7 @@ const relatedNews = allNews.filter(n => {
 	return mentioned.includes(llmName) || tags.some(tag => tag.toLowerCase().includes(llmName.toLowerCase()));
 }).slice(0, 3);
 
-const relatedDeals = allDeals.filter(d => d.data.tools?.includes(llmName)).slice(0, 2);
+const relatedDevfinds = allDevfinds.filter(d => d.data.tools?.includes(llmName)).slice(0, 2);
 
 function formatDate(date: Date | string | undefined) {
 	if (!date) return '';
@@ -41,14 +42,19 @@ function formatDate(date: Date | string | undefined) {
 ---
 
 <MainLayout title={`${llm.data.name} - LLM`}>
-	<div class="page-enter max-w-3xl mx-auto">
-		<div class="flex items-center gap-2 mb-4 text-xs uppercase font-bold">
-			<a href="/resources" class="text-gray-500 hover:text-primary-600">Resources</a>
-			<span class="text-gray-300">/</span>
-			<a href="/resources/llms" class="text-gray-500 hover:text-primary-600">LLMs</a>
-			<span class="text-gray-300">/</span>
-			<span class="text-gray-900">{llm.data.name}</span>
+	<div class="page-enter max-w-5xl mx-auto">
+		<div class="mb-6">
+			<div class="flex items-center gap-2 mb-4 text-xs uppercase font-bold">
+				<a href="/resources" class="text-gray-500 hover:text-primary-600">Resources</a>
+				<span class="text-gray-300">/</span>
+				<a href="/resources/llms" class="text-gray-500 hover:text-primary-600">LLMs</a>
+				<span class="text-gray-300">/</span>
+				<span class="text-gray-900">{llm.data.name}</span>
+			</div>
+			<h1 class="text-xl font-black text-gray-900 uppercase">{llm.data.name}</h1>
 		</div>
+
+		<ResourceTabs active="llms" />
 
 		<div class="bg-white border-2 border-gray-300 rounded-lg mb-4">
 			<div class="p-4">
@@ -77,12 +83,12 @@ function formatDate(date: Date | string | undefined) {
 						<ExternalLink class="w-3 h-3" />
 						Website
 					</a>
-					{relatedDeals.length > 0 && (
+					{relatedDevfinds.length > 0 && (
 						<a 
-							href="/resources/deals" 
+							href="/resources/devfinds" 
 							class="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold uppercase rounded hover:bg-gray-200 transition-colors"
 						>
-							{relatedDeals.length} Deal{relatedDeals.length > 1 ? 's' : ''}
+							{relatedDevfinds.length} Find{relatedDevfinds.length > 1 ? 's' : ''}
 						</a>
 					)}
 				</div>
@@ -187,13 +193,6 @@ function formatDate(date: Date | string | undefined) {
 		)}
 
 		<div class="flex items-center gap-3">
-			<a 
-				href="/resources/llms" 
-				class="inline-flex items-center gap-1 text-xs font-bold uppercase text-gray-600 hover:text-gray-900 transition-colors"
-			>
-				<ArrowLeft class="w-3 h-3" />
-				Back to LLMs
-			</a>
-		</div>
+			</div>
 	</div>
 </MainLayout>

@@ -1,0 +1,86 @@
+{
+  "$ref": "#/definitions/devfinds",
+  "definitions": {
+    "devfinds": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "pubDate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "integer",
+              "format": "unix-time"
+            }
+          ]
+        },
+        "discount": {
+          "type": "string"
+        },
+        "originalPrice": {
+          "type": "string"
+        },
+        "discountedPrice": {
+          "type": "string"
+        },
+        "expireDate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "integer",
+              "format": "unix-time"
+            }
+          ]
+        },
+        "affiliate": {
+          "type": "boolean",
+          "default": false
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "pubDate",
+        "discount",
+        "originalPrice",
+        "discountedPrice",
+        "url",
+        "tools"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
