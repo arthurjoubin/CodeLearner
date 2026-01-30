@@ -1,6 +1,6 @@
 // Link replaced by standard anchor tags
 
-import { useUser, UserProvider } from '../context/UserContext';
+import { useUser } from '../context/UserContext';
 import { lessons, modules, getModulesForCourse, getExercisesForLesson } from '../data/modules';
 import { ArrowRight } from 'lucide-react';
 
@@ -20,7 +20,7 @@ interface CourseResume {
   totalLessonsCount: number;
 }
 
-function HomePageContent() {
+export function HomePageContent() {
   const { user, updateStreak, loading } = useUser();
   updateStreak();
 
@@ -287,9 +287,5 @@ function HomePageContent() {
 }
 
 export default function HomePage() {
-  return (
-    <UserProvider>
-      <HomePageContent />
-    </UserProvider>
-  );
+  return <HomePageContent />;
 }

@@ -35,9 +35,6 @@
         "verdict": {
           "type": "string"
         },
-        "image": {
-          "type": "string"
-        },
         "$schema": {
           "type": "string"
         }

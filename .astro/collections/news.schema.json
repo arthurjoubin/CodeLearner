@@ -1,7 +1,7 @@
 {
-  "$ref": "#/definitions/blog",
+  "$ref": "#/definitions/news",
   "definitions": {
-    "blog": {
+    "news": {
       "type": "object",
       "properties": {
         "title": {
@@ -30,9 +30,6 @@
           "type": "string",
           "default": "Arthur"
         },
-        "image": {
-          "type": "string"
-        },
         "tags": {
           "type": "array",
           "items": {
@@ -42,6 +39,13 @@
             "llm",
             "vibecoding"
           ]
+        },
+        "mentionedTools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
         },
         "$schema": {
           "type": "string"

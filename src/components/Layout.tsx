@@ -11,7 +11,7 @@ interface LayoutProps {
 
 // Wrapped in internal component to allow usage of useUser in the parent
 function LayoutContent({ children }: LayoutProps) {
-  const { user, logout, loading } = useUser();
+  const { user, isGuest, logout, loading } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const [levelPopupOpen, setLevelPopupOpen] = useState(false);
   const [streakPopupOpen, setStreakPopupOpen] = useState(false);
@@ -43,6 +43,22 @@ function LayoutContent({ children }: LayoutProps) {
               </div>
             </a>
 
+            {isGuest ? (
+              <div className="flex items-center gap-3 sm:gap-4">
+                <a href="/learning-path" className="text-xs font-bold text-gray-700 hover:text-primary-600 transition-colors uppercase">
+                  Learning Paths
+                </a>
+                <a href="/resources" className="text-xs font-bold text-gray-700 hover:text-primary-600 transition-colors uppercase">
+                  Resources
+                </a>
+                <a
+                  href="/login"
+                  className="flex items-center gap-1 bg-gray-900 text-white px-3 py-1.5 text-xs font-bold hover:bg-gray-700 transition-colors rounded"
+                >
+                  Login
+                </a>
+              </div>
+            ) : (
             <div className="flex items-center gap-1.5 sm:gap-2">
               <a href="/labs" className="flex items-center gap-1 px-2 py-1.5 border border-transparent hover:border-gray-300 rounded transition-colors group" title="Labs">
                 <FlaskConical className="w-4 h-4 text-gray-600 group-hover:text-primary-600 transition-colors" />
@@ -180,11 +196,11 @@ function LayoutContent({ children }: LayoutProps) {
                           <Trophy className="w-4 h-4" /> Leaderboard
                         </a>
                         <a
-                          href="/learning-path/react"
+                          href="/learning-path"
                           onClick={() => setMenuOpen(false)}
                           className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
-                          <Lightbulb className="w-4 h-4" /> Learning Path
+                          <Lightbulb className="w-4 h-4" /> Learning Paths
                         </a>
                         <a
                           href="/resources"
@@ -213,6 +229,7 @@ function LayoutContent({ children }: LayoutProps) {
                 )}
               </div>
             </div>
+            )}
           </div>
         </div>
       </header>

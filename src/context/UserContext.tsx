@@ -90,6 +90,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     await api.logout();
     setUser({ ...GUEST_USER });
     setIsGuest(true);
+    window.location.href = '/';
   };
 
   const addXp = useCallback((amount: number) => {

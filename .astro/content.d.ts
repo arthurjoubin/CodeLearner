@@ -162,17 +162,7 @@ declare module 'astro:content' {
 	};
 
 	type DataEntryMap = {
-		"blog": Record<string, {
-  id: string;
-  render(): Render[".md"];
-  slug: string;
-  body: string;
-  collection: "blog";
-  data: InferEntrySchema<"blog">;
-  rendered?: RenderedContent;
-  filePath?: string;
-}>;
-"comparisons": Record<string, {
+		"comparisons": Record<string, {
   id: string;
   render(): Render[".md"];
   slug: string;
@@ -189,6 +179,36 @@ declare module 'astro:content' {
   body: string;
   collection: "deals";
   data: InferEntrySchema<"deals">;
+  rendered?: RenderedContent;
+  filePath?: string;
+}>;
+"llms": Record<string, {
+  id: string;
+  render(): Render[".md"];
+  slug: string;
+  body: string;
+  collection: "llms";
+  data: InferEntrySchema<"llms">;
+  rendered?: RenderedContent;
+  filePath?: string;
+}>;
+"news": Record<string, {
+  id: string;
+  render(): Render[".md"];
+  slug: string;
+  body: string;
+  collection: "news";
+  data: InferEntrySchema<"news">;
+  rendered?: RenderedContent;
+  filePath?: string;
+}>;
+"tools": Record<string, {
+  id: string;
+  render(): Render[".md"];
+  slug: string;
+  body: string;
+  collection: "tools";
+  data: InferEntrySchema<"tools">;
   rendered?: RenderedContent;
   filePath?: string;
 }>;
