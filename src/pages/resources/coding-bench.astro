@@ -3,7 +3,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 import ResourceTabs from '../../components/ResourceTabs.astro';
 import { ArrowLeft, TrendingUp, Trophy } from 'lucide-react';
 
-// All models with their evolution data - sorted by SWE-Bench score (highest first)
+// All models with their benchmark data - sorted by SWE-Bench score (highest first)
 const allModels = [
   { family: 'Anthropic', version: 'Claude 4.5 Opus', date: 'Jan 2026', score: 80.9, role: 'Current World SOTA.', current: true },
   { family: 'OpenAI', version: 'GPT-5.2 Codex', date: 'Dec 2025', score: 80.0, role: 'Top competitor to Opus.', current: true },
@@ -52,8 +52,8 @@ const getRankColor = (index: number) => {
 };
 ---
 
-<MainLayout title="LLM Evolution Timeline">
-  <ResourceTabs active="evolution" />
+<MainLayout title="Coding Bench - LLM Rankings">
+  <ResourceTabs active="coding-bench" />
   
   <div class="page-enter mt-6">
     <div class="relative inline-block group mb-4">
@@ -66,7 +66,7 @@ const getRankColor = (index: number) => {
     <div class="mb-6">
       <div class="relative inline-block group">
         <div class="flex items-center gap-2">
-          <h1 class="text-2xl font-black text-gray-900 uppercase">LLM Evolution Timeline</h1>
+          <h1 class="text-2xl font-black text-gray-900 uppercase">Coding Bench</h1>
           <span class="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider border border-gray-300 rounded">
             <TrendingUp className="w-3 h-3 inline mr-1" />SWE-Bench
           </span>

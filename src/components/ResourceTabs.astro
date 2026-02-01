@@ -1,6 +1,6 @@
 ---
 interface Props {
-  active: 'news' | 'tools' | 'llms' | 'devfinds' | 'evolution';
+  active: 'news' | 'tools' | 'llms' | 'devfinds' | 'coding-bench';
 }
 
 const { active } = Astro.props;
@@ -9,7 +9,7 @@ const tabs = [
   { href: '/resources/news', label: 'News', key: 'news' },
   { href: '/resources/tools', label: 'Tools', key: 'tools' },
   { href: '/resources/llms', label: 'LLMs', key: 'llms' },
-  { href: '/resources/evolution', label: 'Évolution', key: 'evolution' },
+  { href: '/resources/coding-bench', label: 'Coding Bench', key: 'coding-bench' },
   { href: '/resources/devfinds', label: 'Dev Finds', key: 'devfinds' },
 ] as const;
 ---
