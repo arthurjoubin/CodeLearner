@@ -6,6 +6,7 @@ import {
   ChevronRight, ArrowRight, ArrowUpRight, Play,
   Code2, GraduationCap, Clock, Check
 } from 'lucide-react';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 const learningPaths = [
   { id: 'web-stack', title: 'VIBECODER BASIS', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png' },
@@ -27,14 +28,7 @@ function DesignVariationsPageContent() {
   updateStreak();
 
   if (loading || !user) {
-    return (
-      <div className="loading-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-700">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   const completedLessons = user.completedLessons || [];

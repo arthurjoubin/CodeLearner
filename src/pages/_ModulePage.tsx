@@ -5,6 +5,8 @@ import { useUser, UserProvider } from '../context/UserContext';
 import { getModule, getLessonsForModule, getExercisesForLesson, getLesson } from '../data/modules';
 import { CheckCircle, Lock, BookOpen, X } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { PageHeader } from '../components/PageTitle';
 
 const learningPathTitles: Record<string, string> = {
   react: 'React',
@@ -44,14 +46,7 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
   };
 
   if (loading) {
-    return (
-      <div className="loading-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-gray-700">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!module) {
@@ -78,11 +73,10 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
         <Breadcrumb items={[
           { label: learningPathTitles[module.courseId] || module.courseId, href: `/learning-path/${module.courseId}` },
         ]} />
-        <div className="relative inline-block group">
-          <h1 className="text-2xl font-black text-gray-900 uppercase">{module.title}</h1>
-          <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
-        </div>
-        <p className="text-gray-700 mt-1">{module.description}</p>
+        <PageHeader
+          title={module.title}
+          subtitle={module.description}
+        />
       </div>
 
       <div className="space-y-3">

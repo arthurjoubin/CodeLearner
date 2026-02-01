@@ -18,10 +18,11 @@ import {
   RotateCcw,
   Maximize,
   X,
-  BookOpen,
 } from 'lucide-react';
 import LivePreview from '../components/LivePreview';
 import Breadcrumb from '../components/Breadcrumb';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { ExerciseCompletionModal } from '../components/completion-modals';
 
 const learningPathTitles: Record<string, string> = {
   react: 'React',
@@ -67,14 +68,7 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
   }, [exercise?.id]);
 
   if (loading) {
-    return (
-      <div className="loading-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-gray-700">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!exercise || !lesson || !module) {
@@ -413,39 +407,14 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
       </div>
 
       {completed && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-white rounded-lg p-4 sm:p-6 text-center max-w-sm w-full border-2 border-gray-300 shadow-xl">
-            <div className="text-4xl sm:text-5xl mb-2 sm:mb-3">🎉</div>
-            <h2 className="text-lg sm:text-xl font-black uppercase text-green-600 mb-1">Well Done!</h2>
-            <p className="text-gray-600 mb-3 sm:mb-4 text-xs sm:text-sm">
-              {alreadyCompleted ? 'Exercise already completed' : 'You completed this exercise'}
-            </p>
-
-            <div className="flex flex-col gap-2">
-              {nextExercise ? (
-                <a
-                  href={`/exercise/${nextExercise.id}`}
-                  className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-bold py-2 sm:py-2.5 px-4 rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors text-sm"
-                >
-                  Next Exercise <ArrowRight className="w-4 h-4" />
-                </a>
-              ) : (
-                <a
-                  href={`/lesson/${lesson.id}`}
-                  className="inline-flex items-center justify-center gap-2 bg-gray-900 text-white font-bold py-2 sm:py-2.5 px-4 rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors text-sm"
-                >
-                  <BookOpen className="w-4 h-4" /> Continue
-                </a>
-              )}
-              <button
-                onClick={() => setCompleted(false)}
-                className="text-xs sm:text-sm text-gray-500 hover:text-gray-900 font-medium py-2"
-              >
-                Stay on this exercise
-              </button>
-            </div>
-          </div>
-        </div>
+        <ExerciseCompletionModal
+          isOpen={true}
+          alreadyCompleted={alreadyCompleted}
+          hasNextExercise={!!nextExercise}
+          nextExerciseId={nextExercise?.id}
+          lessonId={lesson.id}
+          onStay={() => setCompleted(false)}
+        />
       )}
     </div>
   );

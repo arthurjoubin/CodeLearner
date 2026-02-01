@@ -3,19 +3,14 @@ import { labs } from '../data/labs';
 // Link replaced for Astro compatibility
 
 import { FlaskConical, Lock, ChevronRight, CheckCircle, Star } from 'lucide-react';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { PageTitle } from '../components/PageTitle';
 
 function LabsSelectionPageContent() {
   const { user, loading } = useUser();
 
   if (loading) {
-    return (
-      <div className="loading-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-700">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!user) return null;
@@ -24,12 +19,11 @@ function LabsSelectionPageContent() {
     <div className="page-enter">
       {/* Header */}
       <div className="mb-6">
-        <div className="relative inline-block group">
+        <PageTitle>
           <h1 className="text-2xl font-black uppercase mb-1 flex items-center gap-2 text-gray-900">
             <FlaskConical className="w-6 h-6 text-primary-600" /> Project Labs
           </h1>
-          <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
-        </div>
+        </PageTitle>
         <p className="text-sm text-gray-600 mt-1">
           Guided projects to apply your React skills
         </p>

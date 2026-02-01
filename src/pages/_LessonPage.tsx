@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 // Link and useParams replaced for Astro compatibility
 
 import { useUser, UserProvider } from '../context/UserContext';
 import { getLesson, getModule, getExercisesForLesson, getLessonsForModule } from '../data/modules';
 import { getXpReward } from '../types';
 import {
-  ArrowRight,
   CheckCircle,
   Code2,
-  BookOpen,
-  Star,
 } from 'lucide-react';
 import ReactMarkdown from './_ReactMarkdown';
 import Breadcrumb from '../components/Breadcrumb';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { PageHeader } from '../components/PageTitle';
+import { LessonCompletionModal } from '../components/completion-modals';
 
 const learningPathTitles: Record<string, string> = {
   react: 'React',
@@ -35,15 +35,35 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
 
   const [completed, setCompleted] = useState(false);
 
+  const alreadyCompleted = lesson ? isLessonCompleted(lesson.id) : false;
+  const currentIndex = module && lesson ? moduleLessons.findIndex(l => l.id === lesson.id) : -1;
+  const nextLesson = currentIndex >= 0 ? moduleLessons[currentIndex + 1] : undefined;
+
+  const completedExercisesCount = exercises.filter(ex => isExerciseCompleted(ex.id)).length;
+
+  const handleComplete = useCallback(() => {
+    if (lesson) {
+      addXp(getXpReward(lesson.xpReward));
+      completeLesson(lesson.id);
+      setCompleted(true);
+    }
+  }, [lesson, addXp, completeLesson]);
+
+  const isLessonEffectivelyDone = useCallback((lid: string) => {
+    if (isLessonCompleted(lid)) return true;
+    const exs = getExercisesForLesson(lid);
+    return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
+  }, [isLessonCompleted, isExerciseCompleted]);
+
+  // Auto-complete lesson when all exercises are done
+  useEffect(() => {
+    if (exercises.length > 0 && completedExercisesCount === exercises.length && !alreadyCompleted) {
+      handleComplete();
+    }
+  }, [completedExercisesCount, exercises.length, alreadyCompleted, handleComplete]);
+
   if (loading) {
-    return (
-      <div className="loading-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-gray-700">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!lesson || !module) {
@@ -64,31 +84,6 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
     );
   }
 
-  const alreadyCompleted = isLessonCompleted(lesson.id);
-  const currentIndex = moduleLessons.findIndex(l => l.id === lesson.id);
-  const nextLesson = moduleLessons[currentIndex + 1];
-
-  const completedExercisesCount = exercises.filter(ex => isExerciseCompleted(ex.id)).length;
-
-  const handleComplete = () => {
-    addXp(getXpReward(lesson.xpReward));
-    completeLesson(lesson.id);
-    setCompleted(true);
-  };
-
-  const isLessonEffectivelyDone = (lid: string) => {
-    if (isLessonCompleted(lid)) return true;
-    const exs = getExercisesForLesson(lid);
-    return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
-  };
-
-  // Auto-complete lesson when all exercises are done
-  useEffect(() => {
-    if (exercises.length > 0 && completedExercisesCount === exercises.length && !alreadyCompleted) {
-      handleComplete();
-    }
-  }, [completedExercisesCount, exercises.length, alreadyCompleted]);
-
   return (
     <div className="page-enter max-w-6xl mx-auto px-3">
       <div className="mb-6">
@@ -96,10 +91,7 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
           { label: learningPathTitles[module.courseId] || module.courseId, href: `/learning-path/${module.courseId}` },
           { label: module.title, href: `/module/${module.id}` },
         ]} />
-        <div className="relative inline-block group">
-          <h1 className="text-xl font-black text-gray-900 uppercase">{lesson.title}</h1>
-          <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
-        </div>
+        <PageHeader title={lesson.title} />
 
         {/* Lesson and exercise navigation */}
         <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -181,31 +173,14 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
       </div>
 
       {completed && !alreadyCompleted && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-4 border-primary-500 p-8 text-center max-w-sm animate-pop shadow-lg rounded-xl">
-            <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-2xl font-black uppercase text-primary-600 mb-1">WELL DONE!</h2>
-            <p className="text-gray-700 mb-2">Course completed</p>
-            <div className="inline-flex items-center gap-2 bg-yellow-400 text-black px-4 py-2 rounded-lg border-2 border-yellow-500 font-bold text-sm mb-6">
-              <Star className="w-5 h-5" />
-              +{getXpReward(lesson.xpReward)} XP
-            </div>
-            <div className="flex flex-col gap-2">
-              {nextLesson ? (
-                <a href={`/lesson/${nextLesson.id}`} className="w-full py-3 bg-gray-900 text-white font-bold uppercase rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors">
-                  Next Lesson <ArrowRight className="w-4 h-4 inline ml-1" />
-                </a>
-              ) : (
-                <a href={`/module/${module.id}`} className="w-full py-3 bg-primary-600 text-white font-bold uppercase rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors">
-                  <BookOpen className="w-4 h-4 inline mr-1" /> Back to Module
-                </a>
-              )}
-              <button onClick={() => setCompleted(false)} className="w-full py-3 font-bold uppercase border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                Review
-              </button>
-            </div>
-          </div>
-        </div>
+        <LessonCompletionModal
+          isOpen={true}
+          xpReward={getXpReward(lesson.xpReward)}
+          hasNextLesson={!!nextLesson}
+          nextLessonId={nextLesson?.id}
+          moduleId={module.id}
+          onReview={() => setCompleted(false)}
+        />
       )}
     </div>
   );

@@ -1,5 +1,13 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
+import LearningPathCardLarge from '../../components/LearningPathCardLarge.astro';
+import LearningPathCardSoon from '../../components/LearningPathCardSoon.astro';
+import { modules } from '../../data/modules';
+
+// Helper function to get module count for a course
+function getModuleCount(courseId: string): number {
+  return modules.filter(m => m.courseId === courseId).length;
+}
 
 const learningPaths = [
 	{ 
@@ -8,9 +16,19 @@ const learningPaths = [
 		description: 'Understand the full web development ecosystem from HTTP to deployment', 
 		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', 
 		difficulty: 'beginner' as const,
-		modules: 14,
+		get modules() { return getModuleCount('web-stack'); },
 		estimatedTime: '40 hours',
 		topics: ['HTTP', 'Frontend', 'Backend', 'Databases', 'DevOps', 'Security']
+	},
+	{ 
+		id: 'git', 
+		title: 'Git', 
+		description: 'Master version control with Git and GitHub workflows', 
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png',
+		difficulty: 'beginner' as const,
+		get modules() { return getModuleCount('git'); },
+		estimatedTime: '20 hours',
+		topics: ['Commits', 'Branches', 'Merging', 'Rebase', 'GitHub']
 	},
 	{ 
 		id: 'react', 
@@ -18,7 +36,7 @@ const learningPaths = [
 		description: 'Master React and TypeScript from JSX to advanced patterns', 
 		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', 
 		difficulty: 'medium' as const,
-		modules: 12,
+		get modules() { return getModuleCount('react'); },
 		estimatedTime: '35 hours',
 		topics: ['JSX', 'Hooks', 'Context', 'Router', 'TypeScript', 'Testing']
 	},
@@ -34,17 +52,31 @@ const learningPaths = [
 		comingSoon: true
 	},
 	{ 
-		id: 'git', 
-		title: 'Git', 
-		description: 'Master version control with Git and GitHub workflows', 
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png',
+		id: 'go', 
+		title: 'Go', 
+		description: 'Learn Go programming language for modern backend development', 
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/go/go.png',
+		difficulty: 'medium' as const,
+		modules: 0,
+		estimatedTime: 'Coming soon',
+		topics: ['Basics', 'Concurrency', 'HTTP', 'Testing'],
+		comingSoon: true
+	},
+	{ 
+		id: 'python', 
+		title: 'Python', 
+		description: 'Learn Python programming language from basics to advanced', 
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png',
 		difficulty: 'beginner' as const,
 		modules: 0,
 		estimatedTime: 'Coming soon',
-		topics: ['Commits', 'Branches', 'Merging', 'Rebase', 'GitHub'],
+		topics: ['Basics', 'OOP', 'Data Structures', 'Libraries'],
 		comingSoon: true
 	},
 ];
+
+const availablePaths = learningPaths.filter(p => !p.comingSoon);
+const comingSoonPaths = learningPaths.filter(p => p.comingSoon);
 ---
 
 <MainLayout title="Learning Paths - Choose Your Journey">
@@ -60,66 +92,17 @@ const learningPaths = [
 
 		<!-- Available Paths -->
 		<div class="grid md:grid-cols-2 gap-6 mb-8">
-			{learningPaths.filter(p => !p.comingSoon).map((path) => (
-				<a
-					href={`/learning-path/${path.id}`}
-					class="block p-6 border-2 border-gray-300 rounded-lg bg-white hover:border-primary-500 hover:shadow-lg transition-all group relative overflow-hidden"
-				>
-					<div class="absolute top-0 right-0 w-24 h-24 bg-primary-100 rounded-full -mr-12 -mt-12 opacity-50 group-hover:scale-150 transition-transform duration-500" />
-					
-					<div class="relative z-10">
-						<div class="flex items-start gap-4 mb-4">
-							<img
-								src={path.logo}
-								alt={path.title}
-								class="w-12 h-12 object-contain"
-							/>
-							<div class="flex-1">
-								<div class="flex items-center gap-2 mb-1">
-									<h2 class="font-bold text-lg text-gray-900 group-hover:text-primary-700 transition-colors">{path.title}</h2>
-									<span class={`text-[10px] px-2 py-0.5 rounded border uppercase font-bold ${
-										path.difficulty === 'beginner' 
-											? 'bg-green-100 text-green-700 border-green-300' 
-											: path.difficulty === 'medium'
-												? 'bg-yellow-100 text-yellow-700 border-yellow-300'
-												: 'bg-red-100 text-red-700 border-red-300'
-									}`}>
-										{path.difficulty}
-									</span>
-								</div>
-								<p class="text-sm text-gray-600">{path.description}</p>
-							</div>
-						</div>
-
-						<div class="flex items-center gap-4 mb-4 text-xs text-gray-500">
-							<div class="flex items-center gap-1">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-								</svg>
-								<span>{path.modules} modules</span>
-							</div>
-							<div class="flex items-center gap-1">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-								</svg>
-								<span>{path.estimatedTime}</span>
-							</div>
-						</div>
-
-						<div class="flex flex-wrap gap-1">
-							{path.topics.map(topic => (
-								<span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200">
-									{topic}
-								</span>
-							))}
-						</div>
-
-						<div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-							<span class="text-xs text-gray-500">Start learning now</span>
-							<span class="text-primary-600 font-bold text-sm group-hover:translate-x-1 transition-transform">→</span>
-						</div>
-					</div>
-				</a>
+			{availablePaths.map((path) => (
+				<LearningPathCardLarge
+					id={path.id}
+					title={path.title}
+					description={path.description}
+					logo={path.logo}
+					difficulty={path.difficulty}
+					modules={path.modules}
+					estimatedTime={path.estimatedTime}
+					topics={path.topics}
+				/>
 			))}
 		</div>
 
@@ -134,32 +117,13 @@ const learningPaths = [
 			</div>
 			
 			<div class="grid md:grid-cols-2 gap-4">
-				{learningPaths.filter(p => p.comingSoon).map((path) => (
-					<div class="block p-5 border-2 border-gray-200 rounded-lg bg-gray-50 opacity-70">
-						<div class="flex items-start gap-4">
-							<img
-								src={path.logo}
-								alt={path.title}
-								class="w-10 h-10 object-contain grayscale"
-							/>
-							<div class="flex-1">
-								<div class="flex items-center gap-2 mb-1">
-									<h3 class="font-bold text-gray-700">{path.title}</h3>
-									<span class="text-[10px] px-2 py-0.5 bg-gray-200 text-gray-500 rounded uppercase font-bold">
-										Soon
-									</span>
-								</div>
-								<p class="text-xs text-gray-500">{path.description}</p>
-								<div class="flex flex-wrap gap-1 mt-2">
-									{path.topics.slice(0, 3).map(topic => (
-										<span class="text-[10px] px-1.5 py-0.5 bg-gray-200 text-gray-500 rounded">
-											{topic}
-										</span>
-									))}
-								</div>
-							</div>
-						</div>
-					</div>
+				{comingSoonPaths.map((path) => (
+					<LearningPathCardSoon
+						title={path.title}
+						description={path.description}
+						logo={path.logo}
+						topics={path.topics}
+					/>
 				))}
 			</div>
 		</div>

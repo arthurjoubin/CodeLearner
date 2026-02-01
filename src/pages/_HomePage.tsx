@@ -3,12 +3,16 @@
 import { useUser } from '../context/UserContext';
 import { lessons, modules, getModulesForCourse, getExercisesForLesson } from '../data/modules';
 import { ArrowRight } from 'lucide-react';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { SectionTitle } from '../components/PageTitle';
 
 const learningPaths = [
   { id: 'web-stack', title: 'VIBECODER BASIS', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const },
   { id: 'react', title: 'React', description: 'Learn React and TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', difficulty: 'medium' as const },
-  { id: 'fastapi', title: 'FastAPI', description: 'Build modern APIs with FastAPI', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png' },
   { id: 'git', title: 'Git', description: 'Master version control with Git', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png' },
+  { id: 'fastapi', title: 'FastAPI', description: 'Build modern APIs with FastAPI', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png' },
+  { id: 'go', title: 'Go', description: 'Learn Go programming language', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/go/go.png' },
+  { id: 'python', title: 'Python', description: 'Learn Python programming language', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png' },
 ];
 
 interface CourseResume {
@@ -25,14 +29,7 @@ export function HomePageContent() {
   updateStreak();
 
   if (loading) {
-    return (
-      <div className="loading-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-700">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!user) return null;
@@ -113,10 +110,7 @@ export function HomePageContent() {
     <div className="page-enter bg-gradient-to-b from-gray-100 to-white min-h-[calc(100vh-120px)] pb-4">
       {resumes.length > 0 && (
         <div className="mb-8">
-          <div className="relative inline-block group">
-            <h2 className="font-bold text-sm uppercase text-gray-700">Continue Learning</h2>
-            <span className="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
-          </div>
+          <SectionTitle className="text-sm">Continue Learning</SectionTitle>
           <div className="space-y-3 mt-3">
             {resumes.map(resume => {
               const pathData = learningPaths.find(p => p.id === resume.courseId);
@@ -171,14 +165,17 @@ export function HomePageContent() {
       )}
 
       <div className="mb-4">
-        <div className="relative inline-block group">
-          <h2 className="font-bold text-sm uppercase text-gray-700">Learning Paths</h2>
-          <span className="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
-        </div>
+        <SectionTitle className="text-sm">Learning Paths</SectionTitle>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide p-1">
-        {learningPaths.map((path) => {
+        {[...learningPaths]
+          .sort((a, b) => {
+            const progressA = getPathProgress(a.id);
+            const progressB = getPathProgress(b.id);
+            return progressB - progressA;
+          })
+          .map((path) => {
           const isAvailable = path.id === 'react' || path.id === 'web-stack' || path.id === 'git';
           const resume = resumes.find(r => r.courseId === path.id);
           const progress = resume
@@ -242,10 +239,7 @@ export function HomePageContent() {
         })}
       </div>
 
-      <div className="relative inline-block group mt-8">
-        <h2 className="font-bold text-sm uppercase text-gray-700">Our Method</h2>
-        <span className="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
-      </div>
+      <SectionTitle className="text-sm mt-8">Our Method</SectionTitle>
 
       <div className="border-2 border-gray-300 rounded-lg p-3 mt-3 bg-white">
         <div className="grid md:grid-cols-3 gap-4 text-sm">

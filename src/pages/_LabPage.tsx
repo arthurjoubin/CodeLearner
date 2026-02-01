@@ -19,6 +19,7 @@ import {
     Code2,
 } from 'lucide-react';
 import LivePreview from '../components/LivePreview';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 interface LabPageProps {
     labId?: string;
@@ -62,14 +63,7 @@ function LabPageContent({ labId }: LabPageProps) {
     }, [currentStepIndex, lab]);
 
     if (loading) {
-        return (
-            <div className="loading-screen flex items-center justify-center">
-                <div className="text-center">
-                    <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                    <p className="text-gray-700">Loading...</p>
-                </div>
-            </div>
-        );
+        return <LoadingSpinner />;
     }
 
     if (!lab) {

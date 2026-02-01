@@ -27,6 +27,19 @@ const toolLogos: Record<string, string> = {
 function getToolLogo(toolName: string): string {
 	return toolLogos[toolName] || `https://ui-avatars.com/api/?name=${encodeURIComponent(toolName)}&background=random&color=fff&size=128`;
 }
+
+// Format pricing text to be more condensed
+function formatPricing(pricing: string): string {
+	if (pricing.toLowerCase().includes('free')) {
+		if (pricing.toLowerCase().includes('$20')) return 'Free / $20';
+		if (pricing.toLowerCase().includes('$10')) return 'Free / $10';
+		if (pricing.toLowerCase().includes('$15')) return 'Free / $15';
+		if (pricing.toLowerCase().includes('pro')) return 'Free / Pro';
+		return 'Free';
+	}
+	if (pricing.toLowerCase().includes('vercel')) return 'Vercel';
+	return pricing;
+}
 ---
 
 <MainLayout title="AI Tools">
@@ -67,24 +80,23 @@ function getToolLogo(toolName: string): string {
 							<ExternalLink className="w-4 h-4 text-gray-400" />
 						</div>
 
-						<div class="flex items-center gap-3 mb-3 pr-6">
-							<div class="w-10 h-10 rounded-lg overflow-hidden bg-white border border-gray-200 flex items-center justify-center">
-								<img src={logoUrl} alt={tool.data.name} class="w-8 h-8 object-contain" />
-							</div>
+						<div class="absolute top-3 right-3">
+							<span class="text-[8px] px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold uppercase">
+								{formatPricing(tool.data.pricing)}
+							</span>
 						</div>
 
-						<div class="flex items-center gap-2 mb-1">
-							<div class="w-2 h-2 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />
-							<h3 class="font-bold text-gray-900 uppercase group-hover:text-primary-700 transition-colors truncate">{tool.data.name}</h3>
+						<div class="flex items-center gap-3 mb-3">
+							<div class="w-10 h-10 rounded-lg overflow-hidden bg-white border border-gray-200 flex items-center justify-center shrink-0">
+								<img src={logoUrl} alt={tool.data.name} class="w-8 h-8 object-contain" />
+							</div>
+							<div class="flex items-center gap-2 pr-16">
+								<div class="w-2 h-2 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />
+								<h3 class="font-bold text-gray-900 uppercase group-hover:text-primary-700 transition-colors">{tool.data.name}</h3>
+							</div>
 						</div>
-						<p class="text-xs text-gray-700 mb-3 ml-4 line-clamp-2">{tool.data.description}</p>
 						
-						<div class="ml-4 flex items-center justify-between">
-							<span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">
-								{tool.data.category}
-							</span>
-							<span class="text-[10px] text-gray-500 font-bold uppercase">{tool.data.pricing}</span>
-						</div>
+						<p class="text-xs text-gray-700 line-clamp-3">{tool.data.description}</p>
 					</a>
 				);
 			})}

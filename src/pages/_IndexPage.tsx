@@ -4,6 +4,9 @@ import { HomePageContent } from './_HomePage';
 import { ExerciseDemo1 } from '../components/ExerciseDemo1';
 import { ExerciseDemo2 } from '../components/ExerciseDemo2';
 import { ExerciseDemo3 } from '../components/ExerciseDemo3';
+import { LearningPathCard } from '../components/LearningPathCard';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { SectionTitle } from '../components/PageTitle';
 
 const demoComponents = [ExerciseDemo1, ExerciseDemo2, ExerciseDemo3];
 
@@ -44,9 +47,25 @@ function LandingContent() {
               Learn to code<br />
               <span className="text-primary-500">by doing.</span>
             </h1>
-            <p className="text-base md:text-lg text-gray-600 mb-6 max-w-xl leading-relaxed">
+            <p className="text-base md:text-lg text-gray-600 mb-4 max-w-xl leading-relaxed">
               No videos. No passive tutorials. Write real code from lesson one, get instant AI feedback, and track your progression.
             </p>
+
+            {/* Course Tags */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              <a href="/learning-path/web-stack" className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
+                <img src="https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png" alt="Vibecoder Basis" className="w-4 h-4 object-contain" />
+                <span className="text-xs font-medium text-gray-700">Vibecoder Basis</span>
+              </a>
+              <a href="/learning-path/react" className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
+                <img src="https://raw.githubusercontent.com/github/explore/main/topics/react/react.png" alt="React" className="w-4 h-4 object-contain" />
+                <span className="text-xs font-medium text-gray-700">React</span>
+              </a>
+              <a href="/learning-path/git" className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
+                <img src="https://raw.githubusercontent.com/github/explore/main/topics/git/git.png" alt="Git" className="w-4 h-4 object-contain" />
+                <span className="text-xs font-medium text-gray-700">Git</span>
+              </a>
+            </div>
           </div>
 
           {/* Animated code demo */}
@@ -59,10 +78,7 @@ function LandingContent() {
       {/* Features */}
       <section className="py-8 md:py-10 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="relative inline-block group mb-6">
-            <h2 className="text-xl md:text-3xl font-bold text-gray-900">Why HackUp?</h2>
-            <span className="absolute -bottom-1 left-0 w-12 h-1 bg-primary-500 transition-all group-hover:w-full duration-300" />
-          </div>
+          <SectionTitle className="mb-6">Why HackUp?</SectionTitle>
 
           <div className="grid md:grid-cols-3 gap-4">
             <div className="border-2 border-gray-300 rounded-lg p-5 bg-white hover:border-primary-500 hover:shadow-md transition-all group">
@@ -101,47 +117,57 @@ function LandingContent() {
       {/* Learning Paths */}
       <section className="py-8 md:py-10 border-y border-gray-200">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="relative inline-block group mb-6">
-            <h2 className="text-xl md:text-3xl font-bold text-gray-900">Learning Paths</h2>
-            <span className="absolute -bottom-1 left-0 w-12 h-1 bg-primary-500 transition-all group-hover:w-full duration-300" />
-          </div>
+          <SectionTitle className="mb-6">Learning Paths</SectionTitle>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <a href="/learning-path/web-stack" className="border-2 border-gray-300 rounded-lg p-5 bg-white hover:border-primary-500 hover:shadow-md transition-all group">
-              <div className="flex items-center gap-3 mb-3">
-                <img src="https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png" alt="Web Stack" className="w-8 h-8 object-contain" />
-                <h3 className="font-bold text-sm uppercase text-gray-900 group-hover:text-primary-700 transition-colors">Vibecoder Basis</h3>
-              </div>
-              <p className="text-xs text-gray-600 mb-3">Understand the full web development ecosystem.</p>
-              <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase bg-green-100 text-green-700 border border-green-300 rounded">Beginner</span>
-            </a>
-
-            <a href="/learning-path/react" className="border-2 border-gray-300 rounded-lg p-5 bg-white hover:border-primary-500 hover:shadow-md transition-all group">
-              <div className="flex items-center gap-3 mb-3">
-                <img src="https://raw.githubusercontent.com/github/explore/main/topics/react/react.png" alt="React" className="w-8 h-8 object-contain" />
-                <h3 className="font-bold text-sm uppercase text-gray-900 group-hover:text-primary-700 transition-colors">React</h3>
-              </div>
-              <p className="text-xs text-gray-600 mb-3">Learn React and TypeScript from scratch.</p>
-              <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase bg-yellow-100 text-yellow-700 border border-yellow-300 rounded">Intermediate</span>
-            </a>
-
-            <div className="border-2 border-gray-200 rounded-lg p-5 bg-gray-50 opacity-60">
-              <div className="flex items-center gap-3 mb-3">
-                <img src="https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png" alt="FastAPI" className="w-8 h-8 object-contain grayscale" />
-                <h3 className="font-bold text-sm uppercase text-gray-500">FastAPI</h3>
-              </div>
-              <p className="text-xs text-gray-500 mb-3">Build modern APIs with FastAPI.</p>
-              <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase bg-gray-200 text-gray-500 border border-gray-300 rounded">Coming Soon</span>
-            </div>
-
-            <a href="/learning-path/git" className="border-2 border-gray-300 rounded-lg p-5 bg-white hover:border-primary-500 hover:shadow-md transition-all group">
-              <div className="flex items-center gap-3 mb-3">
-                <img src="https://raw.githubusercontent.com/github/explore/main/topics/git/git.png" alt="Git" className="w-8 h-8 object-contain" />
-                <h3 className="font-bold text-sm uppercase text-gray-900 group-hover:text-primary-700 transition-colors">Git</h3>
-              </div>
-              <p className="text-xs text-gray-600 mb-3">Master version control with Git.</p>
-              <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase bg-green-100 text-green-700 border border-green-300 rounded">Beginner</span>
-            </a>
+            <LearningPathCard
+              id="web-stack"
+              title="Vibecoder Basis"
+              description="Understand the full web development ecosystem."
+              logo="https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png"
+              difficulty="beginner"
+              modules={20}
+              hours="40 hours"
+            />
+            <LearningPathCard
+              id="git"
+              title="Git"
+              description="Master version control with Git."
+              logo="https://raw.githubusercontent.com/github/explore/main/topics/git/git.png"
+              difficulty="beginner"
+              modules={7}
+              hours="20 hours"
+            />
+            <LearningPathCard
+              id="react"
+              title="React"
+              description="Learn React and TypeScript from scratch."
+              logo="https://raw.githubusercontent.com/github/explore/main/topics/react/react.png"
+              difficulty="medium"
+              modules={13}
+              hours="35 hours"
+            />
+            <LearningPathCard
+              id="fastapi"
+              title="FastAPI"
+              description="Build modern APIs with FastAPI."
+              logo="https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png"
+              comingSoon
+            />
+            <LearningPathCard
+              id="go"
+              title="Go"
+              description="Learn Go programming language."
+              logo="https://raw.githubusercontent.com/github/explore/main/topics/go/go.png"
+              comingSoon
+            />
+            <LearningPathCard
+              id="python"
+              title="Python"
+              description="Learn Python programming language."
+              logo="https://raw.githubusercontent.com/github/explore/main/topics/python/python.png"
+              comingSoon
+            />
           </div>
         </div>
       </section>
@@ -153,14 +179,7 @@ function IndexPageContent() {
   const { isGuest, loading } = useUser();
 
   if (loading) {
-    return (
-      <div className="loading-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-700">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (isGuest) {

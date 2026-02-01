@@ -2,6 +2,7 @@ import { useUser, UserProvider } from '../context/UserContext';
 import { Github } from 'lucide-react';
 import { api } from '../services/api';
 import { useState } from 'react';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 function LoginPageContent() {
   const { isGuest, loading, loginWithPassword, register } = useUser();
@@ -13,14 +14,7 @@ function LoginPageContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (loading) {
-    return (
-      <div className="loading-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-700">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   // Already logged in → redirect to home

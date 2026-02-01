@@ -1,0 +1,36 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  logo: string;
+  topics: string[];
+}
+
+const { title, description, logo, topics } = Astro.props;
+---
+
+<div class="block p-5 border-2 border-gray-200 rounded-lg bg-gray-50 opacity-70">
+  <div class="flex items-start gap-4">
+    <img
+      src={logo}
+      alt={title}
+      class="w-10 h-10 object-contain grayscale"
+    />
+    <div class="flex-1">
+      <div class="flex items-center gap-2 mb-1">
+        <h3 class="font-bold text-gray-700">{title}</h3>
+        <span class="text-[10px] px-2 py-0.5 bg-gray-200 text-gray-500 rounded uppercase font-bold">
+          Soon
+        </span>
+      </div>
+      <p class="text-xs text-gray-500">{description}</p>
+      <div class="flex flex-wrap gap-1 mt-2">
+        {topics.slice(0, 3).map(topic => (
+          <span class="text-[10px] px-1.5 py-0.5 bg-gray-200 text-gray-500 rounded">
+            {topic}
+          </span>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>

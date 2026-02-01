@@ -9,6 +9,8 @@ import {
   ArrowRight,
   ArrowLeft,
 } from 'lucide-react';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { QuizCompletionModal } from '../components/completion-modals';
 
 interface QuizPageProps {
   exercise: QuizExercise;
@@ -32,14 +34,7 @@ function QuizPageContent({
   const [completed, setCompleted] = useState(false);
 
   if (loading) {
-    return (
-      <div className="loading-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-700">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!user) return null;
@@ -240,53 +235,16 @@ function QuizPageContent({
       </div>
 
       {completed && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-4 border-primary-500 p-8 text-center max-w-sm animate-pop shadow-lg">
-            <div className="text-6xl mb-4">
-              {correctCount === exercise.questions.length ? '🎉' : correctCount >= exercise.questions.length / 2 ? '👍' : '📚'}
-            </div>
-
-            <h2 className="text-2xl font-black mb-2 uppercase text-green-600">Quiz Complete!</h2>
-            <p className="text-gray-600 mb-2">
-              You got <span className="font-bold">{correctCount}</span> out of <span className="font-bold">{exercise.questions.length}</span> correct
-            </p>
-
-            <div className="w-full bg-gray-200 h-3 rounded-full mb-4 overflow-hidden">
-              <div
-                className={`h-full ${correctCount === exercise.questions.length ? 'bg-green-500' : correctCount >= exercise.questions.length / 2 ? 'bg-yellow-500' : 'bg-red-500'}`}
-                style={{ width: `${(correctCount / exercise.questions.length) * 100}%` }}
-              />
-            </div>
-
-            {alreadyCompleted && (
-              <p className="text-sm text-gray-500 mb-6">Already completed</p>
-            )}
-
-            <div className="flex flex-col gap-3">
-              {nextExercise ? (
-                <a
-                  href={`/exercise/${nextExercise.id}`}
-                  className="bg-gray-900 text-white font-bold py-3 px-6 rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors"
-                >
-                  Next Exercise →
-                </a>
-              ) : (
-                <a
-                  href={`/lesson/${lesson.id}`}
-                  className="bg-gray-900 text-white font-bold py-3 px-6 rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors"
-                >
-                  Continue →
-                </a>
-              )}
-              <button
-                onClick={handleRestartQuiz}
-                className="text-sm text-gray-500 hover:text-black underline"
-              >
-                Try again
-              </button>
-            </div>
-          </div>
-        </div>
+        <QuizCompletionModal
+          isOpen={true}
+          correctCount={correctCount}
+          totalQuestions={exercise.questions.length}
+          alreadyCompleted={alreadyCompleted}
+          hasNextExercise={!!nextExercise}
+          nextExerciseId={nextExercise?.id}
+          lessonId={lesson.id}
+          onRestart={handleRestartQuiz}
+        />
       )}
     </div>
   );

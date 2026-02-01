@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // Link will be replaced by standard anchor tags for Astro compatibility
 
 import { useUser, UserProvider } from '../context/UserContext';
@@ -15,6 +15,11 @@ function LayoutContent({ children }: LayoutProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [levelPopupOpen, setLevelPopupOpen] = useState(false);
   const [streakPopupOpen, setStreakPopupOpen] = useState(false);
+  const [currentPath, setCurrentPath] = useState('');
+
+  useEffect(() => {
+    setCurrentPath(window.location.pathname);
+  }, []);
 
   if (loading) {
     return (
@@ -34,43 +39,57 @@ function LayoutContent({ children }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col relative">
       <header className="bg-white border-b border-gray-300 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-3 py-3">
+        <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <a href="/" className="flex items-center gap-2 group">
               <div className="relative">
-                <span className="text-xl font-bold tracking-widest text-gray-900">HACK<span className="text-primary-500">UP</span></span>
-                <div className="absolute -bottom-0.5 left-0 w-6 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+                <span className="text-2xl font-bold tracking-widest text-gray-900">HACK<span className="text-primary-500">UP</span></span>
+                <div className="absolute -bottom-1 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
               </div>
             </a>
 
             {isGuest ? (
-              <div className="flex items-center gap-3 sm:gap-4">
-                <a href="/learning-path" className="text-xs font-bold text-gray-700 hover:text-primary-600 transition-colors uppercase">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <a 
+                  href="/learning-path" 
+                  className={`relative px-3 py-2 text-sm font-bold uppercase rounded-lg transition-colors ${
+                    (currentPath.startsWith('/learning-path') || currentPath.startsWith('/module') || currentPath.startsWith('/lesson') || currentPath.startsWith('/exercise') || currentPath.startsWith('/quiz'))
+                      ? 'text-primary-600 border border-primary-500 bg-primary-50' 
+                      : 'text-gray-700 border border-gray-300 hover:border-gray-400 hover:text-gray-900'
+                  }`}
+                >
                   Learning Paths
                 </a>
-                <a href="/resources" className="text-xs font-bold text-gray-700 hover:text-primary-600 transition-colors uppercase">
+                <a 
+                  href="/resources" 
+                  className={`relative px-3 py-2 text-sm font-bold uppercase rounded-lg transition-colors ${
+                    (currentPath.startsWith('/resources') || currentPath.startsWith('/lab'))
+                      ? 'text-primary-600 border border-primary-500 bg-primary-50' 
+                      : 'text-gray-700 border border-gray-300 hover:border-gray-400 hover:text-gray-900'
+                  }`}
+                >
                   Resources
                 </a>
                 <a
                   href="/login"
-                  className="flex items-center gap-1 bg-gray-900 text-white px-3 py-1.5 text-xs font-bold hover:bg-gray-700 transition-colors rounded"
+                  className="flex items-center gap-1 bg-gray-900 text-white px-4 py-2 text-sm font-bold hover:bg-gray-700 transition-colors rounded-lg"
                 >
                   Login
                 </a>
               </div>
             ) : (
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <a href="/labs" className="flex items-center gap-1 px-2 py-1.5 border border-transparent hover:border-gray-300 rounded transition-colors group" title="Labs">
-                <FlaskConical className="w-4 h-4 text-gray-600 group-hover:text-primary-600 transition-colors" />
-                <span className="text-xs font-bold hidden sm:inline text-gray-700 group-hover:text-primary-600 transition-colors uppercase">Lab</span>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <a href="/labs" className="flex items-center gap-1.5 px-3 py-2 border border-transparent hover:border-gray-300 rounded transition-colors group" title="Labs">
+                <FlaskConical className="w-5 h-5 text-gray-600 group-hover:text-primary-600 transition-colors" />
+                <span className="text-sm font-bold hidden sm:inline text-gray-700 group-hover:text-primary-600 transition-colors uppercase">Lab</span>
               </a>
 
               <div className="relative">
                 <button
                   onClick={() => setStreakPopupOpen(!streakPopupOpen)}
-                  className="flex items-center gap-1 bg-gray-900 text-white px-2 py-1.5 text-xs font-bold hover:bg-gray-700 transition-colors rounded"
+                  className="flex items-center gap-1.5 bg-gray-900 text-white px-3 py-2 text-sm font-bold hover:bg-gray-700 transition-colors rounded"
                 >
-                  <Flame className="w-4 h-4" />
+                  <Flame className="w-5 h-5" />
                   <span>{user.streak}</span>
                 </button>
                 {streakPopupOpen && (
@@ -108,9 +127,9 @@ function LayoutContent({ children }: LayoutProps) {
               <div className="relative">
                 <button
                   onClick={() => setLevelPopupOpen(!levelPopupOpen)}
-                  className="flex items-center gap-1 border border-gray-300 px-2 py-1.5 text-xs font-bold hover:bg-gray-900 hover:text-white transition-colors rounded bg-white"
+                  className="flex items-center gap-1.5 border border-gray-300 px-3 py-2 text-sm font-bold hover:bg-gray-900 hover:text-white transition-colors rounded bg-white"
                 >
-                  <span className="hidden sm:inline text-[10px] text-gray-500 uppercase">{levelInfo.title}</span>
+                  <span className="hidden sm:inline text-xs text-gray-500 uppercase">{levelInfo.title}</span>
                   <span>Lvl {levelInfo.level}</span>
                 </button>
                 {levelPopupOpen && (
@@ -177,10 +196,10 @@ function LayoutContent({ children }: LayoutProps) {
               <div className="relative">
                 <button
                   onClick={() => setMenuOpen(!menuOpen)}
-                  className="p-1.5 hover:bg-gray-100 border border-transparent hover:border-gray-300 transition-colors rounded"
+                  className="p-2 hover:bg-gray-100 border border-transparent hover:border-gray-300 transition-colors rounded"
                   title="Menu"
                 >
-                  {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                  {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                 </button>
 
                 {menuOpen && (
