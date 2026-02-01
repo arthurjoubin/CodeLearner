@@ -50,21 +50,21 @@ function LayoutContent({ children }: LayoutProps) {
 
             {isGuest ? (
               <div className="flex items-center gap-2 sm:gap-3">
-                <a 
-                  href="/learning-path" 
-                  className={`relative px-3 py-2 text-sm font-bold uppercase rounded-lg transition-colors ${
+                <a
+                  href="/learning-path"
+                  className={`hidden sm:block relative px-3 py-2 text-sm font-bold uppercase rounded-lg transition-colors ${
                     (currentPath.startsWith('/learning-path') || currentPath.startsWith('/module') || currentPath.startsWith('/lesson') || currentPath.startsWith('/exercise') || currentPath.startsWith('/quiz'))
-                      ? 'text-primary-600 border border-primary-500 bg-primary-50' 
+                      ? 'text-primary-600 border border-primary-500 bg-primary-50'
                       : 'text-gray-700 border border-gray-300 hover:border-gray-400 hover:text-gray-900'
                   }`}
                 >
                   Learning Paths
                 </a>
-                <a 
-                  href="/resources" 
-                  className={`relative px-3 py-2 text-sm font-bold uppercase rounded-lg transition-colors ${
+                <a
+                  href="/resources"
+                  className={`hidden sm:block relative px-3 py-2 text-sm font-bold uppercase rounded-lg transition-colors ${
                     (currentPath.startsWith('/resources') || currentPath.startsWith('/lab'))
-                      ? 'text-primary-600 border border-primary-500 bg-primary-50' 
+                      ? 'text-primary-600 border border-primary-500 bg-primary-50'
                       : 'text-gray-700 border border-gray-300 hover:border-gray-400 hover:text-gray-900'
                   }`}
                 >
@@ -76,6 +76,38 @@ function LayoutContent({ children }: LayoutProps) {
                 >
                   Login
                 </a>
+                <div className="relative sm:hidden">
+                  <button
+                    onClick={() => setMenuOpen(!menuOpen)}
+                    className="p-2 hover:bg-gray-100 border border-transparent hover:border-gray-300 transition-colors rounded"
+                    title="Menu"
+                  >
+                    {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                  </button>
+                  {menuOpen && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+                      <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-300 rounded-lg z-50">
+                        <div className="py-1">
+                          <a
+                            href="/learning-path"
+                            onClick={() => setMenuOpen(false)}
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            <Lightbulb className="w-4 h-4" /> Learning Paths
+                          </a>
+                          <a
+                            href="/resources"
+                            onClick={() => setMenuOpen(false)}
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            <BookOpen className="w-4 h-4" /> Resources
+                          </a>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             ) : (
             <div className="flex items-center gap-2 sm:gap-3">
