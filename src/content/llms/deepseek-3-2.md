@@ -62,15 +62,15 @@ DeepSeek 3.2 is the latest flagship model from DeepSeek, released in January 202
 
 ## Evolution
 
-| Version | Date | SWE-Bench | Key Features |
-|---------|------|-----------|--------------|
-| DeepSeek Coder | Oct 2023 | 42% | First code-specialized model |
-| DeepSeek LLM | Nov 2023 | 38% | First general model release |
-| DeepSeek Coder V2 | Jun 2024 | 53% | Major code capability upgrade |
-| DeepSeek V2 | May 2024 | 45% | MoE architecture introduction |
-| DeepSeek V2.5 | Sep 2024 | 58% | Chat and coding merged |
-| DeepSeek V3 | Dec 2024 | 62% | Next-gen flagship |
-| **DeepSeek 3.2** | **Jan 2025** | **68%** | **Agentic capabilities + reasoning** |
-| DeepSeek R1 | Jan 2025 | 73% | Reasoning-specialized model |
+| Version | Date de sortie | Score SWE-bench Verified | Évolution Majeure |
+|---------|---------------|--------------------------|-------------------|
+| DeepSeek V3 | Déc. 2024 | 45.4% | Version de base du flagship. |
+| DeepSeek R1 | Jan. 2025 | 49.2% | Introduction du raisonnement pur (RL). |
+| DeepSeek V3-0324 | Mars 2025 | 48.2% | Optimisation de l'architecture MoE. |
+| DeepSeek R1-0528 | Mai 2025 | 53.5% | Amélioration du "Chain of Thought". |
+| DeepSeek V3.1 | Août 2025 | 66.0% | Mode Hybride (Think/Non-Think). |
+| DeepSeek V3.2-Exp | Sept. 2025 | 67.8% | Introduction de la Sparse Attention. |
+| **DeepSeek V3.2** | **Déc. 2025** | **68.4%** | **Modèle actuel (Official Reasoner).** |
+| DeepSeek V3.2 Spec. | Déc. 2025 | 73.1% | Version "Speciale" optimisée pour les agents. |
 
-Rapid iteration with +8-10 point improvements per major release, showing strong focus on coding and agentic capabilities.
+Progression impressionnante de +27.7 points en un an, montrant l'accent mis sur les capacités agentiques et le raisonnement.
