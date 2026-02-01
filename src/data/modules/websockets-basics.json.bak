@@ -1,0 +1,171 @@
+{
+  "module": {
+    "id": "websockets-basics",
+    "title": "WebSockets & Temps Réel",
+    "description": "Communiquez en temps réel entre client et serveur avec WebSockets et Socket.io",
+    "icon": "Zap",
+    "requiredXp": 1800,
+    "color": "from-green-400 to-emerald-600",
+    "courseId": "web-stack"
+  },
+  "lessons": [
+    {
+      "id": "websockets-intro",
+      "moduleId": "websockets-basics",
+      "title": "Introduction aux WebSockets",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- WebSocket = protocole de communication bidirectionnelle en temps réel\n- Connexion persistante : une seule connexion pour plusieurs messages\n- Full-duplex : client et serveur peuvent envoyer des messages en simultané\n- Alternative aux requêtes HTTP polling (plus efficace)\n- Parfait pour : chat, notifications, jeux en ligne, tableaux de bord temps réel\n- Nécessite un serveur WebSocket (Node.js, etc.)\n\n---\n\n# WebSockets : La Communication Temps Réel\n\n## Le Problème avec HTTP\n\n**HTTP classique (requête-réponse) :**\n```\nClient: Hey serveur, y'a des news ?\nServeur: Non\n[attend 5 secondes]\nClient: Hey serveur, y'a des news ?\nServeur: Non\n[attend 5 secondes]\nClient: Hey serveur, y'a des news ?\nServeur: Oui ! Voici les news.\n```\n\n**Problèmes :**\n- Latence élevée\n- Overhead HTTP (headers à chaque requête)\n- Consommation de ressources serveur\n- Pas de push depuis le serveur\n\n## La Solution : WebSockets\n\n**WebSocket connexion persistante :**\n```\nClient: Hey serveur, ouvrons une connexion WebSocket\nServeur: OK, connexion établie !\n\n[connexion ouverte]\n\nServeur: Nouvelle news !\nClient: Merci !\nServeur: Encore une news !\nClient: Super !\nClient: Je veux envoyer un message\nServeur: Reçu !\n\n[connexion reste ouverte...]\n```\n\n**Avantages :**\n- Connexion bidirectionnelle persistante\n- Faible latence\n- Pas d'overhead HTTP après handshake\n- Le serveur peut pousser des données\n- Évolutif (moins de ressources que HTTP polling)\n\n## Comment ça marche ?\n\n### 1. Handshake HTTP (une seule fois)\n\n```\nClient envoie :\nGET /chat HTTP/1.1\nHost: server.example.com\nUpgrade: websocket\nConnection: Upgrade\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\nSec-WebSocket-Version: 13\n\nServeur répond :\nHTTP/1.1 101 Switching Protocols\nUpgrade: websocket\nConnection: Upgrade\nSec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=\n```\n\n### 2. Connexion WebSocket établie\n\nAprès le handshake, la connexion devient WebSocket :\n- Pas de headers HTTP supplémentaires\n- Messages légers (frames)\n- Communication bidirectionnelle continue\n\n## Cas d'Usage\n\n### ✅ Parfait pour :\n- **Chat en temps réel** (WhatsApp, Discord, Slack)\n- **Notifications live** (alertes, mises à jour)\n- **Jeux multijoueurs** (coordination état du jeu)\n- **Tableaux de bord temps réel** (trading, analytics)\n- **Collaboration** (Google Docs, Figma)\n- **Streaming** (données, pas vidéo)\n\n### ❌ Éviter pour :\n- Données uniques/non fréquentes (utiliser HTTP)\n- Téléchargement de fichiers (HTTP est plus adapté)\n- Requêtes simples (overkill)\n\n## WebSocket API Native (Client)\n\n```javascript\n// Créer une connexion WebSocket\nconst socket = new WebSocket('wss://echo.websocket.org');\n\n// Événements\nsocket.addEventListener('open', (event) => {\n  console.log('Connecté au serveur');\n  socket.send('Hello Server!');\n});\n\nsocket.addEventListener('message', (event) => {\n  console.log('Message reçu:', event.data);\n});\n\nsocket.addEventListener('close', (event) => {\n  console.log('Connexion fermée');\n});\n\nsocket.addEventListener('error', (error) => {\n  console.error('Erreur WebSocket:', error);\n});\n\n// Envoyer un message\nfunction sendMessage(message) {\n  if (socket.readyState === WebSocket.OPEN) {\n    socket.send(JSON.stringify({\n      type: 'chat',\n      content: message,\n      timestamp: Date.now()\n    }));\n  }\n}\n\n// Fermer la connexion\nsocket.close();\n```\n\n## États d'une Connexion WebSocket\n\n```javascript\nsocket.readyState;\n// 0 - CONNECTING : Connexion en cours\n// 1 - OPEN : Connexion établie\n// 2 - CLOSING : Fermeture en cours\n// 3 - CLOSED : Connexion fermée\n```",
+      "codeExample": "// Client WebSocket complet\n\nclass ChatClient {\n  constructor(url) {\n    this.url = url;\n    this.socket = null;\n    this.reconnectAttempts = 0;\n    this.maxReconnectAttempts = 5;\n  }\n\n  connect() {\n    console.log('Connexion à', this.url);\n    \n    this.socket = new WebSocket(this.url);\n    \n    this.socket.onopen = () => {\n      console.log('✅ Connecté !');\n      this.reconnectAttempts = 0;\n      this.onConnect?.();\n    };\n    \n    this.socket.onmessage = (event) => {\n      try {\n        const data = JSON.parse(event.data);\n        console.log('📨 Message reçu:', data);\n        this.onMessage?.(data);\n      } catch (e) {\n        console.log('📨 Message texte:', event.data);\n      }\n    };\n    \n    this.socket.onclose = (event) => {\n      console.log('❌ Déconnecté', event.code, event.reason);\n      this.onDisconnect?.();\n      \n      // Reconnexion automatique\n      if (this.reconnectAttempts < this.maxReconnectAttempts) {\n        this.reconnectAttempts++;\n        console.log(`Tentative de reconnexion ${this.reconnectAttempts}/${this.maxReconnectAttempts}...`);\n        setTimeout(() => this.connect(), 3000);\n      }\n    };\n    \n    this.socket.onerror = (error) => {\n      console.error('💥 Erreur:', error);\n      this.onError?.(error);\n    };\n  }\n\n  send(message) {\n    if (this.socket?.readyState === WebSocket.OPEN) {\n      const data = typeof message === 'string' ? message : JSON.stringify(message);\n      this.socket.send(data);\n      console.log('📤 Envoyé:', message);\n    } else {\n      console.error('Socket non connecté');\n    }\n  }\n\n  disconnect() {\n    this.socket?.close();\n  }\n}\n\n// Utilisation\nconst chat = new ChatClient('wss://mon-chat.com');\n\nchat.onConnect = () => {\n  chat.send({ type: 'join', room: 'general' });\n};\n\nchat.onMessage = (data) => {\n  if (data.type === 'chat') {\n    displayMessage(data.user, data.content);\n  }\n};\n\nchat.connect();\n\n// Envoyer un message\nfunction sendChatMessage(text) {\n  chat.send({\n    type: 'chat',\n    content: text,\n    timestamp: Date.now()\n  });\n}"
+    },
+    {
+      "id": "socketio-intro",
+      "moduleId": "websockets-basics",
+      "title": "Socket.io : Simplifier WebSockets",
+      "order": 2,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Socket.io = bibliothèque qui simplifie WebSockets\n- Fallback automatique si WebSocket non dispo (long-polling)\n- Gestion des rooms (canaux) intégrée\n- Broadcasting (envoyer à plusieurs clients)\n- Reconnexion automatique\n- Supporte les acknowledgments (confirmation de réception)\n- Nécessite socket.io côté serveur ET client\n\n---\n\n# Socket.io : WebSockets Simplifiés\n\n## Pourquoi Socket.io ?\n\n**WebSocket natif est basique :**\n- Pas de fallback si WebSocket indisponible\n- Pas de reconnexion automatique\n- Pas de notion de \"rooms\"\n- Pas de broadcasting simple\n- Gestion manuelle des erreurs\n\n**Socket.io apporte :**\n- ✅ Fallback automatique (long-polling → WebSocket)\n- ✅ Reconnexion automatique avec backoff\n- ✅ Rooms et namespaces\n- ✅ Broadcasting facile\n- ✅ Acknowledgments\n- ✅ Binaire supporté\n- ✅ Middleware possible\n\n## Architecture Socket.io\n\n```\nClient (navigateur)        Serveur (Node.js)\n      ↓                           ↑\nsocket.emit('chat')  ─────────>  socket.on('chat')\n      ↑                           ↓\nsocket.on('reply')  <─────────  io.emit('reply')\n```\n\n## Installation\n\n**Serveur (Node.js) :**\n```bash\nnpm install socket.io\n```\n\n**Client :**\n```bash\nnpm install socket.io-client\n# ou CDN\n<script src=\"/socket.io/socket.io.js\"></script>\n```\n\n## Serveur Socket.io (Node.js + Express)\n\n```javascript\nconst express = require('express');\nconst http = require('http');\nconst { Server } = require('socket.io');\n\nconst app = express();\nconst server = http.createServer(app);\nconst io = new Server(server, {\n  cors: {\n    origin: \"http://localhost:3000\",\n    methods: [\"GET\", \"POST\"]\n  }\n});\n\n// Connexion d'un client\nio.on('connection', (socket) => {\n  console.log('Un utilisateur s\'est connecté:', socket.id);\n  \n  // Recevoir un message\n  socket.on('chat message', (msg) => {\n    console.log('Message reçu:', msg);\n    \n    // Envoyer à tous les clients\n    io.emit('chat message', {\n      user: socket.id,\n      text: msg,\n      time: new Date()\n    });\n  });\n  \n  // Déconnexion\n  socket.on('disconnect', () => {\n    console.log('Utilisateur déconnecté:', socket.id);\n  });\n});\n\nserver.listen(3001, () => {\n  console.log('Serveur sur http://localhost:3001');\n});\n```\n\n## Client Socket.io\n\n```javascript\nimport { io } from 'socket.io-client';\n\n// Connexion au serveur\nconst socket = io('http://localhost:3001');\n\n// Ou avec options\nconst socket = io('http://localhost:3001', {\n  transports: ['websocket', 'polling'],\n  reconnection: true,\n  reconnectionAttempts: 5,\n  reconnectionDelay: 1000\n});\n\n// Événements de connexion\nsocket.on('connect', () => {\n  console.log('Connecté au serveur');\n  console.log('ID:', socket.id);\n});\n\nsocket.on('disconnect', (reason) => {\n  console.log('Déconnecté:', reason);\n});\n\nsocket.on('connect_error', (error) => {\n  console.error('Erreur de connexion:', error);\n});\n\n// Recevoir des messages\nsocket.on('chat message', (data) => {\n  console.log(`${data.user}: ${data.text}`);\n  addMessageToUI(data.user, data.text);\n});\n\n// Envoyer un message\nfunction sendMessage(text) {\n  socket.emit('chat message', text);\n}\n\n// Envoyer avec acknowledgment\nsocket.emit('chat message', text, (response) => {\n  console.log('Message bien reçu par le serveur:', response);\n});\n```\n\n## Broadcasting : Envoyer à Plusieurs\n\n```javascript\n// Serveur\nio.on('connection', (socket) => {\n  \n  // Émettre à tous les clients (y compris l'expéditeur)\n  io.emit('message', 'Hello tout le monde !');\n  \n  // Émettre à tous sauf l'expéditeur\n  socket.broadcast.emit('message', `${socket.id} a rejoint le chat`);\n  \n  // Émettre à une room spécifique\n  io.to('room-123').emit('message', 'Message privé à room-123');\n  \n  // Émettre à tous dans une room sauf l'expéditeur\n  socket.to('room-123').emit('message', 'Nouveau message dans la room');\n});\n```\n\n## Rooms (Canaux/Salons)\n\n```javascript\n// Serveur\nio.on('connection', (socket) => {\n  \n  // Rejoindre une room\n  socket.on('join-room', (roomId) => {\n    socket.join(roomId);\n    console.log(`${socket.id} a rejoint ${roomId}`);\n    \n    // Notifier les autres de la room\n    socket.to(roomId).emit('user-joined', socket.id);\n  });\n  \n  // Quitter une room\n  socket.on('leave-room', (roomId) => {\n    socket.leave(roomId);\n    socket.to(roomId).emit('user-left', socket.id);\n  });\n  \n  // Message dans une room spécifique\n  socket.on('room-message', ({ roomId, message }) => {\n    io.to(roomId).emit('room-message', {\n      user: socket.id,\n      message,\n      room: roomId\n    });\n  });\n  \n  // Lister les clients d'une room\n  socket.on('get-room-users', async (roomId) => {\n    const sockets = await io.in(roomId).fetchSockets();\n    const userIds = sockets.map(s => s.id);\n    socket.emit('room-users', userIds);\n  });\n});\n```\n\n## Namespaces\n\nOrganiser ton app avec des namespaces :\n\n```javascript\n// Serveur\nconst chatNamespace = io.of('/chat');\nconst gameNamespace = io.of('/game');\n\nchatNamespace.on('connection', (socket) => {\n  console.log('Utilisateur dans /chat');\n  \n  socket.on('message', (msg) => {\n    chatNamespace.emit('message', msg);\n  });\n});\n\ngameNamespace.on('connection', (socket) => {\n  console.log('Joueur dans /game');\n  \n  socket.on('move', (data) => {\n    gameNamespace.emit('move', data);\n  });\n});\n\n// Client\nconst chatSocket = io('http://localhost:3001/chat');\nconst gameSocket = io('http://localhost:3001/game');\n```",
+      "codeExample": "// Exemple complet : Chat avec Socket.io\n\n// ============ SERVEUR (server.js) ============\nconst express = require('express');\nconst http = require('http');\nconst { Server } = require('socket.io');\n\nconst app = express();\nconst server = http.createServer(app);\nconst io = new Server(server, {\n  cors: { origin: '*' }\n});\n\nconst users = new Map();\n\nio.on('connection', (socket) => {\n  console.log('🟢 Connecté:', socket.id);\n  \n  // Connexion d'un utilisateur\n  socket.on('user-login', (username) => {\n    users.set(socket.id, username);\n    socket.broadcast.emit('user-joined', username);\n    io.emit('user-count', users.size);\n  });\n  \n  // Message dans le chat général\n  socket.on('chat-message', ({ text, room = 'general' }) => {\n    const username = users.get(socket.id) || 'Anonymous';\n    const message = {\n      id: Date.now(),\n      user: username,\n      text,\n      room,\n      timestamp: new Date().toISOString()\n    };\n    \n    if (room === 'general') {\n      io.emit('chat-message', message);\n    } else {\n      io.to(room).emit('chat-message', message);\n    }\n  });\n  \n  // Rejoindre une room\n  socket.on('join-room', (room) => {\n    socket.join(room);\n    const username = users.get(socket.id);\n    socket.to(room).emit('notification', `${username} a rejoint ${room}`);\n  });\n  \n  // Typing indicator\n  socket.on('typing', ({ isTyping, room }) => {\n    const username = users.get(socket.id);\n    socket.to(room || 'general').emit('user-typing', {\n      user: username,\n      isTyping\n    });\n  });\n  \n  // Déconnexion\n  socket.on('disconnect', () => {\n    const username = users.get(socket.id);\n    users.delete(socket.id);\n    socket.broadcast.emit('user-left', username);\n    io.emit('user-count', users.size);\n    console.log('🔴 Déconnecté:', socket.id);\n  });\n});\n\nserver.listen(3001, () => console.log('🚀 Serveur sur :3001'));\n\n\n// ============ CLIENT (App.js) ============\nimport { useEffect, useState } from 'react';\nimport { io } from 'socket.io-client';\n\nfunction ChatApp() {\n  const [socket, setSocket] = useState(null);\n  const [messages, setMessages] = useState([]);\n  const [input, setInput] = useState('');\n  const [username, setUsername] = useState('');\n  const [userCount, setUserCount] = useState(0);\n  const [typingUsers, setTypingUsers] = useState([]);\n\n  useEffect(() => {\n    const newSocket = io('http://localhost:3001');\n    setSocket(newSocket);\n\n    newSocket.on('connect', () => {\n      console.log('✅ Connecté !');\n      const name = prompt('Ton pseudo ?') || 'Anonymous';\n      setUsername(name);\n      newSocket.emit('user-login', name);\n    });\n\n    newSocket.on('chat-message', (msg) => {\n      setMessages(prev => [...prev, msg]);\n    });\n\n    newSocket.on('user-count', (count) => {\n      setUserCount(count);\n    });\n\n    newSocket.on('user-typing', ({ user, isTyping }) => {\n      if (isTyping) {\n        setTypingUsers(prev => [...new Set([...prev, user])]);\n      } else {\n        setTypingUsers(prev => prev.filter(u => u !== user));\n      }\n    });\n\n    return () => newSocket.close();\n  }, []);\n\n  const sendMessage = (e) => {\n    e.preventDefault();\n    if (input.trim() && socket) {\n      socket.emit('chat-message', { text: input });\n      setInput('');\n      socket.emit('typing', { isTyping: false });\n    }\n  };\n\n  const handleTyping = (e) => {\n    setInput(e.target.value);\n    if (socket) {\n      socket.emit('typing', { isTyping: e.target.value.length > 0 });\n    }\n  };\n\n  return (\n    <div className=\"chat-app\">\n      <header>\n        <h1>💬 Chat en temps réel</h1>\n        <span>{userCount} utilisateurs en ligne</span>\n      </header>\n      \n      <div className=\"messages\">\n        {messages.map(msg => (\n          <div key={msg.id} className=\"message\">\n            <strong>{msg.user}:</strong> {msg.text}\n          </div>\n        ))}\n        {typingUsers.length > 0 && (\n          <div className=\"typing\">\n            {typingUsers.join(', ')} écrit...\n          </div>\n        )}\n      </div>\n      \n      <form onSubmit={sendMessage}>\n        <input\n          value={input}\n          onChange={handleTyping}\n          placeholder=\"Écris un message...\"\n        />\n        <button type=\"submit\">Envoyer</button>\n      </form>\n    </div>\n  );\n}\n\nexport default ChatApp;"
+    },
+    {
+      "id": "websockets-patterns",
+      "moduleId": "websockets-basics",
+      "title": "Patterns Avancés",
+      "order": 3,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- Acknowledgments : confirmer la réception des messages\n- Middleware : exécuter du code avant les événements\n- Authentification : sécuriser les connexions WebSocket\n- Gestion des erreurs : récupération et retry\n- Room-based architecture : organiser par salons\n- Presence tracking : savoir qui est en ligne\n- Rate limiting : éviter le spam\n\n---\n\n# Patterns Avancés WebSockets\n\n## 1. Acknowledgments (Confirmations)\n\nConfirmer que le message a bien été reçu :\n\n```javascript\n// Client\nsocket.emit('send-message', message, (response) => {\n  if (response.success) {\n    console.log('✅ Message envoyé:', response.id);\n    // Mettre à jour l'UI (checkmark, etc.)\n  } else {\n    console.error('❌ Erreur:', response.error);\n    // Afficher erreur à l'utilisateur\n  }\n});\n\n// Serveur\nsocket.on('send-message', async (message, callback) => {\n  try {\n    // Sauvegarder en base\n    const saved = await Message.create({\n      text: message.text,\n      user: socket.userId,\n      timestamp: new Date()\n    });\n    \n    // Envoyer aux autres\n    socket.broadcast.emit('new-message', saved);\n    \n    // Confirmer au client\n    callback({\n      success: true,\n      id: saved._id,\n      timestamp: saved.timestamp\n    });\n  } catch (error) {\n    callback({\n      success: false,\n      error: error.message\n    });\n  }\n});\n```\n\n## 2. Middleware d'Authentification\n\n```javascript\n// Middleware pour vérifier l'authentification\nio.use(async (socket, next) => {\n  try {\n    const token = socket.handshake.auth.token;\n    \n    if (!token) {\n      return next(new Error('Token manquant'));\n    }\n    \n    // Vérifier le JWT\n    const decoded = jwt.verify(token, process.env.JWT_SECRET);\n    const user = await User.findById(decoded.userId);\n    \n    if (!user) {\n      return next(new Error('Utilisateur non trouvé'));\n    }\n    \n    // Attacher l'utilisateur au socket\n    socket.userId = user._id;\n    socket.username = user.username;\n    socket.join(`user:${user._id}`);\n    \n    next();\n  } catch (error) {\n    next(new Error('Authentification échouée'));\n  }\n});\n\nio.on('connection', (socket) => {\n  // Maintenant socket.userId est disponible\n  console.log(`Utilisateur connecté: ${socket.username}`);\n  \n  socket.on('private-message', async ({ toUserId, message }) => {\n    // Sauvegarder\n    await Message.create({\n      from: socket.userId,\n      to: toUserId,\n      text: message\n    });\n    \n    // Envoyer au destinataire s'il est en ligne\n    io.to(`user:${toUserId}`).emit('private-message', {\n      from: socket.username,\n      message\n    });\n  });\n});\n```\n\n## 3. Room-Based Architecture\n\n```javascript\n// Structure d'un chat multi-salons\n\nclass ChatRoomManager {\n  constructor(io) {\n    this.io = io;\n    this.rooms = new Map(); // roomId -> Set de socket ids\n  }\n\n  joinRoom(socket, roomId) {\n    // Quitter les autres rooms (optionnel)\n    socket.rooms.forEach(room => {\n      if (room !== socket.id) {\n        socket.leave(room);\n    });\n    \n    // Rejoindre la nouvelle room\n    socket.join(roomId);\n    \n    // Mettre à jour la map\n    if (!this.rooms.has(roomId)) {\n      this.rooms.set(roomId, new Set());\n    }\n    this.rooms.get(roomId).add(socket.id);\n    \n    // Notifier\n    socket.to(roomId).emit('user-joined', {\n      user: socket.username,\n      room: roomId\n    });\n    \n    // Envoyer l'historique\n    this.sendHistory(socket, roomId);\n  }\n\n  async sendHistory(socket, roomId) {\n    const messages = await Message.find({ room: roomId })\n      .sort({ timestamp: -1 })\n      .limit(50);\n    \n    socket.emit('room-history', messages.reverse());\n  }\n\n  broadcastToRoom(roomId, event, data, exceptSocket = null) {\n    if (exceptSocket) {\n      exceptSocket.to(roomId).emit(event, data);\n    } else {\n      this.io.to(roomId).emit(event, data);\n    }\n  }\n}\n\n// Utilisation\nconst roomManager = new ChatRoomManager(io);\n\nio.on('connection', (socket) => {\n  socket.on('join-room', (roomId) => {\n    roomManager.joinRoom(socket, roomId);\n  });\n  \n  socket.on('room-message', ({ roomId, text }) => {\n    const message = {\n      room: roomId,\n      user: socket.username,\n      text,\n      timestamp: new Date()\n    };\n    \n    // Sauvegarder et broadcaster\n    Message.create(message);\n    roomManager.broadcastToRoom(roomId, 'new-message', message, socket);\n  });\n});\n```\n\n## 4. Presence Tracking (Qui est en ligne)\n\n```javascript\n// Gestion de la présence\n\nclass PresenceManager {\n  constructor(io, redis) {\n    this.io = io;\n    this.redis = redis;\n  }\n\n  async userConnected(userId, socketId) {\n    // Ajouter à Redis\n    await this.redis.sadd(`user:${userId}:sockets`, socketId);\n    await this.redis.sadd('online-users', userId);\n    \n    // Notifier les amis\n    const friends = await this.getFriends(userId);\n    friends.forEach(friendId => {\n      this.io.to(`user:${friendId}`).emit('friend-online', userId);\n    });\n  }\n\n  async userDisconnected(userId, socketId) {\n    // Retirer le socket\n    await this.redis.srem(`user:${userId}:sockets`, socketId);\n    \n    // Vérifier s'il reste des sockets pour cet user\n    const remainingSockets = await this.redis.scard(`user:${userId}:sockets`);\n    \n    if (remainingSockets === 0) {\n      // Plus de connexions, user offline\n      await this.redis.srem('online-users', userId);\n      \n      const friends = await this.getFriends(userId);\n      friends.forEach(friendId => {\n        this.io.to(`user:${friendId}`).emit('friend-offline', userId);\n      });\n    }\n  }\n\n  async getOnlineUsers() {\n    return await this.redis.smembers('online-users');\n  }\n}\n\n// Utilisation\nio.on('connection', async (socket) => {\n  const presence = new PresenceManager(io, redis);\n  \n  await presence.userConnected(socket.userId, socket.id);\n  \n  socket.on('disconnect', async () => {\n    await presence.userDisconnected(socket.userId, socket.id);\n  });\n});\n```\n\n## 5. Rate Limiting\n\n```javascript\n// Limiter le nombre de messages par utilisateur\n\nclass RateLimiter {\n  constructor(redis, maxRequests = 10, windowSeconds = 60) {\n    this.redis = redis;\n    this.maxRequests = maxRequests;\n    this.windowSeconds = windowSeconds;\n  }\n\n  async checkLimit(userId) {\n    const key = `ratelimit:${userId}`;\n    const current = await this.redis.incr(key);\n    \n    if (current === 1) {\n      // Premier message, définir l'expiration\n      await this.redis.expire(key, this.windowSeconds);\n    }\n    \n    if (current > this.maxRequests) {\n      const ttl = await this.redis.ttl(key);\n      throw new Error(`Rate limit dépassé. Réessayez dans ${ttl} secondes.`);\n    }\n    \n    return true;\n  }\n}\n\n// Utilisation\nconst limiter = new RateLimiter(redis, 30, 60); // 30 msg/min\n\nsocket.on('chat-message', async (data) => {\n  try {\n    await limiter.checkLimit(socket.userId);\n    \n    // Traiter le message...\n    io.emit('chat-message', {\n      user: socket.username,\n      text: data.text\n    });\n  } catch (error) {\n    socket.emit('error', { message: error.message });\n  }\n});\n```",
+      "codeExample": "// Pattern complet : Chat sécurisé avec rooms et presence\n\nconst express = require('express');\nconst http = require('http');\nconst { Server } = require('socket.io');\nconst jwt = require('jsonwebtoken');\nconst Redis = require('ioredis');\n\nconst app = express();\nconst server = http.createServer(app);\nconst io = new Server(server, { cors: { origin: '*' } });\nconst redis = new Redis();\n\n// ============ MIDDLEWARE D'AUTH ============\nio.use(async (socket, next) => {\n  try {\n    const token = socket.handshake.auth.token;\n    const decoded = jwt.verify(token, 'secret');\n    const user = await User.findById(decoded.id);\n    \n    socket.userId = user._id.toString();\n    socket.username = user.username;\n    socket.roomsJoined = new Set();\n    \n    next();\n  } catch (err) {\n    next(new Error('Auth failed'));\n  }\n});\n\n// ============ GESTION DES CONNEXIONS ============\nio.on('connection', (socket) => {\n  console.log(`🔌 ${socket.username} connecté`);\n  \n  // Track presence\n  redis.sadd('online-users', socket.userId);\n  redis.sadd(`user:${socket.userId}:sockets`, socket.id);\n  socket.broadcast.emit('user-online', socket.username);\n  \n  // Rejoindre une room\n  socket.on('join-room', async (roomId, callback) => {\n    try {\n      // Quitter les autres rooms\n      socket.roomsJoined.forEach(room => socket.leave(room));\n      socket.roomsJoined.clear();\n      \n      // Rejoindre nouvelle room\n      socket.join(roomId);\n      socket.roomsJoined.add(roomId);\n      socket.currentRoom = roomId;\n      \n      // Notifier\n      socket.to(roomId).emit('user-joined', {\n        user: socket.username,\n        room: roomId\n      });\n      \n      // Récupérer historique\n      const history = await Message.find({ room: roomId })\n        .sort({ timestamp: -1 })\n        .limit(50)\n        .lean();\n      \n      callback({ success: true, history: history.reverse() });\n    } catch (error) {\n      callback({ success: false, error: error.message });\n    }\n  });\n  \n  // Envoyer message avec acknowledgment\n  socket.on('send-message', async (data, callback) => {\n    try {\n      // Rate limiting\n      const count = await redis.incr(`ratelimit:${socket.userId}`);\n      if (count === 1) await redis.expire(`ratelimit:${socket.userId}`, 60);\n      if (count > 30) throw new Error('Rate limit exceeded');\n      \n      const message = await Message.create({\n        room: socket.currentRoom,\n        user: socket.userId,\n        username: socket.username,\n        text: data.text,\n        timestamp: new Date()\n      });\n      \n      // Broadcast à la room\n      io.to(socket.currentRoom).emit('new-message', message);\n      \n      callback({ success: true, messageId: message._id });\n    } catch (error) {\n      callback({ success: false, error: error.message });\n    }\n  });\n  \n  // Typing indicator\n  socket.on('typing', ({ isTyping }) => {\n    socket.to(socket.currentRoom).emit('user-typing', {\n      user: socket.username,\n      isTyping\n    });\n  });\n  \n  // Déconnexion\n  socket.on('disconnect', async () => {\n    // Vérifier s'il reste des sockets\n    await redis.srem(`user:${socket.userId}:sockets`, socket.id);\n    const remaining = await redis.scard(`user:${socket.userId}:sockets`);\n    \n    if (remaining === 0) {\n      await redis.srem('online-users', socket.userId);\n      socket.broadcast.emit('user-offline', socket.username);\n    }\n    \n    // Notifier room\n    if (socket.currentRoom) {\n      socket.to(socket.currentRoom).emit('user-left', socket.username);\n    }\n    \n    console.log(`🔌 ${socket.username} déconnecté`);\n  });\n});\n\nserver.listen(3001);"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ws-ex-1",
+      "lessonId": "websockets-intro",
+      "moduleId": "websockets-basics",
+      "title": "Quiz WebSockets Basics",
+      "difficulty": "easy",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Quelle est la principale différence entre HTTP et WebSocket ?",
+          "options": [
+            "WebSocket est plus lent",
+            "WebSocket garde une connexion persistante ouverte",
+            "WebSocket ne fonctionne pas sur mobile",
+            "WebSocket utilise XML au lieu de JSON"
+          ],
+          "correctAnswer": 1,
+          "explanation": "WebSocket établit une connexion persistante bidirectionnelle, contrairement à HTTP qui fait des requêtes-réponses distinctes."
+        },
+        {
+          "question": "Quel événement se déclenche quand un message est reçu via WebSocket ?",
+          "options": [
+            "'receive'",
+            "'data'",
+            "'message'",
+            "'incoming'"
+          ],
+          "correctAnswer": 2,
+          "explanation": "L'événement 'message' se déclenche quand un message est reçu du serveur via WebSocket."
+        },
+        {
+          "question": "Quel protocole WebSocket est sécurisé (comme HTTPS) ?",
+          "options": [
+            "ws://",
+            "wss://",
+            "websocket://",
+            "ws-secure://"
+          ],
+          "correctAnswer": 1,
+          "explanation": "wss:// (WebSocket Secure) est la version sécurisée de WebSocket, équivalent à HTTPS pour les WebSockets."
+        }
+      ]
+    },
+    {
+      "id": "ws-ex-2",
+      "lessonId": "socketio-intro",
+      "moduleId": "websockets-basics",
+      "title": "Quiz Socket.io",
+      "difficulty": "medium",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Quel avantage Socket.io apporte-t-il par rapport aux WebSockets natifs ?",
+          "options": [
+            "Il est plus rapide",
+            "Fallback automatique et reconnexion automatique",
+            "Il utilise moins de mémoire",
+            "Il est intégré dans le navigateur"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Socket.io offre un fallback automatique vers long-polling si WebSocket n'est pas disponible, et gère la reconnexion automatique."
+        },
+        {
+          "question": "Comment envoyer un message à tous les clients SAUF l'expéditeur avec Socket.io ?",
+          "options": [
+            "io.emit()",
+            "socket.broadcast.emit()",
+            "socket.emit()",
+            "io.broadcast()"
+          ],
+          "correctAnswer": 1,
+          "explanation": "socket.broadcast.emit() envoie à tous les clients connectés sauf celui qui a déclenché l'événement."
+        },
+        {
+          "question": "Qu'est-ce qu'une 'room' dans Socket.io ?",
+          "options": [
+            "Un salon de chat physique",
+            "Un canal logique pour grouper les sockets",
+            "Une base de données",
+            "Un type de message"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Une room est un canal logique qui permet de grouper des sockets et d'envoyer des messages à ce groupe spécifique."
+        }
+      ]
+    },
+    {
+      "id": "ws-ex-3",
+      "lessonId": "websockets-patterns",
+      "moduleId": "websockets-basics",
+      "title": "Quiz Patterns Avancés",
+      "difficulty": "medium",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "À quoi servent les 'acknowledgments' dans Socket.io ?",
+          "options": [
+            "À remercier le serveur",
+            "À confirmer la réception d'un message",
+            "À chiffrer les messages",
+            "À compresser les données"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Les acknowledgments permettent au serveur de confirmer qu'il a bien reçu et traité le message du client."
+        },
+        {
+          "question": "Pourquoi utiliser Redis avec Socket.io en production ?",
+          "options": [
+            "Pour que ça aille plus vite",
+            "Pour partager les rooms entre plusieurs serveurs",
+            "Parce que c'est gratuit",
+            "Pour stocker les fichiers"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Redis permet de synchroniser les rooms et les événements entre plusieurs instances de serveur Socket.io (scaling horizontal)."
+        },
+        {
+          "question": "Quelle est la bonne pratique pour l'authentification WebSocket ?",
+          "options": [
+            "Envoyer le token dans chaque message",
+            "Utiliser socket.handshake.auth lors de la connexion",
+            "Ne pas utiliser d'authentification",
+            "Stocker le token dans localStorage côté serveur"
+          ],
+          "correctAnswer": 1,
+          "explanation": "La meilleure pratique est d'envoyer le token lors du handshake via socket.handshake.auth et de vérifier via un middleware."
+        }
+      ]
+    }
+  ]
+}
