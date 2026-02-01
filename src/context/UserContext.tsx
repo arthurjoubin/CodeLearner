@@ -6,7 +6,6 @@ interface UserContextType {
   user: User | null;
   isGuest: boolean;
   loading: boolean;
-  login: () => void;
   loginWithPassword: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -82,10 +81,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  const login = () => {
-    window.location.href = api.getGitHubLoginUrl();
   };
 
   const loginWithPassword = async (email: string, password: string) => {
@@ -196,7 +191,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         user,
         isGuest,
         loading,
-        login,
         loginWithPassword,
         register,
         logout,

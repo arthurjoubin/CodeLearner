@@ -84,7 +84,7 @@ function LabPageContent({ labId }: LabPageProps) {
         if (isValidating) return;
 
         if (isGuest) {
-            setFeedback({ isCorrect: false, message: 'Sign in with GitHub to validate your code and save your progress!' });
+            setFeedback({ isCorrect: false, message: 'Connecte-toi pour valider ton code et sauvegarder ta progression !' });
             return;
         }
 
@@ -118,7 +118,7 @@ function LabPageContent({ labId }: LabPageProps) {
         if (isAskingAi) return;
 
         if (isGuest) {
-            setAiMessage('Sign in with GitHub to get AI-powered hints!');
+            setAiMessage('Connecte-toi pour obtenir des indices IA !');
             return;
         }
 
