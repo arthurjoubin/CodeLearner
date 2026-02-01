@@ -82,7 +82,7 @@ Each module file follows this structure:
 |----------|-------|-------------|
 | react | React | Learn React from basics to advanced |
 | web-stack | Web Stack Essentials | Understanding web technologies and making the right choices |
-| git | Git (planned) | Version control with Git |
+| git | Git | Version control with Git - from basics to collaboration |
 
 ## Adding a New Module to Existing Course
 

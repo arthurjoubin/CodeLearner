@@ -1,0 +1,233 @@
+{
+  "module": {
+    "id": "git-basics",
+    "title": "Git Basics",
+    "description": "Learn the fundamental Git commands to track and save your code changes",
+    "icon": "GitBranch",
+    "requiredXp": 0,
+    "color": "from-orange-400 to-red-600",
+    "courseId": "git"
+  },
+  "lessons": [
+    {
+      "id": "git-intro",
+      "moduleId": "git-basics",
+      "title": "What is Git?",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Git is a **distributed version control system**\n- It tracks changes to files over time\n- Allows multiple people to work on the same project\n- You can revert to any previous version of your code\n- Git is NOT GitHub (GitHub is a hosting service for Git repositories)\n\n---\n\n# What is Git?\n\nGit is a **version control system** that helps you track changes in your code. Think of it as a time machine for your projects - you can save snapshots of your work and go back to any point in time.\n\n## Why Use Git?\n\n1. **Track Changes**: See exactly what changed, when, and by whom\n2. **Collaborate**: Multiple developers can work on the same project without overwriting each other's work\n3. **Backup**: Your code is safely stored and can be recovered\n4. **Experiment**: Try new features in isolation without breaking the main code\n\n## Key Concepts\n\n### Repository (Repo)\nA repository is a folder that Git watches. It contains:\n- Your project files\n- The history of all changes\n- Git configuration\n\n### Commit\nA commit is a snapshot of your code at a specific moment. Each commit has:\n- A unique ID (hash)\n- A message describing what changed\n- The author and timestamp\n- The actual changes made\n\n### Working Directory, Staging Area, and Repository\n\n```\nWorking Directory → Staging Area → Repository\n   (your files)      (git add)      (git commit)\n```\n\n1. **Working Directory**: Your actual files on disk\n2. **Staging Area**: A temporary holding area for changes you want to commit\n3. **Repository**: The permanent storage of all commits\n\n## Git vs GitHub\n\n- **Git**: The tool/software that tracks changes locally on your computer\n- **GitHub**: A website that hosts Git repositories online (like Dropbox for code)\n\nYou can use Git without GitHub, but GitHub makes sharing and collaborating easier.",
+      "codeExample": "# Check if Git is installed\ngit --version\n\n# Configure your identity (do this once)\ngit config --global user.name \"Your Name\"\ngit config --global user.email \"your@email.com\"\n\n# Check your configuration\ngit config --list"
+    },
+    {
+      "id": "git-init",
+      "moduleId": "git-basics",
+      "title": "Initializing a Repository",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Use `git init` to create a new Git repository\n- This creates a hidden `.git` folder that stores all Git data\n- Only run this once per project\n- You can check if a folder is a repo by looking for the `.git` folder\n\n---\n\n# Initializing a Repository\n\nTo start tracking a project with Git, you need to initialize a repository.\n\n## Creating a New Repository\n\n```bash\n# Navigate to your project folder\ncd my-project\n\n# Initialize Git\ngit init\n```\n\nYou'll see output like:\n```\nInitialized empty Git repository in /path/to/my-project/.git/\n```\n\n## What Happens?\n\nGit creates a hidden `.git` folder containing:\n- All commit history\n- Branch information\n- Configuration files\n- Staging area data\n\n**Never delete or modify the `.git` folder manually!**\n\n## Checking Repository Status\n\nAfter initializing, check the status:\n\n```bash\ngit status\n```\n\nThis shows:\n- Which branch you're on\n- Untracked files (new files Git doesn't know about)\n- Modified files (files that have changed)\n- Staged files (changes ready to be committed)\n\n## Common First Steps\n\n```bash\n# 1. Initialize the repo\ngit init\n\n# 2. Create a .gitignore file (optional but recommended)\necho \"node_modules/\" > .gitignore\n\n# 3. Check status\ngit status\n```\n\nThe `.gitignore` file tells Git which files to ignore (like dependencies, build files, or secrets).",
+      "codeExample": "# Initialize a new repository\ngit init\n\n# Check the status of your repository\ngit status\n\n# Create a .gitignore file\necho \"*.log\" > .gitignore\necho \"node_modules/\" >> .gitignore\necho \".env\" >> .gitignore"
+    },
+    {
+      "id": "git-add",
+      "moduleId": "git-basics",
+      "title": "Staging Changes with git add",
+      "order": 3,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `git add` moves changes from Working Directory to Staging Area\n- `git add filename` stages a specific file\n- `git add .` stages all changes in the current directory\n- Staged changes are NOT yet saved - you need to commit them\n- You can unstage with `git restore --staged filename`\n\n---\n\n# Staging Changes with git add\n\nBefore committing changes, you need to stage them. Think of staging like putting items in a box before shipping them.\n\n## Staging Individual Files\n\n```bash\n# Stage a specific file\ngit add index.html\n\n# Stage multiple specific files\ngit add index.html style.css\n```\n\n## Staging All Changes\n\n```bash\n# Stage all changes in current directory\ngit add .\n\n# Stage all changes in the entire repository\ngit add -A\n```\n\n## What Gets Staged?\n\nWhen you run `git add`:\n- ✅ New files are tracked\n- ✅ Modified files are updated\n- ✅ Deleted files are marked for removal\n\n## Checking What's Staged\n\n```bash\ngit status\n```\n\nShows:\n- **Changes to be committed**: Files in staging area (green)\n- **Changes not staged**: Modified files not yet staged (red)\n- **Untracked files**: New files Git doesn't know about (red)\n\n## Unstaging Files\n\nMade a mistake? Remove files from staging:\n\n```bash\n# Unstage a specific file\ngit restore --staged filename.txt\n\n# Unstage all files\ngit restore --staged .\n```\n\n## Interactive Staging\n\nFor more control, use interactive mode:\n\n```bash\n# Stage changes interactively\ngit add -p\n```\n\nThis lets you review and stage changes chunk by chunk.",
+      "codeExample": "# Stage a specific file\ngit add README.md\n\n# Stage all files in current directory\ngit add .\n\n# Check what is staged\ngit status\n\n# Unstage a file\ngit restore --staged README.md"
+    },
+    {
+      "id": "git-commit",
+      "moduleId": "git-basics",
+      "title": "Saving Changes with git commit",
+      "order": 4,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `git commit` saves staged changes to the repository\n- Each commit needs a message describing what changed\n- Use `git commit -m \"message\"` for quick commits\n- Commits are permanent snapshots you can return to\n- Write clear, descriptive commit messages\n\n---\n\n# Saving Changes with git commit\n\nCommitting is how you save your work in Git. Each commit is a snapshot of your project at a specific moment.\n\n## Making a Commit\n\n```bash\n# Commit with a message\ngit commit -m \"Add user authentication\"\n```\n\n## The Commit Process\n\n```\n1. Edit files in Working Directory\n2. Stage changes with git add\n3. Commit with git commit\n```\n\n## Writing Good Commit Messages\n\n**Good examples:**\n- \"Fix login button not working on mobile\"\n- \"Add dark mode toggle to settings\"\n- \"Update README with installation instructions\"\n\n**Bad examples:**\n- \"fix\"\n- \"update\"\n- \"asdf\"\n\n## Commit Message Best Practices\n\n1. **Use present tense**: \"Add feature\" not \"Added feature\"\n2. **Be specific**: What and why, not just what\n3. **Keep first line under 50 characters**\n4. **Add details after a blank line** if needed:\n\n```bash\ngit commit -m \"Implement user registration\n\n- Add form validation\n- Send confirmation email\n- Hash passwords with bcrypt\"\n```\n\n## Viewing Your Commits\n\n```bash\n# See commit history\ngit log\n\n# See compact history\ngit log --oneline\n\n# See last 5 commits\ngit log -5\n```\n\n## Amending the Last Commit\n\nForgot something? Fix the last commit:\n\n```bash\n# Add forgotten changes\ngit add forgotten-file.txt\n\n# Amend the last commit\ngit commit --amend -m \"New message\"\n```\n\n⚠️ **Only amend commits that haven't been pushed yet!**",
+      "codeExample": "# Stage your changes\ngit add .\n\n# Commit with a descriptive message\ngit commit -m \"Initial commit: Add project files\"\n\n# View commit history\ngit log --oneline\n\n# View detailed log\ngit log"
+    },
+    {
+      "id": "git-status",
+      "moduleId": "git-basics",
+      "title": "Checking Status and Diffs",
+      "order": 5,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `git status` shows the current state of your working directory\n- `git diff` shows the actual changes in your files\n- `git diff` compares Working Directory vs Staging Area\n- `git diff --staged` compares Staging Area vs last commit\n- Use these commands often to understand what's happening\n\n---\n\n# Checking Status and Diffs\n\nGit provides powerful tools to see exactly what's happening in your project.\n\n## git status\n\nYour most-used command! It shows:\n\n```bash\ngit status\n```\n\nOutput explained:\n```\nOn branch main\n\nChanges to be committed:\n  (use \"git restore --staged <file>...\" to unstage)\n        modified:   index.html    ← Staged (green)\n\nChanges not staged for commit:\n  (use \"git add <file>...\" to update what will be committed)\n        modified:   style.css     ← Modified but not staged (red)\n\nUntracked files:\n  (use \"git add <file>...\" to include in what will be committed)\n        new-file.js               ← New file, not tracked (red)\n```\n\n## git diff\n\nSee the actual changes in your files:\n\n```bash\n# See unstaged changes\ngit diff\n\n# See staged changes\ngit diff --staged\n\n# See changes in a specific file\ngit diff filename.txt\n```\n\n### Understanding diff Output\n\n```diff\n- This line was removed (shown in red)\n+ This line was added (shown in green)\n  This line stayed the same\n```\n\n## Short Status\n\nFor a quick overview:\n\n```bash\ngit status -s\n```\n\nOutput format:\n```\n M README.md     ← Modified, not staged\nM  index.html    ← Modified and staged\nA  new-file.txt  ← Added (new file staged)\nD  old-file.txt  ← Deleted\n?? untracked.js  ← Untracked\n```\n\n## Useful Combinations\n\n```bash\n# Check status and then diff\ngit status\ngit diff\n\n# See what will be committed\ngit diff --staged\n\n# Check specific file\ngit diff src/components/Button.tsx\n```",
+      "codeExample": "# Check current status\ngit status\n\n# See unstaged changes\ngit diff\n\n# See staged changes\ngit diff --staged\n\n# Short status format\ngit status -s"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "git-ex-1",
+      "lessonId": "git-init",
+      "moduleId": "git-basics",
+      "title": "Initialize Your First Repo",
+      "difficulty": "easy",
+      "description": "Practice initializing a Git repository",
+      "instructions": "Write the command to initialize a new Git repository in the current directory.",
+      "starterCode": "# Write the command to initialize a Git repository\n",
+      "solution": "git init",
+      "hints": [
+        "The command starts with 'git'",
+        "You want to 'initialize' the repository",
+        "It's just two words"
+      ],
+      "validationPrompt": "Check if the user wrote 'git init' to initialize a Git repository"
+    },
+    {
+      "id": "git-ex-2",
+      "lessonId": "git-init",
+      "moduleId": "git-basics",
+      "title": "Check Repository Status",
+      "difficulty": "easy",
+      "description": "Learn to check the status of your repository",
+      "instructions": "Write the command to check the current status of your Git repository.",
+      "starterCode": "# Write the command to check repository status\n",
+      "solution": "git status",
+      "hints": [
+        "The command starts with 'git'",
+        "You want to check the 'status'",
+        "It's just two words"
+      ],
+      "validationPrompt": "Check if the user wrote 'git status' to check the repository status"
+    },
+    {
+      "id": "git-ex-3",
+      "lessonId": "git-add",
+      "moduleId": "git-basics",
+      "title": "Stage a Specific File",
+      "difficulty": "easy",
+      "description": "Practice staging individual files",
+      "instructions": "Write the command to stage a file named 'index.html'.",
+      "starterCode": "# Stage the file index.html\n",
+      "solution": "git add index.html",
+      "hints": [
+        "Start with 'git add'",
+        "Then specify the filename",
+        "Don't forget the file extension"
+      ],
+      "validationPrompt": "Check if the user wrote 'git add index.html' to stage the file"
+    },
+    {
+      "id": "git-ex-4",
+      "lessonId": "git-add",
+      "moduleId": "git-basics",
+      "title": "Stage All Changes",
+      "difficulty": "easy",
+      "description": "Learn to stage all changes at once",
+      "instructions": "Write the command to stage ALL changes in the current directory.",
+      "starterCode": "# Stage all changes in the current directory\n",
+      "solution": "git add .",
+      "hints": [
+        "Start with 'git add'",
+        "Use a dot to mean 'all files in current directory'",
+        "It's 'git add' followed by a period"
+      ],
+      "validationPrompt": "Check if the user wrote 'git add .' to stage all changes"
+    },
+    {
+      "id": "git-ex-5",
+      "lessonId": "git-commit",
+      "moduleId": "git-basics",
+      "title": "Make Your First Commit",
+      "difficulty": "easy",
+      "description": "Practice committing changes with a message",
+      "instructions": "Write the command to commit staged changes with the message 'Initial commit'.",
+      "starterCode": "# Commit with the message 'Initial commit'\n",
+      "solution": "git commit -m \"Initial commit\"",
+      "hints": [
+        "Use 'git commit'",
+        "Add the -m flag for the message",
+        "Put the message in quotes",
+        "The message should be 'Initial commit'"
+      ],
+      "validationPrompt": "Check if the user wrote a git commit command with the message 'Initial commit'"
+    },
+    {
+      "id": "git-ex-6",
+      "lessonId": "git-commit",
+      "moduleId": "git-basics",
+      "title": "View Commit History",
+      "difficulty": "easy",
+      "description": "Learn to view your commit history",
+      "instructions": "Write the command to view the commit history in a compact, one-line format.",
+      "starterCode": "# View compact commit history\n",
+      "solution": "git log --oneline",
+      "hints": [
+        "Start with 'git log'",
+        "Add the --oneline flag",
+        "This shows each commit on one line"
+      ],
+      "validationPrompt": "Check if the user wrote 'git log --oneline' to view compact commit history"
+    },
+    {
+      "id": "git-ex-7",
+      "lessonId": "git-status",
+      "moduleId": "git-basics",
+      "title": "See What Changed",
+      "difficulty": "medium",
+      "description": "View the actual changes in your files",
+      "instructions": "Write the command to see the differences between your working directory and the staging area.",
+      "starterCode": "# Show unstaged changes\n",
+      "solution": "git diff",
+      "hints": [
+        "This command shows changes not yet staged",
+        "It's just two words",
+        "Start with 'git'"
+      ],
+      "validationPrompt": "Check if the user wrote 'git diff' to see unstaged changes"
+    },
+    {
+      "id": "git-ex-8",
+      "lessonId": "git-status",
+      "moduleId": "git-basics",
+      "title": "See Staged Changes",
+      "difficulty": "medium",
+      "description": "View changes that are staged for commit",
+      "instructions": "Write the command to see the differences between the staging area and the last commit.",
+      "starterCode": "# Show staged changes\n",
+      "solution": "git diff --staged",
+      "hints": [
+        "Start with 'git diff'",
+        "Add the --staged flag",
+        "This shows what will be in the next commit"
+      ],
+      "validationPrompt": "Check if the user wrote 'git diff --staged' to see staged changes"
+    },
+    {
+      "id": "git-ex-9",
+      "lessonId": "git-add",
+      "moduleId": "git-basics",
+      "title": "Unstage a File",
+      "difficulty": "medium",
+      "description": "Learn to remove files from the staging area",
+      "instructions": "Write the command to unstage a file named 'config.js' (remove it from staging area but keep the changes).",
+      "starterCode": "# Unstage config.js\n",
+      "solution": "git restore --staged config.js",
+      "hints": [
+        "Use 'git restore' command",
+        "Add the --staged flag",
+        "Then specify the filename",
+        "This keeps your changes but removes from staging"
+      ],
+      "validationPrompt": "Check if the user wrote 'git restore --staged config.js' to unstage the file"
+    },
+    {
+      "id": "git-ex-10",
+      "lessonId": "git-commit",
+      "moduleId": "git-basics",
+      "title": "Complete Workflow",
+      "difficulty": "medium",
+      "description": "Practice the complete Git workflow",
+      "instructions": "Write the three commands to: 1) Stage all changes, 2) Commit with message 'Add new feature', 3) View the last 3 commits. Write each command on a new line.",
+      "starterCode": "# Complete the workflow\n",
+      "solution": "git add .\ngit commit -m \"Add new feature\"\ngit log -3",
+      "hints": [
+        "First command stages all files",
+        "Second command commits with -m flag",
+        "Third command shows git log with -3 flag",
+        "Each command on its own line"
+      ],
+      "validationPrompt": "Check if the user wrote three commands: git add ., git commit with message 'Add new feature', and git log -3"
+    }
+  ]
+}

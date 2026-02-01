@@ -34,8 +34,8 @@ function LandingContent() {
   return (
     <div className="page-enter min-h-screen bg-gray-50">
       {/* Hero */}
-      <section className="pt-6 pb-8">
-        <div className="max-w-6xl mx-auto px-4 py-8 md:py-10">
+      <section className="pt-2 pb-4">
+        <div className="max-w-6xl mx-auto px-4 py-4 md:py-6">
           <div className="max-w-3xl">
             <div className="inline-block px-3 py-1 bg-primary-100 border border-primary-300 rounded text-xs font-bold uppercase text-primary-700 mb-2">
               Interactive Learning
@@ -134,14 +134,14 @@ function LandingContent() {
               <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase bg-gray-200 text-gray-500 border border-gray-300 rounded">Coming Soon</span>
             </div>
 
-            <div className="border-2 border-gray-200 rounded-lg p-5 bg-gray-50 opacity-60">
+            <a href="/learning-path/git" className="border-2 border-gray-300 rounded-lg p-5 bg-white hover:border-primary-500 hover:shadow-md transition-all group">
               <div className="flex items-center gap-3 mb-3">
-                <img src="https://raw.githubusercontent.com/github/explore/main/topics/git/git.png" alt="Git" className="w-8 h-8 object-contain grayscale" />
-                <h3 className="font-bold text-sm uppercase text-gray-500">Git</h3>
+                <img src="https://raw.githubusercontent.com/github/explore/main/topics/git/git.png" alt="Git" className="w-8 h-8 object-contain" />
+                <h3 className="font-bold text-sm uppercase text-gray-900 group-hover:text-primary-700 transition-colors">Git</h3>
               </div>
-              <p className="text-xs text-gray-500 mb-3">Master version control with Git.</p>
-              <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase bg-gray-200 text-gray-500 border border-gray-300 rounded">Coming Soon</span>
-            </div>
+              <p className="text-xs text-gray-600 mb-3">Master version control with Git.</p>
+              <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase bg-green-100 text-green-700 border border-green-300 rounded">Beginner</span>
+            </a>
           </div>
         </div>
       </section>

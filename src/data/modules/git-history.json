@@ -1,0 +1,230 @@
+{
+  "module": {
+    "id": "git-history",
+    "title": "History & Undoing",
+    "description": "Learn to view history, compare versions, and undo changes safely",
+    "icon": "History",
+    "requiredXp": 450,
+    "color": "from-green-400 to-emerald-600",
+    "courseId": "git"
+  },
+  "lessons": [
+    {
+      "id": "git-log",
+      "moduleId": "git-history",
+      "title": "Viewing Commit History",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `git log` shows commit history\n- `git log --oneline` shows compact history\n- `git log -n` shows last n commits\n- `git log --graph` shows branch visualization\n- `git log --all` shows all branches' history\n\n---\n\n# Viewing Commit History\n\nGit keeps a complete history of your project. Learn how to navigate and understand it.\n\n## Basic Log\n\n```bash\n# Show commit history\ngit log\n```\n\nShows:\n- Commit hash (SHA)\n- Author and date\n- Commit message\n- Full diff (press space to scroll, q to quit)\n\n## Compact Log\n\n```bash\n# One line per commit\ngit log --oneline\n\n# Output:\n# a1b2c3d Add login page\n# e4f5g6h Fix navigation bug\n# i7j8k9l Initial commit\n```\n\n## Limiting Output\n\n```bash\n# Show last 5 commits\ngit log -5\n\n# Show last 10 commits\ngit log -10 --oneline\n```\n\n## Visualizing Branches\n\n```bash\n# Show graph with branches\ngit log --graph --oneline --all\n\n# Output shows branch structure with * and lines\n```\n\n## Log Options\n\n```bash\n# Show all branches\ngit log --all\n\n# Show decorated with branch/tag names\ngit log --oneline --decorate\n\n# Show file statistics\ngit log --stat\n\n# Show which files changed\ngit log --name-only\n```\n\n## Filtering History\n\n```bash\n# By author\ngit log --author=\"John\"\n\n# By date\ngit log --since=\"1 week ago\"\ngit log --until=\"2024-01-01\"\n\n# By file\ngit log -- README.md\n\n# Search commit messages\ngit log --grep=\"bugfix\"\n```\n\n## Pretty Formats\n\n```bash\n# Custom format\ngit log --pretty=format:\"%h - %an, %ar : %s\"\n\n# Common placeholders:\n# %h = short hash\n# %an = author name\n# %ar = author date, relative\n# %s = subject (message)\n```",
+      "codeExample": "# View full log\ngit log\n\n# Compact one-line view\ngit log --oneline\n\n# Last 10 commits\ngit log -10 --oneline\n\n# Graph view with all branches\ngit log --graph --oneline --all\n\n# Show commits affecting a specific file\ngit log -- README.md"
+    },
+    {
+      "id": "git-show",
+      "moduleId": "git-history",
+      "title": "Inspecting Commits",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `git show` displays a specific commit\n- Shows commit info and diff in one view\n- Use commit hash (full or abbreviated)\n- `git show HEAD` shows the latest commit\n- `git show HEAD~1` shows the commit before last\n\n---\n\n# Inspecting Commits\n\nSometimes you need to see exactly what changed in a specific commit.\n\n## git show\n\n```bash\n# Show the latest commit\ngit show\n\n# Show specific commit by hash\ngit show a1b2c3d\n\n# Show with short hash\ngit show a1b2c3\n```\n\n## Relative References\n\n```bash\n# Show last commit\ngit show HEAD\n\n# Show commit before last\ngit show HEAD~1\n\n# Show 3 commits ago\ngit show HEAD~3\n```\n\n## Show Specific Files\n\n```bash\n# Show what changed in a file in a commit\ngit show a1b2c3d:filename.txt\n\n# Show file as it was at that commit\ngit show a1b2c3d -- path/to/file.js\n```\n\n## Show Statistics\n\n```bash\n# Show stats only (no diff)\ngit show --stat a1b2c3d\n\n# Show just the commit message\ngit show --quiet a1b2c3d\n```\n\n## Viewing File History\n\n```bash\n# See all changes to a specific file\ngit log -p -- filename.txt\n\n# Who changed each line (blame)\ngit blame filename.txt\n\n# Blame with specific range\ngit blame -L 10,20 filename.txt\n```",
+      "codeExample": "# Show latest commit\ngit show\n\n# Show specific commit\ngit show abc1234\n\n# Show commit before last\ngit show HEAD~1\n\n# Show who changed each line\ngit blame README.md\n\n# Show file at specific commit\ngit show abc1234:README.md"
+    },
+    {
+      "id": "git-diff-advanced",
+      "moduleId": "git-history",
+      "title": "Comparing Versions",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `git diff` compares different versions\n- `git diff commit1 commit2` compares two commits\n- `git diff HEAD~1` compares with previous commit\n- `git diff branch1 branch2` compares branches\n- Understanding diff output is crucial\n\n---\n\n# Comparing Versions\n\nGit diff is powerful for comparing any two versions of your code.\n\n## Comparing Commits\n\n```bash\n# Compare two commits\ngit diff abc1234 def5678\n\n# Compare with previous commit\ngit diff HEAD~1 HEAD\n\n# Compare with specific commit\ngit diff abc1234\n```\n\n## Comparing Branches\n\n```bash\n# See what's in feature but not in main\ngit diff main feature\n\n# See what would be merged\ngit diff main...feature\n```\n\n## Understanding Diff Output\n\n```diff\ndiff --git a/file.txt b/file.txt\nindex 1234567..abcdefg 100644\n--- a/file.txt    (old version)\n+++ b/file.txt    (new version)\n@@ -1,5 +1,5 @@     (line numbers)\n Line 1 unchanged\n-Line 2 removed\n+Line 2 added\n Line 3 unchanged\n```\n\n- Lines starting with - were removed\n- Lines starting with + were added\n- Context lines help you locate changes\n\n## Diff Options\n\n```bash\n# Show only filenames\ngit diff --name-only\n\n# Show statistics\ngit diff --stat\n\n# Show word-by-word diff\ngit diff --word-diff\n\n# Ignore whitespace\ngit diff -w\n```\n\n## Staged vs Unstaged\n\n```bash\n# Unstaged changes (working directory)\ngit diff\n\n# Staged changes (index)\ngit diff --staged\ngit diff --cached\n\n# Both\ngit diff HEAD\n```",
+      "codeExample": "# Compare working directory with staging area\ngit diff\n\n# Compare staging area with last commit\ngit diff --staged\n\n# Compare two commits\ngit diff abc1234 def5678\n\n# Compare branches\ngit diff main feature\n\n# Show only filenames that changed\ngit diff --name-only"
+    },
+    {
+      "id": "git-undo",
+      "moduleId": "git-history",
+      "title": "Undoing Changes",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `git restore` undoes uncommitted changes\n- `git restore --staged` unstages files\n- `git checkout -- file` restores file to last commit\n- These commands can lose work - be careful!\n- Only affects uncommitted changes\n\n---\n\n# Undoing Changes\n\nGit provides several ways to undo changes at different stages.\n\n## Discarding Local Changes\n\n```bash\n# Restore file to last committed state\ngit restore filename.txt\n\n# Restore all files in current directory\ngit restore .\n\n# Old syntax (still works)\ngit checkout -- filename.txt\n```\n\n⚠️ **Warning**: This permanently deletes your local changes!\n\n## Unstaging Files\n\n```bash\n# Remove file from staging area\ngit restore --staged filename.txt\n\n# Unstage all files\ngit restore --staged .\n\n# Old syntax\ngit reset HEAD filename.txt\n```\n\nThis keeps your changes but removes them from staging.\n\n## Discarding Everything\n\n```bash\n# Discard all uncommitted changes\ngit restore .\n\n# Unstage and discard\ngit reset --hard\n```\n\n⚠️ **DANGER**: `git reset --hard` deletes all uncommitted work!\n\n## Safe Alternatives\n\nBefore discarding, consider:\n\n```bash\n# Stash changes instead of deleting\ngit stash\n\n# Later, get them back\ngit stash pop\n```\n\n## Undo Scenarios\n\n**I modified a file but haven't staged:**\n```bash\ngit restore filename.txt\n```\n\n**I staged a file but haven't committed:**\n```bash\ngit restore --staged filename.txt  # Unstage\ngit restore filename.txt            # Discard changes\n```\n\n**I want to start over completely:**\n```bash\ngit reset --hard HEAD  # ⚠️ Destructive!\n```\n\n## Check Before Undoing\n\nAlways check what you'll lose:\n\n```bash\n# See what would be discarded\ngit diff\n\n# See what's staged\ngit diff --staged\n```",
+      "codeExample": "# Discard changes in a file\ngit restore config.js\n\n# Unstage a file\ngit restore --staged README.md\n\n# Discard all uncommitted changes\ngit restore .\n\n# Stash instead of discarding (safer)\ngit stash\n\n# Get stashed changes back\ngit stash pop"
+    },
+    {
+      "id": "git-revert",
+      "moduleId": "git-history",
+      "title": "Reverting Commits",
+      "order": 5,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `git revert` creates a new commit that undoes a previous commit\n- Safe for shared history - doesn't rewrite history\n- `git revert HEAD` undoes the last commit\n- `git revert abc1234` undoes a specific commit\n- Use for commits that have been pushed\n\n---\n\n# Reverting Commits\n\nRevert is the safe way to undo commits that have already been shared.\n\n## How Revert Works\n\nInstead of deleting a commit, revert creates a new commit that does the opposite:\n\n```\nBefore:  A---B---C (bad commit)\n                  ↓\nAfter:   A---B---C---D (revert commit that undoes C)\n```\n\n## Basic Revert\n\n```bash\n# Revert the last commit\ngit revert HEAD\n\n# Revert a specific commit\ngit revert abc1234\n\n# Revert without opening editor\ngit revert --no-edit HEAD\n```\n\n## Reverting Multiple Commits\n\n```bash\n# Revert a range of commits\ngit revert abc1234..def5678\n\n# Revert multiple specific commits\ngit revert abc1234 def5678\n```\n\n## Handling Conflicts\n\nIf the revert causes conflicts:\n\n```bash\ngit revert abc1234\n# Auto-merging file.txt\n# CONFLICT (content): Merge conflict in file.txt\n\n# Fix the conflicts...\ngit add .\ngit revert --continue\n\n# Or abort\ngit revert --abort\n```\n\n## Revert vs Reset\n\n| Revert | Reset |\n|--------|-------|\n| Creates new commit | Moves branch pointer |\n| Safe for shared history | Rewrites history |\n| Can be used on pushed commits | Only for local changes |\n| Doesn't delete history | Can delete commits |\n\n## When to Use Revert\n\n**Use revert when:**\n- The commit has been pushed to remote\n- Others might have based work on it\n- You want to keep a record of the change\n\n**Example workflow:**\n```bash\n# Oops, last commit introduced a bug\n# It's already pushed\ngit revert HEAD\n\n# This creates a new commit that undoes the bug\n# Push the revert\ngit push\n```",
+      "codeExample": "# Revert the last commit\ngit revert HEAD\n\n# Revert specific commit\ngit revert abc1234\n\n# Revert without editing message\ngit revert --no-edit HEAD\n\n# Revert a range\ngit revert abc1234..def5678"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "history-ex-1",
+      "lessonId": "git-log",
+      "moduleId": "git-history",
+      "title": "View Compact History",
+      "difficulty": "easy",
+      "description": "View commit history concisely",
+      "instructions": "Write the command to view commit history with one commit per line.",
+      "starterCode": "# View compact history\n",
+      "solution": "git log --oneline",
+      "hints": [
+        "Use 'git log'",
+        "Add the --oneline flag",
+        "Shows commit hash and message"
+      ],
+      "validationPrompt": "Check if the user wrote 'git log --oneline' to view compact history"
+    },
+    {
+      "id": "history-ex-2",
+      "lessonId": "git-log",
+      "moduleId": "git-history",
+      "title": "Limit Log Output",
+      "difficulty": "easy",
+      "description": "View last N commits",
+      "instructions": "Write the command to view the last 5 commits in one-line format.",
+      "starterCode": "# View last 5 commits\n",
+      "solution": "git log -5 --oneline",
+      "hints": [
+        "Use 'git log'",
+        "Add -5 to limit to 5 commits",
+        "Add --oneline for compact view"
+      ],
+      "validationPrompt": "Check if the user wrote 'git log -5 --oneline' to view last 5 commits"
+    },
+    {
+      "id": "history-ex-3",
+      "lessonId": "git-show",
+      "moduleId": "git-history",
+      "title": "Show Latest Commit",
+      "difficulty": "easy",
+      "description": "View the most recent commit",
+      "instructions": "Write the command to show the details of the latest commit.",
+      "starterCode": "# Show latest commit\n",
+      "solution": "git show",
+      "hints": [
+        "Use 'git show'",
+        "Without arguments shows HEAD",
+        "Shows commit info and diff"
+      ],
+      "validationPrompt": "Check if the user wrote 'git show' to display the latest commit"
+    },
+    {
+      "id": "history-ex-4",
+      "lessonId": "git-show",
+      "moduleId": "git-history",
+      "title": "Show Previous Commit",
+      "difficulty": "medium",
+      "description": "View commit before last",
+      "instructions": "Write the command to show the commit before the latest one (one commit back from HEAD).",
+      "starterCode": "# Show commit before last\n",
+      "solution": "git show HEAD~1",
+      "hints": [
+        "Use 'git show'",
+        "HEAD refers to latest commit",
+        "Tilde 1 means one commit back"
+      ],
+      "validationPrompt": "Check if the user wrote 'git show HEAD~1' to show the previous commit"
+    },
+    {
+      "id": "history-ex-5",
+      "lessonId": "git-diff-advanced",
+      "moduleId": "git-history",
+      "title": "Compare Working Directory",
+      "difficulty": "easy",
+      "description": "See unstaged changes",
+      "instructions": "Write the command to see the differences between your working directory and the staging area.",
+      "starterCode": "# See unstaged changes\n",
+      "solution": "git diff",
+      "hints": [
+        "Just 'git diff'",
+        "Shows changes not yet staged",
+        "Compares working directory to index"
+      ],
+      "validationPrompt": "Check if the user wrote 'git diff' to see unstaged changes"
+    },
+    {
+      "id": "history-ex-6",
+      "lessonId": "git-diff-advanced",
+      "moduleId": "git-history",
+      "title": "Compare Staged Changes",
+      "difficulty": "medium",
+      "description": "See what's staged",
+      "instructions": "Write the command to see the differences between the staging area and the last commit.",
+      "starterCode": "# See staged changes\n",
+      "solution": "git diff --staged",
+      "hints": [
+        "Use 'git diff'",
+        "Add '--staged' flag",
+        "Also works with '--cached'"
+      ],
+      "validationPrompt": "Check if the user wrote 'git diff --staged' or 'git diff --cached' to see staged changes"
+    },
+    {
+      "id": "history-ex-7",
+      "lessonId": "git-undo",
+      "moduleId": "git-history",
+      "title": "Discard File Changes",
+      "difficulty": "medium",
+      "description": "Restore file to committed state",
+      "instructions": "Write the command to discard changes in a file called 'config.js' and restore it to the last committed state.",
+      "starterCode": "# Discard changes in config.js\n",
+      "solution": "git restore config.js",
+      "hints": [
+        "Use 'git restore'",
+        "Followed by filename",
+        "This deletes local changes permanently"
+      ],
+      "validationPrompt": "Check if the user wrote 'git restore config.js' to discard changes"
+    },
+    {
+      "id": "history-ex-8",
+      "lessonId": "git-undo",
+      "moduleId": "git-history",
+      "title": "Unstage a File",
+      "difficulty": "medium",
+      "description": "Remove from staging area",
+      "instructions": "Write the command to unstage a file called 'README.md' (remove it from staging but keep the changes).",
+      "starterCode": "# Unstage README.md\n",
+      "solution": "git restore --staged README.md",
+      "hints": [
+        "Use 'git restore'",
+        "Add '--staged' flag",
+        "Then the filename"
+      ],
+      "validationPrompt": "Check if the user wrote 'git restore --staged README.md' to unstage the file"
+    },
+    {
+      "id": "history-ex-9",
+      "lessonId": "git-revert",
+      "moduleId": "git-history",
+      "title": "Revert Last Commit",
+      "difficulty": "medium",
+      "description": "Undo the last commit safely",
+      "instructions": "Write the command to revert the last commit (create a new commit that undoes it).",
+      "starterCode": "# Revert the last commit\n",
+      "solution": "git revert HEAD",
+      "hints": [
+        "Use 'git revert'",
+        "HEAD refers to latest commit",
+        "This creates a new commit"
+      ],
+      "validationPrompt": "Check if the user wrote 'git revert HEAD' to revert the last commit"
+    },
+    {
+      "id": "history-ex-10",
+      "lessonId": "git-show",
+      "moduleId": "git-history",
+      "title": "Blame File",
+      "difficulty": "medium",
+      "description": "See who changed each line",
+      "instructions": "Write the command to see who last modified each line of a file called 'app.js'.",
+      "starterCode": "# See who changed each line in app.js\n",
+      "solution": "git blame app.js",
+      "hints": [
+        "Use 'git blame'",
+        "Followed by filename",
+        "Shows author and commit for each line"
+      ],
+      "validationPrompt": "Check if the user wrote 'git blame app.js' to see line-by-line authorship"
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "module": {
+    "id": "git-branches",
+    "title": "Git Branches",
+    "description": "Learn to work with branches to develop features in isolation",
+    "icon": "GitBranch",
+    "requiredXp": 150,
+    "color": "from-purple-400 to-purple-600",
+    "courseId": "git"
+  },
+  "lessons": [
+    {
+      "id": "branches-intro",
+      "moduleId": "git-branches",
+      "title": "Understanding Branches",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Branches allow you to work on features in isolation\n- The default branch is usually called 'main' or 'master'\n- Each branch has its own commit history\n- You can switch between branches instantly\n- Merging combines branches back together\n\n---\n\n# Understanding Branches\n\nBranches are one of Git's most powerful features. They let you work on different features or experiments without affecting the main codebase.\n\n## What is a Branch?\n\nThink of branches like parallel universes for your code:\n- **main branch**: The stable, production-ready code\n- **feature branches**: Where you develop new features\n- **bugfix branches**: Where you fix issues\n\n```\nmain:     A---B---C---F---G (production)\n               \\         /\nfeature:        D---E---/   (new feature)\n```\n\n## Why Use Branches?\n\n1. **Isolation**: Work on features without breaking the main code\n2. **Collaboration**: Multiple people can work on different features\n3. **Experimentation**: Try ideas without consequences\n4. **Code Review**: Merge only after review and testing\n\n## Default Branch\n\nWhen you create a repository, Git creates a default branch:\n- Historically called `master`\n- Modern convention uses `main`\n- You can check with: `git branch`\n\n## Branch Workflow\n\n```\n1. Create a branch: git branch feature-name\n2. Switch to it: git checkout feature-name\n3. Make changes and commit\n4. Switch back: git checkout main\n5. Merge: git merge feature-name\n```\n\n## Best Practices\n\n- Keep the main branch stable and deployable\n- Create a new branch for each feature or bugfix\n- Use descriptive branch names: `feature/login-page`, `bugfix/header-alignment`\n- Delete branches after merging to keep things clean",
+      "codeExample": "# List all branches\ngit branch\n\n# List all branches including remote ones\ngit branch -a\n\n# See which branch you're on (marked with *)\n# main\n# * feature-login    ← you're here\n# feature-signup"
+    },
+    {
+      "id": "git-branch",
+      "moduleId": "git-branches",
+      "title": "Creating and Listing Branches",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `git branch` lists all branches\n- `git branch name` creates a new branch\n- The current branch is marked with an asterisk (*)\n- Creating a branch doesn't switch to it\n- Branch names should be descriptive\n\n---\n\n# Creating and Listing Branches\n\n## Listing Branches\n\n```bash\n# List local branches\ngit branch\n\n# List all branches (local and remote)\ngit branch -a\n\n# List branches with last commit info\ngit branch -v\n```\n\nExample output:\n```\n* main              a1b2c3d Latest commit message\n  feature-login     e4f5g6h Add login form\n  bugfix-header     i7j8k9l Fix header alignment\n```\n\nThe `*` shows which branch you're currently on.\n\n## Creating Branches\n\n```bash\n# Create a new branch (but stay on current branch)\ngit branch feature-name\n\n# Create branch with descriptive name\ngit branch feature/user-authentication\ngit branch bugfix/fix-navbar\ngit branch hotfix/critical-bug\n```\n\n## Naming Conventions\n\nGood branch names are descriptive:\n\n**Feature branches:**\n- `feature/login-page`\n- `feature/dark-mode`\n- `feature/api-integration`\n\n**Bug fix branches:**\n- `bugfix/login-error`\n- `fix/header-alignment`\n- `hotfix/security-patch`\n\n**Other types:**\n- `docs/readme-update`\n- `refactor/cleanup-css`\n- `test/add-unit-tests`\n\n## Creating from a Specific Commit\n\n```bash\n# Create branch from a specific commit\ngit branch feature-name abc1234\n\n# Create branch from another branch\ngit branch new-branch existing-branch\n```\n\n## Renaming Branches\n\n```bash\n# Rename current branch\ngit branch -m new-name\n\n# Rename any branch\ngit branch -m old-name new-name\n```",
+      "codeExample": "# See all branches\ngit branch\n\n# Create a new feature branch\ngit branch feature-navbar\n\n# Create a bugfix branch\ngit branch bugfix-typo\n\n# List with more details\ngit branch -v"
+    },
+    {
+      "id": "git-checkout",
+      "moduleId": "git-branches",
+      "title": "Switching Branches with git checkout",
+      "order": 3,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `git checkout branch-name` switches to that branch\n- `git checkout -b name` creates AND switches to a new branch\n- You must commit or stash changes before switching if they'd conflict\n- Your working directory changes to match the branch\n\n---\n\n# Switching Branches with git checkout\n\n## Basic Checkout\n\n```bash\n# Switch to an existing branch\ngit checkout feature-login\n\n# Switch to main\ngit checkout main\n```\n\nWhen you checkout:\n- Git updates your working directory to match the branch\n- Files change to reflect that branch's state\n- Your current work is preserved on the branch you're leaving\n\n## Creating and Switching\n\n```bash\n# Create AND switch in one command\ngit checkout -b feature-navbar\n\n# This is the same as:\n# git branch feature-navbar\n# git checkout feature-navbar\n```\n\n## Switching with Uncommitted Changes\n\nIf you have uncommitted changes:\n\n```bash\n# Option 1: Commit them first\ngit add .\ngit commit -m \"WIP: work in progress\"\ngit checkout other-branch\n\n# Option 2: Stash them (save for later)\ngit stash\ngit checkout other-branch\n\n# Later, get your changes back\ngit checkout original-branch\ngit stash pop\n```\n\n## Checkout Conflicts\n\nGit won't let you switch if you'd lose work:\n\n```bash\n$ git checkout main\nerror: Your local changes would be overwritten by checkout.\nPlease commit your changes or stash them.\n```\n\n## Modern Alternative: git switch\n\nGit 2.23+ introduced clearer commands:\n\n```bash\n# Switch to branch (replaces checkout)\ngit switch feature-branch\n\n# Create and switch\ngit switch -c feature-branch\n\n# Switch back to previous branch\ngit switch -\n```\n\n## Practical Workflow\n\n```bash\n# Start new feature\ngit checkout -b feature/contact-form\n\n# Work on feature...\necho \"Contact form code\" > contact.html\ngit add .\ngit commit -m \"Add contact form\"\n\n# Go back to main\ngit checkout main\n```",
+      "codeExample": "# Switch to a feature branch\ngit checkout feature-login\n\n# Create and switch to new branch\ngit checkout -b feature-signup\n\n# Switch back to main\ngit checkout main\n\n# Modern syntax (Git 2.23+)\ngit switch feature-branch\ngit switch -c new-branch"
+    },
+    {
+      "id": "git-merge",
+      "moduleId": "git-branches",
+      "title": "Merging Branches",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `git merge branch-name` merges that branch into your current branch\n- Always checkout the branch you want to merge INTO first\n- Merging creates a new commit that combines both branches\n- Fast-forward merge: simple, linear history\n- Merge commit: preserves branch history\n\n---\n\n# Merging Branches\n\nMerging combines the work from different branches.\n\n## Basic Merge\n\n```bash\n# Switch to the branch you want to merge INTO\ngit checkout main\n\n# Merge another branch into main\ngit merge feature-login\n```\n\n## Types of Merges\n\n### 1. Fast-Forward Merge\n\nWhen the main branch hasn't changed since you branched:\n\n```\nBefore:          After:\nmain: A---B       main: A---B---C---D\n            \\                    ↑\nfeature:     C---D     feature: (merged)\n```\n\nGit simply moves the main pointer forward.\n\n### 2. Merge Commit\n\nWhen both branches have new commits:\n\n```\nBefore:          After:\nmain: A---B---E   main: A---B---E---F\n            \\                    / \\  ← merge commit\nfeature:     C---D           C---D\n```\n\nGit creates a new commit that has two parents.\n\n## Merge Process\n\n```bash\n# 1. Make sure your feature branch is complete\ngit checkout feature-navbar\ngit status  # should be clean\n\n# 2. Switch to main and update it\ngit checkout main\ngit pull  # if working with remote\n\n# 3. Merge the feature branch\ngit merge feature-navbar\n\n# 4. Delete the feature branch (optional)\ngit branch -d feature-navbar\n```\n\n## No Fast-Forward Merge\n\nForce a merge commit even when fast-forward is possible:\n\n```bash\ngit merge --no-ff feature-navbar\n```\n\nThis preserves the fact that a feature branch existed.\n\n## Aborting a Merge\n\nIf something goes wrong:\n\n```bash\n# Abort the merge and go back to pre-merge state\ngit merge --abort\n```\n\n## Checking Merge Status\n\n```bash\n# See which branches are merged\ngit branch --merged\n\n# See which branches are NOT merged\ngit branch --no-merged\n```",
+      "codeExample": "# Switch to main branch\ngit checkout main\n\n# Merge feature branch into main\ngit merge feature-login\n\n# Create a merge commit even if fast-forward is possible\ngit merge --no-ff feature-navbar\n\n# See merged branches\ngit branch --merged"
+    },
+    {
+      "id": "merge-conflicts",
+      "moduleId": "git-branches",
+      "title": "Handling Merge Conflicts",
+      "order": 5,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Conflicts happen when the same line is modified in both branches\n- Git marks conflicts with <<<<<<, =======, and >>>>>>>\n- You must manually edit files to resolve conflicts\n- After fixing, stage and commit the resolved files\n- Conflicts are normal - don't panic!\n\n---\n\n# Handling Merge Conflicts\n\nConflicts happen when Git can't automatically merge changes. This is normal and happens when the same part of a file is modified in both branches.\n\n## What Causes Conflicts?\n\n```\nBranch A:  const color = \"blue\";\nBranch B:  const color = \"red\";\n\nGit: I don't know which one to keep!\n```\n\n## Conflict Markers\n\nWhen a conflict occurs, Git adds markers to the file:\n\n```javascript\n<<<<<<< HEAD\nconst color = \"blue\";  // Your current branch\n=======\nconst color = \"red\";   // The branch you're merging\n>>>>>>> feature-branch\n```\n\n- `<<<<<<< HEAD`: Start of your changes\n- `=======`: Separator\n- `>>>>>>> branch-name`: End of their changes\n\n## Resolving Conflicts\n\n### Step 1: See the conflicts\n\n```bash\ngit status\n# Shows files with conflicts in red\n```\n\n### Step 2: Open and edit the file\n\nRemove the markers and keep the code you want:\n\n```javascript\n// Before (with conflict markers):\n<<<<<<< HEAD\nconst color = \"blue\";\n=======\nconst color = \"red\";\n>>>>>>> feature-branch\n\n// After (resolved):\nconst color = \"purple\";  // Compromise!\n```\n\n### Step 3: Mark as resolved\n\n```bash\n# Stage the resolved file\ngit add filename.js\n\n# Complete the merge\ngit commit -m \"Merge feature-branch, resolve color conflict\"\n```\n\n## Aborting a Conflict\n\nIf you want to start over:\n\n```bash\n# Abort the merge entirely\ngit merge --abort\n```\n\n## Tools for Resolving\n\n```bash\n# See conflict details\ngit diff\n\n# Use a merge tool\ngit mergetool\n\n# See which files have conflicts\ngit diff --name-only --diff-filter=U\n```\n\n## Best Practices\n\n1. **Communicate**: Talk to the person who made the other changes\n2. **Test**: After resolving, test that everything works\n3. **Don't panic**: Conflicts are a normal part of collaboration\n4. **Commit often**: Smaller commits = smaller conflicts",
+      "codeExample": "# When you have a conflict, first see what files are affected\ngit status\n\n# After editing the file to fix conflicts, stage it\ngit add conflicted-file.js\n\n# Complete the merge\ngit commit -m \"Resolve merge conflicts\"\n\n# Or abort if you want to start over\ngit merge --abort"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "branch-ex-1",
+      "lessonId": "git-branch",
+      "moduleId": "git-branches",
+      "title": "List All Branches",
+      "difficulty": "easy",
+      "description": "Practice listing branches",
+      "instructions": "Write the command to list all local branches in your repository.",
+      "starterCode": "# List all local branches\n",
+      "solution": "git branch",
+      "hints": [
+        "Start with 'git'",
+        "The command is just one word after git",
+        "It's the same as what branches are called"
+      ],
+      "validationPrompt": "Check if the user wrote 'git branch' to list branches"
+    },
+    {
+      "id": "branch-ex-2",
+      "lessonId": "git-branch",
+      "moduleId": "git-branches",
+      "title": "Create a New Branch",
+      "difficulty": "easy",
+      "description": "Create a feature branch",
+      "instructions": "Write the command to create a new branch called 'feature-navbar'.",
+      "starterCode": "# Create branch feature-navbar\n",
+      "solution": "git branch feature-navbar",
+      "hints": [
+        "Use 'git branch'",
+        "Followed by the branch name",
+        "The name should be 'feature-navbar'"
+      ],
+      "validationPrompt": "Check if the user wrote 'git branch feature-navbar' to create the branch"
+    },
+    {
+      "id": "branch-ex-3",
+      "lessonId": "git-checkout",
+      "moduleId": "git-branches",
+      "title": "Switch to a Branch",
+      "difficulty": "easy",
+      "description": "Practice switching branches",
+      "instructions": "Write the command to switch to a branch called 'feature-login'.",
+      "starterCode": "# Switch to feature-login branch\n",
+      "solution": "git checkout feature-login",
+      "hints": [
+        "Use 'git checkout'",
+        "Followed by the branch name",
+        "This changes your working directory"
+      ],
+      "validationPrompt": "Check if the user wrote 'git checkout feature-login' to switch branches"
+    },
+    {
+      "id": "branch-ex-4",
+      "lessonId": "git-checkout",
+      "moduleId": "git-branches",
+      "title": "Create and Switch",
+      "difficulty": "easy",
+      "description": "Create and switch in one command",
+      "instructions": "Write the command to create a new branch called 'feature-header' AND switch to it immediately.",
+      "starterCode": "# Create and switch to feature-header\n",
+      "solution": "git checkout -b feature-header",
+      "hints": [
+        "Use 'git checkout'",
+        "Add the -b flag to create a new branch",
+        "Then specify the branch name"
+      ],
+      "validationPrompt": "Check if the user wrote 'git checkout -b feature-header' to create and switch"
+    },
+    {
+      "id": "branch-ex-5",
+      "lessonId": "git-merge",
+      "moduleId": "git-branches",
+      "title": "Merge a Branch",
+      "difficulty": "medium",
+      "description": "Practice merging branches",
+      "instructions": "Assuming you're on the 'main' branch, write the command to merge a branch called 'feature-footer' into main.",
+      "starterCode": "# Merge feature-footer into main\n",
+      "solution": "git merge feature-footer",
+      "hints": [
+        "Use 'git merge'",
+        "You must be on the branch you want to merge INTO",
+        "Specify the branch to merge from"
+      ],
+      "validationPrompt": "Check if the user wrote 'git merge feature-footer' to merge the branch"
+    },
+    {
+      "id": "branch-ex-6",
+      "lessonId": "git-branch",
+      "moduleId": "git-branches",
+      "title": "Delete a Branch",
+      "difficulty": "medium",
+      "description": "Learn to delete branches",
+      "instructions": "Write the command to delete a branch called 'old-feature' (that has already been merged).",
+      "starterCode": "# Delete the old-feature branch\n",
+      "solution": "git branch -d old-feature",
+      "hints": [
+        "Use 'git branch'",
+        "Add the -d flag to delete",
+        "This only works if the branch is merged"
+      ],
+      "validationPrompt": "Check if the user wrote 'git branch -d old-feature' to delete the branch"
+    },
+    {
+      "id": "branch-ex-7",
+      "lessonId": "git-branch",
+      "moduleId": "git-branches",
+      "title": "Force Delete a Branch",
+      "difficulty": "medium",
+      "description": "Delete unmerged branches",
+      "instructions": "Write the command to force delete a branch called 'experiment' even if it hasn't been merged.",
+      "starterCode": "# Force delete the experiment branch\n",
+      "solution": "git branch -D experiment",
+      "hints": [
+        "Use 'git branch'",
+        "Use -D (capital D) to force delete",
+        "This deletes even if not merged - be careful!"
+      ],
+      "validationPrompt": "Check if the user wrote 'git branch -D experiment' to force delete"
+    },
+    {
+      "id": "branch-ex-8",
+      "lessonId": "git-checkout",
+      "moduleId": "git-branches",
+      "title": "Modern Switch Command",
+      "difficulty": "medium",
+      "description": "Use the modern git switch command",
+      "instructions": "Write the modern command (git switch) to switch to a branch called 'develop'.",
+      "starterCode": "# Switch to develop using modern syntax\n",
+      "solution": "git switch develop",
+      "hints": [
+        "Use 'git switch' instead of 'git checkout'",
+        "This is available in Git 2.23+",
+        "More clear and explicit than checkout"
+      ],
+      "validationPrompt": "Check if the user wrote 'git switch develop' to switch branches"
+    },
+    {
+      "id": "branch-ex-9",
+      "lessonId": "git-checkout",
+      "moduleId": "git-branches",
+      "title": "Modern Create and Switch",
+      "difficulty": "medium",
+      "description": "Use modern syntax to create and switch",
+      "instructions": "Write the modern command to create a new branch called 'feature-api' AND switch to it.",
+      "starterCode": "# Create and switch using modern syntax\n",
+      "solution": "git switch -c feature-api",
+      "hints": [
+        "Use 'git switch'",
+        "Add the -c flag to create",
+        "This is the modern replacement for 'checkout -b'"
+      ],
+      "validationPrompt": "Check if the user wrote 'git switch -c feature-api' to create and switch"
+    },
+    {
+      "id": "branch-ex-10",
+      "lessonId": "merge-conflicts",
+      "moduleId": "git-branches",
+      "title": "Abort a Merge",
+      "difficulty": "medium",
+      "description": "Learn to cancel a merge",
+      "instructions": "Write the command to abort a merge that is in progress (cancel it and go back to the state before merging).",
+      "starterCode": "# Abort the current merge\n",
+      "solution": "git merge --abort",
+      "hints": [
+        "Use 'git merge'",
+        "Add the --abort flag",
+        "This cancels the merge entirely"
+      ],
+      "validationPrompt": "Check if the user wrote 'git merge --abort' to abort the merge"
+    }
+  ]
+}

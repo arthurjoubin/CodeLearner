@@ -47,6 +47,12 @@ import securityBasicsData from './security-basics.json';
 import webPerformanceData from './web-performance.json';
 import testingBasicsData from './testing-basics.json';
 
+// Git course modules
+import gitBasicsData from './git-basics.json';
+import gitBranchesData from './git-branches.json';
+import gitRemotesData from './git-remotes.json';
+import gitHistoryData from './git-history.json';
+
 // Type for the JSON file structure
 interface ModuleData {
   module: Omit<Module, 'lessons'>;
@@ -85,6 +91,12 @@ const moduleFiles: ModuleData[] = [
   securityBasicsData as ModuleData,
   webPerformanceData as ModuleData,
   testingBasicsData as ModuleData,
+
+  // Git course
+  gitBasicsData as ModuleData,
+  gitBranchesData as ModuleData,
+  gitRemotesData as ModuleData,
+  gitHistoryData as ModuleData,
 ];
 
 // Type for module metadata in JSON (includes courseId)
