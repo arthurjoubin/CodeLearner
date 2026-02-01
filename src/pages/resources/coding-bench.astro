@@ -53,9 +53,7 @@ const getRankColor = (index: number) => {
 ---
 
 <MainLayout title="Coding Bench - LLM Rankings">
-  <ResourceTabs active="coding-bench" />
-  
-  <div class="page-enter mt-6">
+  <div class="page-enter">
     <div class="relative inline-block group mb-4">
       <a href="/resources" class="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors text-sm">
         <ArrowLeft className="w-4 h-4" /> Back
@@ -75,6 +73,8 @@ const getRankColor = (index: number) => {
       </div>
       <p class="text-gray-700 mt-1">Model progression on SWE-Bench Verified benchmark (sorted by performance)</p>
     </div>
+
+    <ResourceTabs active="coding-bench" />
 
     <div class="bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
       <div class="overflow-x-auto">

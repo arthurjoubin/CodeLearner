@@ -179,7 +179,7 @@ export function HomePageContent() {
 
       <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide p-1">
         {learningPaths.map((path) => {
-          const isAvailable = path.id === 'react' || path.id === 'web-stack';
+          const isAvailable = path.id === 'react' || path.id === 'web-stack' || path.id === 'git';
           const resume = resumes.find(r => r.courseId === path.id);
           const progress = resume
             ? Math.max(1, getPathProgress(path.id))
