@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // Link and useParams replaced for Astro compatibility
 
 import { useUser, UserProvider } from '../context/UserContext';
@@ -82,6 +82,13 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
     return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
   };
 
+  // Auto-complete lesson when all exercises are done
+  useEffect(() => {
+    if (exercises.length > 0 && completedExercisesCount === exercises.length && !alreadyCompleted) {
+      handleComplete();
+    }
+  }, [completedExercisesCount, exercises.length, alreadyCompleted]);
+
   return (
     <div className="page-enter max-w-6xl mx-auto px-3">
       <div className="mb-6">
@@ -89,14 +96,14 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
           { label: learningPathTitles[module.courseId] || module.courseId, href: `/learning-path/${module.courseId}` },
           { label: module.title, href: `/module/${module.id}` },
         ]} />
-        <div className="flex items-center justify-between gap-4">
-          <div className="relative inline-block group min-w-0 flex-1">
-            <h1 className="text-xl font-black text-gray-900 uppercase truncate">{lesson.title}</h1>
-            <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
-          </div>
+        <div className="relative inline-block group">
+          <h1 className="text-xl font-black text-gray-900 uppercase">{lesson.title}</h1>
+          <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+        </div>
 
-          {/* Lesson navigation */}
-          <div className="flex items-center gap-2 flex-shrink-0 border-2 border-gray-300 bg-white rounded-lg px-3 py-2">
+        {/* Lesson and exercise navigation */}
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <div className="inline-flex items-center gap-2 border-2 border-gray-300 bg-white rounded-lg px-3 py-2">
             <span className="text-xs font-bold text-gray-500 uppercase">Courses</span>
             <div className="flex items-center gap-1.5">
               {moduleLessons.map((mLesson, idx) => {
@@ -125,55 +132,30 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
               })}
             </div>
           </div>
-        </div>
 
-        {/* Exercise navigation - shown when exercises exist */}
-        {exercises.length > 0 && (
-          <div className="mt-3 inline-flex items-center gap-3 border-2 border-gray-300 bg-white rounded-lg px-3 py-2">
-            <span className="text-xs font-bold text-gray-500 uppercase">Exercises</span>
-            <div className="flex items-center gap-1.5">
-              {exercises.map((ex, idx) => {
-                const isDone = isExerciseCompleted(ex.id);
-                return (
-                  <a
-                    key={ex.id}
-                    href={`/exercise/${ex.id}`}
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border-2 ${isDone
-                      ? 'bg-primary-100 border-primary-500 text-primary-700 hover:bg-primary-200'
-                      : 'bg-white border-gray-300 text-gray-600 hover:border-gray-400'
-                      }`}
-                    title={`Exercise ${idx + 1}: ${ex.title}${isDone ? ' (completed)' : ''}`}
-                  >
-                    {isDone ? <CheckCircle className="w-3.5 h-3.5" /> : idx + 1}
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Complete button */}
-        <div className="mt-3 flex items-center gap-3">
-          <div className="relative inline-block group">
-            <button
-              onClick={handleComplete}
-              disabled={alreadyCompleted || (exercises.length > 0 && completedExercisesCount !== exercises.length)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 font-bold border-2 transition-colors text-xs rounded-lg ${alreadyCompleted
-                ? 'bg-primary-100 text-primary-700 border-primary-300 cursor-default'
-                : (exercises.length === 0 || completedExercisesCount === exercises.length)
-                  ? 'bg-primary-600 text-white border-primary-600 hover:bg-primary-700 cursor-pointer'
-                  : 'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed'
-                }`}
-            >
-              <CheckCircle className="w-3.5 h-3.5" />
-              {alreadyCompleted ? 'Completed' : 'Complete Lesson'}
-            </button>
-            {exercises.length > 0 && completedExercisesCount !== exercises.length && !alreadyCompleted && (
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-2 py-1 rounded text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                Complete exercises first
+          {exercises.length > 0 && (
+            <div className="inline-flex items-center gap-2 border-2 border-gray-300 bg-white rounded-lg px-3 py-2">
+              <span className="text-xs font-bold text-gray-500 uppercase">Exercises</span>
+              <div className="flex items-center gap-1.5">
+                {exercises.map((ex, idx) => {
+                  const isDone = isExerciseCompleted(ex.id);
+                  return (
+                    <a
+                      key={ex.id}
+                      href={`/exercise/${ex.id}`}
+                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border-2 ${isDone
+                        ? 'bg-primary-100 border-primary-500 text-primary-700 hover:bg-primary-200'
+                        : 'bg-white border-gray-300 text-gray-600 hover:border-gray-400'
+                        }`}
+                      title={`Exercise ${idx + 1}: ${ex.title}${isDone ? ' (completed)' : ''}`}
+                    >
+                      {isDone ? <CheckCircle className="w-3.5 h-3.5" /> : idx + 1}
+                    </a>
+                  );
+                })}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
 
