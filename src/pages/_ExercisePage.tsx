@@ -262,25 +262,43 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
               </div>
             </div>
             <div className="flex-1 min-h-0">
-              <Editor
-                height="100%"
-                defaultLanguage="typescript"
-                theme="vs-dark"
-                value={code}
-                onChange={(value) => setCode(value || '')}
-                options={{
-                  minimap: { enabled: false },
-                  fontSize: 13,
-                  lineNumbers: 'on',
-                  scrollBeyondLastLine: false,
-                  automaticLayout: true,
-                  tabSize: 2,
-                  padding: { top: 8 },
-                  fixedOverflowWidgets: true,
-                  quickSuggestions: { other: false, comments: false, strings: false },
-                  suggestOnTriggerCharacters: false,
-                }}
-              />
+              {module?.courseId === 'git' ? (
+                <div className="w-full h-full bg-gray-900 flex flex-col font-mono text-sm">
+                  <div className="px-3 py-2 bg-gray-800 text-gray-400 text-xs border-b border-gray-700">
+                    Terminal - Git Commands
+                  </div>
+                  <div className="flex-1 p-3 overflow-auto">
+                    <div className="flex items-start gap-2">
+                      <span className="text-green-400 select-none">$</span>
+                      <textarea
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                        className="flex-1 bg-transparent text-gray-100 resize-none outline-none border-none p-0 font-mono text-sm leading-relaxed"
+                        style={{ minHeight: '100%', tabSize: 2 }}
+                        spellCheck={false}
+                        placeholder="# Type your git command here..."
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Editor
+                  height="100%"
+                  defaultLanguage="typescript"
+                  theme="vs-dark"
+                  value={code}
+                  onChange={(value) => setCode(value || '')}
+                  options={{
+                    minimap: { enabled: false },
+                    fontSize: 13,
+                    lineNumbers: 'on',
+                    scrollBeyondLastLine: false,
+                    automaticLayout: true,
+                    tabSize: 2,
+                    padding: { top: 8 },
+                  }}
+                />
+              )}
             </div>
           </div>
 
