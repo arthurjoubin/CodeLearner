@@ -1,6 +1,4 @@
 import { useUser, UserProvider } from '../context/UserContext';
-import { Github } from 'lucide-react';
-import { api } from '../services/api';
 import { useState } from 'react';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 
@@ -122,25 +120,6 @@ function LoginPageContent() {
                 Forgot password?
               </a>
             )}
-          </div>
-
-          <div className="mt-6 relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <a
-              href={api.getGitHubLoginUrl()}
-              className="flex items-center justify-center gap-2 w-full bg-gray-900 text-white px-4 py-2.5 text-sm font-bold rounded hover:bg-gray-700 transition-colors"
-            >
-              <Github className="w-4 h-4" />
-              Continue with GitHub
-            </a>
           </div>
 
           <div className="mt-6 text-center">

@@ -3,11 +3,6 @@ import { User, ChatMessage, ValidationResult } from '../types';
 const WORKER_URL = 'https://codelearner-api.arthurjoubin.workers.dev';
 
 export const api = {
-  // Auth endpoints - always use worker URL (OAuth callback is configured there)
-  getGitHubLoginUrl(): string {
-    return `${WORKER_URL}/auth/github`;
-  },
-
   async login(email: string, password: string): Promise<User> {
     const res = await fetch(`${WORKER_URL}/auth/login`, {
       method: 'POST',

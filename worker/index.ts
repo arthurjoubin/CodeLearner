@@ -1,8 +1,6 @@
 interface Env {
   DB: D1Database;
   DEEPSEEK_API_KEY: string;
-  GITHUB_CLIENT_ID: string;
-  GITHUB_CLIENT_SECRET: string;
   FRONTEND_URL: string;
 }
 
@@ -16,14 +14,6 @@ interface UserProgress {
   completed_exercises: string;
   module_progress: string;
   lab_progress: string;
-}
-
-interface GitHubUser {
-  id: number;
-  login: string;
-  email: string | null;
-  avatar_url: string;
-  name: string | null;
 }
 
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
@@ -180,84 +170,6 @@ export default {
 
     try {
       // ==================== AUTH ROUTES ====================
-
-      // GET /auth/github - Redirect to GitHub OAuth
-      if (path === '/auth/github' && request.method === 'GET') {
-        const githubAuthUrl = new URL('https://github.com/login/oauth/authorize');
-        githubAuthUrl.searchParams.set('client_id', env.GITHUB_CLIENT_ID);
-        githubAuthUrl.searchParams.set('redirect_uri', `${url.origin}/auth/callback`);
-        githubAuthUrl.searchParams.set('scope', 'user:email');
-
-        return Response.redirect(githubAuthUrl.toString(), 302);
-      }
-
-      // GET /auth/callback - Handle GitHub OAuth callback
-      if (path === '/auth/callback' && request.method === 'GET') {
-        const code = url.searchParams.get('code');
-        if (!code) {
-          return Response.redirect(`${env.FRONTEND_URL}?error=no_code`, 302);
-        }
-
-        // Exchange code for access token
-        const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          body: JSON.stringify({
-            client_id: env.GITHUB_CLIENT_ID,
-            client_secret: env.GITHUB_CLIENT_SECRET,
-            code,
-          }),
-        });
-
-        const tokenData = await tokenResponse.json() as { access_token?: string; error?: string };
-        if (!tokenData.access_token) {
-          return Response.redirect(`${env.FRONTEND_URL}?error=token_failed`, 302);
-        }
-
-        // Get user info from GitHub
-        const userResponse = await fetch('https://api.github.com/user', {
-          headers: {
-            'Authorization': `Bearer ${tokenData.access_token}`,
-            'User-Agent': 'CodeLearner',
-          },
-        });
-
-        const githubUser = await userResponse.json() as GitHubUser;
-        const userId = `github_${githubUser.id}`;
-        const email = githubUser.email || `${githubUser.login}@github.local`;
-        const name = githubUser.name || githubUser.login;
-        const avatarUrl = githubUser.avatar_url;
-
-        // Upsert user in database
-        await env.DB.prepare(
-          'INSERT INTO users (id, email, name, avatar_url) VALUES (?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET name = excluded.name, avatar_url = excluded.avatar_url'
-        ).bind(userId, email, name, avatarUrl).run();
-
-        // Create user_progress if not exists
-        await env.DB.prepare(
-          'INSERT OR IGNORE INTO user_progress (user_id) VALUES (?)'
-        ).bind(userId).run();
-
-        // Create session
-        const sessionId = generateSessionId();
-        const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days
-
-        await env.DB.prepare(
-          'INSERT INTO sessions (id, user_id, expires_at) VALUES (?, ?, ?)'
-        ).bind(sessionId, userId, expiresAt).run();
-
-        // Redirect to frontend with session cookie
-        return new Response(null, {
-          status: 302,
-          headers: {
-            'Location': env.FRONTEND_URL,
-            'Set-Cookie': `session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${30 * 24 * 60 * 60}`,
-          },
-        });
-      }
 
       // GET /auth/me - Get current user from session
       if (path === '/auth/me' && request.method === 'GET') {
