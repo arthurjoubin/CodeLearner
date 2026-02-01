@@ -58,173 +58,224 @@
   "exercises": [
     {
       "id": "branch-ex-1",
+      "type": "git-scenario",
       "lessonId": "git-branch",
       "moduleId": "git-branches",
-      "title": "List All Branches",
+      "title": "Create Your First Branch",
       "difficulty": "easy",
-      "description": "Practice listing branches",
-      "instructions": "Write the command to list all local branches in your repository.",
-      "starterCode": "# List all local branches\n",
-      "solution": "git branch",
+      "story": "Your project is on the main branch with one commit. Create a new branch called 'feature-navbar' to start working on a navigation bar.",
       "hints": [
-        "Start with 'git'",
-        "The command is just one word after git",
-        "It's the same as what branches are called"
+        "Use 'git branch feature-navbar' to create the branch",
+        "Then use 'git checkout feature-navbar' or 'git switch feature-navbar' to switch to it"
       ],
-      "validationPrompt": "Check if the user wrote 'git branch' to list branches"
+      "initialState": {
+        "files": [
+          { "name": "index.html", "status": "committed" },
+          { "name": "style.css", "status": "committed" }
+        ],
+        "commits": [{ "message": "Initial commit", "files": ["index.html", "style.css"] }],
+        "branches": ["main"],
+        "currentBranch": "main",
+        "isInitialized": true
+      },
+      "objectives": [
+        { "description": "Create a branch called 'feature-navbar'", "check": { "type": "branchExists", "value": "feature-navbar" } },
+        { "description": "Switch to the feature-navbar branch", "check": { "type": "currentBranch", "value": "feature-navbar" } }
+      ]
     },
     {
       "id": "branch-ex-2",
-      "lessonId": "git-branch",
+      "type": "git-scenario",
+      "lessonId": "git-checkout",
       "moduleId": "git-branches",
-      "title": "Create a New Branch",
+      "title": "Branch Workflow",
       "difficulty": "easy",
-      "description": "Create a feature branch",
-      "instructions": "Write the command to create a new branch called 'feature-navbar'.",
-      "starterCode": "# Create branch feature-navbar\n",
-      "solution": "git branch feature-navbar",
+      "story": "Create a new feature branch, make a commit on it, then switch back to main. This is the basic branch workflow used in most projects.",
       "hints": [
-        "Use 'git branch'",
-        "Followed by the branch name",
-        "The name should be 'feature-navbar'"
+        "Use 'git checkout -b feature-login' to create and switch in one command",
+        "Stage files with 'git add .' then commit",
+        "Switch back to main with 'git checkout main'"
       ],
-      "validationPrompt": "Check if the user wrote 'git branch feature-navbar' to create the branch"
+      "initialState": {
+        "files": [
+          { "name": "index.html", "status": "committed" },
+          { "name": "login.html", "status": "untracked" }
+        ],
+        "commits": [{ "message": "Initial commit", "files": ["index.html"] }],
+        "branches": ["main"],
+        "currentBranch": "main",
+        "isInitialized": true
+      },
+      "objectives": [
+        { "description": "Create a branch called 'feature-login'", "check": { "type": "branchExists", "value": "feature-login" } },
+        { "description": "Commit on the feature branch", "check": { "type": "minCommits", "value": 2 } },
+        { "description": "Switch back to main", "check": { "type": "currentBranch", "value": "main" } }
+      ]
     },
     {
       "id": "branch-ex-3",
-      "lessonId": "git-checkout",
+      "type": "git-scenario",
+      "lessonId": "git-merge",
       "moduleId": "git-branches",
-      "title": "Switch to a Branch",
-      "difficulty": "easy",
-      "description": "Practice switching branches",
-      "instructions": "Write the command to switch to a branch called 'feature-login'.",
-      "starterCode": "# Switch to feature-login branch\n",
-      "solution": "git checkout feature-login",
+      "title": "Merge a Feature Branch",
+      "difficulty": "medium",
+      "story": "The feature-sidebar branch has a commit ready. Switch to main and merge the feature branch to integrate the sidebar into the project.",
       "hints": [
-        "Use 'git checkout'",
-        "Followed by the branch name",
-        "This changes your working directory"
+        "First switch to main with 'git checkout main'",
+        "Then merge with 'git merge feature-sidebar'"
       ],
-      "validationPrompt": "Check if the user wrote 'git checkout feature-login' to switch branches"
+      "initialState": {
+        "files": [
+          { "name": "index.html", "status": "committed" },
+          { "name": "sidebar.html", "status": "committed" }
+        ],
+        "commits": [
+          { "message": "Initial commit", "files": ["index.html"], "branch": "main" },
+          { "message": "Add sidebar component", "files": ["sidebar.html"], "branch": "feature-sidebar" }
+        ],
+        "branches": ["main", "feature-sidebar"],
+        "currentBranch": "feature-sidebar",
+        "isInitialized": true
+      },
+      "objectives": [
+        { "description": "Switch to main branch", "check": { "type": "currentBranch", "value": "main" } },
+        { "description": "Merge feature-sidebar into main", "check": { "type": "mergedBranch", "value": "feature-sidebar" } }
+      ]
     },
     {
       "id": "branch-ex-4",
+      "type": "git-scenario",
       "lessonId": "git-checkout",
       "moduleId": "git-branches",
-      "title": "Create and Switch",
-      "difficulty": "easy",
-      "description": "Create and switch in one command",
-      "instructions": "Write the command to create a new branch called 'feature-header' AND switch to it immediately.",
-      "starterCode": "# Create and switch to feature-header\n",
-      "solution": "git checkout -b feature-header",
+      "title": "Multi-Branch Project",
+      "difficulty": "medium",
+      "story": "Set up a project with two feature branches. Create 'feature-header' and 'feature-footer' branches from main, then switch to feature-header to start working on it.",
       "hints": [
-        "Use 'git checkout'",
-        "Add the -b flag to create a new branch",
-        "Then specify the branch name"
+        "Use 'git branch feature-header' to create without switching",
+        "Use 'git branch feature-footer' to create the second branch",
+        "Finally, use 'git checkout feature-header' to switch"
       ],
-      "validationPrompt": "Check if the user wrote 'git checkout -b feature-header' to create and switch"
+      "initialState": {
+        "files": [
+          { "name": "index.html", "status": "committed" }
+        ],
+        "commits": [{ "message": "Initial commit", "files": ["index.html"] }],
+        "branches": ["main"],
+        "currentBranch": "main",
+        "isInitialized": true
+      },
+      "objectives": [
+        { "description": "Create a 'feature-header' branch", "check": { "type": "branchExists", "value": "feature-header" } },
+        { "description": "Create a 'feature-footer' branch", "check": { "type": "branchExists", "value": "feature-footer" } },
+        { "description": "Switch to feature-header", "check": { "type": "currentBranch", "value": "feature-header" } }
+      ]
     },
     {
       "id": "branch-ex-5",
-      "lessonId": "git-merge",
+      "type": "quiz",
+      "lessonId": "branches-intro",
       "moduleId": "git-branches",
-      "title": "Merge a Branch",
-      "difficulty": "medium",
-      "description": "Practice merging branches",
-      "instructions": "Assuming you're on the 'main' branch, write the command to merge a branch called 'feature-footer' into main.",
-      "starterCode": "# Merge feature-footer into main\n",
-      "solution": "git merge feature-footer",
-      "hints": [
-        "Use 'git merge'",
-        "You must be on the branch you want to merge INTO",
-        "Specify the branch to merge from"
-      ],
-      "validationPrompt": "Check if the user wrote 'git merge feature-footer' to merge the branch"
+      "title": "Branch Concepts",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "question": "What is the main purpose of branches in Git?",
+          "options": [
+            "To make the repository larger",
+            "To work on features in isolation without affecting the main code",
+            "To delete old code",
+            "To back up files to the cloud"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Branches let you develop features, fix bugs, or experiment in isolation. The main branch stays stable while you work on separate branches."
+        },
+        {
+          "question": "What is the difference between 'git branch feature' and 'git checkout -b feature'?",
+          "options": [
+            "They are exactly the same",
+            "'git branch' creates the branch, 'git checkout -b' creates AND switches to it",
+            "'git checkout -b' only works on remote branches",
+            "'git branch' deletes the branch"
+          ],
+          "correctAnswer": 1,
+          "explanation": "'git branch feature' creates the branch but keeps you on your current branch. 'git checkout -b feature' creates the branch and immediately switches to it — it's a shortcut for two commands."
+        }
+      ]
     },
     {
       "id": "branch-ex-6",
-      "lessonId": "git-branch",
+      "type": "quiz",
+      "lessonId": "git-merge",
       "moduleId": "git-branches",
-      "title": "Delete a Branch",
+      "title": "Merge Concepts",
       "difficulty": "medium",
-      "description": "Learn to delete branches",
-      "instructions": "Write the command to delete a branch called 'old-feature' (that has already been merged).",
-      "starterCode": "# Delete the old-feature branch\n",
-      "solution": "git branch -d old-feature",
-      "hints": [
-        "Use 'git branch'",
-        "Add the -d flag to delete",
-        "This only works if the branch is merged"
-      ],
-      "validationPrompt": "Check if the user wrote 'git branch -d old-feature' to delete the branch"
+      "questions": [
+        {
+          "question": "When merging, which branch should you be on?",
+          "options": [
+            "The branch you want to merge FROM",
+            "The branch you want to merge INTO",
+            "It doesn't matter",
+            "You must be on a new branch"
+          ],
+          "correctAnswer": 1,
+          "explanation": "You must checkout the branch you want to merge INTO first. For example, to merge feature into main, you first 'git checkout main', then 'git merge feature'."
+        },
+        {
+          "question": "What is a fast-forward merge?",
+          "options": [
+            "A merge that happens instantly",
+            "When Git simply moves the branch pointer forward because there's no divergence",
+            "A merge that skips conflict resolution",
+            "A merge between remote branches"
+          ],
+          "correctAnswer": 1,
+          "explanation": "A fast-forward merge occurs when the target branch hasn't changed since the feature branch was created. Git simply moves the pointer forward — no merge commit is needed."
+        }
+      ]
     },
     {
       "id": "branch-ex-7",
-      "lessonId": "git-branch",
-      "moduleId": "git-branches",
-      "title": "Force Delete a Branch",
-      "difficulty": "medium",
-      "description": "Delete unmerged branches",
-      "instructions": "Write the command to force delete a branch called 'experiment' even if it hasn't been merged.",
-      "starterCode": "# Force delete the experiment branch\n",
-      "solution": "git branch -D experiment",
-      "hints": [
-        "Use 'git branch'",
-        "Use -D (capital D) to force delete",
-        "This deletes even if not merged - be careful!"
-      ],
-      "validationPrompt": "Check if the user wrote 'git branch -D experiment' to force delete"
-    },
-    {
-      "id": "branch-ex-8",
-      "lessonId": "git-checkout",
-      "moduleId": "git-branches",
-      "title": "Modern Switch Command",
-      "difficulty": "medium",
-      "description": "Use the modern git switch command",
-      "instructions": "Write the modern command (git switch) to switch to a branch called 'develop'.",
-      "starterCode": "# Switch to develop using modern syntax\n",
-      "solution": "git switch develop",
-      "hints": [
-        "Use 'git switch' instead of 'git checkout'",
-        "This is available in Git 2.23+",
-        "More clear and explicit than checkout"
-      ],
-      "validationPrompt": "Check if the user wrote 'git switch develop' to switch branches"
-    },
-    {
-      "id": "branch-ex-9",
-      "lessonId": "git-checkout",
-      "moduleId": "git-branches",
-      "title": "Modern Create and Switch",
-      "difficulty": "medium",
-      "description": "Use modern syntax to create and switch",
-      "instructions": "Write the modern command to create a new branch called 'feature-api' AND switch to it.",
-      "starterCode": "# Create and switch using modern syntax\n",
-      "solution": "git switch -c feature-api",
-      "hints": [
-        "Use 'git switch'",
-        "Add the -c flag to create",
-        "This is the modern replacement for 'checkout -b'"
-      ],
-      "validationPrompt": "Check if the user wrote 'git switch -c feature-api' to create and switch"
-    },
-    {
-      "id": "branch-ex-10",
+      "type": "quiz",
       "lessonId": "merge-conflicts",
       "moduleId": "git-branches",
-      "title": "Abort a Merge",
+      "title": "Conflict Resolution",
       "difficulty": "medium",
-      "description": "Learn to cancel a merge",
-      "instructions": "Write the command to abort a merge that is in progress (cancel it and go back to the state before merging).",
-      "starterCode": "# Abort the current merge\n",
-      "solution": "git merge --abort",
-      "hints": [
-        "Use 'git merge'",
-        "Add the --abort flag",
-        "This cancels the merge entirely"
-      ],
-      "validationPrompt": "Check if the user wrote 'git merge --abort' to abort the merge"
+      "questions": [
+        {
+          "question": "When do merge conflicts occur?",
+          "options": [
+            "Every time you merge two branches",
+            "When the same lines of a file are modified in both branches",
+            "When you forget to commit",
+            "When you delete a branch"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Conflicts happen when Git can't automatically determine which changes to keep — specifically when the same part of a file was modified differently in the two branches being merged."
+        },
+        {
+          "question": "What does '<<<<<<< HEAD' mean in a conflict file?",
+          "options": [
+            "The file header information",
+            "The start of the changes from your current branch",
+            "A Git error message",
+            "The beginning of the file"
+          ],
+          "correctAnswer": 1,
+          "explanation": "In a conflict, '<<<<<<< HEAD' marks the start of changes from your current branch (HEAD). The '=======' separator divides it from the incoming changes, which end with '>>>>>>> branch-name'."
+        },
+        {
+          "question": "After resolving a conflict, what commands do you need to run?",
+          "options": [
+            "git merge --continue",
+            "git add <file> then git commit",
+            "git conflict --resolve",
+            "git push --force"
+          ],
+          "correctAnswer": 1,
+          "explanation": "After manually editing the conflicted files to resolve them, you stage the resolved files with 'git add', then complete the merge with 'git commit'."
+        }
+      ]
     }
   ]
 }

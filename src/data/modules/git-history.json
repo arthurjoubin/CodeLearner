@@ -58,173 +58,213 @@
   "exercises": [
     {
       "id": "history-ex-1",
-      "lessonId": "git-log",
+      "type": "git-scenario",
+      "lessonId": "git-undo",
       "moduleId": "git-history",
-      "title": "View Compact History",
+      "title": "Undo Staged Changes",
       "difficulty": "easy",
-      "description": "View commit history concisely",
-      "instructions": "Write the command to view commit history with one commit per line.",
-      "starterCode": "# View compact history\n",
-      "solution": "git log --oneline",
+      "story": "You accidentally staged config.js which contains sensitive data. Unstage it before committing, but keep your other staged files ready.",
       "hints": [
-        "Use 'git log'",
-        "Add the --oneline flag",
-        "Shows commit hash and message"
+        "Use 'git restore --staged config.js' to unstage just that file",
+        "Then commit the remaining staged files"
       ],
-      "validationPrompt": "Check if the user wrote 'git log --oneline' to view compact history"
+      "initialState": {
+        "files": [
+          { "name": "index.html", "status": "staged" },
+          { "name": "style.css", "status": "staged" },
+          { "name": "config.js", "status": "staged" }
+        ],
+        "commits": [{ "message": "Initial commit", "files": ["index.html", "style.css", "config.js"] }],
+        "branches": ["main"],
+        "currentBranch": "main",
+        "isInitialized": true
+      },
+      "objectives": [
+        { "description": "Unstage config.js", "check": { "type": "fileStatus", "file": "config.js", "status": "modified" } },
+        { "description": "Commit the safe files", "check": { "type": "minCommits", "value": 2 } }
+      ]
     },
     {
       "id": "history-ex-2",
-      "lessonId": "git-log",
+      "type": "git-scenario",
+      "lessonId": "git-undo",
       "moduleId": "git-history",
-      "title": "Limit Log Output",
-      "difficulty": "easy",
-      "description": "View last N commits",
-      "instructions": "Write the command to view the last 5 commits in one-line format.",
-      "starterCode": "# View last 5 commits\n",
-      "solution": "git log -5 --oneline",
+      "title": "Discard Local Changes",
+      "difficulty": "medium",
+      "story": "You made some experimental changes to app.js that didn't work out. Discard the changes to restore the file to its last committed state.",
       "hints": [
-        "Use 'git log'",
-        "Add -5 to limit to 5 commits",
-        "Add --oneline for compact view"
+        "Use 'git restore app.js' to discard local changes",
+        "Warning: this permanently removes your uncommitted changes!"
       ],
-      "validationPrompt": "Check if the user wrote 'git log -5 --oneline' to view last 5 commits"
+      "initialState": {
+        "files": [
+          { "name": "index.html", "status": "committed" },
+          { "name": "app.js", "status": "modified" },
+          { "name": "style.css", "status": "committed" }
+        ],
+        "commits": [{ "message": "Initial commit", "files": ["index.html", "app.js", "style.css"] }],
+        "branches": ["main"],
+        "currentBranch": "main",
+        "isInitialized": true
+      },
+      "objectives": [
+        { "description": "Restore app.js to its committed state", "check": { "type": "fileStatus", "file": "app.js", "status": "committed" } }
+      ]
     },
     {
       "id": "history-ex-3",
-      "lessonId": "git-show",
+      "type": "git-scenario",
+      "lessonId": "git-undo",
       "moduleId": "git-history",
-      "title": "Show Latest Commit",
-      "difficulty": "easy",
-      "description": "View the most recent commit",
-      "instructions": "Write the command to show the details of the latest commit.",
-      "starterCode": "# Show latest commit\n",
-      "solution": "git show",
+      "title": "Clean Up Working Directory",
+      "difficulty": "medium",
+      "story": "Your working directory is a mess — some files are modified, some are staged. Clean everything up: unstage the staged files, then discard all modifications to get a clean tree.",
       "hints": [
-        "Use 'git show'",
-        "Without arguments shows HEAD",
-        "Shows commit info and diff"
+        "First unstage with 'git restore --staged .'",
+        "Then discard modifications with 'git restore .'"
       ],
-      "validationPrompt": "Check if the user wrote 'git show' to display the latest commit"
+      "initialState": {
+        "files": [
+          { "name": "index.html", "status": "staged" },
+          { "name": "app.js", "status": "modified" },
+          { "name": "utils.js", "status": "committed" }
+        ],
+        "commits": [{ "message": "Initial commit", "files": ["index.html", "app.js", "utils.js"] }],
+        "branches": ["main"],
+        "currentBranch": "main",
+        "isInitialized": true
+      },
+      "objectives": [
+        { "description": "All files are committed (clean tree)", "check": { "type": "allFilesCommitted" } }
+      ]
     },
     {
       "id": "history-ex-4",
-      "lessonId": "git-show",
+      "type": "quiz",
+      "lessonId": "git-log",
       "moduleId": "git-history",
-      "title": "Show Previous Commit",
-      "difficulty": "medium",
-      "description": "View commit before last",
-      "instructions": "Write the command to show the commit before the latest one (one commit back from HEAD).",
-      "starterCode": "# Show commit before last\n",
-      "solution": "git show HEAD~1",
-      "hints": [
-        "Use 'git show'",
-        "HEAD refers to latest commit",
-        "Tilde 1 means one commit back"
-      ],
-      "validationPrompt": "Check if the user wrote 'git show HEAD~1' to show the previous commit"
+      "title": "Git Log Quiz",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "question": "What does 'git log --oneline' show?",
+          "options": [
+            "Only the first commit ever made",
+            "A compact view with one commit per line (hash + message)",
+            "The full diff of every commit",
+            "Only commits from today"
+          ],
+          "correctAnswer": 1,
+          "explanation": "git log --oneline shows each commit on a single line with its abbreviated hash and commit message, making it easy to scan the project history."
+        },
+        {
+          "question": "How do you view only the last 3 commits?",
+          "options": [
+            "git log --last 3",
+            "git log -3",
+            "git log --limit=3",
+            "git log --count 3"
+          ],
+          "correctAnswer": 1,
+          "explanation": "git log -3 limits the output to the 3 most recent commits. You can combine it with other flags like --oneline for a compact view."
+        }
+      ]
     },
     {
       "id": "history-ex-5",
-      "lessonId": "git-diff-advanced",
+      "type": "quiz",
+      "lessonId": "git-show",
       "moduleId": "git-history",
-      "title": "Compare Working Directory",
+      "title": "Inspecting Commits Quiz",
       "difficulty": "easy",
-      "description": "See unstaged changes",
-      "instructions": "Write the command to see the differences between your working directory and the staging area.",
-      "starterCode": "# See unstaged changes\n",
-      "solution": "git diff",
-      "hints": [
-        "Just 'git diff'",
-        "Shows changes not yet staged",
-        "Compares working directory to index"
-      ],
-      "validationPrompt": "Check if the user wrote 'git diff' to see unstaged changes"
+      "questions": [
+        {
+          "question": "What does HEAD~1 refer to?",
+          "options": [
+            "The next commit to be made",
+            "The first commit in the repository",
+            "The commit before the current HEAD",
+            "A branch named HEAD"
+          ],
+          "correctAnswer": 2,
+          "explanation": "HEAD~1 is a relative reference meaning 'one commit before HEAD'. HEAD points to the latest commit, so HEAD~1 is the parent commit. HEAD~2 would be two commits back, and so on."
+        },
+        {
+          "question": "What does 'git blame' show?",
+          "options": [
+            "A list of all errors in the file",
+            "Who last modified each line of a file and when",
+            "The difference between two commits",
+            "A list of deleted files"
+          ],
+          "correctAnswer": 1,
+          "explanation": "git blame shows each line of a file annotated with the commit hash, author, and date of the last change. It's useful for understanding who changed what and when."
+        }
+      ]
     },
     {
       "id": "history-ex-6",
+      "type": "quiz",
       "lessonId": "git-diff-advanced",
       "moduleId": "git-history",
-      "title": "Compare Staged Changes",
+      "title": "Comparing Versions Quiz",
       "difficulty": "medium",
-      "description": "See what's staged",
-      "instructions": "Write the command to see the differences between the staging area and the last commit.",
-      "starterCode": "# See staged changes\n",
-      "solution": "git diff --staged",
-      "hints": [
-        "Use 'git diff'",
-        "Add '--staged' flag",
-        "Also works with '--cached'"
-      ],
-      "validationPrompt": "Check if the user wrote 'git diff --staged' or 'git diff --cached' to see staged changes"
+      "questions": [
+        {
+          "question": "What does a line starting with '+' mean in git diff output?",
+          "options": [
+            "A line that was removed",
+            "A line that was added",
+            "A line that was moved",
+            "A comment line"
+          ],
+          "correctAnswer": 1,
+          "explanation": "In diff output, lines starting with '+' were added (shown in green), and lines starting with '-' were removed (shown in red). Lines without a prefix are unchanged context lines."
+        },
+        {
+          "question": "What is the difference between 'git diff main feature' and 'git diff main...feature'?",
+          "options": [
+            "They are exactly the same",
+            "Two dots compares tips directly, three dots shows changes since branches diverged",
+            "Three dots is invalid syntax",
+            "Two dots is for local, three dots is for remote"
+          ],
+          "correctAnswer": 1,
+          "explanation": "'git diff main feature' (two dots implied) compares the tips of both branches directly. 'git diff main...feature' shows only the changes made on the feature branch since it diverged from main."
+        }
+      ]
     },
     {
       "id": "history-ex-7",
-      "lessonId": "git-undo",
-      "moduleId": "git-history",
-      "title": "Discard File Changes",
-      "difficulty": "medium",
-      "description": "Restore file to committed state",
-      "instructions": "Write the command to discard changes in a file called 'config.js' and restore it to the last committed state.",
-      "starterCode": "# Discard changes in config.js\n",
-      "solution": "git restore config.js",
-      "hints": [
-        "Use 'git restore'",
-        "Followed by filename",
-        "This deletes local changes permanently"
-      ],
-      "validationPrompt": "Check if the user wrote 'git restore config.js' to discard changes"
-    },
-    {
-      "id": "history-ex-8",
-      "lessonId": "git-undo",
-      "moduleId": "git-history",
-      "title": "Unstage a File",
-      "difficulty": "medium",
-      "description": "Remove from staging area",
-      "instructions": "Write the command to unstage a file called 'README.md' (remove it from staging but keep the changes).",
-      "starterCode": "# Unstage README.md\n",
-      "solution": "git restore --staged README.md",
-      "hints": [
-        "Use 'git restore'",
-        "Add '--staged' flag",
-        "Then the filename"
-      ],
-      "validationPrompt": "Check if the user wrote 'git restore --staged README.md' to unstage the file"
-    },
-    {
-      "id": "history-ex-9",
+      "type": "quiz",
       "lessonId": "git-revert",
       "moduleId": "git-history",
-      "title": "Revert Last Commit",
+      "title": "Revert vs Reset Quiz",
       "difficulty": "medium",
-      "description": "Undo the last commit safely",
-      "instructions": "Write the command to revert the last commit (create a new commit that undoes it).",
-      "starterCode": "# Revert the last commit\n",
-      "solution": "git revert HEAD",
-      "hints": [
-        "Use 'git revert'",
-        "HEAD refers to latest commit",
-        "This creates a new commit"
-      ],
-      "validationPrompt": "Check if the user wrote 'git revert HEAD' to revert the last commit"
-    },
-    {
-      "id": "history-ex-10",
-      "lessonId": "git-show",
-      "moduleId": "git-history",
-      "title": "Blame File",
-      "difficulty": "medium",
-      "description": "See who changed each line",
-      "instructions": "Write the command to see who last modified each line of a file called 'app.js'.",
-      "starterCode": "# See who changed each line in app.js\n",
-      "solution": "git blame app.js",
-      "hints": [
-        "Use 'git blame'",
-        "Followed by filename",
-        "Shows author and commit for each line"
-      ],
-      "validationPrompt": "Check if the user wrote 'git blame app.js' to see line-by-line authorship"
+      "questions": [
+        {
+          "question": "What is the key difference between 'git revert' and 'git reset'?",
+          "options": [
+            "They do the same thing",
+            "Revert creates a new commit that undoes changes; reset moves the branch pointer back",
+            "Revert only works on branches, reset works on files",
+            "Reset is safer because it creates a backup"
+          ],
+          "correctAnswer": 1,
+          "explanation": "git revert creates a new commit that reverses the changes, preserving history. git reset moves the branch pointer backwards, potentially rewriting history. Revert is safe for shared branches."
+        },
+        {
+          "question": "When should you use 'git revert' instead of 'git reset'?",
+          "options": [
+            "When the commit hasn't been pushed yet",
+            "When the commit has already been pushed and others may have pulled it",
+            "When you want to delete a branch",
+            "When you want to rename a file"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Use git revert when the commit has been pushed to a shared repository. Since revert creates a new commit instead of rewriting history, it won't cause problems for other developers."
+        }
+      ]
     }
   ]
 }

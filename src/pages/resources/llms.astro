@@ -2,7 +2,7 @@
 import MainLayout from '../../layouts/MainLayout.astro';
 import { getCollection } from 'astro:content';
 import ResourceTabs from '../../components/ResourceTabs.astro';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 const llms = await getCollection('llms');
 const llmsByProvider = llms.reduce((acc: Record<string, typeof llms>, llm: typeof llms[0]) => {
@@ -21,6 +21,7 @@ const providerLogos: Record<string, string> = {
 	'OpenAI': 'https://avatars.githubusercontent.com/u/14957082?s=200&v=4',
 	'Google': 'https://raw.githubusercontent.com/github/explore/main/topics/google/google.png',
 	'DeepSeek': 'https://avatars.githubusercontent.com/u/148330874?s=200&v=4',
+	'Moonshot AI': '/images/providers/moonshot-ai.png',
 };
 
 function getProviderLogo(provider: string): string {
@@ -52,48 +53,36 @@ function getProviderLogo(provider: string): string {
 
 		<ResourceTabs active="llms" />
 
-		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 p-1">
+		<div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3 p-1">
 			{llms.map((llm: typeof llms[0], index: number) => {
 				const llmSlug = llm.slug;
-				const humanEval = llm.data.benchmarks?.find((b: { name: string; score: string }) => b.name === 'HumanEval')?.score;
 				const logoUrl = getProviderLogo(llm.data.provider);
+				const isOpenSource = llm.data.strengths?.some((s: string) => s.toLowerCase().includes('open') || s.toLowerCase().includes('open-source'));
+				
 				return (
 					<a
 						href={`/resources/llms/${llmSlug}`}
-						class="border-2 border-gray-300 rounded-lg p-4 transition-all hover:border-primary-500 hover:shadow-md bg-white relative group"
+						class="border-2 border-gray-300 rounded-lg p-3.5 transition-all hover:border-primary-500 hover:shadow-md bg-white relative group"
 						style={`animation-delay: ${index * 50}ms`}
 					>
-						<div class="absolute top-3 right-3 flex flex-col items-end gap-1">
-							<ExternalLink className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-						</div>
-
-						<div class="flex items-center gap-3 mb-3 pr-6">
-							<div class="w-10 h-10 rounded-lg overflow-hidden bg-white border border-gray-200 flex items-center justify-center">
+						<div class="flex items-center gap-3">
+							<div class="w-11 h-11 rounded-lg overflow-hidden bg-gray-50 border border-gray-200 flex items-center justify-center shrink-0 group-hover:border-primary-300 transition-colors">
 								<img src={logoUrl} alt={llm.data.provider} class="w-8 h-8 object-contain" />
 							</div>
+							<div class="flex-1 min-w-0">
+								<div class="flex items-center gap-2">
+									<h3 class="font-bold text-gray-900 uppercase text-base leading-tight group-hover:text-primary-700 transition-colors truncate">{llm.data.name}</h3>
+									{isOpenSource && (
+										<span class="shrink-0 text-[9px] px-1.5 py-0.5 bg-green-100 text-green-700 rounded font-bold border border-green-200">OPEN</span>
+									)}
+								</div>
+								<p class="text-xs text-gray-500 font-medium truncate">{llm.data.provider}</p>
+							</div>
 						</div>
 
-						<div class="flex items-center gap-2 mb-1">
-							<div class="w-2 h-2 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />
-							<h3 class="font-bold text-gray-900 uppercase group-hover:text-primary-700 transition-colors truncate">{llm.data.name}</h3>
-						</div>
-						<p class="text-xs text-gray-700 mb-3 ml-4 line-clamp-2">{llm.data.description}</p>
-						
-						<div class="ml-4 flex items-center justify-between">
-							<div class="flex items-center gap-3">
-								<div class="text-center">
-									<p class="text-[10px] text-gray-500 uppercase font-bold">Context</p>
-									<p class="text-xs font-bold text-gray-900">{llm.data.contextWindow}</p>
-								</div>
-								{humanEval && (
-									<div class="text-center">
-										<p class="text-[10px] text-gray-500 uppercase font-bold">HumanEval</p>
-										<p class="text-xs font-bold text-primary-600">{humanEval}</p>
-									</div>
-								)}
-							</div>
-							<span class="text-[10px] text-gray-500 font-bold uppercase">{llm.data.pricing.split(' ')[0]}</span>
-						</div>
+						<div class="h-px bg-gray-200 mt-4 mb-3 w-full"></div>
+
+						<p class="text-xs text-gray-600 line-clamp-2 leading-relaxed">{llm.data.description}</p>
 					</a>
 				);
 			})}

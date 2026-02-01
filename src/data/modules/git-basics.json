@@ -58,176 +58,258 @@
   "exercises": [
     {
       "id": "git-ex-1",
+      "type": "git-scenario",
       "lessonId": "git-init",
       "moduleId": "git-basics",
-      "title": "Initialize Your First Repo",
+      "title": "Your First Repository",
       "difficulty": "easy",
-      "description": "Practice initializing a Git repository",
-      "instructions": "Write the command to initialize a new Git repository in the current directory.",
-      "starterCode": "# Write the command to initialize a Git repository\n",
-      "solution": "git init",
+      "story": "You just created a new web project with two files: index.html and style.css. Initialize Git to start tracking your project.",
       "hints": [
-        "The command starts with 'git'",
-        "You want to 'initialize' the repository",
-        "It's just two words"
+        "Use 'git init' to initialize a repository",
+        "After initializing, use 'git add .' to stage all files",
+        "Then commit with git commit -m \"your message\""
       ],
-      "validationPrompt": "Check if the user wrote 'git init' to initialize a Git repository"
+      "initialState": {
+        "files": [
+          { "name": "index.html", "status": "untracked" },
+          { "name": "style.css", "status": "untracked" }
+        ],
+        "commits": [],
+        "branches": [],
+        "currentBranch": "",
+        "isInitialized": false
+      },
+      "objectives": [
+        { "description": "Initialize the repository", "check": { "type": "isInitialized", "value": true } },
+        { "description": "Stage all files", "check": { "type": "noUntrackedFiles" } },
+        { "description": "Create your first commit", "check": { "type": "minCommits", "value": 1 } }
+      ]
     },
     {
       "id": "git-ex-2",
-      "lessonId": "git-init",
+      "type": "git-scenario",
+      "lessonId": "git-add",
       "moduleId": "git-basics",
-      "title": "Check Repository Status",
+      "title": "Staging Files",
       "difficulty": "easy",
-      "description": "Learn to check the status of your repository",
-      "instructions": "Write the command to check the current status of your Git repository.",
-      "starterCode": "# Write the command to check repository status\n",
-      "solution": "git status",
+      "story": "Your project is already initialized with some committed files. You just created two new files: app.js and utils.js. Stage them and commit the changes.",
       "hints": [
-        "The command starts with 'git'",
-        "You want to check the 'status'",
-        "It's just two words"
+        "Use 'git add .' to stage all new files",
+        "Or use 'git add app.js' then 'git add utils.js' to stage individually",
+        "Don't forget to commit after staging!"
       ],
-      "validationPrompt": "Check if the user wrote 'git status' to check the repository status"
+      "initialState": {
+        "files": [
+          { "name": "index.html", "status": "committed" },
+          { "name": "app.js", "status": "untracked" },
+          { "name": "utils.js", "status": "untracked" }
+        ],
+        "commits": [{ "message": "Initial commit", "files": ["index.html"] }],
+        "branches": ["main"],
+        "currentBranch": "main",
+        "isInitialized": true
+      },
+      "objectives": [
+        { "description": "Stage all new files", "check": { "type": "noUntrackedFiles" } },
+        { "description": "Commit the staged files", "check": { "type": "minCommits", "value": 2 } }
+      ]
     },
     {
       "id": "git-ex-3",
-      "lessonId": "git-add",
+      "type": "git-scenario",
+      "lessonId": "git-commit",
       "moduleId": "git-basics",
-      "title": "Stage a Specific File",
+      "title": "Making Multiple Commits",
       "difficulty": "easy",
-      "description": "Practice staging individual files",
-      "instructions": "Write the command to stage a file named 'index.html'.",
-      "starterCode": "# Stage the file index.html\n",
-      "solution": "git add index.html",
+      "story": "You have three new files in your project. Practice good Git habits by making separate, meaningful commits: first add README.md, then add the source files.",
       "hints": [
-        "Start with 'git add'",
-        "Then specify the filename",
-        "Don't forget the file extension"
+        "Add README.md first with 'git add README.md', then commit it",
+        "Then add the other files and commit them separately",
+        "Use descriptive commit messages"
       ],
-      "validationPrompt": "Check if the user wrote 'git add index.html' to stage the file"
+      "initialState": {
+        "files": [
+          { "name": "README.md", "status": "untracked" },
+          { "name": "server.js", "status": "untracked" },
+          { "name": "package.json", "status": "untracked" }
+        ],
+        "commits": [],
+        "branches": ["main"],
+        "currentBranch": "main",
+        "isInitialized": true
+      },
+      "objectives": [
+        { "description": "Create at least 2 commits", "check": { "type": "minCommits", "value": 2 } },
+        { "description": "All files must be committed", "check": { "type": "allFilesCommitted" } }
+      ]
     },
     {
       "id": "git-ex-4",
+      "type": "git-scenario",
       "lessonId": "git-add",
       "moduleId": "git-basics",
-      "title": "Stage All Changes",
-      "difficulty": "easy",
-      "description": "Learn to stage all changes at once",
-      "instructions": "Write the command to stage ALL changes in the current directory.",
-      "starterCode": "# Stage all changes in the current directory\n",
-      "solution": "git add .",
+      "title": "Selective Staging",
+      "difficulty": "medium",
+      "story": "You modified three files but only want to commit the HTML file for now. Stage only index.html and commit it, leaving the others unstaged.",
       "hints": [
-        "Start with 'git add'",
-        "Use a dot to mean 'all files in current directory'",
-        "It's 'git add' followed by a period"
+        "Use 'git add index.html' to stage just that one file",
+        "Don't use 'git add .' — that would stage everything!",
+        "After committing, the other files should still be modified"
       ],
-      "validationPrompt": "Check if the user wrote 'git add .' to stage all changes"
+      "initialState": {
+        "files": [
+          { "name": "index.html", "status": "modified" },
+          { "name": "style.css", "status": "modified" },
+          { "name": "app.js", "status": "modified" }
+        ],
+        "commits": [{ "message": "Initial commit", "files": ["index.html", "style.css", "app.js"] }],
+        "branches": ["main"],
+        "currentBranch": "main",
+        "isInitialized": true
+      },
+      "objectives": [
+        { "description": "Commit the index.html file", "check": { "type": "minCommits", "value": 2 } },
+        { "description": "index.html is committed", "check": { "type": "fileStatus", "file": "index.html", "status": "committed" } }
+      ]
     },
     {
       "id": "git-ex-5",
-      "lessonId": "git-commit",
-      "moduleId": "git-basics",
-      "title": "Make Your First Commit",
-      "difficulty": "easy",
-      "description": "Practice committing changes with a message",
-      "instructions": "Write the command to commit staged changes with the message 'Initial commit'.",
-      "starterCode": "# Commit with the message 'Initial commit'\n",
-      "solution": "git commit -m \"Initial commit\"",
-      "hints": [
-        "Use 'git commit'",
-        "Add the -m flag for the message",
-        "Put the message in quotes",
-        "The message should be 'Initial commit'"
-      ],
-      "validationPrompt": "Check if the user wrote a git commit command with the message 'Initial commit'"
-    },
-    {
-      "id": "git-ex-6",
-      "lessonId": "git-commit",
-      "moduleId": "git-basics",
-      "title": "View Commit History",
-      "difficulty": "easy",
-      "description": "Learn to view your commit history",
-      "instructions": "Write the command to view the commit history in a compact, one-line format.",
-      "starterCode": "# View compact commit history\n",
-      "solution": "git log --oneline",
-      "hints": [
-        "Start with 'git log'",
-        "Add the --oneline flag",
-        "This shows each commit on one line"
-      ],
-      "validationPrompt": "Check if the user wrote 'git log --oneline' to view compact commit history"
-    },
-    {
-      "id": "git-ex-7",
-      "lessonId": "git-status",
-      "moduleId": "git-basics",
-      "title": "See What Changed",
-      "difficulty": "medium",
-      "description": "View the actual changes in your files",
-      "instructions": "Write the command to see the differences between your working directory and the staging area.",
-      "starterCode": "# Show unstaged changes\n",
-      "solution": "git diff",
-      "hints": [
-        "This command shows changes not yet staged",
-        "It's just two words",
-        "Start with 'git'"
-      ],
-      "validationPrompt": "Check if the user wrote 'git diff' to see unstaged changes"
-    },
-    {
-      "id": "git-ex-8",
-      "lessonId": "git-status",
-      "moduleId": "git-basics",
-      "title": "See Staged Changes",
-      "difficulty": "medium",
-      "description": "View changes that are staged for commit",
-      "instructions": "Write the command to see the differences between the staging area and the last commit.",
-      "starterCode": "# Show staged changes\n",
-      "solution": "git diff --staged",
-      "hints": [
-        "Start with 'git diff'",
-        "Add the --staged flag",
-        "This shows what will be in the next commit"
-      ],
-      "validationPrompt": "Check if the user wrote 'git diff --staged' to see staged changes"
-    },
-    {
-      "id": "git-ex-9",
-      "lessonId": "git-add",
-      "moduleId": "git-basics",
-      "title": "Unstage a File",
-      "difficulty": "medium",
-      "description": "Learn to remove files from the staging area",
-      "instructions": "Write the command to unstage a file named 'config.js' (remove it from staging area but keep the changes).",
-      "starterCode": "# Unstage config.js\n",
-      "solution": "git restore --staged config.js",
-      "hints": [
-        "Use 'git restore' command",
-        "Add the --staged flag",
-        "Then specify the filename",
-        "This keeps your changes but removes from staging"
-      ],
-      "validationPrompt": "Check if the user wrote 'git restore --staged config.js' to unstage the file"
-    },
-    {
-      "id": "git-ex-10",
+      "type": "git-scenario",
       "lessonId": "git-commit",
       "moduleId": "git-basics",
       "title": "Complete Workflow",
       "difficulty": "medium",
-      "description": "Practice the complete Git workflow",
-      "instructions": "Write the three commands to: 1) Stage all changes, 2) Commit with message 'Add new feature', 3) View the last 3 commits. Write each command on a new line.",
-      "starterCode": "# Complete the workflow\n",
-      "solution": "git add .\ngit commit -m \"Add new feature\"\ngit log -3",
+      "story": "You're starting a brand new project from scratch. Initialize Git, create your first commit with all files, then verify everything is clean.",
       "hints": [
-        "First command stages all files",
-        "Second command commits with -m flag",
-        "Third command shows git log with -3 flag",
-        "Each command on its own line"
+        "Start with 'git init'",
+        "Then 'git add .' to stage everything",
+        "Commit with a descriptive message",
+        "Use 'git status' to verify a clean tree"
       ],
-      "validationPrompt": "Check if the user wrote three commands: git add ., git commit with message 'Add new feature', and git log -3"
+      "initialState": {
+        "files": [
+          { "name": "index.html", "status": "untracked" },
+          { "name": "style.css", "status": "untracked" },
+          { "name": "main.js", "status": "untracked" }
+        ],
+        "commits": [],
+        "branches": [],
+        "currentBranch": "",
+        "isInitialized": false
+      },
+      "objectives": [
+        { "description": "Initialize the repository", "check": { "type": "isInitialized", "value": true } },
+        { "description": "Stage all files", "check": { "type": "noUntrackedFiles" } },
+        { "description": "Create a commit", "check": { "type": "minCommits", "value": 1 } },
+        { "description": "All files committed (clean tree)", "check": { "type": "allFilesCommitted" } }
+      ]
+    },
+    {
+      "id": "git-ex-6",
+      "type": "quiz",
+      "lessonId": "git-intro",
+      "moduleId": "git-basics",
+      "title": "Git Fundamentals",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "question": "What is Git?",
+          "options": [
+            "A website for hosting code",
+            "A distributed version control system",
+            "A programming language",
+            "A text editor"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Git is a distributed version control system that tracks changes to files over time. GitHub is a website for hosting Git repositories — they are not the same thing."
+        },
+        {
+          "question": "What is the correct order of the basic Git workflow?",
+          "options": [
+            "commit → add → push",
+            "add → commit → push",
+            "push → add → commit",
+            "init → push → add"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The basic workflow is: edit files, then 'git add' to stage changes, then 'git commit' to save them, and optionally 'git push' to share with a remote."
+        },
+        {
+          "question": "What does the Staging Area do?",
+          "options": [
+            "It permanently saves your changes",
+            "It uploads files to GitHub",
+            "It's a holding area for changes you want to include in the next commit",
+            "It deletes files you no longer need"
+          ],
+          "correctAnswer": 2,
+          "explanation": "The staging area (also called the index) is where you prepare changes before committing them. It lets you select which changes go into the next commit."
+        }
+      ]
+    },
+    {
+      "id": "git-ex-7",
+      "type": "quiz",
+      "lessonId": "git-status",
+      "moduleId": "git-basics",
+      "title": "Status & Diff Quiz",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "question": "What does 'git status' show?",
+          "options": [
+            "The commit history",
+            "The current state of the working directory and staging area",
+            "The remote repository URL",
+            "The difference between two files"
+          ],
+          "correctAnswer": 1,
+          "explanation": "git status shows which files are untracked, modified, or staged — it gives you an overview of the current state of your working directory."
+        },
+        {
+          "question": "What is the difference between 'git diff' and 'git diff --staged'?",
+          "options": [
+            "They show the same thing",
+            "git diff shows unstaged changes, git diff --staged shows changes ready to commit",
+            "git diff shows commit history, git diff --staged shows branches",
+            "git diff --staged only works on remote repositories"
+          ],
+          "correctAnswer": 1,
+          "explanation": "git diff shows changes in your working directory that haven't been staged yet. git diff --staged shows changes that have been staged and will be included in the next commit."
+        }
+      ]
+    },
+    {
+      "id": "git-ex-8",
+      "type": "quiz",
+      "lessonId": "git-commit",
+      "moduleId": "git-basics",
+      "title": "Commit Best Practices",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "question": "Which commit message follows best practices?",
+          "options": [
+            "fix",
+            "updated stuff",
+            "Fix login button not responding on mobile",
+            "asdfgh"
+          ],
+          "correctAnswer": 2,
+          "explanation": "Good commit messages are specific and descriptive. 'Fix login button not responding on mobile' clearly explains what changed and why, making it easy to understand the project history."
+        },
+        {
+          "question": "What happens if you run 'git commit' without staging anything first?",
+          "options": [
+            "Git commits all modified files automatically",
+            "Git creates an empty commit",
+            "Git shows an error that there's nothing to commit",
+            "Git stages and commits everything"
+          ],
+          "correctAnswer": 2,
+          "explanation": "If no changes are staged, Git will tell you there's nothing to commit. You must use 'git add' first to stage the changes you want to include."
+        }
+      ]
     }
   ]
 }

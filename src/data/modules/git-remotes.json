@@ -58,173 +58,227 @@
   "exercises": [
     {
       "id": "remote-ex-1",
+      "type": "quiz",
       "lessonId": "remotes-intro",
       "moduleId": "git-remotes",
-      "title": "View Remotes",
+      "title": "Remote Basics",
       "difficulty": "easy",
-      "description": "Check configured remotes",
-      "instructions": "Write the command to view all configured remotes with their URLs.",
-      "starterCode": "# View all remotes with URLs\n",
-      "solution": "git remote -v",
-      "hints": [
-        "Use 'git remote'",
-        "Add the -v flag for verbose output",
-        "This shows the URLs for fetch and push"
-      ],
-      "validationPrompt": "Check if the user wrote 'git remote -v' to view remotes with URLs"
+      "questions": [
+        {
+          "question": "What is a remote repository?",
+          "options": [
+            "A local backup of your files",
+            "A version of your repository hosted on a server (like GitHub)",
+            "A branch inside your local repository",
+            "A special folder in .git"
+          ],
+          "correctAnswer": 1,
+          "explanation": "A remote repository is a version of your project hosted on a server like GitHub, GitLab, or Bitbucket. It enables collaboration and serves as a backup."
+        },
+        {
+          "question": "What is 'origin' in Git?",
+          "options": [
+            "The first commit in a repository",
+            "The main branch",
+            "The default name for the remote repository",
+            "The user who created the repo"
+          ],
+          "correctAnswer": 2,
+          "explanation": "When you clone a repository, Git automatically names the remote 'origin'. It's just a convention — you can rename it or add additional remotes with different names."
+        }
+      ]
     },
     {
       "id": "remote-ex-2",
+      "type": "quiz",
       "lessonId": "git-clone",
       "moduleId": "git-remotes",
-      "title": "Clone a Repository",
+      "title": "Cloning Quiz",
       "difficulty": "easy",
-      "description": "Practice cloning",
-      "instructions": "Write the command to clone a repository from https://github.com/user/project.git",
-      "starterCode": "# Clone the repository\n",
-      "solution": "git clone https://github.com/user/project.git",
-      "hints": [
-        "Use 'git clone'",
-        "Followed by the repository URL",
-        "This downloads the entire repository"
-      ],
-      "validationPrompt": "Check if the user wrote 'git clone https://github.com/user/project.git' to clone the repository"
+      "questions": [
+        {
+          "question": "What does 'git clone' do?",
+          "options": [
+            "Creates an empty repository",
+            "Downloads a complete copy of a remote repository including all history",
+            "Copies only the latest version of files",
+            "Creates a branch on the remote"
+          ],
+          "correctAnswer": 1,
+          "explanation": "git clone downloads the entire repository including all files, branches, and complete commit history. It also automatically sets up the 'origin' remote."
+        },
+        {
+          "question": "What is a 'shallow clone'?",
+          "options": [
+            "A clone that only copies one branch",
+            "A clone that downloads only recent history (using --depth)",
+            "A clone without the .git folder",
+            "A clone from a private repository"
+          ],
+          "correctAnswer": 1,
+          "explanation": "A shallow clone (using --depth N) downloads only the last N commits instead of the full history. This is useful for large repositories when you don't need the complete history."
+        }
+      ]
     },
     {
       "id": "remote-ex-3",
+      "type": "quiz",
       "lessonId": "git-remote",
       "moduleId": "git-remotes",
-      "title": "Add a Remote",
+      "title": "Managing Remotes Quiz",
       "difficulty": "easy",
-      "description": "Add origin remote",
-      "instructions": "Write the command to add a remote named 'origin' pointing to https://github.com/user/repo.git",
-      "starterCode": "# Add origin remote\n",
-      "solution": "git remote add origin https://github.com/user/repo.git",
-      "hints": [
-        "Use 'git remote add'",
-        "Specify the name 'origin'",
-        "Then the URL"
-      ],
-      "validationPrompt": "Check if the user wrote 'git remote add origin https://github.com/user/repo.git' to add the remote"
+      "questions": [
+        {
+          "question": "How do you add a new remote called 'upstream'?",
+          "options": [
+            "git remote upstream https://url.git",
+            "git remote add upstream https://url.git",
+            "git add remote upstream https://url.git",
+            "git upstream add https://url.git"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The syntax is 'git remote add <name> <url>'. The 'upstream' remote is commonly used when forking to point to the original repository."
+        },
+        {
+          "question": "When would you have multiple remotes?",
+          "options": [
+            "Never, you can only have one",
+            "When you fork a project (origin for your fork, upstream for the original)",
+            "Only when using GitLab",
+            "Only for private repositories"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Multiple remotes are common when contributing to open source. 'origin' points to your fork, while 'upstream' points to the original repository. You can also have remotes for different hosting services."
+        }
+      ]
     },
     {
       "id": "remote-ex-4",
+      "type": "quiz",
       "lessonId": "git-push",
       "moduleId": "git-remotes",
-      "title": "Push to Main",
-      "difficulty": "easy",
-      "description": "Push main branch",
-      "instructions": "Write the command to push the main branch to origin.",
-      "starterCode": "# Push main branch to origin\n",
-      "solution": "git push origin main",
-      "hints": [
-        "Use 'git push'",
-        "Specify the remote 'origin'",
-        "Then the branch 'main'"
-      ],
-      "validationPrompt": "Check if the user wrote 'git push origin main' to push the main branch"
+      "title": "Push Concepts",
+      "difficulty": "medium",
+      "questions": [
+        {
+          "question": "What does 'git push -u origin feature' do?",
+          "options": [
+            "Deletes the feature branch from origin",
+            "Pushes the branch and sets up tracking between local and remote branches",
+            "Creates a new repository on origin",
+            "Undoes the last push"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The -u (or --set-upstream) flag pushes the branch and creates a tracking relationship. After this, you can just use 'git push' and 'git pull' without specifying the remote and branch."
+        },
+        {
+          "question": "Why is 'git push --force' dangerous?",
+          "options": [
+            "It's actually perfectly safe",
+            "It can overwrite remote history and destroy other people's work",
+            "It deletes the repository",
+            "It removes all branches"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Force push overwrites the remote branch with your local version, potentially destroying commits that others have pushed. Use --force-with-lease as a safer alternative, or avoid force pushing on shared branches."
+        }
+      ]
     },
     {
       "id": "remote-ex-5",
-      "lessonId": "git-push",
+      "type": "quiz",
+      "lessonId": "git-pull-fetch",
       "moduleId": "git-remotes",
-      "title": "Push with Upstream",
+      "title": "Fetch vs Pull",
       "difficulty": "medium",
-      "description": "Push and set upstream",
-      "instructions": "Write the command to push a new branch called 'feature-auth' to origin and set it as upstream.",
-      "starterCode": "# Push feature-auth and set upstream\n",
-      "solution": "git push -u origin feature-auth",
-      "hints": [
-        "Use 'git push'",
-        "Add the -u flag to set upstream",
-        "This links local and remote branches"
-      ],
-      "validationPrompt": "Check if the user wrote 'git push -u origin feature-auth' to push and set upstream"
+      "questions": [
+        {
+          "question": "What is the difference between git fetch and git pull?",
+          "options": [
+            "fetch downloads and merges, pull only downloads",
+            "fetch only downloads, pull downloads and merges",
+            "They are the same command",
+            "fetch is for branches, pull is for files"
+          ],
+          "correctAnswer": 1,
+          "explanation": "git fetch downloads changes from the remote but doesn't modify your working directory or merge anything. git pull does both: it fetches and then automatically merges. Fetch is safer because you can review changes first."
+        },
+        {
+          "question": "What does 'git pull --rebase' do differently from a regular pull?",
+          "options": [
+            "It downloads faster",
+            "Instead of merging, it replays your local commits on top of the remote changes",
+            "It only pulls from the upstream remote",
+            "It pulls without downloading any files"
+          ],
+          "correctAnswer": 1,
+          "explanation": "git pull --rebase fetches remote changes and then replays your local commits on top, creating a linear history instead of a merge commit. This keeps the commit history cleaner."
+        }
+      ]
     },
     {
       "id": "remote-ex-6",
-      "lessonId": "git-pull-fetch",
+      "type": "quiz",
+      "lessonId": "git-push",
       "moduleId": "git-remotes",
-      "title": "Fetch Changes",
-      "difficulty": "easy",
-      "description": "Download remote changes",
-      "instructions": "Write the command to fetch changes from the origin remote.",
-      "starterCode": "# Fetch from origin\n",
-      "solution": "git fetch origin",
-      "hints": [
-        "Use 'git fetch'",
-        "Specify the remote name",
-        "This downloads but doesn't merge"
-      ],
-      "validationPrompt": "Check if the user wrote 'git fetch origin' to fetch changes"
+      "title": "Remote Branches",
+      "difficulty": "medium",
+      "questions": [
+        {
+          "question": "How do you delete a remote branch?",
+          "options": [
+            "git branch -d remote/branch-name",
+            "git push origin --delete branch-name",
+            "git remote delete branch-name",
+            "git delete origin/branch-name"
+          ],
+          "correctAnswer": 1,
+          "explanation": "To delete a branch on the remote, use 'git push origin --delete branch-name'. This only removes the remote copy — your local branch remains until you delete it with 'git branch -d'."
+        },
+        {
+          "question": "What does 'origin/main' represent?",
+          "options": [
+            "Your local main branch",
+            "A special branch for origin",
+            "A remote-tracking branch that mirrors the state of main on origin",
+            "The default file in the repository"
+          ],
+          "correctAnswer": 2,
+          "explanation": "origin/main is a remote-tracking branch — it's a local reference that represents the last known state of the main branch on the origin remote. It's updated when you fetch or pull."
+        }
+      ]
     },
     {
       "id": "remote-ex-7",
+      "type": "quiz",
       "lessonId": "git-pull-fetch",
       "moduleId": "git-remotes",
-      "title": "Pull Changes",
-      "difficulty": "easy",
-      "description": "Fetch and merge",
-      "instructions": "Write the command to pull changes from origin (fetch and merge in one step).",
-      "starterCode": "# Pull from origin\n",
-      "solution": "git pull origin",
-      "hints": [
-        "Use 'git pull'",
-        "This is fetch + merge combined",
-        "Specify the remote name"
-      ],
-      "validationPrompt": "Check if the user wrote 'git pull origin' to pull changes"
-    },
-    {
-      "id": "remote-ex-8",
-      "lessonId": "git-remote",
-      "moduleId": "git-remotes",
-      "title": "Remove a Remote",
+      "title": "Collaboration Workflow",
       "difficulty": "medium",
-      "description": "Delete a remote",
-      "instructions": "Write the command to remove a remote named 'old-origin'.",
-      "starterCode": "# Remove the old-origin remote\n",
-      "solution": "git remote remove old-origin",
-      "hints": [
-        "Use 'git remote remove'",
-        "Or use 'git remote rm'",
-        "Followed by the remote name"
-      ],
-      "validationPrompt": "Check if the user wrote 'git remote remove old-origin' or 'git remote rm old-origin' to remove the remote"
-    },
-    {
-      "id": "remote-ex-9",
-      "lessonId": "git-push",
-      "moduleId": "git-remotes",
-      "title": "Delete Remote Branch",
-      "difficulty": "medium",
-      "description": "Remove remote branch",
-      "instructions": "Write the command to delete a remote branch called 'old-feature' from origin.",
-      "starterCode": "# Delete remote branch old-feature\n",
-      "solution": "git push origin --delete old-feature",
-      "hints": [
-        "Use 'git push'",
-        "Specify the remote",
-        "Add '--delete' flag followed by branch name"
-      ],
-      "validationPrompt": "Check if the user wrote 'git push origin --delete old-feature' to delete the remote branch"
-    },
-    {
-      "id": "remote-ex-10",
-      "lessonId": "git-pull-fetch",
-      "moduleId": "git-remotes",
-      "title": "Pull with Rebase",
-      "difficulty": "medium",
-      "description": "Use rebase instead of merge",
-      "instructions": "Write the command to pull changes from origin using rebase instead of merge.",
-      "starterCode": "# Pull with rebase\n",
-      "solution": "git pull --rebase origin",
-      "hints": [
-        "Use 'git pull'",
-        "Add the '--rebase' flag",
-        "This replays your commits on top"
-      ],
-      "validationPrompt": "Check if the user wrote 'git pull --rebase origin' to pull with rebase"
+      "questions": [
+        {
+          "question": "What is the recommended workflow before pushing to a shared branch?",
+          "options": [
+            "Just push directly",
+            "Pull (or fetch + merge) the latest changes first, resolve any conflicts, then push",
+            "Delete the branch and recreate it",
+            "Force push to override everything"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Before pushing, always pull the latest changes to make sure you're up to date. This prevents rejected pushes and lets you resolve any conflicts locally before sharing your work."
+        },
+        {
+          "question": "In a fork-based workflow, where do you push your changes?",
+          "options": [
+            "To the upstream (original) repository directly",
+            "To your fork (origin), then create a pull request to upstream",
+            "To a new repository each time",
+            "You can't push when using forks"
+          ],
+          "correctAnswer": 1,
+          "explanation": "In a fork workflow, you push to your own fork (origin), then create a pull request on the original repository (upstream) to propose your changes. This allows maintainers to review your code before merging."
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,190 @@
+{
+  "module": {
+    "id": "accessibility-basics",
+    "title": "Web Accessibility (a11y)",
+    "description": "Build inclusive web applications that work for everyone",
+    "icon": "Accessibility",
+    "requiredXp": 1200,
+    "color": "from-blue-400 to-purple-600",
+    "courseId": "web-stack"
+  },
+  "lessons": [
+    {
+      "id": "why-accessibility",
+      "moduleId": "accessibility-basics",
+      "title": "Why Accessibility Matters",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- 15% of world's population has some form of disability.\n- Accessibility (a11y) = making web usable by everyone.\n- Legal requirement in many countries (ADA, WCAG).\n- Benefits everyone: better UX, SEO, mobile support.\n\n---\n\n# Accessibility: Building for Everyone\n\n## The Reality\n\n**1 billion people** worldwide live with disabilities. That's 15% of the global population.\n\n**Types of disabilities:**\n- **Visual**: Blindness, low vision, color blindness\n- **Auditory**: Deafness, hard of hearing\n- **Motor**: Can't use mouse, limited fine motor control\n- **Cognitive**: Learning disabilities, memory issues, ADHD\n\n## Real-World Impact\n\n### Scenario 1: Keyboard Navigation\n```\nUser with broken arm can't use mouse.\nYour website: All buttons require mouse clicks\nResult: User can't complete purchase\n```\n\n### Scenario 2: Screen Reader\n```\nBlind user wants to buy train ticket.\nYour website: Images without alt text, forms without labels\nResult: User can't determine ticket options\n```\n\n### Scenario 3: Color Contrast\n```\nUser with low vision (40+ years old)\nYour website: Light gray text on white background\nResult: User strains to read, leaves frustrated\n```\n\n## Why Accessibility Matters\n\n### 1. It's the Right Thing\nThe web should be accessible to everyone, regardless of ability.\n\n### 2. Legal Requirements\n- **USA**: ADA (Americans with Disabilities Act)\n- **EU**: European Accessibility Act\n- **Canada**: Accessible Canada Act\n\nCompanies sued for inaccessible websites:\n- Domino's Pizza\n- Target\n- Netflix\n- Harvard and MIT\n\n### 3. Business Benefits\n\n**Larger market:**\n- $13 trillion annual disposable income of people with disabilities globally\n\n**Better SEO:**\n- Semantic HTML helps search engines understand content\n- Alt text improves image search\n\n**Improved UX for everyone:**\n- Captions help in loud environments\n- Keyboard navigation helps power users\n- High contrast helps in bright sunlight\n\n### 4. Technical Benefits\n\n- **Cleaner code**: Semantic HTML is easier to maintain\n- **Better testing**: Automated a11y testing catches bugs\n- **Future-proof**: Accessible sites work better on new devices\n\n## Common Misconceptions\n\n❌ **\"Accessibility is only for blind users\"**\n✅ Benefits all disabilities AND situational limitations\n\n❌ **\"It's too expensive and time-consuming\"**\n✅ Cheaper to build in from the start than retrofit later\n\n❌ **\"It makes websites ugly\"**\n✅ Accessible design can be beautiful (Apple, Google, Microsoft)\n\n❌ **\"Only government sites need to be accessible\"**\n✅ All websites should be accessible\n\n## The POUR Principles\n\nWCAG (Web Content Accessibility Guidelines) uses POUR:\n\n**Perceivable**: Users can perceive the information\n**Operable**: Users can operate the interface\n**Understandable**: Users can understand the content\n**Robust**: Works with assistive technologies",
+      "codeExample": "// Accessibility isn't just code - it's mindset!\n\n// ❌ Inaccessible - Image without alt text\n<img src=\"chart.png\" />\n\n// ✅ Accessible - Descriptive alt text\n<img src=\"chart.png\" alt=\"Bar chart showing sales increased 50% from Q1 to Q2\" />\n\n// ❌ Inaccessible - Button that only works with mouse\n<div onClick={handleClick}>Submit</div>\n\n// ✅ Accessible - Real button with keyboard support\n<button onClick={handleClick}>Submit</button>\n\n// ❌ Inaccessible - Form without labels\n<input type=\"email\" placeholder=\"Email\" />\n\n// ✅ Accessible - Associated label\n<label htmlFor=\"email\">Email Address</label>\n<input type=\"email\" id=\"email\" />\n\n// ❌ Inaccessible - Low contrast text\n<p style={{ color: '#ccc' }}>Light gray text</p>\n\n// ✅ Accessible - High contrast (WCAG AA: 4.5:1 ratio)\n<p style={{ color: '#333' }}>Dark gray text on white</p>"
+    },
+    {
+      "id": "semantic-html",
+      "moduleId": "accessibility-basics",
+      "title": "Semantic HTML",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Semantic HTML = using correct elements for their intended purpose.\n- Screen readers rely on semantic structure.\n- <div> and <span> are generic - use specific elements when possible.\n- Headings create document outline for navigation.\n\n---\n\n# Semantic HTML: The Foundation of Accessibility\n\n## What is Semantic HTML?\n\nUsing HTML elements according to their **meaning**, not just their appearance.\n\n## Why Semantic HTML Matters\n\n**For screen readers:**\n```\n<button>Sign up</button>  → \"Sign up, button\"\n<div>Sign up</div>    → \"Sign up\" (no context!)\n```\n\n**For navigation:**\n- Screen reader users can jump between headings (H1-H6)\n- Landmarks (<main>, <nav>, <aside>) create page outline\n\n**For everyone:**\n- Easier to style consistently\n- Better for SEO\n- Easier to maintain\n\n## Common Patterns\n\n### Buttons vs Links\n\n```jsx\n// ❌ Wrong - Link that acts like button\n<a href=\"#\" onClick={submitForm}>Submit</a>\n\n// ✅ Correct - Use button for actions\n<button onClick={submitForm}>Submit</button>\n\n// ❌ Wrong - Button that navigates\n<button onClick={() => router.push('/about')}>About</button>\n\n// ✅ Correct - Use link for navigation\n<a href=\"/about\">About</a>\n```\n\n### Headings Hierarchy\n\n```jsx\n// ❌ Wrong - Skipping levels, using for styling\n<h1>My Site</h1>\n<h4>Subsection</h4>  // Skipped h2 and h3!\n\n// ✅ Correct - Logical hierarchy\n<h1>My Site</h1>\n  <h2>Products</h2>\n    <h3>Electronics</h3>\n    <h3>Clothing</h3>\n  <h2>About</h2>\n    <h3>Our Story</h3>\n```\n\n### Landmarks\n\n```jsx\n// ❌ Generic divs\n<div className=\"header\">...</div>\n<div className=\"nav\">...</div>\n<div className=\"main\">...</div>\n\n// ✅ Semantic landmarks\n<header>...</header>\n<nav>...</nav>\n<main>...</main>\n<aside>...</aside>\n<footer>...</footer>\n```\n\n### Lists\n\n```jsx\n// ❌ Fake list with divs\n<div>\n  <div>• Item 1</div>\n  <div>• Item 2</div>\n  <div>• Item 3</div>\n</div>\n\n// ✅ Real list\n<ul>\n  <li>Item 1</li>\n  <li>Item 2</li>\n  <li>Item 3</li>\n</ul>\n\n// Screen reader announces: \"List, 3 items\"\n```\n\n### Tables\n\n```jsx\n// ❌ Layout table\n<table>\n  <tr><td>Name</td><td>Alice</td></tr>\n  <tr><td>Age</td><td>25</td></tr>\n</table>\n\n// ✅ Data table with headers\n<table>\n  <caption>User Information</caption>\n  <thead>\n    <tr>\n      <th scope=\"col\">Name</th>\n      <th scope=\"col\">Age</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Alice</td>\n      <td>25</td>\n    </tr>\n  </tbody>\n</table>\n```\n\n## ARIA When HTML Isn't Enough\n\n```jsx\n// Native semantic (preferred)\n<button>Save</button>\n\n// Custom button needs ARIA\n<div\n  role=\"button\"\n  tabIndex={0}\n  onClick={handleSave}\n  onKeyDown={(e) => e.key === 'Enter' && handleSave()}\n  aria-pressed={isPressed}\n>\n  Save\n</div>\n```\n\n**Rule of thumb:** Use native HTML elements when possible. Add ARIA only when necessary.",
+      "codeExample": "// Semantic HTML Examples\n\nfunction AccessibleCard() {\n  // ❌ Generic div soup\n  return (\n    <div className=\"card\">\n      <div className=\"card-title\">Product Name</div>\n      <div className=\"card-desc\">Description here</div>\n      <div className=\"card-btn\" onClick={buy}>Buy Now</div>\n    </div>\n  );\n}\n\nfunction AccessibleCard() {\n  // ✅ Semantic HTML\n  return (\n    <article className=\"card\">\n      <h3>Product Name</h3>\n      <p>Description here</p>\n      <button onClick={buy}>Buy Now</button>\n    </article>\n  );\n}\n\n// Navigation\nfunction Nav() {\n  return (\n    <nav aria-label=\"Main navigation\">\n      <ul>\n        <li><a href=\"/\" aria-current=\"page\">Home</a></li>\n        <li><a href=\"/about\">About</a></li>\n        <li><a href=\"/contact\">Contact</a></li>\n      </ul>\n    </nav>\n  );\n}\n\n// Form with proper labels\nfunction ContactForm() {\n  return (\n    <form>\n      <div>\n        <label htmlFor=\"name\">Full Name</label>\n        <input\n          type=\"text\"\n          id=\"name\"\n          name=\"name\"\n          required\n          aria-required=\"true\"\n        />\n      </div>\n      \n      <div>\n        <label htmlFor=\"email\">Email Address</label>\n        <input\n          type=\"email\"\n          id=\"email\"\n          name=\"email\"\n          required\n          aria-describedby=\"email-help\"\n        />\n        <span id=\"email-help\">We'll never share your email.</span>\n      </div>\n      \n      <button type=\"submit\">Send Message</button>\n    </form>\n  );\n}"
+    },
+    {
+      "id": "keyboard-navigation",
+      "moduleId": "accessibility-basics",
+      "title": "Keyboard Navigation",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Many users can't or don't use a mouse (keyboard, switch devices, screen readers).\n- All interactive elements must be keyboard accessible.\n- Tab order should follow visual order (logical flow).\n- Visible focus indicators are required.\n- Common keys: Tab, Shift+Tab, Enter, Space, Escape, Arrow keys.\n\n---\n\n# Keyboard Navigation: No Mouse Required\n\n## Who Uses Keyboard Navigation?\n\n- **Motor disabilities**: Can't use mouse\n- **Blind users**: Screen readers rely on keyboard\n- **Power users**: Faster than mouse for many tasks\n- **Temporary situations**: Broken mouse, holding baby, bright sun\n\n## Keyboard Basics\n\n**Tab**: Move focus forward\n**Shift + Tab**: Move focus backward\n**Enter**: Activate button or link\n**Space**: Toggle buttons, checkboxes\n**Escape**: Close modals, menus\n**Arrow keys**: Navigate within widgets\n\n## Making Elements Keyboard Accessible\n\n### Native Elements (Just Work!)\n\n```jsx\n// These are automatically keyboard accessible:\n<button>Click me</button>\n<a href=\"/about\">About</a>\n<input type=\"text\" />\n<select>...</select>\n```\n\n### Custom Elements (Need Help)\n\n```jsx\n// ❌ Not keyboard accessible\nfunction BadButton() {\n  return (\n    <div\n      onClick={handleClick}\n      style={{ padding: '10px', background: 'blue', color: 'white' }}\n    >\n      Click me\n    </div>\n  );\n}\n\n// ✅ Keyboard accessible\nfunction GoodButton() {\n  return (\n    <div\n      role=\"button\"\n      tabIndex={0}\n      onClick={handleClick}\n      onKeyDown={(e) => {\n        if (e.key === 'Enter' || e.key === ' ') {\n          e.preventDefault();\n          handleClick();\n        }\n      }}\n      style={{ padding: '10px', background: 'blue', color: 'white' }}\n    >\n      Click me\n    </div>\n  );\n}\n\n// ✅ Even better - use native button!\nfunction BestButton() {\n  return (\n    <button onClick={handleClick}>\n      Click me\n    </button>\n  );\n}\n```\n\n## Focus Management\n\n### Tab Order\n\nTab order should match visual order (left-to-right, top-to-bottom):\n\n```jsx\n// ✅ Logical order\n<form>\n  <input placeholder=\"First Name\" />  // Tab 1\n  <input placeholder=\"Last Name\" />   // Tab 2\n  <input placeholder=\"Email\" />       // Tab 3\n  <button>Submit</button>               // Tab 4\n</form>\n\n// ❌ Illogical order (bad CSS or tabIndex)\n<form>\n  <input placeholder=\"Email\" tabIndex={3} />       // Tab 3\n  <input placeholder=\"First Name\" tabIndex={1} />  // Tab 1\n  <button tabIndex={4}>Submit</button>              // Tab 4\n  <input placeholder=\"Last Name\" tabIndex={2} />   // Tab 2\n</form>\n```\n\n**Avoid positive tabIndex values!** Use source order instead.\n\n### Skip Links\n\nAllow keyboard users to skip navigation:\n\n```jsx\nfunction App() {\n  return (\n    <>\n      <a href=\"#main-content\" className=\"skip-link\">\n        Skip to main content\n      </a>\n      <nav>...lots of nav links...</nav>\n      <main id=\"main-content\">\n        <h1>Page Title</h1>\n      </main>\n    </>\n  );\n}\n```\n\n```css\n.skip-link {\n  position: absolute;\n  top: -40px;\n  left: 0;\n  background: #000;\n  color: #fff;\n  padding: 8px;\n  z-index: 100;\n}\n\n.skip-link:focus {\n  top: 0;\n}\n```\n\n## Focus Indicators\n\nUsers must see where focus is!\n\n```css\n/* ❌ Never do this! */\n*:focus {\n  outline: none;\n}\n\n/* ✅ Keep default or provide custom */\n*:focus {\n  outline: 2px solid blue;\n  outline-offset: 2px;\n}\n\n/* ✅ Or use box-shadow for rounded elements */\nbutton:focus {\n  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);\n}\n```\n\n## Focus Traps in Modals\n\nWhen modal opens, trap focus inside:\n\n```jsx\nfunction Modal({ isOpen, onClose, children }) {\n  const modalRef = useRef();\n  \n  useEffect(() => {\n    if (isOpen) {\n      // Focus first focusable element\n      modalRef.current?.querySelector('button, [href], input').focus();\n      \n      // Trap focus\n      const handleTab = (e) => {\n        const focusable = modalRef.current?.querySelectorAll(\n          'button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])'\n        );\n        const first = focusable[0];\n        const last = focusable[focusable.length - 1];\n        \n        if (e.key === 'Tab') {\n          if (e.shiftKey && document.activeElement === first) {\n            e.preventDefault();\n            last.focus();\n          } else if (!e.shiftKey && document.activeElement === last) {\n            e.preventDefault();\n            first.focus();\n          }\n        }\n      };\n      \n      document.addEventListener('keydown', handleTab);\n      return () => document.removeEventListener('keydown', handleTab);\n    }\n  }, [isOpen]);\n  \n  if (!isOpen) return null;\n  \n  return (\n    <div className=\"modal-overlay\" onClick={onClose}>\n      <div ref={modalRef} className=\"modal-content\" onClick={e => e.stopPropagation()}>\n        {children}\n      </div>\n    </div>\n  );\n}\n```\n\n## Testing Keyboard Navigation\n\n1. **Unplug your mouse**\n2. **Use only keyboard** for 5 minutes\n3. **Check:**\n   - Can you reach every interactive element?\n   - Is the tab order logical?\n   - Can you see focus indicator?\n   - Can you activate everything with Enter/Space?\n   - Can you escape modals with Escape key?",
+      "codeExample": "// Keyboard accessible custom dropdown\n\nfunction AccessibleDropdown({ options, value, onChange }) {\n  const [isOpen, setIsOpen] = useState(false);\n  const [highlightedIndex, setHighlightedIndex] = useState(0);\n  const buttonRef = useRef();\n\n  const handleKeyDown = (e) => {\n    switch (e.key) {\n      case 'Enter':\n      case ' ':  // Space\n        e.preventDefault();\n        if (isOpen) {\n          onChange(options[highlightedIndex]);\n          setIsOpen(false);\n        } else {\n          setIsOpen(true);\n        }\n        break;\n      case 'Escape':\n        setIsOpen(false);\n        buttonRef.current?.focus();\n        break;\n      case 'ArrowDown':\n        e.preventDefault();\n        if (!isOpen) {\n          setIsOpen(true);\n        } else {\n          setHighlightedIndex(i => \n            i < options.length - 1 ? i + 1 : i\n          );\n        }\n        break;\n      case 'ArrowUp':\n        e.preventDefault();\n        setHighlightedIndex(i => i > 0 ? i - 1 : i);\n        break;\n    }\n  };\n\n  return (\n    <div className=\"dropdown\">\n      <button\n        ref={buttonRef}\n        onClick={() => setIsOpen(!isOpen)}\n        onKeyDown={handleKeyDown}\n        aria-haspopup=\"listbox\"\n        aria-expanded={isOpen}\n      >\n        {value || 'Select an option'}\n      </button>\n      \n      {isOpen && (\n        <ul role=\"listbox\" aria-activedescendant={`option-${highlightedIndex}`}>\n          {options.map((option, index) => (\n            <li\n              key={option}\n              id={`option-${index}`}\n              role=\"option\"\n              aria-selected={index === highlightedIndex}\n              className={index === highlightedIndex ? 'highlighted' : ''}\n              onClick={() => {\n                onChange(option);\n                setIsOpen(false);\n                buttonRef.current?.focus();\n              }}\n            >\n              {option}\n            </li>\n          ))}\n        </ul>\n      )}\n    </div>\n  );\n}\n\n// Usage\nfunction App() {\n  const [selected, setSelected] = useState('');\n  \n  return (\n    <AccessibleDropdown\n      options={['Apple', 'Banana', 'Cherry']}\n      value={selected}\n      onChange={setSelected}\n    />\n  );\n}"
+    },
+    {
+      "id": "screen-readers",
+      "moduleId": "accessibility-basics",
+      "title": "Screen Reader Support",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Screen readers convert visual UI to audio/speech.\n- Alt text describes images for blind users.\n- ARIA labels provide context when visible text isn't enough.\n- Form labels must be associated with inputs.\n- Dynamic content needs live regions for announcements.\n\n---\n\n# Screen Reader Support: Making the Invisible Audible\n\n## How Screen Readers Work\n\nScreen readers (NVDA, JAWS, VoiceOver):\n1. Parse HTML DOM\n2. Convert to audio/speech\n3. Allow keyboard navigation\n4. Announce dynamic changes\n\n**Example experience:**\n```\nUser presses Tab...\nScreen reader: \"Search, edit text, blank\"\n\nUser types \"shoes\"...\nScreen reader: \"S... H... O... E... S... shoes\"\n\nUser presses Tab...\nScreen reader: \"Search button\"\n```\n\n## Images and Alt Text\n\n### Informative Images\n\n```jsx\n// ✅ Descriptive alt text\n<img\n  src=\"chart-sales.png\"\n  alt=\"Bar chart showing sales increased 50% from Q1 to Q2, from $100K to $150K\"\n/>\n\n// ✅ For complex images, use longdesc or describe in text\n<img\n  src=\"complex-diagram.png\"\n  alt=\"Flowchart showing user registration process. Full description follows.\"\n/>\n<p>[Detailed text description of the diagram]</p>\n```\n\n### Decorative Images\n\n```jsx\n// ❌ Screen reader: \"Image, decorative border\" (annoying!)\n<img src=\"border.png\" alt=\"Decorative border\" />\n\n// ✅ Empty alt hides from screen readers\n<img src=\"border.png\" alt=\"\" />\n\n// ✅ Even better - use CSS for decorative elements\n<div className=\"decorative-border\"></div>\n```\n\n### Functional Images\n\n```jsx\n// Icon buttons need descriptive labels\n\n// ❌ Screen reader: \"Button\"\n<button onClick={deleteItem}>\n  <img src=\"trash.png\" alt=\"\" />\n</button>\n\n// ✅ Screen reader: \"Delete item, button\"\n<button onClick={deleteItem} aria-label=\"Delete item\">\n  <img src=\"trash.png\" alt=\"\" />\n</button>\n\n// ✅ Or use visible text\n<button onClick={deleteItem}>\n  <img src=\"trash.png\" alt=\"\" />\n  Delete\n</button>\n```\n\n## Form Labels\n
+### Explicit Labels (Preferred)\n\n```jsx\n// ✅ Using htmlFor (id reference)\n<label htmlFor=\"email\">Email Address</label>\n<input type=\"email\" id=\"email\" name=\"email\" />\n\n// Screen reader: \"Email Address, edit text, blank\"\n```\n\n### Implicit Labels\n\n```jsx\n// ✅ Wrapping input\n<label>\n  Email Address\n  <input type=\"email\" name=\"email\" />\n</label>\n```\n\n### When Visible Label Isn't Enough\n
+```jsx\n<label htmlFor=\"search\">Search</label>\n<input\n  type=\"search\"\n  id=\"search\"\n  aria-describedby=\"search-help\"\n  placeholder=\"Enter keywords...\"\n/>\n<p id=\"search-help\">Search products by name, category, or SKU.</p>\n\n// Screen reader: \"Search, edit text, Search products by name...\"\n```\n\n## ARIA Labels and Descriptions\n
+### aria-label\n\n```jsx\n// When there's no visible text\n<button aria-label=\"Close dialog\" onClick={close}>\n  ×\n</button>\n\n// Screen reader: \"Close dialog, button\" (not \"Times button\")\n```\n
+### aria-labelledby\n
+```jsx\n// Reference another element for label\n<h2 id=\"shipping-heading\">Shipping Address</h2>\n<form aria-labelledby=\"shipping-heading\">\n  ...\n</form>\n```\n
+### aria-describedby\n
+```jsx\n// Additional context\n<input\n  type=\"password\"\n  aria-describedby=\"password-help\"\n/>\n<span id=\"password-help\">\n  Must be at least 8 characters with numbers and symbols.\n</span>\n```\n\n## Live Regions\n
+Announce dynamic changes to screen readers:\n\n```jsx\nfunction SearchResults() {\n  const [results, setResults] = useState([]);\n  const [isSearching, setIsSearching] = useState(false);\n\n  return (\n    <div>\n      {/* Live region for announcements */}\n      <div\n        role=\"status\"\n        aria-live=\"polite\"\n        aria-atomic=\"true\"\n        className=\"sr-only\"\n      >\n        {isSearching \u0026& 'Searching...'}\n        {!isSearching && results.length > 0 \u0026&\n          `${results.length} results found`}\n        {!isSearching && results.length === 0 \u0026&\n          'No results found'}\n      </div>\n      \n      {/* Visual results */}\n      <ul>\n        {results.map(result => (\n          <li key={result.id}>{result.title}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}\n\n// Screen reader announces: \"5 results found\" when search completes\n```\n\n## Testing with Screen Readers\n
+**Free screen readers:**\n- **NVDA** (Windows) - Free, most popular\n- **VoiceOver** (Mac/iOS) - Built-in (Cmd+F5)\n- **TalkBack** (Android) - Built-in\n
+**Testing checklist:**\n- Can you navigate the entire page?\n- Are images described meaningfully?\n- Do form inputs have labels?\n- Are dynamic changes announced?\n- Is the reading order logical?",
+      "codeExample": "// Screen reader friendly components\n\n// Accessible image gallery\nfunction ImageGallery({ images }) {\n  return (\n    <ul className=\"gallery\">\n      {images.map(img => (\n        <li key={img.id}>\n          <figure>\n            <img\n              src={img.src}\n              alt={img.alt}\n              loading=\"lazy\"\n            />\n            <figcaption>{img.caption}</figcaption>\n          </figure>\n        </li>\n      ))}\n    </ul>\n  );\n}\n\n// Accessible alert/notification\nfunction Alert({ type, message, onClose }) {\n  return (\n    <div\n      role=\"alert\"\n      aria-live=\"assertive\"\n      className={`alert alert-${type}`}\n    >\n      <span className=\"alert-icon\" aria-hidden=\"true\">\n        {type === 'error' && '⚠️'}\n        {type === 'success' && '✓'}\n      </span>\n      <span className=\"alert-message\">{message}</span>\n      <button\n        onClick={onClose}\n        aria-label=\"Dismiss alert\"\n      >\n        ×\n      </button>\n    </div>\n  );\n}\n\n// Accessible data table\nfunction UserTable({ users }) {\n  return (\n    <table>\n      <caption>Registered Users</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\">Name</th>\n          <th scope=\"col\">Email</th>\n          <th scope=\"col\">Role</th>\n          <th scope=\"col\">Actions</th>\n        </tr>\n      </thead>\n      <tbody>\n        {users.map(user => (\n          <tr key={user.id}>\n            <td>{user.name}</td>\n            <td>{user.email}</td>\n            <td>{user.role}</td>\n            <td>\n              <button\n                aria-label={`Edit ${user.name}`}\n                onClick={() => editUser(user)}\n              >\n                Edit\n              </button>\n            </td>\n          </tr>\n        ))}\n      </tbody>\n    </table>\n  );\n}\n\n// CSS to visually hide but keep accessible\nconst srOnly = {\n  position: 'absolute',\n  width: '1px',\n  height: '1px',\n  padding: '0',\n  margin: '-1px',\n  overflow: 'hidden',\n  clip: 'rect(0, 0, 0, 0)',\n  whiteSpace: 'nowrap',\n  border: '0'\n};"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a11y-ex-1",
+      "lessonId": "semantic-html",
+      "moduleId": "accessibility-basics",
+      "title": "Fix Semantic HTML",
+      "difficulty": "easy",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What's wrong with this code?\n\u003cdiv onClick={handleClick}>Submit</div>",
+          "options": [
+            "Nothing, it's fine",
+            "Divs aren't keyboard accessible - should use button",
+            "The div is too small",
+            "It needs CSS"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Divs are not focusable or keyboard accessible. Use semantic <button> for clickable actions."
+        },
+        {
+          "question": "Which heading structure is correct?",
+          "options": [
+            "h1 → h3 → h2 (skipping and out of order)",
+            "h1 → h2 → h3 (logical hierarchy)",
+            "h3 → h2 → h1 (reverse order)",
+            "All headings are h1 (for styling)"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Headings should follow logical hierarchy (h1 → h2 → h3) without skipping levels."
+        },
+        {
+          "question": "Which image alt text is best?",
+          "options": [
+            "alt=\"image\"",
+            "alt=\"photo of a person\"",
+            "alt=\"\" (empty for decorative)",
+            "alt=\"John presenting Q3 sales data showing 25% growth\""
+          ],
+          "correctAnswer": 3,
+          "explanation": "Alt text should be descriptive and convey the purpose/content of the image."
+        }
+      ]
+    },
+    {
+      "id": "a11y-ex-2",
+      "lessonId": "keyboard-navigation",
+      "moduleId": "accessibility-basics",
+      "title": "Keyboard Accessibility Check",
+      "difficulty": "medium",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Which key activates a button?",
+          "options": [
+            "Tab",
+            "Enter or Space",
+            "Arrow keys",
+            "Escape"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Buttons are activated with Enter or Space keys. Tab just moves focus."
+        },
+        {
+          "question": "Why shouldn't you use positive tabIndex values?",
+          "options": [
+            "They make elements invisible",
+            "They break the logical tab order",
+            "They only work on buttons",
+            "They're deprecated"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Positive tabIndex values override natural tab order and can create confusing navigation."
+        },
+        {
+          "question": "What should you remove?\n*:focus { outline: none; }",
+          "options": [
+            "Nothing, it's good for design",
+            "It's fine if you add a replacement focus style",
+            "Remove it - focus indicators are required",
+            "Only remove it for mouse users"
+          ],
+          "correctAnswer": 2,
+          "explanation": "Removing focus indicators makes keyboard navigation impossible. Always show where focus is."
+        }
+      ]
+    },
+    {
+      "id": "a11y-ex-3",
+      "lessonId": "screen-readers",
+      "moduleId": "accessibility-basics",
+      "title": "Screen Reader Support",
+      "difficulty": "medium",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "When should alt text be empty (alt=\"\")?",
+          "options": [
+            "Never",
+            "When the image is decorative only",
+            "When the image is small",
+            "Always"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Empty alt text hides decorative images from screen readers. They don't announce \"image\" for these."
+        },
+        {
+          "question": "What does aria-label do?",
+          "options": [
+            "Adds a CSS label",
+            "Provides accessible name when no visible text exists",
+            "Creates a tooltip",
+            "Links to another element"
+          ],
+          "correctAnswer": 1,
+          "explanation": "aria-label provides an accessible name for elements when visible text isn't available (like icon buttons)."
+        },
+        {
+          "question": "Which attribute associates a label with an input?",
+          "options": [
+            "aria-label",
+            "for/id (htmlFor in React)",
+            "name",
+            "placeholder"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The htmlFor attribute on label matches the id on input to programmatically associate them."
+        }
+      ]
+    }
+  ]
+}

@@ -25,6 +25,8 @@ src/data/modules/
 ├── git-basics.json
 ├── git-branches.json
 ├── git-remotes.json
+├── git-history.json
+├── git-advanced.json
 ├── ...
 ```
 

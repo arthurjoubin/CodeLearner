@@ -45,6 +45,25 @@
       "content": "# Essential to know\n- Use arrays in state for lists.\n- Add: `[...old, new]`. Remove: `.filter()`.\n- NEVER mutate the array directly.\n\n---\n\n# State with Arrays\n\n## Managing Lists in State\n\nArrays are common in React state for lists, todos, etc.\n\n## Adding Items\n\n```jsx\nconst [items, setItems] = useState([]);\n\n// Add new item\nsetItems([...items, newItem]);\n```\n\n## Removing Items\n\n```jsx\n// Remove by index\nsetItems(items.filter((_, i) => i !== indexToRemove));\n\n// Remove by id\nsetItems(items.filter(item => item.id !== idToRemove));\n```\n\n## Updating Items\n\n```jsx\nsetItems(items.map(item =>\n  item.id === targetId\n    ? { ...item, done: true }\n    : item\n));\n```\n\n## Key Rule: Never Mutate!\n\nAlways create a new array, never modify the existing one.",
       "codeExample": "import { useState } from 'react';\n\nfunction TodoList() {\n  const [todos, setTodos] = useState([\n    { id: 1, text: 'Learn React', done: false }\n  ]);\n  const [input, setInput] = useState('');\n\n  const addTodo = () => {\n    if (!input.trim()) return;\n    setTodos([...todos, {\n      id: Date.now(),\n      text: input,\n      done: false\n    }]);\n    setInput('');\n  };\n\n  const toggleTodo = (id) => {\n    setTodos(todos.map(t =>\n      t.id === id ? { ...t, done: !t.done } : t\n    ));\n  };\n\n  const deleteTodo = (id) => {\n    setTodos(todos.filter(t => t.id !== id));\n  };\n\n  return (\n    <div>\n      <input\n        value={input}\n        onChange={e => setInput(e.target.value)}\n      />\n      <button onClick={addTodo}>Add</button>\n      <ul>\n        {todos.map(t => (\n          <li key={t.id}>\n            <span\n              onClick={() => toggleTodo(t.id)}\n              style={{ textDecoration: t.done ? 'line-through' : 'none' }}\n            >\n              {t.text}\n            </span>\n            <button onClick={() => deleteTodo(t.id)}>×</button>\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}"
     }
+    },
+    {
+      "id": "useref-basics",
+      "moduleId": "state-hooks",
+      "title": "The useRef Hook",
+      "order": 5,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `useRef` persists values across renders without causing re-renders.\n- Access DOM elements directly (focus input, measure element).\n- Store previous values or any mutable value.\n- `.current` property holds the value.\n\n---\n\n# useRef: Values That Persist Without Re-rendering\n\n## What is useRef?\n\n`useRef` creates a mutable reference that **persists across renders** but **doesn't cause re-renders** when changed.\n\nTwo main uses:\n1. **Accessing DOM elements**\n2. **Storing mutable values** (timers, previous values)\n\n## Basic Syntax\n\n```jsx\nimport { useRef } from 'react';\n\nfunction MyComponent() {\n  const myRef = useRef(initialValue);\n  \n  // Access with .current\n  console.log(myRef.current);\n}\n```\n\n## Use Case 1: Focus an Input\n\n```jsx\nfunction LoginForm() {\n  const inputRef = useRef(null);\n  \n  const handleClick = () => {\n    // Focus the input\n    inputRef.current.focus();\n  };\n  \n  return (\n    <div>\n      <input ref={inputRef} placeholder=\"Username\" />\n      <button onClick={handleClick}>Focus Input</button>\n    </div>\n  );\n}\n```\n\n## Use Case 2: Store Previous Value\n\n```jsx\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  const prevCountRef = useRef();\n  \n  useEffect(() => {\n    prevCountRef.current = count;\n  });\n  \n  const prevCount = prevCountRef.current;\n  \n  return (\n    <div>\n      <p>Current: {count}, Previous: {prevCount}</p>\n      <button onClick={() => setCount(c => c + 1)}>+</button>\n    </div>\n  );\n}\n```\n\n## Use Case 3: Store Interval ID\n\n```jsx\nfunction Timer() {\n  const [seconds, setSeconds] = useState(0);\n  const intervalRef = useRef(null);\n  \n  const start = () => {\n    intervalRef.current = setInterval(() => {\n      setSeconds(s => s + 1);\n    }, 1000);\n  };\n  \n  const stop = () => {\n    clearInterval(intervalRef.current);\n  };\n  \n  // Cleanup on unmount\n  useEffect(() => {\n    return () => clearInterval(intervalRef.current);\n  }, []);\n  \n  return (\n    <div>\n      <p>{seconds}s</p>\n      <button onClick={start}>Start</button>\n      <button onClick={stop}>Stop</button>\n    </div>\n  );\n}\n```\n\n## Ref vs State\n\n| Feature | useState | useRef |\n|---------|----------|--------|\n| Triggers re-render | ✅ Yes | ❌ No |\n| Persists across renders | ✅ Yes | ✅ Yes |\n| Use for UI | ✅ Yes | ❌ No |\n| Use for DOM | ❌ No | ✅ Yes |",
+      "codeExample": "import { useRef, useState, useEffect } from 'react';\n\nfunction Stopwatch() {\n  const [seconds, setSeconds] = useState(0);\n  const [isRunning, setIsRunning] = useState(false);\n  const intervalRef = useRef(null);\n  const inputRef = useRef(null);\n\n  const start = () => {\n    if (!isRunning) {\n      setIsRunning(true);\n      intervalRef.current = setInterval(() => {\n        setSeconds(s => s + 1);\n      }, 1000);\n    }\n  };\n\n  const stop = () => {\n    setIsRunning(false);\n    clearInterval(intervalRef.current);\n  };\n\n  const reset = () => {\n    stop();\n    setSeconds(0);\n    inputRef.current?.focus();\n  };\n\n  useEffect(() => {\n    return () => clearInterval(intervalRef.current);\n  }, []);\n\n  return (\n    <div>\n      <input ref={inputRef} placeholder=\"Enter name\" />\n      <h1>{Math.floor(seconds / 60)}:{(seconds % 60).toString().padStart(2, '0')}</h1>\n      <button onClick={start} disabled={isRunning}>Start</button>\n      <button onClick={stop} disabled={!isRunning}>Stop</button>\n      <button onClick={reset}>Reset</button>\n    </div>\n  );\n}"
+    },
+    {
+      "id": "usereducer-intro",
+      "moduleId": "state-hooks",
+      "title": "The useReducer Hook",
+      "order": 6,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- `useReducer` manages complex state logic in one place.\n- Similar to Redux but built into React.\n- Best for: complex state objects, multiple related state updates.\n- Pattern: reducer function + dispatch actions.\n\n---\n\n# useReducer: Complex State Management\n\n## When to Use useReducer\n\nUse `useReducer` when:\n- State logic is complex (multiple sub-values)\n- Next state depends on previous state\n- You want to consolidate update logic\n\n## The Pattern\n\n**Reducer function:**\n```jsx\nfunction reducer(state, action) {\n  switch (action.type) {\n    case 'increment':\n      return { count: state.count + 1 };\n    case 'decrement':\n      return { count: state.count - 1 };\n    case 'reset':\n      return { count: 0 };\n    default:\n      throw new Error('Unknown action');\n  }\n}\n```\n\n**Using it:**\n```jsx\nfunction Counter() {\n  const [state, dispatch] = useReducer(reducer, { count: 0 });\n  \n  return (\n    <div>\n      <p>{state.count}</p>\n      <button onClick={() => dispatch({ type: 'increment' })}>+</button>\n      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>\n      <button onClick={() => dispatch({ type: 'reset' })}>Reset</button>\n    </div>\n  );\n}\n```\n\n## Complex Example: Todo List\n\n```jsx\nconst initialState = { todos: [], nextId: 1 };\n\nfunction todoReducer(state, action) {\n  switch (action.type) {\n    case 'add':\n      return {\n        todos: [...state.todos, {\n          id: state.nextId,\n          text: action.text,\n          done: false\n        }],\n        nextId: state.nextId + 1\n      };\n    case 'toggle':\n      return {\n        todos: state.todos.map(todo =>\n          todo.id === action.id\n            ? { ...todo, done: !todo.done }\n            : todo\n        ),\n        nextId: state.nextId\n      };\n    case 'delete':\n      return {\n        todos: state.todos.filter(todo => todo.id !== action.id),\n        nextId: state.nextId\n      };\n    default:\n      return state;\n  }\n}\n\nfunction TodoApp() {\n  const [state, dispatch] = useReducer(todoReducer, initialState);\n  \n  return (\n    <div>\n      {state.todos.map(todo => (\n        <div key={todo.id}>\n          <span style={{ textDecoration: todo.done ? 'line-through' : 'none' }}>\n            {todo.text}\n          </span>\n          <button onClick={() => dispatch({ type: 'toggle', id: todo.id })}>\n            Toggle\n          </button>\n          <button onClick={() => dispatch({ type: 'delete', id: todo.id })}>\n            Delete\n          </button>\n        </div>\n      ))}\n    </div>\n  );\n}\n```\n\n## Benefits\n\n- ✅ Logic centralized in reducer\n- ✅ Easy to test (pure function)\n- ✅ Predictable state updates\n- ✅ Easier to debug (action history)",
+      "codeExample": "import { useReducer, useState } from 'react';\n\n// Reducer for a shopping cart\nconst cartReducer = (state, action) => {\n  switch (action.type) {\n    case 'add':\n      const existing = state.items.find(i => i.id === action.item.id);\n      if (existing) {\n        return {\n          ...state,\n          items: state.items.map(i =>\n            i.id === action.item.id\n              ? { ...i, quantity: i.quantity + 1 }\n              : i\n          ),\n          total: state.total + action.item.price\n        };\n      }\n      return {\n        ...state,\n        items: [...state.items, { ...action.item, quantity: 1 }],\n        total: state.total + action.item.price\n      };\n    \n    case 'remove':\n      const item = state.items.find(i => i.id === action.id);\n      return {\n        ...state,\n        items: state.items.filter(i => i.id !== action.id),\n        total: state.total - (item.price * item.quantity)\n      };\n    \n    case 'clear':\n      return { items: [], total: 0 };\n    \n    default:\n      return state;\n  }\n};\n\nfunction ShoppingCart() {\n  const [cart, dispatch] = useReducer(cartReducer, { items: [], total: 0 });\n  \n  return (\n    <div>\n      <h2>Cart: ${cart.total.toFixed(2)}</h2>\n      <ul>\n        {cart.items.map(item => (\n          <li key={item.id}>\n            {item.name} x{item.quantity} - ${item.price * item.quantity}\n            <button onClick={() => dispatch({ type: 'remove', id: item.id })}>\n              Remove\n            </button>\n          </li>\n        ))}\n      </ul>\n      <button onClick={() => dispatch({ type: 'add', item: { id: 1, name: 'Apple', price: 1.5 } })}>\n        Add Apple\n      </button>\n      <button onClick={() => dispatch({ type: 'add', item: { id: 2, name: 'Banana', price: 0.5 } })}>\n        Add Banana\n      </button>\n      <button onClick={() => dispatch({ type: 'clear' })}>Clear</button>\n    </div>\n  );\n}"
+    }
   ],
   "exercises": [
     {
@@ -159,6 +178,74 @@
         "filter((_, i) => i !== index)"
       ],
       "validationPrompt": "Check if TagList uses filter to remove items by index"
+    },
+    {
+      "id": "useref-ex-1",
+      "lessonId": "useref-basics",
+      "moduleId": "state-hooks",
+      "title": "Focus Input with useRef",
+      "difficulty": "medium",
+      "description": "Use useRef to focus an input element.",
+      "instructions": "Create a `FocusInput` component that:\n1. Uses useRef to reference an input\n2. Has a button that focuses the input when clicked\n3. Uses the ref's .current.focus() method",
+      "starterCode": "import { useRef } from 'react';\n\nfunction FocusInput() {\n  // Create a ref for the input\n  \n  const handleClick = () => {\n    // Focus the input using the ref\n  };\n\n  return (\n    <div>\n      <input placeholder=\"Type here...\" />\n      <button onClick={handleClick}>Focus Input</button>\n    </div>\n  );\n}",
+      "solution": "import { useRef } from 'react';\n\nfunction FocusInput() {\n  const inputRef = useRef(null);\n  \n  const handleClick = () => {\n    inputRef.current.focus();\n  };\n\n  return (\n    <div>\n      <input ref={inputRef} placeholder=\"Type here...\" />\n      <button onClick={handleClick}>Focus Input</button>\n    </div>\n  );\n}",
+      "hints": [
+        "Create ref with useRef(null)",
+        "Attach ref to input with ref={inputRef}",
+        "Call inputRef.current.focus()"
+      ],
+      "validationPrompt": "Check if useRef is used to focus the input when button is clicked"
+    },
+    {
+      "id": "useref-ex-2",
+      "lessonId": "useref-basics",
+      "moduleId": "state-hooks",
+      "title": "Count Renders with useRef",
+      "difficulty": "medium",
+      "description": "Track how many times a component renders without causing re-renders.",
+      "instructions": "Create a `RenderCounter` component that:\n1. Has a button to increment a counter\n2. Uses useRef to count renders (not state!)\n3. Displays both the counter value and render count",
+      "starterCode": "import { useState, useRef, useEffect } from 'react';\n\nfunction RenderCounter() {\n  const [count, setCount] = useState(0);\n  // Use ref to track renders\n  \n  // Increment render count in useEffect\n\n  return (\n    <div>\n      <p>Counter: {count}</p>\n      <p>Render count: {/* show ref value */}</p>\n      <button onClick={() => setCount(c => c + 1)}>Increment</button>\n    </div>\n  );\n}",
+      "solution": "import { useState, useRef, useEffect } from 'react';\n\nfunction RenderCounter() {\n  const [count, setCount] = useState(0);\n  const renderCount = useRef(0);\n  \n  useEffect(() => {\n    renderCount.current += 1;\n  });\n\n  return (\n    <div>\n      <p>Counter: {count}</p>\n      <p>Render count: {renderCount.current}</p>\n      <button onClick={() => setCount(c => c + 1)}>Increment</button>\n    </div>\n  );\n}",
+      "hints": [
+        "useRef starts at 0",
+        "useEffect increments without deps to run every render",
+        "renderCount.current++ in useEffect"
+      ],
+      "validationPrompt": "Check if useRef tracks render count and displays it without causing infinite loops"
+    },
+    {
+      "id": "usereducer-ex-1",
+      "lessonId": "usereducer-intro",
+      "moduleId": "state-hooks",
+      "title": "Counter with useReducer",
+      "difficulty": "hard",
+      "description": "Convert a useState counter to useReducer.",
+      "instructions": "Create a `Counter` component using useReducer instead of useState.\nImplement increment, decrement, and reset actions.",
+      "starterCode": "import { useReducer } from 'react';\n\nfunction reducer(state, action) {\n  // Implement reducer logic\n}\n\nfunction Counter() {\n  const [state, dispatch] = useReducer(reducer, { count: 0 });\n\n  return (\n    <div>\n      <p>Count: {state.count}</p>\n      <button onClick={() => dispatch({ type: 'increment' })}>+</button>\n      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>\n      <button onClick={() => dispatch({ type: 'reset' })}>Reset</button>\n    </div>\n  );\n}",
+      "solution": "import { useReducer } from 'react';\n\nfunction reducer(state, action) {\n  switch (action.type) {\n    case 'increment':\n      return { count: state.count + 1 };\n    case 'decrement':\n      return { count: state.count - 1 };\n    case 'reset':\n      return { count: 0 };\n    default:\n      return state;\n  }\n}\n\nfunction Counter() {\n  const [state, dispatch] = useReducer(reducer, { count: 0 });\n\n  return (\n    <div>\n      <p>Count: {state.count}</p>\n      <button onClick={() => dispatch({ type: 'increment' })}>+</button>\n      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>\n      <button onClick={() => dispatch({ type: 'reset' })}>Reset</button>\n    </div>\n  );\n}",
+      "hints": [
+        "Switch on action.type",
+        "Return new state object for each case",
+        "Don't forget default case"
+      ],
+      "validationPrompt": "Check if useReducer is used with proper increment, decrement, and reset actions"
+    },
+    {
+      "id": "usereducer-ex-2",
+      "lessonId": "usereducer-intro",
+      "moduleId": "state-hooks",
+      "title": "Todo List with useReducer",
+      "difficulty": "hard",
+      "description": "Build a complete todo list using useReducer.",
+      "instructions": "Create a `TodoReducer` component with:\n1. useReducer for state management\n2. Actions: add, toggle, delete\n3. Input field to add new todos\n4. List displaying todos with toggle and delete buttons",
+      "starterCode": "import { useReducer, useState } from 'react';\n\nconst initialState = {\n  todos: [],\n  nextId: 1\n};\n\nfunction todoReducer(state, action) {\n  // Implement: add, toggle, delete\n}\n\nfunction TodoReducer() {\n  const [state, dispatch] = useReducer(todoReducer, initialState);\n  const [input, setInput] = useState('');\n\n  const addTodo = () => {\n    if (input.trim()) {\n      dispatch({ type: 'add', text: input });\n      setInput('');\n    }\n  };\n\n  return (\n    <div>\n      <input\n        value={input}\n        onChange={e => setInput(e.target.value)}\n        placeholder=\"New todo...\"\n      />\n      <button onClick={addTodo}>Add</button>\n      {/* Render todos here */}\n    </div>\n  );\n}",
+      "solution": "import { useReducer, useState } from 'react';\n\nconst initialState = {\n  todos: [],\n  nextId: 1\n};\n\nfunction todoReducer(state, action) {\n  switch (action.type) {\n    case 'add':\n      return {\n        todos: [...state.todos, {\n          id: state.nextId,\n          text: action.text,\n          done: false\n        }],\n        nextId: state.nextId + 1\n      };\n    case 'toggle':\n      return {\n        todos: state.todos.map(todo =>\n          todo.id === action.id\n            ? { ...todo, done: !todo.done }\n            : todo\n        ),\n        nextId: state.nextId\n      };\n    case 'delete':\n      return {\n        todos: state.todos.filter(todo => todo.id !== action.id),\n        nextId: state.nextId\n      };\n    default:\n      return state;\n  }\n}\n\nfunction TodoReducer() {\n  const [state, dispatch] = useReducer(todoReducer, initialState);\n  const [input, setInput] = useState('');\n\n  const addTodo = () => {\n    if (input.trim()) {\n      dispatch({ type: 'add', text: input });\n      setInput('');\n    }\n  };\n\n  return (\n    <div>\n      <input\n        value={input}\n        onChange={e => setInput(e.target.value)}\n        placeholder=\"New todo...\"\n      />\n      <button onClick={addTodo}>Add</button>\n      <ul>\n        {state.todos.map(todo => (\n          <li key={todo.id}>\n            <span style={{ textDecoration: todo.done ? 'line-through' : 'none' }}>\n              {todo.text}\n            </span>\n            <button onClick={() => dispatch({ type: 'toggle', id: todo.id })}>\n              Toggle\n            </button>\n            <button onClick={() => dispatch({ type: 'delete', id: todo.id })}>\n              Delete\n            </button>\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+      "hints": [
+        "For add: use state.nextId for id",
+        "For toggle: map and toggle done property",
+        "For delete: filter by id"
+      ],
+      "validationPrompt": "Check if useReducer manages add, toggle, and delete actions correctly"
     }
   ]
 }

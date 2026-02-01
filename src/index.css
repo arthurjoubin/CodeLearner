@@ -88,3 +88,13 @@
 .shadow-brutal-sm {
   box-shadow: 2px 2px 0 0 black;
 }
+
+/* Safe area for mobile devices with notches/home indicator */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Touch manipulation for better mobile responsiveness */
+.touch-manipulation {
+  touch-action: manipulation;
+}

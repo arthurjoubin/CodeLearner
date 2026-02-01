@@ -100,16 +100,64 @@ export interface QuizExercise {
   difficulty: 'easy' | 'medium' | 'hard' | 'advanced';
 }
 
+// Git scenario exercise - multi-step terminal + visual simulator
+export interface GitObjectiveCheck {
+  type: 'isInitialized' | 'minCommits' | 'currentBranch' | 'branchExists' |
+        'allFilesStaged' | 'allFilesCommitted' | 'fileStatus' | 'noUntrackedFiles' |
+        'commitMessageExists' | 'mergedBranch';
+  value?: boolean | number | string;
+  file?: string;
+  status?: string;
+}
+
+export interface GitObjective {
+  description: string;
+  check: GitObjectiveCheck;
+}
+
+export interface GitScenarioInitialFile {
+  name: string;
+  status: 'untracked' | 'modified' | 'staged' | 'committed';
+  content?: string;
+}
+
+export interface GitScenarioInitialState {
+  files: GitScenarioInitialFile[];
+  commits: { message: string; files: string[]; branch?: string }[];
+  branches: string[];
+  currentBranch: string;
+  isInitialized: boolean;
+}
+
+export interface GitScenarioExercise {
+  id: string;
+  type: 'git-scenario';
+  lessonId: string;
+  moduleId: string;
+  title: string;
+  description?: string;
+  story: string;
+  hints?: string[];
+  initialState: GitScenarioInitialState;
+  objectives: GitObjective[];
+  xpReward?: number;
+  difficulty: 'easy' | 'medium' | 'hard' | 'advanced';
+}
+
 // Type union
-export type Exercise = CodeExercise | QuizExercise;
+export type Exercise = CodeExercise | QuizExercise | GitScenarioExercise;
 
 // Type guards
 export function isQuizExercise(exercise: Exercise): exercise is QuizExercise {
   return exercise.type === 'quiz';
 }
 
+export function isGitScenarioExercise(exercise: Exercise): exercise is GitScenarioExercise {
+  return exercise.type === 'git-scenario';
+}
+
 export function isCodeExercise(exercise: Exercise): exercise is CodeExercise {
-  return exercise.type !== 'quiz';
+  return exercise.type !== 'quiz' && exercise.type !== 'git-scenario';
 }
 
 export interface ChatMessage {

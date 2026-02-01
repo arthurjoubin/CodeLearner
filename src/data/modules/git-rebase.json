@@ -1,0 +1,164 @@
+{
+  "module": {
+    "id": "git-rebase",
+    "title": "Git Rebase",
+    "description": "Maîtrise git rebase pour un historique propre et linéaire",
+    "icon": "GitCommit",
+    "requiredXp": 400,
+    "color": "from-purple-400 to-indigo-600",
+    "courseId": "git"
+  },
+  "lessons": [
+    {
+      "id": "git-rebase-intro",
+      "moduleId": "git-rebase",
+      "title": "Introduction au Rebase",
+      "order": 1,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Rebase = déplacer ou rejouer des commits sur une autre base\n- Rebase interactif = modifier, fusionner, réordonner des commits\n- Produit un historique linéaire et propre\n- Ne jamais rebase des commits déjà pushés !\n- git rebase main = rejoue les commits de la branche courante sur main\n- git rebase -i = mode interactif pour modifier l'historique\n\n---\n\n# Git Rebase : L'Historique Propre\n\n## Qu'est-ce que Rebase ?\n\n**Rebase** = Rejouer les commits d'une branche sur une autre base.\n\nImagine que tu as une branche feature créée à partir de main, mais main a avancé depuis.\n\n**Avant rebase (historique en zigzag) :**\n```\nmain:    A---B---C---D\n              \\feature:       E---F---G\n```\n\n**Après rebase (historique linéaire) :**\n```\nmain:    A---B---C---D\n                      \\feature:               E'---F'---G'\n```\n\nLes commits E, F, G sont "rejoués" (recréés) après D.\n\n## Pourquoi utiliser Rebase ?\n\n**Avantages :**\n- ✅ Historique linéaire et propre\n- ✅ Facilite la lecture de l'historique\n- ✅ Évite les commits de merge inutiles\n- ✅ Facilite le git bisect (debug)\n\n**Inconvénients :**\n- ❌ Réécrit l'historique (nouveaux commit hashes)\n- ❌ Dangereux si utilisé sur du code partagé\n- ❌ Plus complexe que merge\n\n## Quand utiliser Rebase vs Merge ?\n\n**Utiliser Rebase quand :**\n- Tu travailles seul sur ta branche\n- Tu veux un historique propre avant de merger\n- Tu veux mettre à jour ta branche avec main\n\n**Utiliser Merge quand :**\n- Tu travailles en équipe sur la branche\n- Les commits sont déjà pushés\n- Tu veux préserver l'historique exact\n\n## Rebase Simple\n\n```bash\n# Sur ta branche feature\ngit checkout feature\n\n# Rejouer tes commits sur la dernière version de main\ngit rebase main\n\n# Résoudre les conflits si nécessaire\n# Puis continuer\ngit rebase --continue\n\n# Ou annuler le rebase\ngit rebase --abort\n```\n\n## Workflow Type\n\n```bash\n# 1. Commencer une feature\ngit checkout -b feature/login\n\n# 2. Faire des commits\ngit commit -m \"Add login form\"\ngit commit -m \"Add validation\"\n\n# 3. Main a avancé entre-temps\n# On veut mettre à jour notre branche\n\n# 4. Récupérer les derniers changements\ngit fetch origin\n\n# 5. Rebase sur main\ngit rebase origin/main\n\n# 6. Si conflits, les résoudre\ngit add .\ngit rebase --continue\n\n# 7. Pusher (force nécessaire car historique réécrit)\ngit push --force-with-lease\n```",
+      "codeExample": "# Rebase simple : mettre à jour une branche\n\ngit checkout feature-branch\n\n# Rejouer les commits de feature-branch sur main\ngit rebase main\n\n# Gestion des conflits\ngit add .                    # Résoudre puis stage\ngit rebase --continue        # Continuer le rebase\n# ou\ngit rebase --abort           # Annuler complètement\n\n# Pusher après rebase (historique modifié)\ngit push --force-with-lease\n\n# Alternative : pull avec rebase\ngit pull --rebase origin main\n\n# Configurer pull pour rebase par défaut\ngit config --global pull.rebase true"
+    },
+    {
+      "id": "git-rebase-interactive",
+      "moduleId": "git-rebase",
+      "title": "Rebase Interactif",
+      "order": 2,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- Rebase interactif (-i) = modifier l'historique de commits\n- Actions : pick, reword, squash, fixup, drop, reorder\n- Parfait pour nettoyer avant de merger une PR\n- Permet de fusionner des commits \"WIP\"\n- Attention : ne jamais faire sur des commits pushés !\n\n---\n\n# Rebase Interactif : Modifier l'Historique\n\n## Introduction\n\nLe rebase interactif te permet de modifier tes commits comme un montage vidéo :\n- Réordonner les commits\n- Modifier les messages\n- Fusionner des commits\n- Supprimer des commits\n- Séparer un commit en plusieurs\n\n## Syntaxe de Base\n\n```bash\n# Modifier les 3 derniers commits\ngit rebase -i HEAD~3\n\n# Modifier depuis un commit spécifique\ngit rebase -i abc1234\n\n# Modifier toute la branche depuis main\ngit rebase -i main\n```\n\n## Actions Disponibles\n\nQuand tu lances `git rebase -i`, un éditeur s'ouvre :\n\n```\npick abc1234 Add login form\npick def5678 WIP: fix bug\npick ghi9012 Update styles\n\n# Commands:\n# p, pick <commit> = use commit\n# r, reword <commit> = use commit, but edit the commit message\n# e, edit <commit> = use commit, but stop for amending\n# s, squash <commit> = use commit, but meld into previous commit\n# f, fixup <commit> = like \"squash\", but discard this commit's log message\n# d, drop <commit> = remove commit\n```\n\n## Exemples Pratiques\n\n### 1. Modifier un message de commit\n\n```bash\ngit rebase -i HEAD~3\n```\n\n```\n# Avant\npick abc1234 Add login form\npick def5678 WIP: fix bug\npick ghi9012 Update styles\n\n# Après (remplacer pick par reword)\npick abc1234 Add login form\nreword def5678 WIP: fix bug    # ← On va modifier ce message\npick ghi9012 Update styles\n```\n\nSauvegarder et fermer. Un nouvel éditeur s'ouvre pour modifier le message.\n\n### 2. Fusionner des commits (squash)\n\n```\n# Avant\npick abc1234 Add login form\npick def5678 WIP: fix typo\npick ghi9012 WIP: another fix\npick jkl3456 Finalize login\n\n# Après (fusionner les WIP)\npick abc1234 Add login form\nsquash def5678 WIP: fix typo\nsquash ghi9012 WIP: another fix\npick jkl3456 Finalize login\n```\n\nRésultat : 2 commits au lieu de 4\n\n### 3. Supprimer un commit\n\n```\n# Avant\npick abc1234 Add login form\npick def5678 WIP: debug console.log  # ← On veut supprimer\npick ghi9012 Update styles\n\n# Après (supprimer la ligne ou utiliser drop)\npick abc1234 Add login form\ndrop def5678 WIP: debug console.log\npick ghi9012 Update styles\n```\n\n### 4. Réordonner les commits\n\n```\n# Avant\npick abc1234 Add login form\npick def5678 Add validation\npick ghi9012 Add styles\n\n# Après (on inverse validation et styles)\npick abc1234 Add login form\npick ghi9012 Add styles\npick def5678 Add validation\n```\n\n## Cas d'Usage : Nettoyer une PR\n\n```bash\n# Ta PR a 8 commits avec des \"fix\", \"WIP\", \"oops\"\n\n# Lister les commits\ngit log --oneline main..feature\n\n# Rebase interactif\ngit rebase -i main\n\n# Dans l'éditeur, transformer :\n# pick a1111 Add user model\n# pick b2222 Add controller\n# pick c3333 WIP: fix typo\n# pick d4444 Oops forgot file\n# pick e5555 Add tests\n# pick f6666 Fix tests\n# pick g7777 Update docs\n# pick h8888 Final polish\n\n# En :\n# pick a1111 Add user model\n# pick b2222 Add controller\n# fixup c3333 WIP: fix typo        # ← Fusionné dans b2222\n# fixup d4444 Oops forgot file     # ← Fusionné dans b2222\n# pick e5555 Add tests\n# fixup f6666 Fix tests            # ← Fusionné dans e5555\n# pick g7777 Update docs\n# reword h8888 Final polish        # ← On va améliorer le message\n\n# Résultat : 4 commits propres et logiques !\n```",
+      "codeExample": "# Rebase interactif complet\n\n# Modifier les 5 derniers commits\ngit rebase -i HEAD~5\n\n# Éditeur s'ouvre avec :\n# pick abc1111 Commit 1\n# pick def2222 Commit 2\n# pick ghi3333 Commit 3\n# pick jkl4444 Commit 4\n# pick mno5555 Commit 5\n\n# SCÉNARIO 1 : Fusionner commits 2 et 3\n# pick abc1111 Commit 1\n# squash def2222 Commit 2   # ← squash fusionne avec le précédent\n# pick ghi3333 Commit 3     # ← devient le nouveau commit 3\n# pick jkl4444 Commit 4\n# pick mno5555 Commit 5\n\n# SCÉNARIO 2 : Modifier message commit 4\n# pick abc1111 Commit 1\n# pick def2222 Commit 2\n# pick ghi3333 Commit 3\n# reword jkl4444 Commit 4   # ← reword pour changer le message\n# pick mno5555 Commit 5\n\n# SCÉNARIO 3 : Supprimer commit 3\n# pick abc1111 Commit 1\n# pick def2222 Commit 2\n# drop ghi3333 Commit 3     # ← drop supprime le commit\n# pick jkl4444 Commit 4\n# pick mno5555 Commit 5\n\n# SCÉNARIO 4 : Réordonner\n# pick abc1111 Commit 1\n# pick ghi3333 Commit 3     # ← échangé avec commit 2\n# pick def2222 Commit 2\n# pick jkl4444 Commit 4\n# pick mno5555 Commit 5\n\n# Après modification du fichier :\n# Sauvegarder et fermer l'éditeur\n\n# Résoudre les conflits si nécessaire\ngit add .\ngit rebase --continue\n\n# Vérifier le résultat\ngit log --oneline"
+    },
+    {
+      "id": "git-rebase-conflicts",
+      "moduleId": "git-rebase",
+      "title": "Résoudre les Conflits en Rebase",
+      "order": 3,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- Conflits en rebase = même principe qu'en merge\n- Git s'arrête à chaque commit conflictuel\n- Résoudre, stagé, puis rebase --continue\n- Utiliser git rebase --abort pour annuler\n- git rebase --skip pour sauter un commit\n- Plusieurs conflits possibles (un par commit)\n\n---\n\n# Gestion des Conflits en Rebase\n\n## Pourquoi des Conflits en Rebase ?\n\nQuand tu rebases, Git rejoue tes commits un par un. Si un commit modifie un fichier qui a aussi été modifié dans la branche de base, il y a conflit.\n\n**Différence avec merge :**\n- **Merge** : Un seul conflit pour tout\n- **Rebase** : Potentiellement un conflit PAR COMMIT\n\n## Workflow de Résolution\n\n```bash\n# 1. Commencer le rebase\ngit rebase main\n\n# 2. Git s'arrête sur un conflit\nAuto-merging src/app.js\nCONFLICT (content): Merge conflict in src/app.js\nerror: could not apply abc1234... Add feature\nhint: Resolve all conflicts manually...\n\n# 3. Voir les fichiers en conflit\ngit status\n\n# 4. Résoudre les conflits dans les fichiers\n# (Éditer les fichiers, garder ce qu'il faut)\n\n# 5. Stage les fichiers résolus\ngit add src/app.js\n\n# 6. Continuer le rebase\ngit rebase --continue\n\n# 7. Répéter si d'autres conflits...\n```\n\n## Options Disponibles\n
+Quand un conflit survient :\n\n```bash\n# Continuer après résolution\ngit rebase --continue\n\n# Sauter ce commit (attention, perte de changements)\ngit rebase --skip\n\n# Annuler complètement le rebase\ngit rebase --abort\n\n# Éditer le commit actuel\ngit commit --amend\n```\n\n## Exemple Complet\n
+```bash\n# Contexte\ngit checkout feature\ngit rebase main\n\n# Conflit !\n# Auto-merging README.md\n# CONFLICT (content): Merge conflict in README.md\n\n# Voir le conflit\ncat README.md\n```\n\n```markdown\n# Mon Projet\n\n<<<<<<< HEAD (main)\nNouvelle description ajoutée dans main\n=======\nDescription de ma feature branch\n>>>>>>> abc1234 (Add feature)\n```\n\n```bash\n# Éditer README.md pour garder ce qu'on veut\n# Par exemple, combiner les deux :\n\n# Mon Projet\n# \n# Nouvelle description ajoutée dans main\n# Description de ma feature branch\n\n# Stage\ngit add README.md\n\n# Continuer\ngit rebase --continue\n\n# Nouveau conflit sur le commit suivant ?\n# Répéter le processus...\n\n# Si trop compliqué, annuler\n# git rebase --abort\n```\n\n## Astuces pour Éviter les Conflits\n\n1. **Rebase souvent** : Plus tu attends, plus il y a de conflits\n   ```bash\n   # Rebase quotidien\n   git fetch origin\n   git rebase origin/main\n   ```\n\n2. **Communiquer avec l'équipe** : Coordonner les gros changements\n\n3. **Faire des petits commits** : Plus facile à gérer en rebase\n\n4. **Utiliser des outils visuels** :\n   ```bash\n   git mergetool\n   ```\n\n## Rebase vs Merge : Conflits\n
+| Aspect | Merge | Rebase |\n|--------|-------|--------|\n| Nombre de conflits | Un seul | Un par commit |\n| Complexité | Tout d'un coup | Progressif |\n| Historique final | Commit de merge | Linéaire |\n| Recommandé pour | Branches partagées | Branches perso |",
+      "codeExample": "# Gestion complète d'un rebase avec conflits\n\n# Commencer le rebase\ngit checkout feature\ngit rebase main\n\n# === CONFLIT ===\n# Git affiche :\n# Auto-merging app.js\n# CONFLICT (content): Merge conflict in app.js\n\n# Voir l'état\ngit status\n# Output:\n# You are currently rebasing branch 'feature' on 'main'.\n#   (fix conflicts and then run \"git rebase --continue\")\n#   (use \"git rebase --skip\" to skip this patch)\n#   (use \"git rebase --abort\" to check out the original branch)\n#\n# Unmerged paths:\n#   (use \"git restore --staged <file>...\" to unstage)\n#   (use \"git add <file>...\" to mark resolution)\n#\n# 	both modified:   app.js\n\n# Voir les différences\ngit diff\n\n# Éditer app.js pour résoudre\n# ...\n\n# Stage le fichier résolu\ngit add app.js\n\n# Optionnel : vérifier\ngit status\n\n# Continuer\ngit rebase --continue\n\n# Si nouveau conflit, répéter...\n\n# Si tout va bien :\n# Successfully rebased and updated refs/heads/feature.\n\n# Vérifier l'historique\ngit log --oneline --graph\n\n# Pusher (force nécessaire)\ngit push --force-with-lease"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "rebase-ex-1",
+      "lessonId": "git-rebase-intro",
+      "moduleId": "git-rebase",
+      "title": "Quiz Rebase Basics",
+      "difficulty": "medium",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Que fait git rebase main sur une branche feature ?",
+          "options": [
+            "Fusionne main dans feature",
+            "Rejoue les commits de feature sur le sommet de main",
+            "Supprime les commits de feature",
+            "Crée une nouvelle branche"
+          ],
+          "correctAnswer": 1,
+          "explanation": "git rebase main prend les commits de feature et les rejoue un par un sur le sommet de main, créant un historique linéaire."
+        },
+        {
+          "question": "Quelle est la règle d'or du rebase ?",
+          "options": [
+            "Rebase tous les jours",
+            "Ne jamais rebase des commits déjà pushés",
+            "Toujours utiliser rebase au lieu de merge",
+            "Rebase uniquement sur main"
+          ],
+          "correctAnswer": 1,
+          "explanation": "On ne doit jamais rebase des commits qui ont déjà été pushés sur un remote, car cela réécrit l'historique et peut causer des problèmes pour l'équipe."
+        },
+        {
+          "question": "Quelle commande annule un rebase en cours ?",
+          "options": [
+            "git rebase --cancel",
+            "git rebase --abort",
+            "git rebase --stop",
+            "git reset --hard"
+          ],
+          "correctAnswer": 1,
+          "explanation": "git rebase --abort annule le rebase en cours et remet la branche dans son état original."
+        }
+      ]
+    },
+    {
+      "id": "rebase-ex-2",
+      "lessonId": "git-rebase-interactive",
+      "moduleId": "git-rebase",
+      "title": "Quiz Rebase Interactif",
+      "difficulty": "medium",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Quelle commande lance le rebase interactif ?",
+          "options": [
+            "git rebase -interactive",
+            "git rebase -i",
+            "git interactive-rebase",
+            "git rebase --edit"
+          ],
+          "correctAnswer": 1,
+          "explanation": "git rebase -i (ou --interactive) lance le mode interactif qui permet de modifier, fusionner ou réordonner les commits."
+        },
+        {
+          "question": "Que fait 'squash' dans un rebase interactif ?",
+          "options": [
+            "Supprime le commit",
+            "Fusionne le commit avec le précédent",
+            "Change l'ordre des commits",
+            "Modifie le message du commit"
+          ],
+          "correctAnswer": 1,
+          "explanation": "squash fusionne le commit avec le précédent et permet d'éditer le message du commit combiné."
+        },
+        {
+          "question": "Quelle est la différence entre squash et fixup ?",
+          "options": [
+            "Aucune différence",
+            "fixup fusionne sans garder le message",
+            "squash supprime le commit",
+            "fixup modifie l'ordre"
+          ],
+          "correctAnswer": 1,
+          "explanation": "fixup fonctionne comme squash mais garde uniquement le message du commit précédent, sans demander d'éditer le message du commit combiné."
+        }
+      ]
+    },
+    {
+      "id": "rebase-ex-3",
+      "type": "git-scenario",
+      "lessonId": "git-rebase-intro",
+      "moduleId": "git-rebase",
+      "title": "Rebase Simple",
+      "difficulty": "medium",
+      "story": "Tu es sur la branche 'feature' qui a 2 commits. Main a avancé avec 2 nouveaux commits. Utilise rebase pour mettre à jour ta branche avec main.",
+      "hints": [
+        "Assure-toi d'être sur la branche feature",
+        "Utilise 'git rebase main' pour rejouer tes commits sur main",
+        "Vérifie avec git log que l'historique est linéaire"
+      ],
+      "initialState": {
+        "files": [
+          { "name": "app.js", "status": "committed" }
+        ],
+        "commits": [
+          { "message": "Initial commit", "files": ["app.js"] },
+          { "message": "Feature commit 1", "files": ["app.js"], "branch": "feature" },
+          { "message": "Feature commit 2", "files": ["app.js"], "branch": "feature" },
+          { "message": "Main update 1", "files": ["app.js"], "branch": "main" },
+          { "message": "Main update 2", "files": ["app.js"], "branch": "main" }
+        ],
+        "branches": ["main", "feature"],
+        "currentBranch": "feature",
+        "isInitialized": true
+      },
+      "objectives": [
+        { "description": "Rebaser feature sur main", "check": { "type": "currentBranch", "value": "feature" } },
+        { "description": "Historique linéaire", "check": { "type": "minCommits", "value": 5 } }
+      ]
+    }
+  ]
+}

@@ -30,6 +30,7 @@ import contextApiData from './context-api.json';
 import customHooksData from './custom-hooks.json';
 import performanceData from './performance.json';
 import reactRouterData from './react-router.json';
+import reactAdvancedPatternsData from './react-advanced-patterns.json';
 
 // Web Stack course modules
 import howWebWorksData from './how-web-works.json';
@@ -37,7 +38,7 @@ import frontendTechData from './frontend-tech.json';
 import javascriptTypescriptData from './javascript-typescript.json';
 import frontendFrameworksData from './frontend-frameworks.json';
 import fullstackFrameworksData from './fullstack-frameworks.json';
-import databasesDataData from './databases-data.json';
+import databasesData from './databases.json';
 import dataFormatsLogsData from './data-formats-logs.json';
 import backendFrameworksData from './backend-frameworks.json';
 import architecturePatternsData from './architecture-patterns.json';
@@ -46,12 +47,20 @@ import devopsBasicsData from './devops-basics.json';
 import securityBasicsData from './security-basics.json';
 import webPerformanceData from './web-performance.json';
 import testingBasicsData from './testing-basics.json';
+import pwaBasicsData from './pwa-basics.json';
+import websocketsBasicsData from './websockets-basics.json';
+import i18nBasicsData from './i18n-basics.json';
+import browserStorageData from './browser-storage.json';
+import accessibilityBasicsData from './accessibility-basics.json';
 
 // Git course modules
 import gitBasicsData from './git-basics.json';
 import gitBranchesData from './git-branches.json';
 import gitRemotesData from './git-remotes.json';
 import gitHistoryData from './git-history.json';
+import gitAdvancedData from './git-advanced.json';
+import gitRebaseData from './git-rebase.json';
+import gitFlowData from './git-flow.json';
 
 // Type for the JSON file structure
 interface ModuleData {
@@ -75,6 +84,7 @@ const moduleFiles: ModuleData[] = [
   customHooksData as ModuleData,
   performanceData as ModuleData,
   reactRouterData as ModuleData,
+  reactAdvancedPatternsData as ModuleData,
 
   // Web Stack course
   howWebWorksData as ModuleData,
@@ -82,7 +92,18 @@ const moduleFiles: ModuleData[] = [
   javascriptTypescriptData as ModuleData,
   frontendFrameworksData as ModuleData,
   fullstackFrameworksData as ModuleData,
-  databasesDataData as ModuleData,
+  databasesData as ModuleData,
+
+  // Nouveaux modules Web Stack
+  pwaBasicsData as ModuleData,
+  websocketsBasicsData as ModuleData,
+  i18nBasicsData as ModuleData,
+  browserStorageData as ModuleData,
+  accessibilityBasicsData as ModuleData,
+
+  // Nouveaux modules Git
+  gitRebaseData as ModuleData,
+  gitFlowData as ModuleData,
   dataFormatsLogsData as ModuleData,
   backendFrameworksData as ModuleData,
   architecturePatternsData as ModuleData,
@@ -97,6 +118,7 @@ const moduleFiles: ModuleData[] = [
   gitBranchesData as ModuleData,
   gitRemotesData as ModuleData,
   gitHistoryData as ModuleData,
+  gitAdvancedData as ModuleData,
 ];
 
 // Type for module metadata in JSON (includes courseId)

@@ -1,0 +1,180 @@
+{
+  "module": {
+    "id": "pwa-basics",
+    "title": "Progressive Web Apps (PWA)",
+    "description": "Créez des applications web qui fonctionnent hors-ligne, s'installent comme des apps natives et offrent une expérience utilisateur fluide",
+    "icon": "Smartphone",
+    "requiredXp": 1500,
+    "color": "from-indigo-500 to-purple-600",
+    "courseId": "web-stack"
+  },
+  "lessons": [
+    {
+      "id": "pwa-introduction",
+      "moduleId": "pwa-basics",
+      "title": "Introduction aux PWA",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- PWA = Progressive Web App\n- Fonctionnent hors-ligne grâce aux Service Workers\n- S'installent sur l'écran d'accueil comme des apps natives\n- Utilisent un manifest.json pour définir l'apparence\n- Responsive et cross-platform\n\n---\n\n# Qu'est-ce qu'une PWA ?\n\n## Définition\n\nUne **Progressive Web App** est une application web qui utilise des technologies modernes pour offrir une expérience utilisateur similaire aux applications natives mobiles.\n\n## Les 3 Piliers d'une PWA\n\n### 1. Capable (Capable)\n- Fonctionne hors-ligne ou sur réseau faible\n- Accès aux fonctionnalités natives (camera, géolocalisation, notifications)\n- Performances optimales grâce au caching\n\n### 2. Fiable (Reliable)\n- Se charge instantanément, peu importe la connexion\n- Répond toujours, même offline\n- Pas de "page blanche" de chargement\n\n### 3. Engageante (Engaging)\n- S'installe sur l'écran d'accueil\n- Notifications push\n- Expérience immersive (fullscreen)\n\n## Pourquoi choisir une PWA ?\n\n**Avantages vs Apps Natives :**\n- Pas de store à gérer (App Store, Play Store)\n- Mise à jour instantanée\n- Taille réduite\n- Un seul code pour toutes les plateformes\n- Meilleur référencement (SEO)\n- Pas de friction d'installation\n\n**Exemples de PWA célèbres :**\n- Twitter\n- Pinterest\n- Starbucks\n- Spotify\n- Uber\n\n## Les Technos Clés\n\n1. **Service Workers** : Scripts qui tournent en arrière-plan\n2. **Web App Manifest** : Fichier JSON définissant l'app\n3. **HTTPS** : Obligatoire pour les Service Workers\n4. **Cache API** : Stockage des ressources\n5. **IndexedDB** : Base de données côté client",
+      "codeExample": "// Structure minimale d'une PWA\n\n// 1. index.html\n<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Ma PWA</title>\n  \n  <!-- Lien vers le manifest -->\n  <link rel=\"manifest\" href=\"/manifest.json\">\n  \n  <!-- Thème pour mobile -->\n  <meta name=\"theme-color\" content=\"#6366f1\">\n  \n  <!-- Icônes -->\n  <link rel=\"icon\" type=\"image/png\" sizes=\"192x192\" href=\"/icon-192.png\">\n  <link rel=\"apple-touch-icon\" href=\"/icon-192.png\">\n</head>\n<body>\n  <div id=\"app\">\n    <h1>Ma Progressive Web App</h1>\n    <p id=\"status\">Statut : <span>En ligne</span></p>\n  </div>\n  \n  <!-- Enregistrement du Service Worker -->\n  <script>\n    if ('serviceWorker' in navigator) {\n      navigator.serviceWorker.register('/sw.js')\n        .then(reg => console.log('SW enregistré'))\n        .catch(err => console.log('SW erreur', err));\n    }\n  </script>\n</body>\n</html>\n\n// 2. manifest.json\n{\n  \"name\": \"Ma Super PWA\",\n  \"short_name\": \"PWA\",\n  \"start_url\": \"/\",\n  \"display\": \"standalone\",\n  \"background_color\": \"#ffffff\",\n  \"theme_color\": \"#6366f1\",\n  \"orientation\": \"portrait\",\n  \"icons\": [\n    {\n      \"src\": \"/icon-192.png\",\n      \"sizes\": \"192x192\",\n      \"type\": \"image/png\"\n    },\n    {\n      \"src\": \"/icon-512.png\",\n      \"sizes\": \"512x512\",\n      \"type\": \"image/png\"\n    }\n  ]\n}"
+    },
+    {
+      "id": "service-workers",
+      "moduleId": "pwa-basics",
+      "title": "Service Workers",
+      "order": 2,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Service Worker = script JavaScript qui tourne en arrière-plan\n- Agit comme un proxy entre le navigateur et le réseau\n- Permet le caching, la gestion offline, les notifications\n- Lifecycle : install → activate → fetch\n- Doit être enregistré dans le fichier principal\n- Fonctionne uniquement en HTTPS\n\n---\n\n# Service Workers : Le Cerveau de la PWA\n\n## Qu'est-ce qu'un Service Worker ?\n\nUn **Service Worker** est un script JavaScript qui s'exécute en arrière-plan, indépendamment de la page web. Il agit comme un proxy entre ton application et le réseau.\n\n**Ce qu'il peut faire :**\n- Intercepter les requêtes réseau\n- Mettre en cache des ressources\n- Servir du contenu hors-ligne\n- Recevoir des notifications push\n- Synchroniser en arrière-plan\n\n**Ce qu'il ne peut PAS faire :**\n- Accéder directement au DOM\n- Utiliser localStorage (mais peut utiliser Cache API et IndexedDB)\n- Fonctionner sur localhost sans HTTPS (sauf 127.0.0.1)\n\n## Lifecycle d'un Service Worker\n\n```\nRegister → Install → Activate → Idle → Terminate\n                        ↓\n                  Fetch / Message / Push / Sync\n```\n\n### 1. Registration (Enregistrement)\n\nDans ton fichier principal (index.html ou app.js) :\n\n```javascript\nif ('serviceWorker' in navigator) {\n  navigator.serviceWorker\n    .register('/sw.js')\n    .then(registration => {\n      console.log('SW enregistré avec succès !');\n      console.log('Scope:', registration.scope);\n    })\n    .catch(error => {\n      console.log('Erreur d\'enregistrement:', error);\n    });\n}\n```\n\n### 2. Installation\n\nLe Service Worker s'installe une fois, puis reste enregistré :\n\n```javascript\n// sw.js\nconst CACHE_NAME = 'mon-app-v1';\nconst urlsToCache = [\n  '/',\n  '/index.html',\n  '/styles.css',\n  '/app.js',\n  '/icon.png'\n];\n\n// Événement install : se déclenche une fois\nself.addEventListener('install', event => {\n  console.log('Service Worker en cours d\'installation...');\n  \n  event.waitUntil(\n    caches.open(CACHE_NAME)\n      .then(cache => {\n        console.log('Cache ouvert');\n        return cache.addAll(urlsToCache);\n      })\n  );\n});\n```\n\n### 3. Activation\n\nAprès installation, le SW doit s'activer :\n\n```javascript\nself.addEventListener('activate', event => {\n  console.log('Service Worker activé !');\n  \n  // Nettoyer les anciens caches\n  event.waitUntil(\n    caches.keys().then(cacheNames => {\n      return Promise.all(\n        cacheNames\n          .filter(name => name !== CACHE_NAME)\n          .map(name => {\n            console.log('Suppression ancien cache:', name);\n            return caches.delete(name);\n          })\n      );\n    })\n  );\n});\n```\n\n### 4. Interception des requêtes (Fetch)\n\n```javascript\nself.addEventListener('fetch', event => {\n  event.respondWith(\n    caches.match(event.request)\n      .then(response => {\n        // Cache hit - retourner la réponse\n        if (response) {\n          return response;\n        }\n        \n        // Sinon, fetch sur le réseau\n        return fetch(event.request);\n      })\n  );\n});\n```\n\n## Stratégies de Cache\n\n### 1. Cache First (Recommandé pour les assets statiques)\n\n```javascript\nself.addEventListener('fetch', event => {\n  event.respondWith(\n    caches.match(event.request).then(response => {\n      // Retourner du cache si disponible\n      if (response) {\n        return response;\n      }\n      \n      // Sinon fetch et mettre en cache\n      return fetch(event.request).then(networkResponse => {\n        return caches.open(CACHE_NAME).then(cache => {\n          cache.put(event.request, networkResponse.clone());\n          return networkResponse;\n        });\n      });\n    })\n  );\n});\n```\n\n### 2. Network First (Pour les données dynamiques)\n\n```javascript\nself.addEventListener('fetch', event => {\n  event.respondWith(\n    fetch(event.request)\n      .then(networkResponse => {\n        // Mettre à jour le cache\n        return caches.open(CACHE_NAME).then(cache => {\n          cache.put(event.request, networkResponse.clone());\n          return networkResponse;\n        });\n      })\n      .catch(() => {\n        // Fallback sur le cache si offline\n        return caches.match(event.request);\n      })\n  );\n});\n```\n\n### 3. Stale While Revalidate\n\n```javascript\nself.addEventListener('fetch', event => {\n  event.respondWith(\n    caches.match(event.request).then(cachedResponse => {\n      // Retourner immédiatement depuis le cache\n      const fetchPromise = fetch(event.request).then(networkResponse => {\n        // Mettre à jour le cache en arrière-plan\n        caches.open(CACHE_NAME).then(cache => {\n          cache.put(event.request, networkResponse.clone());\n        });\n        return networkResponse;\n      });\n      \n      return cachedResponse || fetchPromise;\n    })\n  );\n});\n```",
+      "codeExample": "// Service Worker complet - sw.js\n\nconst CACHE_NAME = 'my-pwa-v1';\nconst STATIC_ASSETS = [\n  '/',\n  '/index.html',\n  '/styles.css',\n  '/app.js',\n  '/offline.html',\n  '/icon-192.png'\n];\n\n// Installation : mettre en cache les ressources statiques\nself.addEventListener('install', event => {\n  console.log('[SW] Installation...');\n  \n  event.waitUntil(\n    caches.open(CACHE_NAME)\n      .then(cache => {\n        console.log('[SW] Mise en cache des ressources');\n        return cache.addAll(STATIC_ASSETS);\n      })\n      .catch(err => console.error('[SW] Erreur cache:', err))\n  );\n  \n  // Forcer l'activation immédiate\n  self.skipWaiting();\n});\n\n// Activation : nettoyer les anciens caches\nself.addEventListener('activate', event => {\n  console.log('[SW] Activation...');\n  \n  event.waitUntil(\n    caches.keys().then(cacheNames => {\n      return Promise.all(\n        cacheNames\n          .filter(name => name !== CACHE_NAME)\n          .map(name => {\n            console.log('[SW] Suppression cache:', name);\n            return caches.delete(name);\n          })\n      );\n    })\n  );\n  \n  // Prendre le contrôle immédiatement\n  self.clients.claim();\n});\n\n// Fetch : intercepter les requêtes\nself.addEventListener('fetch', event => {\n  console.log('[SW] Fetch:', event.request.url);\n  \n  event.respondWith(\n    caches.match(event.request)\n      .then(cachedResponse => {\n        // Si dans le cache, retourner\n        if (cachedResponse) {\n          return cachedResponse;\n        }\n        \n        // Sinon fetch sur le réseau\n        return fetch(event.request)\n          .then(networkResponse => {\n            // Ne pas mettre en cache si pas valide\n            if (!networkResponse || networkResponse.status !== 200) {\n              return networkResponse;\n            }\n            \n            // Cloner et mettre en cache\n            const responseToCache = networkResponse.clone();\n            caches.open(CACHE_NAME).then(cache => {\n              cache.put(event.request, responseToCache);\n            });\n            \n            return networkResponse;\n          })\n          .catch(() => {\n            // Fallback offline pour les pages HTML\n            if (event.request.mode === 'navigate') {\n              return caches.match('/offline.html');\n            }\n          });\n      })\n  );\n});"
+    },
+    {
+      "id": "web-app-manifest",
+      "moduleId": "pwa-basics",
+      "title": "Web App Manifest",
+      "order": 3,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Manifest.json = fichier JSON qui décrit ton application\n- Définit : nom, icônes, couleurs, mode d'affichage\n- Permet l'installation sur l'écran d'accueil\n- Doit être lié dans le <head> du HTML\n- Les icônes doivent être en PNG\n- Recommandé : 192x192 et 512x512 minimum\n\n---\n\n# Web App Manifest : La Carte d'Identité\n\n## C'est quoi le Manifest ?\n\nLe **Web App Manifest** est un fichier JSON qui décrit ton application au navigateur : son nom, ses icônes, ses couleurs, comment elle doit s'afficher...\n\n**Sans manifest** : Le navigateur ne sait pas que c'est une PWA.\n**Avec manifest** : L'utilisateur peut installer l'app sur son écran d'accueil !\n\n## Structure du Manifest\n\n```json\n{\n  \"name\": \"Ma Super Application\",\n  \"short_name\": \"MonApp\",\n  \"description\": \"Une PWA incroyable pour gérer vos tâches\",\n  \"start_url\": \"/\",\n  \"display\": \"standalone\",\n  \"background_color\": \"#ffffff\",\n  \"theme_color\": \"#6366f1\",\n  \"orientation\": \"portrait\",\n  \"scope\": \"/\",\n  \"lang\": \"fr\",\n  \"icons\": [\n    {\n      \"src\": \"/icons/icon-72x72.png\",\n      \"sizes\": \"72x72\",\n      \"type\": \"image/png\"\n    },\n    {\n      \"src\": \"/icons/icon-192x192.png\",\n      \"sizes\": \"192x192\",\n      \"type\": \"image/png\"\n    },\n    {\n      \"src\": \"/icons/icon-512x512.png\",\n      \"sizes\": \"512x512\",\n      \"type\": \"image/png\"\n    }\n  ],\n  \"screenshots\": [\n    {\n      \"src\": \"/screenshots/home.png\",\n      \"sizes\": \"1280x720\",\n      \"type\": \"image/png\"\n    }\n  ]\n}\n```\n\n## Champs Importants\n\n### Identité\n\n- **name** : Nom complet de l'app (affiché sur le splash screen)\n- **short_name** : Nom court (max 12 caractères, affiché sous l'icône)\n- **description** : Description de l'application\n\n### Affichage\n\n- **start_url** : URL de démarrage quand on ouvre l'app (souvent \"/\")\n- **display** : Mode d'affichage\n  - `browser` : Comme un site normal (barre d'adresse visible)\n  - `standalone` : Sans barre d'adresse (apparence native)\n  - `fullscreen` : Plein écran total\n  - `minimal-ui` : Navigation minimale\n\n### Design\n\n- **background_color** : Couleur de fond du splash screen\n- **theme_color** : Couleur de la barre d'outils/status bar\n- **orientation** : `portrait`, `landscape`, ou `any`\n\n### Icônes\n\n**Tailles recommandées :**\n- 72x72, 96x96, 128x128, 144x144, 152x152, 192x192, 384x384, 512x512\n\n**Purpose (optionnel) :**\n- `maskable` : S'adapte aux formes d'icônes (iOS, Android)\n- `any` : Icône normale\n\n```json\n\"icons\": [\n  {\n    \"src\": \"/icon-maskable.png\",\n    \"sizes\": \"192x192\",\n    \"type\": \"image/png\",\n    \"purpose\": \"maskable\"\n  },\n  {\n    \"src\": \"/icon-any.png\",\n    \"sizes\": \"192x192\",\n    \"type\": \"image/png\",\n    \"purpose\": \"any\"\n  }\n]\n```\n\n## Intégration dans le HTML\n\n```html\n<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  \n  <!-- Lien vers le manifest -->\n  <link rel=\"manifest\" href=\"/manifest.json\">\n  \n  <!-- Couleur du thème pour mobile -->\n  <meta name=\"theme-color\" content=\"#6366f1\">\n  \n  <!-- Icônes pour iOS -->\n  <link rel=\"apple-touch-icon\" href=\"/icons/icon-192x192.png\">\n  \n  <!-- Status bar iOS -->\n  <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n  <meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black-translucent\">\n  \n  <title>Ma PWA</title>\n</head>\n<body>\n  <!-- Contenu -->\n</body>\n</html>\n```\n\n## Générer les Icônes\n\n**Outils recommandés :**\n- Figma, Sketch, Adobe XD\n- PWA Builder (https://www.pwabuilder.com)\n- Favicon Generator (https://realfavicongenerator.net)\n- Maskable.app (pour icônes maskable)\n\n**Bonnes pratiques :**\n- Fond transparent ou couleur unie\n- Design simple et reconnaissable\n- Test sur différentes tailles\n- Format PNG avec canal alpha",
+      "codeExample": "// manifest.json complet\n{\n  \"name\": \"TaskMaster - Gestionnaire de Tâches\",\n  \"short_name\": \"TaskMaster\",\n  \"description\": \"Organisez vos tâches quotidiennes avec une PWA rapide et intuitive\",\n  \"start_url\": \"/\",\n  \"display\": \"standalone\",\n  \"background_color\": \"#f8fafc\",\n  \"theme_color\": \"#4f46e5\",\n  \"orientation\": \"portrait\",\n  \"scope\": \"/\",\n  \"lang\": \"fr\",\n  \"dir\": \"ltr\",\n  \"icons\": [\n    {\n      \"src\": \"/icons/icon-72x72.png\",\n      \"sizes\": \"72x72\",\n      \"type\": \"image/png\",\n      \"purpose\": \"any\"\n    },\n    {\n      \"src\": \"/icons/icon-96x96.png\",\n      \"sizes\": \"96x96\",\n      \"type\": \"image/png\",\n      \"purpose\": \"any\"\n    },\n    {\n      \"src\": \"/icons/icon-128x128.png\",\n      \"sizes\": \"128x128\",\n      \"type\": \"image/png\",\n      \"purpose\": \"any\"\n    },\n    {\n      \"src\": \"/icons/icon-144x144.png\",\n      \"sizes\": \"144x144\",\n      \"type\": \"image/png\",\n      \"purpose\": \"any\"\n    },\n    {\n      \"src\": \"/icons/icon-152x152.png\",\n      \"sizes\": \"152x152\",\n      \"type\": \"image/png\",\n      \"purpose\": \"any\"\n    },\n    {\n      \"src\": \"/icons/icon-192x192.png\",\n      \"sizes\": \"192x192\",\n      \"type\": \"image/png\",\n      \"purpose\": \"any maskable\"\n    },\n    {\n      \"src\": \"/icons/icon-384x384.png\",\n      \"sizes\": \"384x384\",\n      \"type\": \"image/png\",\n      \"purpose\": \"any\"\n    },\n    {\n      \"src\": \"/icons/icon-512x512.png\",\n      \"sizes\": \"512x512\",\n      \"type\": \"image/png\",\n      \"purpose\": \"any\"\n    }\n  ],\n  \"screenshots\": [\n    {\n      \"src\": \"/screenshots/home.png\",\n      \"sizes\": \"1280x720\",\n      \"type\": \"image/png\",\n      \"form_factor\": \"wide\"\n    },\n    {\n      \"src\": \"/screenshots/mobile.png\",\n      \"sizes\": \"750x1334\",\n      \"type\": \"image/png\",\n      \"form_factor\": \"narrow\"\n    }\n  ],\n  \"categories\": [\"productivity\", \"utilities\"],\n  \"shortcuts\": [\n    {\n      \"name\": \"Nouvelle Tâche\",\n      \"short_name\": \"Ajouter\",\n      \"description\": \"Créer une nouvelle tâche rapidement\",\n      \"url\": \"/add\",\n      \"icons\": [{ \"src\": \"/icons/add.png\", \"sizes\": \"96x96\" }]\n    }\n  ],\n  \"related_applications\": [],\n  \"prefer_related_applications\": false\n}"
+    },
+    {
+      "id": "offline-strategies",
+      "moduleId": "pwa-basics",
+      "title": "Stratégies Hors-Ligne",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Plusieurs stratégies de caching selon le type de ressource\n- Cache First : rapide, pour les assets statiques\n- Network First : frais, pour les données dynamiques\n- Stale While Revalidate : compromis perf/fraîcheur\n- Page offline : fallback quand tout échoue\n- Background Sync : synchronisation différée\n\n---\n\n# Stratégies Hors-Ligne : L'Art du Cache\n\n## Pourquoi différentes stratégies ?\n\nToutes les ressources n'ont pas les mêmes besoins :\n- **CSS/JS** : Peuvent être cachés longtemps\n- **API/Data** : Besoin de fraîcheur\n- **Images** : Compromis taille/perf\n\n## Les 5 Stratégies Principales\n\n### 1. Cache Only\n\nNe jamais aller sur le réseau. Utile pour les assets statiques versionnés.\n\n```javascript\nself.addEventListener('fetch', event => {\n  event.respondWith(\n    caches.match(event.request)\n  );\n});\n```\n\n**Usage :**\n- Ressources immuables avec hash (app.abc123.js)\n\n---\n\n### 2. Network Only\n\nToujours récupérer sur le réseau. Pas de cache.\n\n```javascript\nself.addEventListener('fetch', event => {\n  event.respondWith(\n    fetch(event.request)\n  );\n});\n```\n\n**Usage :**\n- Données temps réel\n- Analytics\n\n---\n\n### 3. Cache First (Cache Falling Back to Network)\n\n**Stratégie la plus commune pour les PWA.**\n\n```javascript\nself.addEventListener('fetch', event => {\n  event.respondWith(\n    caches.match(event.request).then(response => {\n      // Retourner du cache si dispo\n      if (response) {\n        return response;\n      }\n      \n      // Sinon fetch et mettre en cache\n      return fetch(event.request).then(networkResponse => {\n        return caches.open(CACHE_NAME).then(cache => {\n          cache.put(event.request, networkResponse.clone());\n          return networkResponse;\n        });\n      });\n    })\n  );\n});\n```\n\n**Usage :**\n- Images\n- Fonts\n- Fichiers JS/CSS statiques\n- Pages complètes\n\n**Avantages :** Rapide, fonctionne offline\n**Inconvénients :** Données potentiellement obsolètes\n\n---\n\n### 4. Network First (Network Falling Back to Cache)\n\n```javascript\nself.addEventListener('fetch', event => {\n  event.respondWith(\n    fetch(event.request)\n      .then(networkResponse => {\n        // Met à jour le cache\n        return caches.open(CACHE_NAME).then(cache => {\n          cache.put(event.request, networkResponse.clone());\n          return networkResponse;\n        });\n      })\n      .catch(() => {\n        // Fallback sur le cache\n        return caches.match(event.request);\n      })\n  );\n});\n```\n\n**Usage :**\n- API calls\n- Données utilisateur\n- Contenu fréquemment mis à jour\n\n**Avantages :** Données fraîches quand online\n**Inconvénients :** Lent quand offline\n\n---\n\n### 5. Stale While Revalidate\n\n**La meilleure stratégie pour la plupart des cas.**\n\nAffiche immédiatement depuis le cache, mais met à jour en arrière-plan.\n\n```javascript\nself.addEventListener('fetch', event => {\n  event.respondWith(\n    caches.match(event.request).then(cachedResponse => {\n      const fetchPromise = fetch(event.request).then(networkResponse => {\n        // Met à jour le cache en arrière-plan\n        caches.open(CACHE_NAME).then(cache => {\n          cache.put(event.request, networkResponse.clone());\n        });\n        return networkResponse;\n      });\n      \n      // Retourne le cache immédiatement, ou fetch si pas en cache\n      return cachedResponse || fetchPromise;\n    })\n  );\n});\n```\n\n**Usage :**\n- Articles de blog\n- Pages de produits\n- Contenu semi-dynamique\n\n**Avantages :**\n- Instantané (depuis cache)\n- Se met à jour automatiquement\n- Fonctionne offline\n\n## Stratégies par Type de Ressource\n\n```javascript\nself.addEventListener('fetch', event => {\n  const { request } = event;\n  const url = new URL(request.url);\n  \n  // Stratégie différente selon le type\n  if (request.mode === 'navigate') {\n    // Pages HTML\n    event.respondWith(networkFirst(request));\n  } else if (url.pathname.match(/\\.(js|css)$/)) {\n    // Assets statiques\n    event.respondWith(cacheFirst(request));\n  } else if (url.pathname.match(/\\.(png|jpg|jpeg|gif|svg)$/)) {\n    // Images\n    event.respondWith(staleWhileRevalidate(request));\n  } else if (url.pathname.startsWith('/api/')) {\n    // API\n    event.respondWith(networkFirst(request));\n  } else {\n    // Par défaut\n    event.respondWith(fetch(request));\n  }\n});\n\n// Fonctions helper\nasync function cacheFirst(request) {\n  const cached = await caches.match(request);\n  return cached || fetch(request);\n}\n\nasync function networkFirst(request) {\n  try {\n    const network = await fetch(request);\n    const cache = await caches.open(CACHE_NAME);\n    cache.put(request, network.clone());\n    return network;\n  } catch (error) {\n    return caches.match(request);\n  }\n}\n\nasync function staleWhileRevalidate(request) {\n  const cached = await caches.match(request);\n  \n  const fetchPromise = fetch(request).then(network => {\n    caches.open(CACHE_NAME).then(cache => {\n      cache.put(request, network.clone());\n    });\n    return network;\n  });\n  \n  return cached || fetchPromise;\n}\n```\n\n## Page Offline\n\nCrée une page de fallback pour quand tout échoue :\n\n```html\n<!-- offline.html -->\n<!DOCTYPE html>\n<html>\n<head>\n  <title>Hors ligne</title>\n  <style>\n    body {\n      font-family: system-ui, sans-serif;\n      display: flex;\n      flex-direction: column;\n      align-items: center;\n      justify-content: center;\n      height: 100vh;\n      margin: 0;\n      background: #f5f5f5;\n    }\n    .icon { font-size: 64px; }\n    h1 { color: #333; }\n    button {\n      padding: 12px 24px;\n      background: #4f46e5;\n      color: white;\n      border: none;\n      border-radius: 8px;\n      cursor: pointer;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"icon\">📡</div>\n  <h1>Vous êtes hors ligne</h1>\n  <p>Impossible de charger cette page. Vérifiez votre connexion.</p>\n  <button onclick=\"location.reload()\">Réessayer</button>\n</body>\n</html>\n```",
+      "codeExample": "// Service Worker avec stratégies différenciées\n\nconst CACHE_NAME = 'my-app-v2';\nconst STATIC_CACHE = 'static-v2';\nconst DYNAMIC_CACHE = 'dynamic-v2';\n\nconst STATIC_ASSETS = [\n  '/',\n  '/index.html',\n  '/offline.html',\n  '/styles.css',\n  '/app.js',\n  '/icons/icon-192.png'\n];\n\n// Installation\nself.addEventListener('install', event => {\n  event.waitUntil(\n    caches.open(STATIC_CACHE)\n      .then(cache => cache.addAll(STATIC_ASSETS))\n  );\n  self.skipWaiting();\n});\n\n// Activation\nself.addEventListener('activate', event => {\n  event.waitUntil(\n    caches.keys().then(cacheNames => {\n      return Promise.all(\n        cacheNames\n          .filter(name => !name.startsWith('static') && !name.startsWith('dynamic'))\n          .map(name => caches.delete(name))\n      );\n    })\n  );\n  self.clients.claim();\n});\n\n// Fetch avec routing intelligent\nself.addEventListener('fetch', event => {\n  const { request } = event;\n  const url = new URL(request.url);\n  \n  // Pages HTML - Network First avec fallback offline\n  if (request.mode === 'navigate') {\n    event.respondWith(\n      fetch(request)\n        .catch(() => caches.match(request) || caches.match('/offline.html'))\n    );\n    return;\n  }\n  \n  // API calls - Network First\n  if (url.pathname.startsWith('/api/')) {\n    event.respondWith(\n      fetch(request)\n        .then(response => {\n          const clone = response.clone();\n          caches.open(DYNAMIC_CACHE).then(cache => cache.put(request, clone));\n          return response;\n        })\n        .catch(() => caches.match(request))\n    );\n    return;\n  }\n  \n  // Assets statiques (JS, CSS) - Cache First\n  if (url.pathname.match(/\\.(js|css)$/)) {\n    event.respondWith(\n      caches.match(request).then(cached => {\n        if (cached) return cached;\n        \n        return fetch(request).then(response => {\n          const clone = response.clone();\n          caches.open(STATIC_CACHE).then(cache => cache.put(request, clone));\n          return response;\n        });\n      })\n    );\n    return;\n  }\n  \n  // Images - Stale While Revalidate\n  if (url.pathname.match(/\\.(png|jpg|jpeg|gif|svg|webp)$/)) {\n    event.respondWith(\n      caches.match(request).then(cached => {\n        const fetchPromise = fetch(request).then(response => {\n          caches.open(DYNAMIC_CACHE).then(cache => cache.put(request, response.clone()));\n          return response;\n        }).catch(() => cached);\n        \n        return cached || fetchPromise;\n      })\n    );\n    return;\n  }\n  \n  // Par défaut - essayer le réseau\n  event.respondWith(fetch(request));\n});"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "pwa-ex-1",
+      "lessonId": "service-workers",
+      "moduleId": "pwa-basics",
+      "title": "Quiz Service Workers",
+      "difficulty": "medium",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Qu'est-ce qu'un Service Worker ?",
+          "options": [
+            "Un serveur web local",
+            "Un script JavaScript qui tourne en arrière-plan",
+            "Un nouveau type de navigateur",
+            "Une base de données côté client"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Un Service Worker est un script JavaScript qui s'exécute en arrière-plan, indépendamment de la page web, et qui peut intercepter les requêtes réseau."
+        },
+        {
+          "question": "Quel événement se déclenche lors de l'installation d'un Service Worker ?",
+          "options": [
+            "'setup'",
+            "'install'",
+            "'activate'",
+            "'ready'"
+          ],
+          "correctAnswer": 1,
+          "explanation": "L'événement 'install' se déclenche lors de l'installation du Service Worker. C'est le bon moment pour mettre en cache les ressources statiques."
+        },
+        {
+          "question": "Pourquoi les Service Workers nécessitent-ils HTTPS ?",
+          "options": [
+            "Pour des raisons de performance",
+            "Pour la sécurité et éviter les attaques man-in-the-middle",
+            "Parce que c'est une exigence Apple",
+            "Pour activer le mode offline"
+          ],
+          "correctAnswer": 1,
+          "explanation": "HTTPS est obligatoire car les Service Workers ont un pouvoir important (intercepter toutes les requêtes). Sans HTTPS, un attaquant pourrait injecter un SW malveillant."
+        }
+      ]
+    },
+    {
+      "id": "pwa-ex-2",
+      "lessonId": "offline-strategies",
+      "moduleId": "pwa-basics",
+      "title": "Quiz Stratégies de Cache",
+      "difficulty": "medium",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Quelle stratégie est recommandée pour les assets statiques (CSS, JS) ?",
+          "options": [
+            "Network First",
+            "Cache First",
+            "Network Only",
+            "No Cache"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Cache First est idéal pour les assets statiques car ils ne changent pas souvent. On les met en cache une fois et on les sert rapidement."
+        },
+        {
+          "question": "Quelle stratégie garantit les données les plus fraîches ?",
+          "options": [
+            "Cache First",
+            "Stale While Revalidate",
+            "Network First",
+            "Cache Only"
+          ],
+          "correctAnswer": 2,
+          "explanation": "Network First essaie d'abord le réseau. Si ça échoue, seulement alors il utilise le cache. C'est parfait pour les données qui doivent être fraîches."
+        },
+        {
+          "question": "Dans 'Stale While Revalidate', que se passe-t-il ?",
+          "options": [
+            "On attend le réseau avant d'afficher",
+            "On affiche le cache et on met à jour en arrière-plan",
+            "On supprime le cache à chaque requête",
+            "On désactive le cache"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Stale While Revalidate affiche immédiatement le contenu depuis le cache (rapide), puis met à jour le cache en arrière-plan avec la version fraîche du réseau."
+        }
+      ]
+    },
+    {
+      "id": "pwa-ex-3",
+      "lessonId": "web-app-manifest",
+      "moduleId": "pwa-basics",
+      "title": "Quiz Web App Manifest",
+      "difficulty": "easy",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "À quoi sert le fichier manifest.json ?",
+          "options": [
+            "À configurer le Service Worker",
+            "À décrire l'application (nom, icônes, couleurs)",
+            "À stocker les données utilisateur",
+            "À compiler le code JavaScript"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Le manifest.json décrit l'application au navigateur : son nom, ses icônes, ses couleurs, comment elle doit s'afficher, etc."
+        },
+        {
+          "question": "Quelle valeur de 'display' donne l'apparence la plus native (sans barre d'adresse) ?",
+          "options": [
+            "'browser'",
+            "'standalone'",
+            "'window'",
+            "'app'"
+          ],
+          "correctAnswer": 1,
+          "explanation": "'standalone' retire la barre d'adresse et donne à l'app une apparence native, comme une vraie application mobile."
+        },
+        {
+          "question": "Quelle taille d'icône minimum est recommandée pour une PWA ?",
+          "options": [
+            "64x64",
+            "192x192",
+            "512x512",
+            "1024x1024"
+          ],
+          "correctAnswer": 1,
+          "explanation": "192x192 est la taille minimum recommandée pour que la PWA puisse être installée sur l'écran d'accueil. 512x512 est recommandé pour le splash screen."
+        }
+      ]
+    }
+  ]
+}
