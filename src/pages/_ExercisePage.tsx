@@ -20,6 +20,7 @@ import {
   BookOpen,
 } from 'lucide-react';
 import LivePreview from '../components/LivePreview';
+import GitSimulator from '../components/GitSimulator';
 import Breadcrumb from '../components/Breadcrumb';
 
 interface ExercisePageProps {
@@ -275,6 +276,9 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
                   automaticLayout: true,
                   tabSize: 2,
                   padding: { top: 8 },
+                  fixedOverflowWidgets: true,
+                  quickSuggestions: { other: false, comments: false, strings: false },
+                  suggestOnTriggerCharacters: false,
                 }}
               />
             </div>
@@ -330,10 +334,16 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
 
           <div className="lg:flex-1 border-2 border-gray-300 bg-white rounded-lg flex flex-col h-[200px] lg:h-auto lg:min-h-[200px]">
             <div className="px-4 py-2 bg-gray-100 border-b-2 border-gray-300">
-              <span className="text-sm font-bold uppercase text-gray-800">Preview</span>
+              <span className="text-sm font-bold uppercase text-gray-800">
+                {module?.courseId === 'git' ? 'Git Simulator' : 'Preview'}
+              </span>
             </div>
             <div className="flex-1 bg-white relative overflow-auto">
-              <LivePreview code={code} />
+              {module?.courseId === 'git' ? (
+                <GitSimulator command={code} />
+              ) : (
+                <LivePreview code={code} />
+              )}
             </div>
           </div>
         </div>
