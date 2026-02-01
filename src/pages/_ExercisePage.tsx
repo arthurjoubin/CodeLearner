@@ -36,6 +36,7 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
   const lessonExercises = lesson ? getExercisesForLesson(lesson.id) : [];
 
   const [code, setCode] = useState((exercise && isCodeExercise(exercise)) ? exercise.starterCode : '');
+  const [executedCommand, setExecutedCommand] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [feedback, setFeedback] = useState<{ isCorrect: boolean; message: string } | null>(null);
   const [showHint, setShowHint] = useState(false);
@@ -273,12 +274,31 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
                       <textarea
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            setExecutedCommand(code);
+                          }
+                        }}
                         className="flex-1 bg-transparent text-gray-100 resize-none outline-none border-none p-0 font-mono text-sm leading-relaxed"
                         style={{ minHeight: '100%', tabSize: 2 }}
                         spellCheck={false}
                         placeholder="# Type your git command here..."
                       />
                     </div>
+                  </div>
+                  <div className="px-3 py-2 bg-gray-800 border-t border-gray-700 flex items-center gap-2">
+                    <button
+                      onClick={() => setExecutedCommand(code)}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded transition-colors"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Run
+                    </button>
+                    <span className="text-gray-500 text-xs">or press Enter</span>
                   </div>
                 </div>
               ) : (
@@ -358,7 +378,7 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
             </div>
             <div className="flex-1 bg-white relative overflow-auto">
               {module?.courseId === 'git' ? (
-                <GitSimulator command={code} />
+                <GitSimulator command={executedCommand} />
               ) : (
                 <LivePreview code={code} />
               )}
