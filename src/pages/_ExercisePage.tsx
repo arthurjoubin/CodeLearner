@@ -23,6 +23,13 @@ import LivePreview from '../components/LivePreview';
 import GitSimulator from '../components/GitSimulator';
 import Breadcrumb from '../components/Breadcrumb';
 
+const learningPathTitles: Record<string, string> = {
+  react: 'React',
+  'web-stack': 'Web Stack',
+  git: 'Git',
+  fastapi: 'FastAPI',
+};
+
 interface ExercisePageProps {
   exerciseId?: string;
 }
@@ -198,7 +205,7 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
     <div className="page-enter">
       <div className="mb-6">
         <Breadcrumb items={[
-          { label: 'React', href: '/learning-path/react' },
+          { label: learningPathTitles[module.courseId] || module.courseId, href: `/learning-path/${module.courseId}` },
           { label: module.title, href: `/module/${module.id}` },
           { label: lesson.title, href: `/lesson/${lesson.id}` },
         ]} />

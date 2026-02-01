@@ -1,11 +1,11 @@
 ---
 import MainLayout from '../../../layouts/MainLayout.astro';
 import { getCollection, getEntry } from 'astro:content';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Tag, Newspaper, Command, Brain, Wrench } from 'lucide-react';
 
 export async function getStaticPaths() {
 	const news = await getCollection('news');
-	return news.map(post => ({
+	return news.map((post: { slug: string }) => ({
 		params: { slug: post.slug },
 		props: { slug: post.slug },
 	}));
@@ -20,8 +20,8 @@ if (!post) {
 
 const { Content } = await post.render();
 
-const tools = await getCollection('tools');
 const llms = await getCollection('llms');
+const tools = await getCollection('tools');
 
 function formatDate(date: Date) {
 	return date.toLocaleDateString('en-US', {
@@ -32,68 +32,165 @@ function formatDate(date: Date) {
 }
 
 function getToolPath(toolName: string) {
-	const isLlm = llms.some(l => l.data.name === toolName);
+	// Check if it's an LLM
+	const llmMatch = llms.find((l: typeof llms[0]) => l.data.name.toLowerCase() === toolName.toLowerCase());
+	if (llmMatch) {
+		return { path: `/resources/llms/${llmMatch.slug}`, isLlm: true, logo: getToolLogo(toolName) };
+	}
+	
+	// Check if it's a tool
+	const toolMatch = tools.find((t: typeof tools[0]) => t.data.name.toLowerCase() === toolName.toLowerCase());
+	if (toolMatch) {
+		return { path: `/resources/tools/${toolMatch.slug}`, isLlm: false, logo: getToolLogo(toolName) };
+	}
+	
+	// Fallback: convert to slug
 	const s = toolName.toLowerCase().replace(/\s+/g, '-');
-	return isLlm ? `/resources/llms/${s}` : `/resources/tools/${s}`;
+	return { path: `/resources/tools/${s}`, isLlm: false, logo: null };
+}
+
+// Provider logos
+const providerLogos: Record<string, string> = {
+	'Anthropic': 'https://avatars.githubusercontent.com/u/76263028?s=200&v=4',
+	'OpenAI': 'https://avatars.githubusercontent.com/u/14957082?s=200&v=4',
+	'Google': 'https://raw.githubusercontent.com/github/explore/main/topics/google/google.png',
+	'DeepSeek': 'https://avatars.githubusercontent.com/u/148330874?s=200&v=4',
+};
+
+// Tool logos
+const toolLogos: Record<string, string> = {
+	'Cursor': 'https://avatars.githubusercontent.com/u/126825580?s=200&v=4',
+	'Claude Code': 'https://avatars.githubusercontent.com/u/76263028?s=200&v=4',
+	'V0': 'https://avatars.githubusercontent.com/u/14985020?s=200&v=4',
+	'Lovable': 'https://lovable.dev/favicon.ico',
+	'Bolt.new': 'https://ui-avatars.com/api/?name=Bolt&background=0D8ABC&color=fff&size=128',
+	'Gemini Pro': 'https://raw.githubusercontent.com/github/explore/main/topics/google/google.png',
+	'Gemini Ultra': 'https://raw.githubusercontent.com/github/explore/main/topics/google/google.png',
+};
+
+function getToolLogo(toolName: string): string | null {
+	return toolLogos[toolName] || providerLogos[toolName] || null;
 }
 ---
 
 <MainLayout title={post.data.title}>
-	<div class="page-enter max-w-5xl mx-auto">
-		<div class="flex items-center gap-2 mb-4 text-xs uppercase font-bold">
-			<a href="/resources" class="text-gray-500 hover:text-primary-600">Resources</a>
-			<span class="text-gray-300">/</span>
-			<a href="/resources/news" class="text-gray-500 hover:text-primary-600">News</a>
-			<span class="text-gray-300">/</span>
-			<span class="text-gray-900 truncate max-w-[150px]">{post.data.title}</span>
+	<div class="page-enter">
+		<div class="flex items-start justify-between mb-6">
+			<div class="relative inline-block group">
+				<a href="/resources/news" class="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors text-sm">
+					<ArrowLeft className="w-4 h-4" /> Back to News
+				</a>
+				<span class="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-32 duration-200" />
+			</div>
+
+			<div class="flex items-center gap-2">
+				<a 
+					href="/resources/news" 
+					class="flex items-center gap-2 px-3 py-2 bg-green-50 border-2 border-green-500 rounded-lg shadow-sm"
+					title="News"
+				>
+					<Newspaper className="w-4 h-4 text-green-600" />
+					<span class="text-xs font-bold text-green-700 uppercase">News</span>
+				</a>
+				<a 
+					href="/resources/tools" 
+					class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group"
+					title="Tools"
+				>
+					<Command className="w-4 h-4 text-gray-600 group-hover:text-primary-600" />
+					<span class="text-xs font-bold text-gray-700 group-hover:text-primary-700 uppercase">Tools</span>
+				</a>
+				<a 
+					href="/resources/llms" 
+					class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group"
+					title="LLMs"
+				>
+					<Brain className="w-4 h-4 text-gray-600 group-hover:text-primary-600" />
+					<span class="text-xs font-bold text-gray-700 group-hover:text-primary-700 uppercase">LLMs</span>
+				</a>
+				<a 
+					href="/resources/devfinds" 
+					class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group"
+					title="Dev Finds"
+				>
+					<Tag className="w-4 h-4 text-gray-600 group-hover:text-primary-600" />
+					<span class="text-xs font-bold text-gray-700 group-hover:text-primary-700 uppercase">Deals</span>
+				</a>
+			</div>
 		</div>
 
-		<div class="bg-white border-2 border-gray-300 rounded-lg overflow-hidden mb-4">
-			<div class="p-4 border-b-2 border-gray-200">
-				<div class="flex items-center gap-2 mb-2">
-					{post.data.tags.map((tag) => (
-						<span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">{tag}</span>
-					))}
+		<div class="mb-6">
+			<div class="flex flex-wrap gap-2 mb-3">
+				{post.data.tags.map((tag: string) => (
+					<span class="text-[10px] px-2 py-0.5 bg-primary-100 text-primary-700 border border-primary-300 rounded font-bold uppercase">{tag}</span>
+				))}
+			</div>
+			<div class="relative inline-block group">
+				<h1 class="text-2xl font-black text-gray-900">{post.data.title}</h1>
+				<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+			</div>
+			<div class="flex items-center gap-4 mt-3 text-xs text-gray-500">
+				<div class="flex items-center gap-1">
+					<User className="w-3 h-3" />
+					<span class="font-bold text-gray-700">{post.data.author}</span>
 				</div>
-				<h1 class="font-bold text-xl text-gray-900 leading-tight mb-2">{post.data.title}</h1>
-				<div class="text-xs text-gray-500">
-					<span class="font-medium text-gray-700">{post.data.author}</span>
-					<span class="mx-2">·</span>
+				<div class="flex items-center gap-1">
+					<Calendar className="w-3 h-3" />
 					<span>{formatDate(post.data.pubDate)}</span>
 				</div>
 			</div>
+		</div>
 
-			{post.data.mentionedTools && post.data.mentionedTools.length > 0 && (
-				<div class="px-4 py-2 bg-gray-50 border-b-2 border-gray-200 flex items-center gap-2">
-					<span class="text-[10px] font-bold uppercase text-gray-500">Mentioned:</span>
-					<div class="flex flex-wrap gap-1">
-						{post.data.mentionedTools.map(toolName => {
-							const isLlm = llms.some(l => l.data.name === toolName);
-							return (
-								<a href={getToolPath(toolName)} class="text-[10px] px-2 py-0.5 bg-white border border-gray-300 rounded font-bold uppercase hover:border-gray-900 transition-colors">
-									{toolName}
-								</a>
-							);
-						})}
-					</div>
+		{post.data.mentionedTools && post.data.mentionedTools.length > 0 && (
+			<div class="mb-6">
+				<div class="relative inline-block group mb-3">
+					<h2 class="font-bold text-gray-900 uppercase text-sm">Mentioned Tools</h2>
+					<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
 				</div>
-			)}
+				<div class="flex flex-wrap gap-2">
+					{post.data.mentionedTools.map((toolName: string) => {
+						const toolInfo = getToolPath(toolName);
+						return (
+							<a 
+								href={toolInfo.path} 
+								class="inline-flex items-center gap-2 text-[10px] px-3 py-1.5 bg-white border-2 border-gray-300 rounded font-bold uppercase hover:border-primary-500 hover:shadow-md transition-all group"
+							>
+								{toolInfo.logo ? (
+									<img src={toolInfo.logo} alt={toolName} class="w-4 h-4 object-contain rounded" />
+								) : toolInfo.isLlm ? (
+									<Brain className="w-4 h-4 text-gray-500" />
+								) : (
+									<Wrench className="w-4 h-4 text-gray-500" />
+								)}
+								<span class="group-hover:text-primary-700 transition-colors">{toolName}</span>
+							</a>
+						);
+					})}
+				</div>
+			</div>
+		)}
 
-			<div class="p-4">
-				<div class="prose prose-sm max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 prose-strong:font-bold prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-primary-700 prose-code:font-mono prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-lg prose-pre:p-3">
-					<Content />
-				</div>
+		<div class="border-2 border-gray-300 rounded-lg p-4 bg-white mb-6">
+			<div class="prose prose-sm max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 prose-strong:font-bold prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-primary-700 prose-code:font-mono prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-lg prose-pre:p-3">
+				<Content />
 			</div>
 		</div>
 
-		<div class="flex items-center gap-2 text-xs">
-			<a href="/resources/news" class="px-3 py-1.5 bg-gray-900 text-white rounded font-bold uppercase hover:bg-gray-800 transition-colors flex items-center gap-1">
-				<ArrowLeft class="w-3 h-3" />
-				News
+		<div class="flex items-center justify-between">
+			<a 
+				href="/resources/news" 
+				class="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-900 text-white text-xs font-bold uppercase rounded hover:bg-gray-800 transition-colors"
+			>
+				<ArrowLeft className="w-3 h-3" />
+				All News
 			</a>
-			<a href="/resources/tools" class="px-3 py-1.5 border border-gray-300 rounded font-bold uppercase hover:bg-gray-100 transition-colors">Tools</a>
-			<a href="/resources/llms" class="px-3 py-1.5 border border-gray-300 rounded font-bold uppercase hover:bg-gray-100 transition-colors">LLMs</a>
-			<a href="/resources/devfinds" class="px-3 py-1.5 border border-gray-300 rounded font-bold uppercase hover:bg-gray-100 transition-colors">Dev Finds</a>
+			<div class="flex items-center gap-2">
+				<a href="/resources/tools" class="text-xs font-bold uppercase text-gray-600 hover:text-primary-600 transition-colors">Tools</a>
+				<span class="text-gray-300">•</span>
+				<a href="/resources/llms" class="text-xs font-bold uppercase text-gray-600 hover:text-primary-600 transition-colors">LLMs</a>
+				<span class="text-gray-300">•</span>
+				<a href="/resources/devfinds" class="text-xs font-bold uppercase text-gray-600 hover:text-primary-600 transition-colors">Dev Finds</a>
+			</div>
 		</div>
 	</div>
 </MainLayout>

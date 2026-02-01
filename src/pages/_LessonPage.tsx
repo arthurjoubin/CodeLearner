@@ -14,6 +14,13 @@ import {
 import ReactMarkdown from './_ReactMarkdown';
 import Breadcrumb from '../components/Breadcrumb';
 
+const learningPathTitles: Record<string, string> = {
+  react: 'React',
+  'web-stack': 'Web Stack',
+  git: 'Git',
+  fastapi: 'FastAPI',
+};
+
 interface LessonPageProps {
   lessonId?: string;
 }
@@ -79,7 +86,7 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
     <div className="page-enter max-w-6xl mx-auto px-3">
       <div className="mb-6">
         <Breadcrumb items={[
-          { label: 'React', href: '/learning-path/react' },
+          { label: learningPathTitles[module.courseId] || module.courseId, href: `/learning-path/${module.courseId}` },
           { label: module.title, href: `/module/${module.id}` },
         ]} />
         <div className="flex items-center justify-between gap-4">

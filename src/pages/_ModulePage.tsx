@@ -6,6 +6,13 @@ import { getModule, getLessonsForModule, getExercisesForLesson, getLesson } from
 import { CheckCircle, Lock, BookOpen, X } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
 
+const learningPathTitles: Record<string, string> = {
+  react: 'React',
+  'web-stack': 'Web Stack',
+  git: 'Git',
+  fastapi: 'FastAPI',
+};
+
 interface ModulePageProps {
   moduleId?: string;
 }
@@ -69,7 +76,7 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
     <div className="page-enter">
       <div className="mb-6">
         <Breadcrumb items={[
-          { label: 'React', href: '/learning-path/react' },
+          { label: learningPathTitles[module.courseId] || module.courseId, href: `/learning-path/${module.courseId}` },
         ]} />
         <div className="relative inline-block group">
           <h1 className="text-2xl font-black text-gray-900 uppercase">{module.title}</h1>

@@ -2,9 +2,10 @@
 import MainLayout from '../../layouts/MainLayout.astro';
 import { getCollection } from 'astro:content';
 import ResourceTabs from '../../components/ResourceTabs.astro';
+import { ArrowLeft, Newspaper, ExternalLink } from 'lucide-react';
 
 const news = (await getCollection('news')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+	(a: { data: { pubDate: Date } }, b: { data: { pubDate: Date } }) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
 function formatDate(date: Date) {
@@ -14,49 +15,69 @@ function formatDate(date: Date) {
 		year: 'numeric'
 	});
 }
+
+const totalNews = news.length;
 ---
 
 <MainLayout title="AI News">
-	<div class="page-enter max-w-4xl mx-auto">
-		<div class="mb-6">
-			<a href="/resources" class="text-xs text-gray-500 hover:text-primary-600 uppercase font-bold flex items-center gap-1 mb-3">
-				<span class="w-1.5 h-1.5 bg-primary-500 rounded-full" />
-				Back to Resources
+	<div class="page-enter">
+		<div class="relative inline-block group mb-4">
+			<a href="/resources" class="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors text-sm">
+				<ArrowLeft className="w-4 h-4" /> Back
 			</a>
-			<div class="flex items-center justify-between">
-				<div class="relative inline-block">
-					<h1 class="text-xl font-black text-gray-900 uppercase">AI News</h1>
-					<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500" />
+			<span class="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-20 duration-200" />
+		</div>
+
+		<div class="mb-6">
+			<div class="relative inline-block group">
+				<div class="flex items-center gap-2">
+					<h1 class="text-2xl font-black text-gray-900 uppercase">AI News</h1>
+					<span class="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider border border-gray-300 rounded">
+						{totalNews} articles
+					</span>
 				</div>
+				<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
 			</div>
-			<p class="text-sm text-gray-500 mt-1">Latest updates on AI tools and trends</p>
+			<p class="text-gray-700 mt-1">Latest updates on AI tools, models, and trends</p>
 		</div>
 
 		<ResourceTabs active="news" />
 
-		<div class="bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
-			<table class="w-full text-sm">
-				<thead>
-					<tr class="border-b-2 border-gray-300 bg-gray-50">
-						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Title</th>
-						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs w-40">Tag</th>
-						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs w-32">Date</th>
-					</tr>
-				</thead>
-				<tbody>
-					{news.map((article) => (
-						<tr class="border-b border-gray-200 last:border-0 hover:bg-gray-100 transition-colors cursor-pointer" onclick={`window.location.href='/resources/news/${article.slug}'`}>
-							<td class="py-2 px-3">
-								<span class="font-medium text-gray-900 truncate block">{article.data.title}</span>
-							</td>
-							<td class="py-2 px-3">
-								<span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">{article.data.tags[0]}</span>
-							</td>
-							<td class="py-2 px-3 text-gray-500">{formatDate(article.data.pubDate)}</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
+		<div class="grid gap-4 md:grid-cols-2 p-1">
+			{news.map((article: typeof news[0], index: number) => (
+				<a
+					href={`/resources/news/${article.slug}`}
+					class="border-2 border-gray-300 rounded-lg p-4 transition-all hover:border-primary-500 hover:shadow-md bg-white relative group"
+					style={`animation-delay: ${index * 50}ms`}
+				>
+					<div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+						<ExternalLink className="w-4 h-4 text-gray-400" />
+					</div>
+
+					<div class="flex items-center gap-3 mb-3 pr-6">
+						<div class="w-10 h-10 bg-primary-100 flex items-center justify-center rounded-lg">
+							<Newspaper className="w-5 h-5 text-primary-700" />
+						</div>
+						<div class="flex-1 min-w-0">
+							<span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">
+								{article.data.tags[0] || 'News'}
+							</span>
+						</div>
+					</div>
+
+					<div class="flex items-center gap-2 mb-1">
+						<div class="w-2 h-2 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />
+						<h3 class="font-bold text-gray-900 group-hover:text-primary-700 transition-colors line-clamp-2">{article.data.title}</h3>
+					</div>
+					<p class="text-xs text-gray-700 mb-3 ml-4 line-clamp-2">{article.data.description}</p>
+					
+					<div class="ml-4 flex items-center gap-2">
+						<span class="text-[10px] text-gray-500 font-bold">{formatDate(article.data.pubDate)}</span>
+						<span class="text-gray-300">•</span>
+						<span class="text-[10px] text-gray-500">{article.data.author}</span>
+					</div>
+				</a>
+			))}
 		</div>
 	</div>
 </MainLayout>

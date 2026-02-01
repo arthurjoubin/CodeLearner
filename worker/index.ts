@@ -30,7 +30,7 @@ const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
 
 // CORS headers - allow both prod and localhost
 function getCorsHeaders(origin: string | null, env: Env) {
-  const allowedOrigins = [env.FRONTEND_URL, 'http://localhost:5173', 'http://localhost:3000'];
+  const allowedOrigins = [env.FRONTEND_URL, 'http://localhost:5173', 'http://localhost:3000', 'http://localhost:4321'];
   const allowOrigin = origin && allowedOrigins.includes(origin) ? origin : env.FRONTEND_URL;
   return {
     'Access-Control-Allow-Origin': allowOrigin,
@@ -64,6 +64,49 @@ function getSessionFromCookie(request: Request): string | null {
   if (!cookie) return null;
   const match = cookie.match(/session=([^;]+)/);
   return match ? match[1] : null;
+}
+
+// Hash password using bcrypt-like approach with Web Crypto
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const passwordData = encoder.encode(password);
+  
+  // Combine salt + password
+  const combined = new Uint8Array(salt.length + passwordData.length);
+  combined.set(salt);
+  combined.set(passwordData, salt.length);
+  
+  // Hash using SHA-256
+  const hashBuffer = await crypto.subtle.digest('SHA-256', combined);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const saltHex = Array.from(salt).map(b => b.toString(16).padStart(2, '0')).join('');
+  
+  // Return salt:hash format
+  return `${saltHex}:${hashHex}`;
+}
+
+// Verify password against hash
+async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  const [saltHex, hashHex] = hash.split(':');
+  if (!saltHex || !hashHex) return false;
+  
+  const encoder = new TextEncoder();
+  const salt = new Uint8Array(saltHex.match(/.{2}/g)!.map(byte => parseInt(byte, 16)));
+  const passwordData = encoder.encode(password);
+  
+  // Combine salt + password
+  const combined = new Uint8Array(salt.length + passwordData.length);
+  combined.set(salt);
+  combined.set(passwordData, salt.length);
+  
+  // Hash using SHA-256
+  const hashBuffer = await crypto.subtle.digest('SHA-256', combined);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const computedHashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  
+  return computedHashHex === hashHex;
 }
 
 async function callDeepSeek(apiKey: string, messages: Array<{ role: string; content: string }>, maxTokens = 500) {
@@ -138,8 +181,8 @@ export default {
     try {
       // ==================== AUTH ROUTES ====================
 
-      // GET /auth/login - Redirect to GitHub OAuth
-      if (path === '/auth/login' && request.method === 'GET') {
+      // GET /auth/github - Redirect to GitHub OAuth
+      if (path === '/auth/github' && request.method === 'GET') {
         const githubAuthUrl = new URL('https://github.com/login/oauth/authorize');
         githubAuthUrl.searchParams.set('client_id', env.GITHUB_CLIENT_ID);
         githubAuthUrl.searchParams.set('redirect_uri', `${url.origin}/auth/callback`);
@@ -251,6 +294,146 @@ export default {
         return json({ success: true }, origin, env, 200, {
           'Set-Cookie': 'session=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0',
         });
+      }
+
+      // POST /auth/register - Register with email/password
+      if (path === '/auth/register' && request.method === 'POST') {
+        const body = await request.json() as { email?: string; password?: string; name?: string };
+        const { email, password, name } = body;
+
+        if (!email || !password || !name) {
+          return error('Email, password and name are required', origin, env, 400);
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          return error('Invalid email format', origin, env, 400);
+        }
+
+        // Validate password length
+        if (password.length < 6) {
+          return error('Password must be at least 6 characters', origin, env, 400);
+        }
+
+        // Check if email already exists
+        const existingUser = await env.DB.prepare(
+          'SELECT id FROM users WHERE email = ?'
+        ).bind(email).first<{ id: string }>();
+
+        if (existingUser) {
+          return error('Email already registered', origin, env, 409);
+        }
+
+        // Hash password
+        const passwordHash = await hashPassword(password);
+        const userId = `local_${crypto.randomUUID()}`;
+
+        // Create user
+        await env.DB.prepare(
+          'INSERT INTO users (id, email, name, password_hash) VALUES (?, ?, ?, ?)'
+        ).bind(userId, email, name, passwordHash).run();
+
+        // Create user_progress
+        await env.DB.prepare(
+          'INSERT OR IGNORE INTO user_progress (user_id) VALUES (?)'
+        ).bind(userId).run();
+
+        // Create session
+        const sessionId = generateSessionId();
+        const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+        await env.DB.prepare(
+          'INSERT INTO sessions (id, user_id, expires_at) VALUES (?, ?, ?)'
+        ).bind(sessionId, userId, expiresAt).run();
+
+        return json({ success: true, user: { id: userId, email, name } }, origin, env, 201, {
+          'Set-Cookie': `session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${30 * 24 * 60 * 60}`,
+        });
+      }
+
+      // POST /auth/login - Login with email/password
+      if (path === '/auth/login' && request.method === 'POST') {
+        const body = await request.json() as { email?: string; password?: string };
+        const { email, password } = body;
+
+        if (!email || !password) {
+          return error('Email and password are required', origin, env, 400);
+        }
+
+        // Get user by email
+        const user = await env.DB.prepare(
+          'SELECT id, email, name, avatar_url, password_hash FROM users WHERE email = ?'
+        ).bind(email).first<{ id: string; email: string; name: string; avatar_url: string | null; password_hash: string | null }>();
+
+        if (!user || !user.password_hash) {
+          return error('Invalid email or password', origin, env, 401);
+        }
+
+        // Verify password
+        const isValid = await verifyPassword(password, user.password_hash);
+        if (!isValid) {
+          return error('Invalid email or password', origin, env, 401);
+        }
+
+        // Get or create user progress
+        const progress = await env.DB.prepare(
+          'SELECT * FROM user_progress WHERE user_id = ?'
+        ).bind(user.id).first<UserProgress>();
+
+        if (!progress) {
+          await env.DB.prepare(
+            'INSERT OR IGNORE INTO user_progress (user_id) VALUES (?)'
+          ).bind(user.id).run();
+        }
+
+        // Create session
+        const sessionId = generateSessionId();
+        const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+        await env.DB.prepare(
+          'INSERT INTO sessions (id, user_id, expires_at) VALUES (?, ?, ?)'
+        ).bind(sessionId, user.id, expiresAt).run();
+
+        return json({
+          success: true,
+          user: toUserFormat(user.id, user.email, user.name, user.avatar_url, progress)
+        }, origin, env, 200, {
+          'Set-Cookie': `session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${30 * 24 * 60 * 60}`,
+        });
+      }
+
+      // POST /auth/reset-password - Reset password (requires session/auth)
+      if (path === '/auth/reset-password' && request.method === 'POST') {
+        const body = await request.json() as { email?: string; newPassword?: string };
+        const { email, newPassword } = body;
+
+        if (!email || !newPassword) {
+          return error('Email and new password are required', origin, env, 400);
+        }
+
+        if (newPassword.length < 6) {
+          return error('Password must be at least 6 characters', origin, env, 400);
+        }
+
+        // Check if user exists
+        const user = await env.DB.prepare(
+          'SELECT id FROM users WHERE email = ?'
+        ).bind(email).first<{ id: string }>();
+
+        if (!user) {
+          return error('User not found', origin, env, 404);
+        }
+
+        // Hash new password
+        const passwordHash = await hashPassword(newPassword);
+
+        // Update password
+        await env.DB.prepare(
+          'UPDATE users SET password_hash = ? WHERE id = ?'
+        ).bind(passwordHash, user.id).run();
+
+        return json({ success: true, message: 'Password reset successfully' }, origin, env);
       }
 
       // ==================== API ROUTES ====================

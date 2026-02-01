@@ -1,9 +1,14 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
 import ExercisePage from '../../pages/_ExercisePage';
+import { exercises } from '../../data/modules';
+
+export const prerender = true;
 
 export function getStaticPaths() {
-  return [];
+  return exercises.map(exercise => ({
+    params: { exerciseId: exercise.id },
+  }));
 }
 
 const { exerciseId } = Astro.params;

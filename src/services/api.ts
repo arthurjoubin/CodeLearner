@@ -4,8 +4,51 @@ const WORKER_URL = 'https://codelearner-api.arthurjoubin.workers.dev';
 
 export const api = {
   // Auth endpoints - always use worker URL (OAuth callback is configured there)
-  getLoginUrl(): string {
-    return `${WORKER_URL}/auth/login`;
+  getGitHubLoginUrl(): string {
+    return `${WORKER_URL}/auth/github`;
+  },
+
+  async login(email: string, password: string): Promise<User> {
+    const res = await fetch(`${WORKER_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Login failed');
+    }
+    const data = await res.json();
+    return data.user;
+  },
+
+  async register(email: string, password: string, name: string): Promise<User> {
+    const res = await fetch(`${WORKER_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, password, name }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Registration failed');
+    }
+    const data = await res.json();
+    return data.user;
+  },
+
+  async resetPassword(email: string, newPassword: string): Promise<void> {
+    const res = await fetch(`${WORKER_URL}/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, newPassword }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Password reset failed');
+    }
   },
 
   async getMe(): Promise<User | null> {

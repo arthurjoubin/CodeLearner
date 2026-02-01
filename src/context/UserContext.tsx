@@ -7,6 +7,8 @@ interface UserContextType {
   isGuest: boolean;
   loading: boolean;
   login: () => void;
+  loginWithPassword: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
   addXp: (amount: number) => void;
   completeLesson: (lessonId: string) => void;
@@ -83,7 +85,19 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   };
 
   const login = () => {
-    window.location.href = api.getLoginUrl();
+    window.location.href = api.getGitHubLoginUrl();
+  };
+
+  const loginWithPassword = async (email: string, password: string) => {
+    const userData = await api.login(email, password);
+    setUser(userData);
+    setIsGuest(false);
+  };
+
+  const register = async (email: string, password: string, name: string) => {
+    const userData = await api.register(email, password, name);
+    setUser(userData);
+    setIsGuest(false);
   };
 
   const logout = async () => {
@@ -183,6 +197,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         isGuest,
         loading,
         login,
+        loginWithPassword,
+        register,
         logout,
         addXp,
         completeLesson,

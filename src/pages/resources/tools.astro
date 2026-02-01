@@ -2,9 +2,10 @@
 import MainLayout from '../../layouts/MainLayout.astro';
 import { getCollection } from 'astro:content';
 import ResourceTabs from '../../components/ResourceTabs.astro';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
 
 const tools = await getCollection('tools');
-const toolsByCategory = tools.reduce((acc, tool) => {
+const toolsByCategory = tools.reduce((acc: Record<string, typeof tools>, tool: typeof tools[0]) => {
 	const cat = tool.data.category;
 	if (!acc[cat]) acc[cat] = [];
 	acc[cat].push(tool);
@@ -12,50 +13,81 @@ const toolsByCategory = tools.reduce((acc, tool) => {
 }, {} as Record<string, typeof tools>);
 
 const categories = Object.keys(toolsByCategory).sort();
+const totalTools = tools.length;
+
+// Tool logos from official sources or GitHub topics
+const toolLogos: Record<string, string> = {
+	'Cursor': 'https://avatars.githubusercontent.com/u/126825580?s=200&v=4',
+	'Claude Code': 'https://avatars.githubusercontent.com/u/76263028?s=200&v=4',
+	'V0': 'https://avatars.githubusercontent.com/u/14985020?s=200&v=4',
+	'Lovable': 'https://lovable.dev/favicon.ico',
+	'Bolt.new': 'https://ui-avatars.com/api/?name=Bolt&background=0D8ABC&color=fff&size=128',
+};
+
+function getToolLogo(toolName: string): string {
+	return toolLogos[toolName] || `https://ui-avatars.com/api/?name=${encodeURIComponent(toolName)}&background=random&color=fff&size=128`;
+}
 ---
 
 <MainLayout title="AI Tools">
-	<div class="page-enter max-w-5xl mx-auto">
-		<div class="mb-6">
-			<a href="/resources" class="text-xs text-gray-500 hover:text-primary-600 uppercase font-bold flex items-center gap-1 mb-3">
-				<span class="w-1.5 h-1.5 bg-primary-500 rounded-full" />
-				Back to Resources
+	<div class="page-enter">
+		<div class="relative inline-block group mb-4">
+			<a href="/resources" class="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors text-sm">
+				<ArrowLeft className="w-4 h-4" /> Back
 			</a>
-			<div class="flex items-center justify-between">
-				<div class="relative inline-block">
-					<h1 class="text-xl font-black text-gray-900 uppercase">AI Tools</h1>
-					<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500" />
+			<span class="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-20 duration-200" />
+		</div>
+
+		<div class="mb-6">
+			<div class="relative inline-block group">
+				<div class="flex items-center gap-2">
+					<h1 class="text-2xl font-black text-gray-900 uppercase">AI Tools</h1>
+					<span class="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider border border-gray-300 rounded">
+						{totalTools} tools
+					</span>
 				</div>
+				<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
 			</div>
-			<p class="text-sm text-gray-500 mt-1">{tools.length} tools across {categories.length} categories</p>
+			<p class="text-gray-700 mt-1">Essential AI-powered development tools across {categories.length} categories</p>
 		</div>
 
 		<ResourceTabs active="tools" />
 
-		<div class="bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
-			<table class="w-full text-sm">
-				<thead>
-					<tr class="border-b-2 border-gray-300 bg-gray-50">
-						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Tool</th>
-						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs w-40">Category</th>
-						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Description</th>
-					</tr>
-				</thead>
-				<tbody>
-					{tools.map((tool) => {
-						const toolSlug = tool.slug;
-						return (
-							<tr class="border-b border-gray-200 last:border-0 hover:bg-gray-100 transition-colors cursor-pointer" onclick={`window.location.href='/resources/tools/${toolSlug}'`}>
-								<td class="py-2 px-3">
-									<span class="font-bold text-gray-900">{tool.data.name}</span>
-								</td>
-								<td class="py-2 px-3 text-gray-600">{tool.data.category}</td>
-								<td class="py-2 px-3 text-gray-600">{tool.data.description}</td>
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
+		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 p-1">
+			{tools.map((tool: typeof tools[0], index: number) => {
+				const toolSlug = tool.slug;
+				const logoUrl = getToolLogo(tool.data.name);
+				return (
+					<a
+						href={`/resources/tools/${toolSlug}`}
+						class="border-2 border-gray-300 rounded-lg p-4 transition-all hover:border-primary-500 hover:shadow-md bg-white relative group"
+						style={`animation-delay: ${index * 50}ms`}
+					>
+						<div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+							<ExternalLink className="w-4 h-4 text-gray-400" />
+						</div>
+
+						<div class="flex items-center gap-3 mb-3 pr-6">
+							<div class="w-10 h-10 rounded-lg overflow-hidden bg-white border border-gray-200 flex items-center justify-center">
+								<img src={logoUrl} alt={tool.data.name} class="w-8 h-8 object-contain" />
+							</div>
+						</div>
+
+						<div class="flex items-center gap-2 mb-1">
+							<div class="w-2 h-2 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />
+							<h3 class="font-bold text-gray-900 uppercase group-hover:text-primary-700 transition-colors truncate">{tool.data.name}</h3>
+						</div>
+						<p class="text-xs text-gray-700 mb-3 ml-4 line-clamp-2">{tool.data.description}</p>
+						
+						<div class="ml-4 flex items-center justify-between">
+							<span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">
+								{tool.data.category}
+							</span>
+							<span class="text-[10px] text-gray-500 font-bold uppercase">{tool.data.pricing}</span>
+						</div>
+					</a>
+				);
+			})}
 		</div>
 	</div>
 </MainLayout>

@@ -2,9 +2,10 @@
 import MainLayout from '../../layouts/MainLayout.astro';
 import { getCollection } from 'astro:content';
 import ResourceTabs from '../../components/ResourceTabs.astro';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
 
 const llms = await getCollection('llms');
-const llmsByProvider = llms.reduce((acc, llm) => {
+const llmsByProvider = llms.reduce((acc: Record<string, typeof llms>, llm: typeof llms[0]) => {
 	const provider = llm.data.provider;
 	if (!acc[provider]) acc[provider] = [];
 	acc[provider].push(llm);
@@ -12,55 +13,90 @@ const llmsByProvider = llms.reduce((acc, llm) => {
 }, {} as Record<string, typeof llms>);
 
 const providers = Object.keys(llmsByProvider).sort();
+const totalLlms = llms.length;
+
+// Provider logos from GitHub topics and official sources
+const providerLogos: Record<string, string> = {
+	'Anthropic': 'https://avatars.githubusercontent.com/u/76263028?s=200&v=4',
+	'OpenAI': 'https://avatars.githubusercontent.com/u/14957082?s=200&v=4',
+	'Google': 'https://raw.githubusercontent.com/github/explore/main/topics/google/google.png',
+	'DeepSeek': 'https://avatars.githubusercontent.com/u/148330874?s=200&v=4',
+};
+
+function getProviderLogo(provider: string): string {
+	return providerLogos[provider] || `https://ui-avatars.com/api/?name=${encodeURIComponent(provider)}&background=random&color=fff&size=128`;
+}
 ---
 
 <MainLayout title="LLM Models">
-	<div class="page-enter max-w-5xl mx-auto">
-		<div class="mb-6">
-			<a href="/resources" class="text-xs text-gray-500 hover:text-primary-600 uppercase font-bold flex items-center gap-1 mb-3">
-				<span class="w-1.5 h-1.5 bg-primary-500 rounded-full" />
-				Back to Resources
+	<div class="page-enter">
+		<div class="relative inline-block group mb-4">
+			<a href="/resources" class="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors text-sm">
+				<ArrowLeft className="w-4 h-4" /> Back
 			</a>
-			<div class="flex items-center justify-between">
-				<div class="relative inline-block">
-					<h1 class="text-xl font-black text-gray-900 uppercase">LLM Models</h1>
-					<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500" />
+			<span class="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-20 duration-200" />
+		</div>
+
+		<div class="mb-6">
+			<div class="relative inline-block group">
+				<div class="flex items-center gap-2">
+					<h1 class="text-2xl font-black text-gray-900 uppercase">LLM Models</h1>
+					<span class="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider border border-gray-300 rounded">
+						{totalLlms} models
+					</span>
 				</div>
+				<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
 			</div>
-			<p class="text-sm text-gray-500 mt-1">{llms.length} models from {providers.length} providers</p>
+			<p class="text-gray-700 mt-1">Compare AI models from {providers.length} providers</p>
 		</div>
 
 		<ResourceTabs active="llms" />
 
-		<div class="bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
-			<table class="w-full text-sm">
-				<thead>
-					<tr class="border-b-2 border-gray-300 bg-gray-50">
-						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Model</th>
-						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Provider</th>
-						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Context</th>
-						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">HumanEval</th>
-						<th class="text-left py-2 px-3 font-bold text-gray-700 uppercase text-xs">Pricing</th>
-					</tr>
-				</thead>
-				<tbody>
-					{llms.map((llm) => {
-						const llmSlug = llm.slug;
-						const humanEval = llm.data.benchmarks?.find(b => b.name === 'HumanEval')?.score;
-						return (
-							<tr class="border-b border-gray-200 last:border-0 hover:bg-gray-100 transition-colors cursor-pointer" onclick={`window.location.href='/resources/llms/${llmSlug}'`}>
-								<td class="py-2 px-3">
-									<span class="font-bold text-gray-900">{llm.data.name}</span>
-								</td>
-								<td class="py-2 px-3 text-gray-600">{llm.data.provider}</td>
-								<td class="py-2 px-3 text-gray-600">{llm.data.contextWindow}</td>
-								<td class="py-2 px-3 font-bold text-gray-900">{humanEval || '-'}</td>
-								<td class="py-2 px-3 text-gray-600">{llm.data.pricing.split(' ')[0]}</td>
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
+		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 p-1">
+			{llms.map((llm: typeof llms[0], index: number) => {
+				const llmSlug = llm.slug;
+				const humanEval = llm.data.benchmarks?.find((b: { name: string; score: string }) => b.name === 'HumanEval')?.score;
+				const logoUrl = getProviderLogo(llm.data.provider);
+				return (
+					<a
+						href={`/resources/llms/${llmSlug}`}
+						class="border-2 border-gray-300 rounded-lg p-4 transition-all hover:border-primary-500 hover:shadow-md bg-white relative group"
+						style={`animation-delay: ${index * 50}ms`}
+					>
+						<div class="absolute top-3 right-3 flex flex-col items-end gap-1">
+							<ExternalLink className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+						</div>
+
+						<div class="flex items-center gap-3 mb-3 pr-6">
+							<div class="w-10 h-10 rounded-lg overflow-hidden bg-white border border-gray-200 flex items-center justify-center">
+								<img src={logoUrl} alt={llm.data.provider} class="w-8 h-8 object-contain" />
+							</div>
+						</div>
+
+						<div class="flex items-center gap-2 mb-1">
+							<div class="w-2 h-2 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />
+							<h3 class="font-bold text-gray-900 uppercase group-hover:text-primary-700 transition-colors truncate">{llm.data.name}</h3>
+						</div>
+						<p class="text-xs text-gray-700 mb-3 ml-4 line-clamp-2">{llm.data.description}</p>
+						
+						<div class="ml-4 flex items-center justify-between">
+							<div class="flex items-center gap-3">
+								<div class="text-center">
+									<p class="text-[10px] text-gray-500 uppercase font-bold">Context</p>
+									<p class="text-xs font-bold text-gray-900">{llm.data.contextWindow}</p>
+								</div>
+								{humanEval && (
+									<div class="text-center">
+										<p class="text-[10px] text-gray-500 uppercase font-bold">HumanEval</p>
+										<p class="text-xs font-bold text-primary-600">{humanEval}</p>
+									</div>
+								)}
+							</div>
+							<span class="text-[10px] text-gray-500 font-bold uppercase">{llm.data.pricing.split(' ')[0]}</span>
+						</div>
+					</a>
+				);
+			})}
 		</div>
 	</div>
 </MainLayout>

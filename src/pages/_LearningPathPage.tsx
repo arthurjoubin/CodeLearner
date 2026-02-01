@@ -123,9 +123,30 @@ function LearningPathPageContent({ pathId }: LearningPathPageProps) {
               key={module.id}
               href={`/module/${module.id}`}
               style={{ animationDelay: `${index * 50}ms` }}
-              className="border-2 border-gray-300 rounded-lg p-4 transition-all hover:border-primary-500 hover:shadow-md bg-white"
+              className="border-2 border-gray-300 rounded-lg p-4 transition-all hover:border-primary-500 hover:shadow-md bg-white relative"
             >
-              <div className="flex items-center gap-3 mb-3">
+              <div className="absolute top-3 right-3 flex flex-col items-center">
+                <div className="relative w-10 h-10">
+                  <svg className="w-10 h-10 transform -rotate-90">
+                    <circle cx="20" cy="20" r="17" stroke="#d1d5db" strokeWidth="3" fill="none" />
+                    <circle
+                      cx="20" cy="20" r="17"
+                      stroke="#22c55e"
+                      strokeWidth="3"
+                      fill="none"
+                      strokeDasharray={106.8}
+                      strokeDashoffset={106.8 - (106.8 * Math.max(1, progress)) / 100}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800">
+                    {Math.max(1, progress)}
+                  </span>
+                </div>
+                <p className="text-[10px] text-gray-700 font-bold mt-0.5">{completedLessons}/{totalLessons}</p>
+              </div>
+
+              <div className="flex items-center gap-3 mb-3 pr-12">
                 <div className={`w-10 h-10 flex items-center justify-center font-bold border-2 border-gray-300 rounded-lg transition-colors ${isComplete ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-gray-800 border-gray-300 group-hover:bg-primary-500 group-hover:text-white group-hover:border-primary-500'}`}>
                   {isComplete ? <CheckCircle className="w-5 h-5" /> : index + 1}
                 </div>
@@ -139,25 +160,6 @@ function LearningPathPageContent({ pathId }: LearningPathPageProps) {
                 <h3 className="font-bold text-gray-900 uppercase group-hover:text-primary-700 transition-colors">{module.title}</h3>
               </div>
               <p className="text-xs text-gray-700 mb-3 ml-4">{module.description}</p>
-
-              <div className="relative w-10 h-10 ml-4">
-                <svg className="w-10 h-10 transform -rotate-90">
-                  <circle cx="20" cy="20" r="17" stroke="#d1d5db" strokeWidth="3" fill="none" />
-                  <circle
-                    cx="20" cy="20" r="17"
-                    stroke="#22c55e"
-                    strokeWidth="3"
-                    fill="none"
-                    strokeDasharray={106.8}
-                    strokeDashoffset={106.8 - (106.8 * Math.max(1, progress)) / 100}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800">
-                  {Math.max(1, progress)}
-                </span>
-              </div>
-              <p className="text-[10px] text-gray-700 font-bold mt-1 ml-4">{completedLessons}/{totalLessons} lessons</p>
             </a>
           );
         })}
