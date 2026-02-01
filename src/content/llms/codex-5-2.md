@@ -53,3 +53,15 @@ Codex 5.2 is OpenAI's specialized coding agent, designed to autonomously handle 
 - Input: ~$3 per million tokens
 - Output: ~$12 per million tokens
 - Available via ChatGPT Pro/Enterprise
+
+## Evolution
+
+| Version | Date | Score SWE-Bench Verified | Statut / Rôle |
+|---------|------|--------------------------|---------------|
+| o3 (Full Reasoning) | Déc 2024 | 71.7% | Pionnier du raisonnement long. |
+| GPT-4.1 Codex | Fév 2025 | 66.5% | Spécialisation "Code Agent". |
+| GPT-5.0 Codex | Mai 2025 | 71.0% | Première version GPT-5 Code. |
+| GPT-5.1 Codex | Août 2025 | 76.3% | Optimisation multi-fichiers. |
+| **GPT-5.2 Codex** | **Déc 2025** | **80.0%** | **Concurrent n°1 d'Opus.** |
+
+Spécialisation progressive sur le codage agentique avec des gains de +13.5 points en un an.

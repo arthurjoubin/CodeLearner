@@ -52,3 +52,12 @@ Minimax 2.1 is MiniMax's flagship text model, designed for exceptional multiling
 
 - Input: ~$0.60 per million tokens
 - Output: ~$2.40 per million tokens
+
+## Evolution
+
+| Version | Date | Score SWE-Bench Verified | Statut / Rôle |
+|---------|------|--------------------------|---------------|
+| MiniMax 2.0 | Juin 2025 | 69.4% | Stable et efficace. |
+| **MiniMax 2.1 (REAP)** | **Nov 2025** | **74.0%** | **Spécialiste C++ / Rust / Go.** |
+
+Amélioration constante avec un focus sur les langages système et le multilinguisme.

@@ -55,3 +55,13 @@ Gemini 3 is Google's flagship multimodal model, setting the standard for native 
 - Input: ~$0.35 per million tokens
 - Output: ~$1.05 per million tokens
 - Video/audio: Priced per minute of content
+
+## Evolution
+
+| Version | Date | Score SWE-Bench Verified | Statut / Rôle |
+|---------|------|--------------------------|---------------|
+| Gemini 2.5 Pro | Mars 2025 | 59.6% | Roi du contexte (2M+). |
+| Gemini 3.0 Pro | Oct 2025 | 76.2% | Multimodal natif. |
+| **Gemini 3.0 Flash** | **Déc 2025** | **78.0%** | **Rapidité extrême / Haut score.** |
+
+Amélioration significative de +18.4 points, combinant vitesse et performance multimodale.

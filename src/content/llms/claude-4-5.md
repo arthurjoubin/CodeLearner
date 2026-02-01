@@ -51,3 +51,18 @@ Claude 4.5 represents Anthropic's commitment to helpful, harmless, and honest AI
 
 - Input: ~$15 per million tokens
 - Output: ~$75 per million tokens
+
+## Evolution
+
+| Version | Date | Score SWE-Bench Verified | Statut / Rôle |
+|---------|------|--------------------------|---------------|
+| Claude 3.5 Sonnet | Juin 2024 | 49.0% | La légende (point de départ). |
+| Claude 3.6 Sonnet | Oct 2024 | 54.2% | Amélioration Computer Use. |
+| Claude 3.7 Sonnet | Fév 2025 | 70.3% | Premier mode "Thinking". |
+| Claude 4.0 Sonnet | Mai 2025 | 72.7% | Passage à l'architecture v4. |
+| Claude 4.1 Opus | Sept 2025 | 70.8% | Raisonnement complexe (Lourd). |
+| **Claude 4.5 Sonnet** | **Oct 2025** | **77.2%** | **Standard actuel des devs.** |
+| Claude 4.5 Haiku | Nov 2025 | 68.8% | Performance/Prix imbattable. |
+| Claude 4.5 Opus | Jan 2026 | 80.9% | SOTA Mondial actuel. |
+
+Progression constante avec une amélioration de +31.9 points en 18 mois.

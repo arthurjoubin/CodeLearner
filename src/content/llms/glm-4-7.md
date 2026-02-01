@@ -50,3 +50,13 @@ GLM 4.7 is Zhipu AI's latest flagship model, offering strong performance in both
 
 - Input: ~$0.50 per million tokens
 - Output: ~$1.50 per million tokens
+
+## Evolution
+
+| Version | Date | Score SWE-Bench Verified | Statut / Rôle |
+|---------|------|--------------------------|---------------|
+| GLM 4.5 | Août 2025 | 51.2% | Entrée dans l'ère agentique. |
+| GLM 4.6 | Oct 2025 | 68.0% | Correction de bugs avancée. |
+| **GLM 4.7** | **Déc 2025** | **73.8%** | **Flagship bilingue actuel.** |
+
+Progression rapide de +22.6 points, avec un focus particulier sur le bilingue chinois-anglais.
