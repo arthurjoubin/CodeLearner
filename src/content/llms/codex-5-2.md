@@ -56,12 +56,12 @@ Codex 5.2 is OpenAI's specialized coding agent, designed to autonomously handle 
 
 ## Evolution
 
-| Version | Date | Score SWE-Bench Verified | Statut / Rôle |
+| Version | Date | Score SWE-Bench Verified | Status / Role |
 |---------|------|--------------------------|---------------|
-| o3 (Full Reasoning) | Déc 2024 | 71.7% | Pionnier du raisonnement long. |
-| GPT-4.1 Codex | Fév 2025 | 66.5% | Spécialisation "Code Agent". |
-| GPT-5.0 Codex | Mai 2025 | 71.0% | Première version GPT-5 Code. |
-| GPT-5.1 Codex | Août 2025 | 76.3% | Optimisation multi-fichiers. |
-| **GPT-5.2 Codex** | **Déc 2025** | **80.0%** | **Concurrent n°1 d'Opus.** |
+| o3 (Full Reasoning) | Dec 2024 | 71.7% | Pioneer of long reasoning. |
+| GPT-4.1 Codex | Feb 2025 | 66.5% | "Code Agent" specialization. |
+| GPT-5.0 Codex | May 2025 | 71.0% | First GPT-5 Code version. |
+| GPT-5.1 Codex | Aug 2025 | 76.3% | Multi-file optimization. |
+| **GPT-5.2 Codex** | **Dec 2025** | **80.0%** | **Opus #1 competitor.** |
 
-Spécialisation progressive sur le codage agentique avec des gains de +13.5 points en un an.
+Progressive specialization on agentic coding with gains of +13.5 points in one year.

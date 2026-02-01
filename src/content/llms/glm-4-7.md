@@ -53,10 +53,10 @@ GLM 4.7 is Zhipu AI's latest flagship model, offering strong performance in both
 
 ## Evolution
 
-| Version | Date | Score SWE-Bench Verified | Statut / Rôle |
+| Version | Date | Score SWE-Bench Verified | Status / Role |
 |---------|------|--------------------------|---------------|
-| GLM 4.5 | Août 2025 | 51.2% | Entrée dans l'ère agentique. |
-| GLM 4.6 | Oct 2025 | 68.0% | Correction de bugs avancée. |
-| **GLM 4.7** | **Déc 2025** | **73.8%** | **Flagship bilingue actuel.** |
+| GLM 4.5 | Aug 2025 | 51.2% | Entry into the agentic era. |
+| GLM 4.6 | Oct 2025 | 68.0% | Advanced bug fixing. |
+| **GLM 4.7** | **Dec 2025** | **73.8%** | **Current bilingual flagship.** |
 
-Progression rapide de +22.6 points, avec un focus particulier sur le bilingue chinois-anglais.
+Rapid progression of +22.6 points, with a particular focus on Chinese-English bilingualism.

@@ -1,8 +1,8 @@
 {
   "module": {
     "id": "git-advanced",
-    "title": "Git Avancé & Vibe Coding",
-    "description": "Maîtrise git stash, reset, checkout avancé et les bonnes pratiques pour développer sereinement",
+    "title": "Git Advanced & Vibe Coding",
+    "description": "Master git stash, reset, advanced checkout, and best practices for stress-free development",
     "icon": "Zap",
     "requiredXp": 600,
     "color": "from-pink-400 to-rose-600",
@@ -12,47 +12,47 @@
     {
       "id": "git-stash",
       "moduleId": "git-advanced",
-      "title": "Git Stash - Sauvegarder Temporairement",
+      "title": "Git Stash - Temporary Save",
       "order": 1,
       "difficulty": "intermediate",
-      "content": "# Essential to know\n- `git stash` sauvegarde temporairement tes modifications non commitées\n- `git stash pop` récupère et supprime le stash\n- `git stash list` montre tous les stashes\n- `git stash apply` récupère sans supprimer le stash\n- Parfait quand tu dois changer de branche rapidement\n\n---\n\n# Git Stash - Sauvegarder Temporairement\n\nLe stash est comme une pile où tu empiles tes changements temporairement. Imagine que tu es en plein milieu d'un feature mais tu dois corriger un bug urgent sur main - stash te sauve la vie !\n\n## Pourquoi utiliser Stash ?\n\n**Scénarios courants :**\n1. **Changement de branche urgent** - Tu dois switcher mais tes changements ne sont pas prêts\n2. **Pull avec conflits** - Tu veux pull mais tu as des modifications locales\n3. **Expérimentation** - Tu veux tester quelque chose sans perdre ton travail actuel\n4. **Code review** - Tu dois reviewer du code mais tu es en plein développement\n\n## Commandes de Base\n\n### Stasher ses changements\n\n```bash\n# Stash tout (modifications staged et unstaged)\ngit stash\n\n# Stash avec un message descriptif\ngit stash push -m \"WIP: authentification en cours\"\n\n# Stash seulement les fichiers staged\ngit stash --staged\n\n# Stash en gardant les fichiers staged (unstash uniquement)\ngit stash --keep-index\n```\n\n### Voir ses stashes\n\n```bash\n# Lister tous les stashes\ngit stash list\n\n# Output:\n# stash@{0}: WIP on feature-login: a1b2c3d Add login form\n# stash@{1}: On main: temp fix for header\n```\n\n### Récupérer un stash\n\n```bash\n# Récupérer le dernier stash et le supprimer\ngit stash pop\n\n# Récupérer sans supprimer\ngit stash apply\n\n# Récupérer un stash spécifique\ngit stash apply stash@{1}\n\n# Récupérer dans une nouvelle branche\ngit stash branch nouvelle-branche stash@{0}\n```\n\n### Gérer les stashes\n\n```bash\n# Supprimer le dernier stash\ngit stash drop\n\n# Supprimer un stash spécifique\ngit stash drop stash@{2}\n\n# Supprimer tous les stashes\ngit stash clear\n\n# Voir le contenu d'un stash\ngit stash show -p stash@{0}\n```\n\n## Workflow Typique\n\n```bash\n# 1. Tu es en plein développement sur une feature\necho \"nouveau code\" >> app.js\n\n# 2. Bug urgent signalé sur main !\ngit stash push -m \"WIP: feature panier\"\n\n# 3. Switch vers main pour le fix\ngit checkout main\n\n# 4. Corrige le bug...\ngit add .\ngit commit -m \"Fix: bouton login cassé\"\n\n# 5. Retourne sur ta feature\ngit checkout feature-panier\n\n# 6. Récupère ton travail\ngit stash pop\n```\n\n## ⚠️ Attention aux fichiers non-trackés\n\nPar défaut, stash ne sauvegarde pas les fichiers nouveaux (untracked) :\n\n```bash\n# Pour inclure les fichiers untracked\ngit stash -u\n# ou\ngit stash --include-untracked\n\n# Pour tout inclure (même les ignorés)\ngit stash -a\n# ou\ngit stash --all\n```\n\n## Tips Vibe Coder\n\n- **Nomme toujours tes stashes** : `git stash push -m \"descriptif\"`\n- **N'accumule pas les stashes** : trop de stash = confusion\n- **Pop > Apply** : préfère `pop` pour ne pas oublier de nettoyer\n- **Stash régulièrement** : si tu hésites, stash !",
-      "codeExample": "# Stash rapide\ngit stash\n\n# Stash avec message\ngit stash push -m \"WIP: refactoring auth\"\n\n# Voir les stashes\ngit stash list\n\n# Récupérer et supprimer\ngit stash pop\n\n# Récupérer sans supprimer\ngit stash apply\n\n# Inclure les fichiers untracked\ngit stash -u"
+      "content": "# Essential to know\n- `git stash` temporarily saves your uncommitted modifications\n- `git stash pop` retrieves and removes the stash\n- `git stash list` shows all stashes\n- `git stash apply` retrieves without removing the stash\n- Perfect when you need to switch branches quickly\n\n---\n\n# Git Stash - Temporary Save\n\nStash is like a stack where you pile your changes temporarily. Imagine you're in the middle of a feature but need to fix an urgent bug on main - stash saves your life!\n\n## Why Use Stash?\n\n**Common scenarios:**\n1. **Urgent branch switch** - You need to switch but your changes aren't ready\n2. **Pull with conflicts** - You want to pull but have local modifications\n3. **Experimentation** - You want to test something without losing current work\n4. **Code review** - You need to review code but are in the middle of development\n\n## Basic Commands\n\n### Stash your changes\n\n```bash\n# Stash everything (staged and unstaged modifications)\ngit stash\n\n# Stash with a descriptive message\ngit stash push -m \"WIP: authentication in progress\"\n\n# Stash only staged files\ngit stash --staged\n\n# Stash while keeping staged files (unstash only)\ngit stash --keep-index\n```\n\n### View your stashes\n\n```bash\n# List all stashes\ngit stash list\n\n# Output:\n# stash@{0}: WIP on feature-login: a1b2c3d Add login form\n# stash@{1}: On main: temp fix for header\n```\n\n### Retrieve a stash\n\n```bash\n# Retrieve last stash and delete it\ngit stash pop\n\n# Retrieve without deleting\ngit stash apply\n\n# Retrieve a specific stash\ngit stash apply stash@{1}\n\n# Retrieve into a new branch\ngit stash branch new-branch stash@{0}\n```\n\n### Manage stashes\n\n```bash\n# Delete last stash\ngit stash drop\n\n# Delete a specific stash\ngit stash drop stash@{2}\n\n# Delete all stashes\ngit stash clear\n```\n\n## Practical Examples\n\n### Scenario 1: Urgent Bug\n\n```bash\n# You're working on feature-auth\ngit status\n# M login.js\n# M auth.css\n\n# Urgent bug on main\ngit stash push -m \"WIP: auth form\"\ngit checkout main\ngit checkout -b hotfix/critical-bug\n\n# Fix bug...\ngit add .\ngit commit -m \"fix: correct header bug\"\ngit push\n\n# Return to feature\ngit checkout feature-auth\ngit stash pop\n```\n\n### Scenario 2: Pull with Local Changes\n\n```bash\n# You have local modifications\ngit status\n# M app.js\n\n# Stash, pull, then restore\ngit stash\ngit pull origin main\ngit stash pop\n\n# If conflicts, resolve them\n```\n\n## Advanced Options\n\n### Partial Stash\n\n```bash\n# Stash specific files\ngit stash push -m \"WIP: API\" api.js utils.js\n\n# Stash with patch mode (interactive)\ngit stash push -p\n```\n\n### Stash Untracked Files\n\n```bash\n# Also stash untracked files\ngit stash -u\ngit stash --include-untracked\n\n# Also stash ignored files (!)\ngit stash -a\ngit stash --all\n```",
+      "codeExample": "# Quick stash\ngit stash\n\n# Stash with message\ngit stash push -m \"WIP: refactoring auth\"\n\n# View stashes\ngit stash list\n\n# Retrieve and delete\ngit stash pop\n\n# Retrieve without deleting\ngit stash apply\n\n# Include untracked files\ngit stash -u"
     },
     {
       "id": "git-reset",
       "moduleId": "git-advanced",
-      "title": "Git Reset - Annuler des Commits",
+      "title": "Git Reset - Undoing Commits",
       "order": 2,
       "difficulty": "advanced",
-      "content": "# Essential to know\n- `git reset` déplace HEAD et change l'historique\n- `--soft` : garde les modifications staged\n- `--mixed` (défaut) : garde les modifications unstaged\n- `--hard` : supprime TOUT (danger !)\n- Ne jamais utiliser sur des commits pushés\n- Préférer `git revert` pour l'historique partagé\n\n---\n\n# Git Reset - Annuler des Commits\n\nGit reset est l'outil ultime pour corriger des erreurs de commit. Mais attention, c'est une arme à double tranchant !\n\n## Les Trois Modes de Reset\n\nImagine que tu veux revenir en arrière de 2 commits :\n\n```\nA---B---C---D (HEAD)\n        ↑\n    Tu veux revenir ici\n```\n\n### 1. Soft Reset (--soft)\n\n```bash\ngit reset --soft HEAD~2\n```\n\n**Ce qui se passe :**\n- HEAD revient au commit C\n- Les modifications des commits D et C sont **staged** (prêtes à commit)\n- Ton working directory est inchangé\n\n**Usage :** Tu veux refaire tes commits avec un meilleur message ou une meilleure organisation.\n\n### 2. Mixed Reset (--mixed, défaut)\n\n```bash\ngit reset HEAD~2\n# ou explicitement\ngit reset --mixed HEAD~2\n```\n\n**Ce qui se passe :**\n- HEAD revient au commit C\n- Les modifications sont **unstaged** (modifiées mais pas staged)\n- Ton working directory garde les changements\n\n**Usage :** Tu veux reconsidérer quels fichiers inclure dans tes commits.\n\n### 3. Hard Reset (--hard) ⚠️ DANGER\n\n```bash\ngit reset --hard HEAD~2\n```\n\n**Ce qui se passe :**\n- HEAD revient au commit C\n- **TOUTES les modifications sont PERDUES**\n- Ton working directory est exactement au commit C\n\n**Usage :** Tu veux vraiment tout effacer et repartir de zéro.\n\n## ⚠️ RÈGLE D'OR : Ne jamais reset --hard sur des commits pushés !\n\n```bash\n# DANGER - Si tu fais ça sur des commits déjà pushés :\ngit reset --hard HEAD~3\ngit push --force  # 💀 Tu viens de détruire le travail des autres !\n```\n\n**Si les commits sont pushés, utilise `git revert` à la place !**\n\n## Scénarios Pratiques\n\n### Corriger le dernier commit\n\n```bash\n# Tu as oublié un fichier dans le dernier commit\ngit add fichier-oublie.js\ngit commit --amend --no-edit\n\n# Ou avec reset soft\ngit reset --soft HEAD~1\ngit add .\ngit commit -m \"Nouveau message\"\n```\n\n### Réorganiser les 3 derniers commits\n\n```bash\n# Retourne 3 commits en arrière, garde tout staged\ngit reset --soft HEAD~3\n\n# Maintenant refais tes commits proprement\ngit add fichier1.js\ngit commit -m \"feat: ajoute système de auth\"\n\ngit add fichier2.js\ngit commit -m \"fix: corrige bug de validation\"\n```\n\n### Annuler complètement un commit local\n\n```bash\n# Commit local que tu veux oublier\ngit reset --hard HEAD~1\n\n# 💀 Tout est perdu, impossible de récupérer !\n```\n\n### Annuler un fichier ajouté par erreur\n\n```bash\n# Tu as staged un fichier que tu ne veux pas commit\ngit reset HEAD fichier-secret.env\n\n# Le fichier est unstaged mais toujours modifié\n```\n\n## Reset vs Revert vs Restore\n\n| Commande | Usage | Sûr pour remote |\n|----------|-------|-----------------\n| `git reset --soft` | Annuler commit, garder staged | ❌ Non |\n| `git reset --mixed` | Annuler commit, garder modifs | ❌ Non |\n| `git reset --hard` | Tout supprimer | ❌ Non |\n| `git revert` | Créer un commit d'annulation | ✅ Oui |\n| `git restore` | Annuler modifications locales | ✅ Oui (local uniquement) |\n\n## Récupérer après un reset --hard accidentel\n\nSi tu viens de faire `git reset --hard` par erreur :\n\n```bash\n# Voir le reflog (journal de tous les mouvements de HEAD)\ngit reflog\n\n# Output:\n# a1b2c3d HEAD@{0}: reset: moving to HEAD~2\n# d4e5f6g HEAD@{1}: commit: Ajoute feature X\n# h7i8j9k HEAD@{2}: commit: Fix bug Y\n\n# Récupérer ce qui a été perdu\ngit reset --hard HEAD@{1}\n```\n\n⚠️ **Le reflog n'est pas éternel** (90 jours par défaut). Agis vite !",
-      "codeExample": "# Reset soft : annuler commit, garder staged\ngit reset --soft HEAD~1\n\n# Reset mixed (défaut) : annuler commit, garder modifs unstaged\ngit reset HEAD~2\n\n# Reset hard : TOUT supprimer (danger !)\ngit reset --hard HEAD~1\n\n# Unstage un fichier spécifique\ngit reset HEAD fichier.txt\n\n# Voir le reflog pour récupérer\ngit reflog"
+      "content": "# Essential to know\n- `git reset` moves HEAD and changes history\n- `--soft`: keeps modifications staged\n- `--mixed` (default): keeps modifications unstaged\n- `--hard`: deletes EVERYTHING (danger!)\n- Never use on pushed commits\n- Prefer `git revert` for shared history\n\n---\n\n# Git Reset - Undoing Commits\n\nGit reset is the ultimate tool for correcting commit mistakes. But be careful, it's a double-edged sword!\n\n## The Three Reset Modes\n\nImagine you want to go back 2 commits:\n\n```\nA---B---C---D (HEAD)\n        ↑\n    You want to go back here\n```\n\n### 1. Soft Reset (--soft)\n\n```bash\ngit reset --soft HEAD~2\n```\n\n**What happens:**\n- HEAD goes back to commit C\n- Modifications from commits D and C are **staged** (ready to commit)\n- Your working directory is unchanged\n\n**Usage:** You want to redo your commits with better messages or better organization.\n\n### 2. Mixed Reset (--mixed, default)\n\n```bash\ngit reset HEAD~2\n# or explicitly\ngit reset --mixed HEAD~2\n```\n\n**What happens:**\n- HEAD goes back to commit C\n- Modifications are **unstaged** (modified but not staged)\n- Your working directory keeps the changes\n\n**Usage:** You want to reconsider which files to include in your commits.\n\n### 3. Hard Reset (--hard) ⚠️ DANGER\n\n```bash\ngit reset --hard HEAD~2\n```\n\n**What happens:**\n- HEAD goes back to commit C\n- **ALL modifications are LOST**\n- Your working directory is exactly at commit C\n\n**Usage:** You really want to erase everything and start from scratch.\n\n## ⚠️ GOLDEN RULE: Never reset --hard on pushed commits!\n\n```bash\n# DANGER - If you do this on already pushed commits:\ngit reset --hard HEAD~3\ngit push --force  # 💀 You just destroyed others' work!\n```\n\n**If commits are pushed, use `git revert` instead!**\n\n## Practical Scenarios\n\n### Correct the last commit\n\n```bash\n# Forgot to add a file?\ngit add forgotten-file.js\ngit commit --amend -m \"Better message\"\n\n# Or with reset\ngit reset --soft HEAD~1\ngit add .\ngit commit -m \"New message\"\n```\n\n### Split a commit\n\n```bash\n# You committed everything at once (bad!)\ngit log --oneline\n# a1b2c3d Big messy commit\n\n# Go back but keep modifications\ngit reset HEAD~1\n\n# Now re-commit properly\ngit add auth.js\ngit commit -m \"feat: add authentication\"\n\ngit add tests/\ngit commit -m \"test: add auth tests\"\n```\n\n### Remove sensitive data\n\n```bash\n# Oops, you committed a password\ngit reset --hard HEAD~1  # Local only!\n\n# Better: use filter-branch or BFG Repo-Cleaner\n```\n\n## Unstage Files\n\n```bash\n# Unstage a specific file\ngit reset HEAD filename.txt\n\n# Unstage everything\ngit reset HEAD\n\n# Modern alternative\ngit restore --staged filename.txt\n```",
+      "codeExample": "# Soft reset: undo commit, keep staged\ngit reset --soft HEAD~1\n\n# Mixed reset (default): undo commit, keep modifications unstaged\ngit reset HEAD~2\n\n# Hard reset: DELETE everything (danger!)\ngit reset --hard HEAD~1\n\n# Unstage a specific file\ngit reset HEAD filename.txt\n\n# View reflog to recover\ngit reflog"
     },
     {
       "id": "git-checkout-advanced",
       "moduleId": "git-advanced",
-      "title": "Git Checkout Avancé",
+      "title": "Git Checkout Advanced",
       "order": 3,
       "difficulty": "advanced",
-      "content": "# Essential to know\n- `git checkout` peut restaurer des fichiers ou switcher de branche\n- `git checkout -- fichier` restaure un fichier au dernier commit\n- `git checkout commit -- fichier` restaure un fichier à un commit spécifique\n- `git checkout -b branche commit` crée une branche à partir d'un ancien commit\n- Attention : checkout écrase les modifications locales\n\n---\n\n# Git Checkout Avancé\n\nCheckout est une commande puissante qui fait plusieurs choses : switcher de branche, restaurer des fichiers, ou même voyager dans le temps !\n\n## Restaurer un Fichier\n\n### Restaurer au dernier commit\n\n```bash\n# Tu as fait des modifications sur app.js que tu veux annuler\ngit checkout -- app.js\n\n# Alternative moderne\ngit restore app.js\n```\n\n⚠️ **Attention** : tes modifications locales sont PERDUES !\n\n### Restaurer à un commit spécifique\n\n```bash\n# Récupérer la version de app.js du commit abc1234\ngit checkout abc1234 -- app.js\n\n# Le fichier est restauré et staged\ngit status\n# Changes to be committed:\n#   modified:   app.js\n\n# Tu peux le commit ou le modifier\ngit commit -m \"Restaure app.js à l'état stable\"\n```\n\n### Restaurer plusieurs fichiers\n\n```bash\n# Restaurer tout un dossier\ngit checkout abc1234 -- src/components/\n\n# Restaurer plusieurs fichiers\ngit checkout HEAD -- package.json package-lock.json\n```\n\n## Voyager dans le Temps\n\n### Checkout d'un commit spécifique (DETACHED HEAD)\n\n```bash\n# Checkout un commit ancien\ngit checkout abc1234\n\n# Message:\n# You are in 'detached HEAD' state...\n```\n\n**En DETACHED HEAD :**\n- Tu vois le code exactement comme il était à ce commit\n- Tu peux regarder, tester, compiler\n- ⚠️ Si tu commits, ils seront orphelins (perdus si tu switches de branche)\n\n### Créer une branche depuis un ancien commit\n\n```bash\n# Créer une branche à partir d'un vieux commit\ngit checkout -b hotfix-v1 abc1234\n\n# Maintenant tu peux travailler sur cette version\n# et merger plus tard\n```\n\n## Scénarios Pratiques\n\n### Récupérer un fichier supprimé\n\n```bash\n# Tu as supprimé config.js par erreur\nrm config.js\n\n# Récupère-le depuis le dernier commit\ngit checkout HEAD -- config.js\n```\n\n### Revenir à une version stable d'un fichier\n\n```bash\n# app.js est cassé après des modifications\n# Tu veux revenir à la version de hier\ngit log --oneline -- app.js\n# a1b2c3d Fix: corrige bug critique\n# d4e5f6g Ajoute nouvelle feature\n\n# Revenir à la version stable\ngit checkout a1b2c3d -- app.js\ngit commit -m \"Revert app.js à version stable\"\n```\n\n### Extraire un fichier d'une autre branche\n\n```bash\n# Tu veux le fichier config.js de la branche develop\ngit checkout develop -- config.js\n\n# Le fichier est ajouté à ta branche actuelle\ngit commit -m \"Import config depuis develop\"\n```\n\n## Checkout avec Conflits\n\nQuand checkout échoue :\n\n```bash\n$ git checkout feature-branch\nerror: Your local changes would be overwritten by checkout.\nPlease commit your changes or stash them.\n```\n\n**Solutions :**\n\n```bash\n# Option 1 : Stash\ngit stash\ngit checkout feature-branch\ngit stash pop\n\n# Option 2 : Commit rapide\ngit add .\ngit commit -m \"WIP\"\ngit checkout feature-branch\n```\n\n## Alternative Moderne : git switch\n\nGit 2.23+ a introduqué des commandes plus claires :\n\n```bash\n# Switch de branche (remplace checkout)\ngit switch feature-branch\n\n# Créer et switch\ngit switch -c nouvelle-branche\n\n# Restaurer un fichier (remplace checkout --)\ngit restore app.js\n\n# Restaurer à un commit spécifique\ngit restore --source=abc1234 app.js\n```\n\n## Checklist Avant un Checkout\n\n- [ ] Ai-je des modifications non commitées ?\n- [ ] Dois-je les stasher ?\n- [ ] Suis-je sûr de vouloir écraser les changements ?\n- [ ] Est-ce que `git status` est propre ?",
-      "codeExample": "# Restaurer un fichier au dernier commit\ngit checkout -- app.js\n\n# Restaurer un fichier à un commit spécifique\ngit checkout abc1234 -- app.js\n\n# Checkout un commit (detached HEAD)\ngit checkout abc1234\n\n# Créer branche depuis ancien commit\ngit checkout -b hotfix abc1234\n\n# Alternative moderne\ngit switch feature-branch\ngit restore app.js"
+      "content": "# Essential to know\n- `git checkout` can restore files or switch branches\n- `git checkout -- file` restores a file to last commit\n- `git checkout commit -- file` restores a file to a specific commit\n- `git checkout -b branch commit` creates a branch from an old commit\n- Warning: checkout overwrites local modifications\n\n---\n\n# Git Checkout Advanced\n\nCheckout is a powerful command that does several things: switch branches, restore files, or even travel through time!\n\n## Restore a File\n\n### Restore to last commit\n\n```bash\n# You made modifications to app.js that you want to undo\ngit checkout -- app.js\n\n# Modern alternative\ngit restore app.js\n```\n\n⚠️ **Warning**: your local modifications are LOST!\n\n### Restore to a specific commit\n\n```bash\n# Get app.js version from commit abc1234\ngit checkout abc1234 -- app.js\n\n# File is restored and staged\ngit status\n# Changes to be committed:\n#   modified:   app.js\n\n# You can commit or modify\ngit commit -m \"Restore app.js to stable state\"\n```\n\n### Restore multiple files\n\n```bash\n# Restore an entire folder\ngit checkout abc1234 -- src/components/\n\n# Restore multiple files\ngit checkout HEAD -- package.json package-lock.json\n```\n\n## Time Travel\n\n### Checkout a specific commit (DETACHED HEAD)\n\n```bash\n# Checkout an old commit\ngit checkout abc1234\n\n# Message:\n# You are in 'detached HEAD' state...\n```\n\n**In DETACHED HEAD:**\n- You see code exactly as it was at that commit\n- You can look, test, compile\n- ⚠️ If you commit, they will be orphaned (lost if you switch branches)\n\n### Create a branch from an old commit\n\n```bash\n# Create a branch from an old commit\ngit checkout -b hotfix-v1 abc1234\n\n# Now you can work on this version\n# and merge later\n```\n\n## Restore vs Reset vs Checkout\n\n| Command | What it does | Risk |\n|---------|-------------|------|\n| `git restore file` | Restore file to last commit | Medium |\n| `git reset HEAD file` | Unstage file | Low |\n| `git checkout -- file` | Restore file (old syntax) | Medium |\n| `git reset --hard` | Erase everything | High 💀 |\n\n## Practical Examples\n\n### Recover a deleted file\n\n```bash\n# Oops, you deleted config.js\ngit status\n# D config.js\n\n# Restore it\ngit checkout HEAD -- config.js\n```\n\n### Get an old file version\n\n```bash\n# See file history\ngit log --oneline -- config.js\n# a1b2c3d Update config\n# e4f5g6h Initial config\n\n# Get initial version\ngit checkout e4f5g6h -- config.js\ngit commit -m \"Revert config to initial version\"\n```\n\n### Test an old version\n\n```bash\n# Go back 5 commits\ngit checkout HEAD~5\n\n# Test, look...\n\n# Return to main\ngit checkout main\n```",
+      "codeExample": "# Restore a file to last commit\ngit checkout -- app.js\n\n# Restore a file to a specific commit\ngit checkout abc1234 -- app.js\n\n# Checkout a commit (detached HEAD)\ngit checkout abc1234\n\n# Create branch from old commit\ngit checkout -b hotfix abc1234\n\n# Modern alternative\ngit switch feature-branch\ngit restore app.js"
     },
     {
       "id": "push-force",
       "moduleId": "git-advanced",
-      "title": "Push Force - Usage et Dangers",
+      "title": "Push Force - Usage and Dangers",
       "order": 4,
       "difficulty": "advanced",
-      "content": "# Essential to know\n- `git push --force` écrase l'historique remote\n- **DANGER** : peut détruire le travail des autres\n- Préférer `--force-with-lease` pour plus de sécurité\n- Ne jamais force push sur main/master partagé\n- Acceptable sur des branches perso non partagées\n- Préférer `git revert` pour corriger des erreurs sur des branches partagées\n\n---\n\n# Push Force - Usage et Dangers\n\nLe push force est souvent vu comme l'arme nucléaire de Git. Utilisé à mauvais escient, il peut causer des cauchemars en équipe.\n\n## Pourquoi Push Force existe ?\n\n**Scénarios légitimes :**\n1. Tu as rebased ta branche feature et dois mettre à jour la remote\n2. Tu as amendé un commit et dois mettre à jour\n3. Tu travailles seul sur une branche\n4. Tu veux vraiment supprimer des commits sensibles (mots de passe, clés API)\n\n## Le Danger du Push Force\n\n```\nAvant le force push sur main:\n\nRemote:  A---B---C---D (main)\n                      ↑\nAlice travaille ici\n\nLocal (toi):  A---B---C'---D' (main)\n                         ↑\n                    Tu as rebase\n\nAprès `git push --force`:\n\nRemote:  A---B---C'---D' (main)\n\nCommits C et D SONT PERDUS !\nLe travail d'Alice est effacé !\n```\n\n## Force vs Force-with-lease\n\n### Push Force classique (dangereux)\n\n```bash\ngit push --force\ngit push -f\n```\n\n**Problème :** Écrase la remote même si quelqu'un d'autre a push entre-temps.\n\n### Force-with-lease (plus sûr)\n\n```bash\ngit push --force-with-lease\n```\n\n**Avantage :** Vérifie que personne n'a push depuis ton dernier fetch.\n- Si quelqu'un a push → erreur et push refusé\n- Si tout est OK → push accepté\n\n## Règles d'Or\n\n### ❌ Ne JAMAIS force push sur :\n- `main` / `master`\n- `develop`\n- Toute branche sur laquelle d'autres personnes travaillent\n\n### ✅ Force push acceptable sur :\n- Ta branche feature perso (que personne d'autre ne touche)\n- Après un rebase de ta branche\n- Pour supprimer des données sensibles\n\n## Workflow Sécurisé\n\n### Avant de force push\n\n```bash\n# 1. Fetch les dernières modifications\ngit fetch origin\n\n# 2. Vérifie que personne n'a push sur ta branche\ngit log origin/ma-branche..ma-branche\n\n# 3. Si pas de nouveaux commits, force push sécurisé\ngit push --force-with-lease\n```\n\n### Alternative : Ne pas force push\n\nAu lieu de :\n```bash\n# ❌ Mauvais\ngit reset --hard HEAD~2\ngit push --force\n```\n\nFais :\n```bash\n# ✅ Bon\ngit revert HEAD\ngit revert HEAD~1\ngit push\n```\n\n## Scénario de Catastrophe et Récupération\n\n### Ce qui arrive souvent\n\n```bash\n# Bob force push sur main par erreur\ngit checkout main\ngit reset --hard HEAD~3\ngit push --force\n\n# 💀 Les 3 derniers commits de tout le monde sont perdus !\n```\n\n### Comment récupérer\n\n**Si tu as le commit dans ton reflog :**\n```bash\ngit reflog\n# trouve le commit perdu (ex: abc1234)\ngit checkout abc1234\ngit checkout -b recovery\ngit push origin recovery\n\n# Demande au propriétaire du repo de merger recovery\n```\n\n**Depuis une autre machine :**\n```bash\n# Si quelqu'un n'a pas encore pull\ngit checkout main\ngit push origin main --force-with-lease\n# Restore l'ancien main !\n```\n\n## Bonnes Pratiques d'Équipe\n\n### 1. Protéger les branches\n\nSur GitHub/GitLab :\n- Settings → Branches → Protection rules\n- Interdire le push force sur main/develop\n- Exiger des PR pour merger\n\n### 2. Communication\n\nSi tu dois force push (branche perso) :\n```bash\n# Avertis ton équipe sur Slack/Discord :\n\"Je vais force push sur feature-xyz dans 5 min,\nne travaillez pas dessus svp !\"\n```\n\n### 3. Préférer le merge au rebase sur les branches partagées\n\n```bash\n# ❌ Évite sur develop/main\ngit rebase main\ngit push --force\n\n# ✅ Préfère\ngit merge main\ngit push\n```",
-      "codeExample": "# DANGER : Force push classique\ngit push --force\ngit push -f\n\n# PLUS SÛR : Force with lease\ngit push --force-with-lease\n\n# Workflow sécurisé avant force push\ngit fetch origin\ngit log origin/ma-branche..ma-branche\ngit push --force-with-lease\n\n# Alternative : revert au lieu de force\ngit revert HEAD\ngit push"
+      "content": "# Essential to know\n- `git push --force` overwrites remote history\n- **DANGER**: can destroy others' work\n- Prefer `--force-with-lease` for more safety\n- Never force push on shared main/master\n- Acceptable on personal branches not shared\n- Prefer `git revert` to correct errors on shared branches\n\n---\n\n# Push Force - Usage and Dangers\n\nForce push is often seen as Git's nuclear weapon. Used incorrectly, it can cause team nightmares.\n\n## Why Push Force Exists\n\n**Legitimate scenarios:**\n1. You rebased your feature branch and need to update remote\n2. You amended a commit and need to update\n3. You're working alone on a branch\n4. You really want to delete sensitive commits (passwords, API keys)\n\n## The Danger of Force Push\n\n```\nBefore force push on main:\n\nRemote:  A---B---C---D (main)\n                      ↑\nAlice works here\n\nLocal (you):  A---B---C'---D' (main)\n                         ↑\n                    You rebased\n\nAfter `git push --force`:\n\nRemote:  A---B---C'---D' (main)\n\nCommits C and D are LOST!\nAlice's work is erased!\n```\n\n## Force vs Force-with-lease\n\n### Classic Force Push (dangerous)\n\n```bash\ngit push --force\ngit push -f\n```\n\n**Problem:** Overwrites remote even if someone else pushed in the meantime.\n\n### Force-with-lease (safer)\n\n```bash\ngit push --force-with-lease\n```\n\n**Advantage:** Checks that no one pushed since your last fetch.\n- If someone pushed → error and push refused\n- If everything OK → push accepted\n\n## Golden Rules\n\n### ❌ NEVER force push on:\n- `main` / `master`\n- `develop`\n- Any branch others are working on\n\n### ✅ Force push acceptable on:\n- Your personal feature branch (that no one else touches)\n- After rebasing your branch\n- To delete sensitive data\n\n## Safe Workflow\n\n```bash\n# Before force push, always:\n\n# 1. Fetch to see remote state\ngit fetch origin\n\n# 2. Check what you'll overwrite\ngit log origin/my-branch..my-branch\n\n# 3. If OK, force with lease\ngit push --force-with-lease\n```\n\n## Better Alternative: Revert\n\n```bash\n# Instead of force push on shared branch:\n\n# 1. Revert problematic commit\ngit revert abc1234\n\n# 2. Push normally (safe!)\ngit push\n\n# History is preserved, error is corrected\n```\n\n## If You Made a Mistake\n\n```bash\n# Oops, you force pushed on main!\n\n# 1. Don't panic\n# 2. Ask colleagues not to pull\n# 3. Find old commit with reflog\ngit reflog\n\n# 4. Restore main\ngit checkout main\ngit reset --hard abc1234  # Old commit\ngit push --force-with-lease\n\n# 5. Ask colleagues to reset their local main\n```",
+      "codeExample": "# DANGER: Classic force push\ngit push --force\ngit push -f\n\n# SAFER: Force with lease\ngit push --force-with-lease\n\n# Safe workflow before force push\ngit fetch origin\ngit log origin/my-branch..my-branch\ngit push --force-with-lease\n\n# Alternative: revert instead of force\ngit revert HEAD\ngit push"
     },
     {
       "id": "vibe-coding-practices",
       "moduleId": "git-advanced",
-      "title": "Bonnes Pratiques Vibe Coding",
+      "title": "Vibe Coding Best Practices",
       "order": 5,
       "difficulty": "intermediate",
-      "content": "# Essential to know\n- Commit souvent, push régulièrement\n- Messages de commit clairs et descriptifs\n- Une feature = une branche\n- Pull avant de push\n- Stash quand tu dois changer de contexte\n- Ne jamais committer sur main directement\n- Relire son code avant de commit\n\n---\n\n# Bonnes Pratiques Vibe Coding\n\nLe \"vibe coding\" c'est coder dans le flow, sereinement, sans stress. Git est ton allié pour ça !\n\n## Le Workflow Parfait\n\n### 1. Avant de Commencer\n\n```bash\n# Mets-toi à jour\ngit checkout main\ngit pull\n\n# Crée ta branche feature\ngit checkout -b feature/ma-super-feature\n\n# Ou avec un nom descriptif\ngit checkout -b feature/login-page-redesign\n```\n\n### 2. Pendant le Développement\n\n**Règle d'or : Commit early, commit often**\n\n```bash\n# ✅ Bon : petits commits logiques\ngit add src/auth.js\ngit commit -m \"feat: ajoute validation email\"\n\ngit add src/auth.js\ngit commit -m \"feat: ajoute hashage mot de passe\"\n\ngit add tests/\ngit commit -m \"test: ajoute tests pour auth\"\n\n# ❌ Mauvais : un gros commit\ngit add .\ngit commit -m \"update\"\n```\n\n### 3. Si Tu Dois Changer de Contexte\n\n```bash\n# Tu es en plein dev mais un bug urgent arrive\ngit stash push -m \"WIP: auth en cours\"\ngit checkout main\ngit checkout -b hotfix/urgent-bug\n\n# Corrige le bug...\ngit add .\ngit commit -m \"fix: corrige crash sur login\"\ngit push\n\n# Retourne à ta feature\ngit checkout feature/ma-feature\ngit stash pop\n```\n\n### 4. Avant de Pusher\n\n```bash\n# Mets-toi à jour\ngit fetch origin\n\n# Vérifie si il y a des changements\ngit log --oneline HEAD..origin/main\n\n# Si oui, merge ou rebase\ngit rebase origin/main\n# ou\ngit merge origin/main\n\n# Résous les conflits si nécessaire\n\n# Pushe\ngit push -u origin feature/ma-feature\n```\n\n## Messages de Commit Pro\n\n### Format Conventionnel\n\n```\n<type>: <description courte>\n\n[corps optionnel]\n```\n\n### Types courants :\n\n- **feat** : Nouvelle fonctionnalité\n- **fix** : Correction de bug\n- **docs** : Documentation\n- **style** : Formatage, pas de changement de code\n- **refactor** : Refactoring\n- **test** : Tests\n- **chore** : Tâches de maintenance\n\n### Exemples :\n\n```bash\ngit commit -m \"feat: ajoute authentification JWT\"\n\ngit commit -m \"fix: corrige crash sur Safari mobile\"\n\ngit commit -m \"docs: ajoute guide d'installation\"\n\ngit commit -m \"refactor: simplifie logique de validation\"\n```\n\n## Les 10 Commandements du Vibe Coder\n\n1. **Commit tous les jours** - Même si c'est pas fini\n2. **Push tous les soirs** - Ton code est en sécurité sur le remote\n3. **Messages clairs** - Le futur toi te remerciera\n4. **Une feature = une branche** - Main reste propre\n5. **Pull avant push** - Évite les conflits\n6. **Stash sans honte** - C'est pas une défaite\n7. **Reset soft > hard** - Garde tes modifs si possible\n8. **Revert sur remote** - Jamais de reset --hard sur shared\n9. **Rebase ta branche** - Avant de merger, rebase sur main\n10. **Force with lease** - Jamais de force push brut\n\n## Gestion des Erreurs\n\n### J'ai commit sur main par erreur !\n\n```bash\n# Pas encore push\ngit reset --soft HEAD~1\ngit checkout -b feature/travail\ngit commit -m \"feat: mon travail\"\n\n# Retourne sur main propre\ngit checkout main\ngit reset --hard origin/main\n```\n\n### J'ai push un fichier sensible !\n\n```bash\n# Ajoute au .gitignore\necho \"secret.env\" >> .gitignore\ngit add .gitignore\n\n# Supprime de l'historique (attention, reécrit l'historique)\ngit filter-branch --force --index-filter \\\n  'git rm --cached --ignore-unmatch secret.env' \\\n  HEAD\n\n# Force push (si branche perso uniquement !)\ngit push --force-with-lease\n```\n\n### J'ai cassé ma branche feature\n\n```bash\n# Crée une backup\ngit checkout -b feature/backup\ngit checkout feature/cassee\n\n# Reset soft pour garder les modifs\ngit reset --soft main\n\n# Refais tes commits proprement\ngit add ...\ngit commit -m \"...\"\n```\n\n## Outils pour un Flow Optimal\n\n### Aliases Git Utiles\n\n```bash\n# Ajoute ces alias à ta config\ngit config --global alias.st status\ngit config --global alias.co checkout\ngit config --global alias.br branch\ngit config --global alias.ci commit\ngit config --global alias.lg \"log --oneline --graph --decorate\"\ngit config --global alias.unstage \"restore --staged\"\ngit config --global alias.last \"log -1 HEAD\"\ngit config --global alias.visual \"!gitk\"\n```\n\n### Utilisation :\n\n```bash\ngit st        # au lieu de git status\ngit co main   # au lieu de git checkout main\ngit ci -m \"fix bug\"  # au lieu de git commit\ngit lg        # log graphique sympa\n```\n\n## Checklist Avant Merge\n\n- [ ] Ma branche est à jour avec main\n- [ ] Tous les tests passent\n- [ ] Le code est relu (self-review)\n- [ ] Les messages de commit sont propres\n- [ ] Pas de fichiers sensibles\n- [ ] Le diff est raisonnable (< 500 lignes idéalement)\n\n## En Résumé\n\nUn vibe coder Git :\n- **Commit souvent** - Toutes les 30-60 min\n- **Messages clairs** - feat/fix/docs avec description\n- **Branches propres** - Une feature = une branche\n- **Stash intelligent** - Pour changer de contexte\n- **Reset prudent** --soft quand possible\n- **Push safe** - Force with lease jamais --force brut\n- **Revert sur remote** - Jamais reset sur branches partagées",
-      "codeExample": "# Workflow quotidien\ngit checkout main && git pull\ngit checkout -b feature/nom-feature\n\n# Commit fréquents\ngit add fichier.js\ngit commit -m \"feat: description claire\"\n\n# Stash si interruption\ngit stash push -m \"WIP\"\ngit checkout main\n\n# Avant push\ngit fetch origin\ngit rebase origin/main\ngit push -u origin feature/nom-feature\n\n# Aliases utiles\ngit config --global alias.st status\ngit config --global alias.lg \"log --oneline --graph\""
+      "content": "# Essential to know\n- Commit often, push regularly\n- Clear and descriptive commit messages\n- One feature = one branch\n- Pull before pushing\n- Stash when you need to change context\n- Never commit directly on main\n- Review your code before committing\n\n---\n\n# Vibe Coding Best Practices\n\n\"Vibe coding\" is coding in the flow, calmly, without stress. Git is your ally for this!\n\n## The Perfect Workflow\n\n### 1. Before Starting\n\n```bash\n# Get up to date\ngit checkout main\ngit pull\n\n# Create your feature branch\ngit checkout -b feature/my-super-feature\n\n# Or with a descriptive name\ngit checkout -b feature/login-page-redesign\n```\n\n### 2. During Development\n\n**Golden rule: Commit early, commit often**\n\n```bash\n# ✅ Good: small logical commits\ngit add src/auth.js\ngit commit -m \"feat: add email validation\"\n\ngit add src/auth.js\ngit commit -m \"feat: add password hashing\"\n\ngit add tests/\ngit commit -m \"test: add tests for auth\"\n\n# ❌ Bad: one big commit\ngit add .\ngit commit -m \"update\"\n```\n\n### 3. If You Need to Change Context\n\n```bash\n# You're in the middle of dev but an urgent bug arrives\ngit stash push -m \"WIP: auth in progress\"\ngit checkout main\ngit checkout -b hotfix/urgent-bug\n\n# Fix bug...\ngit add .\ngit commit -m \"fix: correct crash on login\"\ngit push\n\n# Return to your feature\ngit checkout feature/my-feature\ngit stash pop\n```\n\n### 4. Before Pushing\n\n```bash\n# Get up to date\ngit fetch origin\n\n# Check if there are changes\ngit log --oneline HEAD..origin/main\n\n# If yes, merge or rebase\ngit rebase origin/main\n# or\ngit merge origin/main\n\n# Resolve conflicts if necessary\n\n# Push\ngit push -u origin feature/my-feature\n```\n\n## Pro Commit Messages\n\n### Conventional Format\n\n```\n<type>: <short description>\n\n[optional body]\n```\n\n### Common types:\n\n- **feat**: New feature\n- **fix**: Bug fix\n- **docs**: Documentation\n- **style**: Formatting (no code change)\n- **refactor**: Code restructuring\n- **test**: Tests\n- **chore**: Maintenance\n\n### Examples:\n\n```bash\n# Good\ngit commit -m \"feat: add user authentication with JWT\"\ngit commit -m \"fix: correct header alignment on mobile\"\ngit commit -m \"refactor: extract validation logic\"\n\n# Bad\ngit commit -m \"update\"\ngit commit -m \"fix\"\ngit commit -m \"WIP\"\n```\n\n## Useful Aliases\n\n```bash\n# Add to ~/.gitconfig\n[alias]\n  st = status\n  co = checkout\n  br = branch\n  ci = commit\n  lg = log --oneline --graph --all\n  last = log -1 HEAD\n  unstage = reset HEAD --\n  discard = checkout --\n```\n\n## Checklist Before Committing\n\n- [ ] I reviewed my modifications (`git diff`)\n- [ ] I didn't commit sensitive files (.env, passwords)\n- [ ] My message is descriptive\n- [ ] Tests pass (if applicable)\n- [ ] I committed only what's necessary\n\n## Typical Day\n\n```bash\n# Morning\ngit checkout main && git pull\ngit checkout -b feature/task-of-the-day\n\n# During the day\ngit add .\ngit commit -m \"feat: implement X\"\n\n# Before leaving\ngit fetch origin\ngit rebase origin/main\ngit push -u origin feature/task-of-the-day\n```",
+      "codeExample": "# Daily workflow\ngit checkout main && git pull\ngit checkout -b feature/name-feature\n\n# Frequent commits\ngit add file.js\ngit commit -m \"feat: clear description\"\n\n# Stash if interruption\ngit stash push -m \"WIP\"\ngit checkout main\n\n# Before push\ngit fetch origin\ngit rebase origin/main\ngit push -u origin feature/name-feature\n\n# Useful aliases\ngit config --global alias.st status\ngit config --global alias.lg \"log --oneline --graph\""
     }
   ],
   "exercises": [
@@ -63,11 +63,11 @@
       "moduleId": "git-advanced",
       "title": "Stash Interruption",
       "difficulty": "easy",
-      "story": "Tu es en train de modifier login.js sur la branche feature-auth, mais un bug urgent doit être corrigé sur main. Stash tes changements, switch sur main, puis récupère ton travail.",
+      "story": "You're modifying login.js on the feature-auth branch, but an urgent bug needs to be fixed on main. Stash your changes, switch to main, then retrieve your work.",
       "hints": [
-        "Utilise 'git stash push -m \"WIP: auth\"' pour stasher avec un message",
-        "Switch sur main avec 'git checkout main'",
-        "Récupère le stash avec 'git stash pop'"
+        "Use 'git stash push -m \"WIP: auth\"' to stash with a message",
+        "Switch to main with 'git checkout main'",
+        "Retrieve stash with 'git stash pop'"
       ],
       "initialState": {
         "files": [
@@ -80,9 +80,9 @@
         "isInitialized": true
       },
       "objectives": [
-        { "description": "Stasher les modifications", "check": { "type": "fileStatus", "file": "login.js", "status": "committed" } },
-        { "description": "Switch sur main", "check": { "type": "currentBranch", "value": "main" } },
-        { "description": "Récupérer le stash sur feature-auth", "check": { "type": "currentBranch", "value": "feature-auth" } }
+        { "description": "Stash modifications", "check": { "type": "fileStatus", "file": "login.js", "status": "committed" } },
+        { "description": "Switch to main", "check": { "type": "currentBranch", "value": "main" } },
+        { "description": "Retrieve stash on feature-auth", "check": { "type": "currentBranch", "value": "feature-auth" } }
       ]
     },
     {
@@ -90,13 +90,13 @@
       "type": "git-scenario",
       "lessonId": "git-reset",
       "moduleId": "git-advanced",
-      "title": "Reset Soft pour Refaire",
+      "title": "Soft Reset to Redo",
       "difficulty": "medium",
-      "story": "Tu as fait 2 commits sur ta branche feature, mais tu veux les refaire avec de meilleurs messages. Utilise reset --soft pour revenir en arrière tout en gardant tes modifications.",
+      "story": "You made 2 commits on your feature branch, but want to redo them with better messages. Use reset --soft to go back while keeping your modifications.",
       "hints": [
-        "Utilise 'git reset --soft HEAD~2' pour revenir 2 commits en arrière",
-        "Tes modifications seront staged, prêtes à être recommitées",
-        "Refais tes commits avec de meilleurs messages"
+        "Use 'git reset --soft HEAD~2' to go back 2 commits",
+        "Your modifications will be staged, ready to be recommitted",
+        "Redo your commits with better messages"
       ],
       "initialState": {
         "files": [
@@ -113,8 +113,8 @@
         "isInitialized": true
       },
       "objectives": [
-        { "description": "Faire un reset soft de 2 commits", "check": { "type": "minCommits", "value": 1 } },
-        { "description": "Créer au moins 2 nouveaux commits propres", "check": { "type": "minCommits", "value": 3 } }
+        { "description": "Do a soft reset of 2 commits", "check": { "type": "minCommits", "value": 1 } },
+        { "description": "Create at least 2 new clean commits", "check": { "type": "minCommits", "value": 3 } }
       ]
     },
     {
@@ -122,13 +122,13 @@
       "type": "git-scenario",
       "lessonId": "git-reset",
       "moduleId": "git-advanced",
-      "title": "Unstage un Fichier",
+      "title": "Unstage a File",
       "difficulty": "easy",
-      "story": "Tu as accidentellement ajouté config.env (fichier sensible) au staging area avec d'autres fichiers. Unstage config.env mais garde les autres fichiers prêts à être commités.",
+      "story": "You accidentally added config.env (sensitive file) to the staging area with other files. Unstage config.env but keep the other files ready to be committed.",
       "hints": [
-        "Utilise 'git reset HEAD config.env' pour unstage un fichier spécifique",
-        "Les autres fichiers resteront staged",
-        "Commit ensuite les fichiers restants"
+        "Use 'git reset HEAD config.env' to unstage a specific file",
+        "Other files will remain staged",
+        "Then commit the remaining files"
       ],
       "initialState": {
         "files": [
@@ -143,8 +143,8 @@
       },
       "objectives": [
         { "description": "Unstage config.env", "check": { "type": "fileStatus", "file": "config.env", "status": "modified" } },
-        { "description": "Commit les fichiers restants", "check": { "type": "minCommits", "value": 2 } },
-        { "description": "config.env n'est pas dans le nouveau commit", "check": { "type": "fileStatus", "file": "config.env", "status": "modified" } }
+        { "description": "Commit remaining files", "check": { "type": "minCommits", "value": 2 } },
+        { "description": "config.env is not in the new commit", "check": { "type": "fileStatus", "file": "config.env", "status": "modified" } }
       ]
     },
     {
@@ -152,13 +152,13 @@
       "type": "git-scenario",
       "lessonId": "git-checkout-advanced",
       "moduleId": "git-advanced",
-      "title": "Restaurer une Ancienne Version",
+      "title": "Restore an Old Version",
       "difficulty": "medium",
-      "story": "Le fichier app.js a été cassé par les derniers commits. Tu veux restaurer la version du commit abc1234. Utilise checkout pour récupérer cette version spécifique.",
+      "story": "The app.js file was broken by recent commits. You want to restore the version from commit abc1234. Use checkout to retrieve this specific version.",
       "hints": [
-        "Utilise 'git checkout abc1234 -- app.js' pour restaurer à un commit spécifique",
-        "Le fichier sera automatiquement staged",
-        "Commit ensuite avec un message approprié"
+        "Use 'git checkout abc1234 -- app.js' to restore to a specific commit",
+        "The file will be automatically staged",
+        "Then commit with an appropriate message"
       ],
       "initialState": {
         "files": [
@@ -166,7 +166,7 @@
           { "name": "index.html", "status": "committed" }
         ],
         "commits": [
-          { "message": "BREAK: casse app.js", "files": ["app.js"] },
+          { "message": "BREAK: break app.js", "files": ["app.js"] },
           { "message": "Initial commit", "files": ["app.js", "index.html"] }
         ],
         "branches": ["main"],
@@ -174,8 +174,8 @@
         "isInitialized": true
       },
       "objectives": [
-        { "description": "Restaurer app.js au commit initial", "check": { "type": "fileStatus", "file": "app.js", "status": "staged" } },
-        { "description": "Commit la restauration", "check": { "type": "minCommits", "value": 3 } }
+        { "description": "Restore app.js to initial commit", "check": { "type": "fileStatus", "file": "app.js", "status": "staged" } },
+        { "description": "Commit the restoration", "check": { "type": "minCommits", "value": 3 } }
       ]
     },
     {
@@ -183,11 +183,11 @@
       "type": "quiz",
       "lessonId": "git-stash",
       "moduleId": "git-advanced",
-      "title": "Quiz Git Stash",
+      "title": "Git Stash Quiz",
       "difficulty": "easy",
       "questions": [
         {
-          "question": "Quelle commande permet de récupérer un stash et le supprimer de la pile ?",
+          "question": "Which command retrieves a stash and removes it from the stack?",
           "options": [
             "git stash apply",
             "git stash pop",
@@ -195,10 +195,10 @@
             "git stash restore"
           ],
           "correctAnswer": 1,
-          "explanation": "git stash pop récupère le dernier stash et le supprime automatiquement de la pile. git stash apply récupère le stash mais le garde dans la pile."
+          "explanation": "git stash pop retrieves the last stash and automatically removes it from the stack. git stash apply retrieves the stash but keeps it in the stack."
         },
         {
-          "question": "Comment stasher avec un message descriptif ?",
+          "question": "How to stash with a descriptive message?",
           "options": [
             "git stash -m \"message\"",
             "git stash push -m \"message\"",
@@ -206,7 +206,7 @@
             "git stash --msg \"message\""
           ],
           "correctAnswer": 1,
-          "explanation": "La syntaxe correcte est git stash push -m \"message\". Cela permet de nommer son stash pour s'y retrouver plus facilement."
+          "explanation": "The correct syntax is git stash push -m \"message\". This allows naming your stash to find it more easily later."
         }
       ]
     },
@@ -215,41 +215,41 @@
       "type": "quiz",
       "lessonId": "git-reset",
       "moduleId": "git-advanced",
-      "title": "Quiz Git Reset",
+      "title": "Git Reset Quiz",
       "difficulty": "medium",
       "questions": [
         {
-          "question": "Quelle est la différence entre `git reset --soft HEAD~1` et `git reset --hard HEAD~1` ?",
+          "question": "What is the difference between `git reset --soft HEAD~1` and `git reset --hard HEAD~1`?",
           "options": [
-            "Aucune différence",
-            "--soft garde les modifications staged, --hard supprime tout",
-            "--soft supprime les modifications, --hard les garde",
-            "--soft fonctionne seulement sur les branches locales"
+            "No difference",
+            "--soft keeps modifications staged, --hard deletes everything",
+            "--soft deletes modifications, --hard keeps them",
+            "--soft only works on local branches"
           ],
           "correctAnswer": 1,
-          "explanation": "--soft annule le commit mais garde les modifications dans le staging area. --hard annule le commit ET supprime définitivement toutes les modifications. C'est dangereux !"
+          "explanation": "--soft undoes the commit but keeps modifications in the staging area. --hard undoes the commit AND permanently deletes all modifications. It's dangerous!"
         },
         {
-          "question": "Quand devrais-tu utiliser `git reset --hard` ?",
+          "question": "When should you use `git reset --hard`?",
           "options": [
-            "Sur des commits déjà pushés",
-            "Seulement sur des commits locaux non pushés",
-            "Tous les jours pour nettoyer",
-            "Jamais, c'est trop dangereux"
+            "On already pushed commits",
+            "Only on local unpushed commits",
+            "Every day to clean up",
+            "Never, it's too dangerous"
           ],
           "correctAnswer": 1,
-          "explanation": "git reset --hard ne devrait être utilisé que sur des commits locaux qui n'ont pas encore été pushés. Sur des commits pushés, cela réécrirait l'historique et causerait des problèmes pour l'équipe."
+          "explanation": "git reset --hard should only be used on local commits that haven't been pushed yet. On pushed commits, this would rewrite history and cause problems for the team."
         },
         {
-          "question": "Comment unstager un fichier spécifique ?",
+          "question": "How to unstage a specific file?",
           "options": [
-            "git unstage fichier",
-            "git reset HEAD fichier",
-            "git checkout -- fichier",
-            "git restore fichier"
+            "git unstage file",
+            "git reset HEAD file",
+            "git checkout -- file",
+            "git restore file"
           ],
           "correctAnswer": 1,
-          "explanation": "git reset HEAD fichier enlève le fichier du staging area (index) mais conserve les modifications. C'est l'ancienne syntaxe, aujourd'hui on peut aussi utiliser git restore --staged fichier."
+          "explanation": "git reset HEAD file removes the file from the staging area (index) but keeps the modifications. This is the old syntax, today you can also use git restore --staged file."
         }
       ]
     },
@@ -258,22 +258,22 @@
       "type": "quiz",
       "lessonId": "push-force",
       "moduleId": "git-advanced",
-      "title": "Quiz Push Force",
+      "title": "Push Force Quiz",
       "difficulty": "medium",
       "questions": [
         {
-          "question": "Pourquoi `git push --force` est-il dangereux ?",
+          "question": "Why is `git push --force` dangerous?",
           "options": [
-            "Il ralentit le serveur",
-            "Il peut écraser le travail des autres développeurs",
-            "Il crée des commits vides",
-            "Il ne fonctionne pas sur GitHub"
+            "It slows down the server",
+            "It can overwrite other developers' work",
+            "It creates empty commits",
+            "It doesn't work on GitHub"
           ],
           "correctAnswer": 1,
-          "explanation": "Force push écrase l'historique du remote. Si d'autres personnes ont basé leur travail sur les commits que tu écrases, leur travail devient orphelin et peut être perdu."
+          "explanation": "Force push overwrites the remote history. If other people based their work on the commits you overwrite, their work becomes orphaned and can be lost."
         },
         {
-          "question": "Quelle est l'alternative plus sûre à `git push --force` ?",
+          "question": "What is the safer alternative to `git push --force`?",
           "options": [
             "git push --safe",
             "git push --force-with-lease",
@@ -281,18 +281,18 @@
             "git push --overwrite"
           ],
           "correctAnswer": 1,
-          "explanation": "git push --force-with-lease vérifie que personne n'a push sur la branche depuis ton dernier fetch. Si quelqu'un a push, la commande échoue, protégeant ainsi le travail des autres."
+          "explanation": "git push --force-with-lease checks that no one pushed to the branch since your last fetch. If someone pushed, the command fails, thus protecting others' work."
         },
         {
-          "question": "Sur quelle(s) branche(s) ne devrais-tu JAMAIS faire de force push ?",
+          "question": "On which branch(es) should you NEVER force push?",
           "options": [
-            "Uniquement sur main/master",
-            "Sur toutes les branches partagées avec l'équipe",
-            "Sur les branches feature personnelles",
-            "Sur toutes les branches sans exception"
+            "Only on main/master",
+            "On all branches shared with the team",
+            "On personal feature branches",
+            "On all branches without exception"
           ],
           "correctAnswer": 1,
-          "explanation": "Ne jamais force push sur main, master, develop ou toute branche sur laquelle d'autres personnes travaillent. Le force push est acceptable uniquement sur tes branches perso non partagées."
+          "explanation": "Never force push on main, master, develop, or any branch others are working on. Force push is only acceptable on your personal unshared branches."
         }
       ]
     },
@@ -301,30 +301,30 @@
       "type": "quiz",
       "lessonId": "vibe-coding-practices",
       "moduleId": "git-advanced",
-      "title": "Quiz Bonnes Pratiques",
+      "title": "Best Practices Quiz",
       "difficulty": "easy",
       "questions": [
         {
-          "question": "Quelle convention de message de commit est recommandée ?",
+          "question": "Which commit message convention is recommended?",
           "options": [
             "update, fix, change",
             "feat:, fix:, docs:, refactor:",
-            "Ajout, Modification, Suppression",
-            "Pas de convention particulière"
+            "Add, Modify, Delete",
+            "No particular convention"
           ],
           "correctAnswer": 1,
-          "explanation": "La convention conventionnelle utilise des préfixes comme feat: (nouvelle feature), fix: (correction), docs: (documentation), refactor: (refactoring), etc. Cela rend l'historique lisible."
+          "explanation": "The conventional convention uses prefixes like feat: (new feature), fix: (correction), docs: (documentation), refactor: (refactoring), etc. This makes history readable."
         },
         {
-          "question": "Quelle est la bonne fréquence de commit ?",
+          "question": "What is the right commit frequency?",
           "options": [
-            "Une fois par jour",
-            "Une fois par semaine",
-            "Toutes les 30-60 minutes ou à chaque petite fonctionnalité",
-            "Uniquement quand tout est fini"
+            "Once per day",
+            "Once per week",
+            "Every 30-60 minutes or at each small feature",
+            "Only when everything is finished"
           ],
           "correctAnswer": 2,
-          "explanation": "Commit souvent, idéalement toutes les 30-60 minutes ou à chaque petite fonctionnalité terminée. Cela crée des points de sauvegarde et facilite le débogage."
+          "explanation": "Commit often, ideally every 30-60 minutes or at each completed small feature. This creates save points and facilitates debugging."
         }
       ]
     },
@@ -333,14 +333,14 @@
       "type": "git-scenario",
       "lessonId": "vibe-coding-practices",
       "moduleId": "git-advanced",
-      "title": "Workflow Complet",
+      "title": "Complete Workflow",
       "difficulty": "hard",
-      "story": "Mets en pratique tout ce que tu as appris ! Tu dois créer une feature branch, faire plusieurs commits avec des messages conventionnels, puis revenir sur main proprement. Ensuite stasher des changements et les récupérer.",
+      "story": "Put everything you learned into practice! You need to create a feature branch, make several commits with conventional messages, then return to main cleanly. Then stash changes and retrieve them.",
       "hints": [
-        "Crée une branche avec git checkout -b feature/nom",
-        "Fais au moins 2 commits avec des messages type 'feat: ...'",
-        "Stash des changements avant de revenir sur main",
-        "Récupère le stash sur ta feature"
+        "Create a branch with git checkout -b feature/name",
+        "Make at least 2 commits with messages like 'feat: ...'",
+        "Stash changes before returning to main",
+        "Retrieve the stash on your feature"
       ],
       "initialState": {
         "files": [
@@ -354,10 +354,10 @@
         "isInitialized": true
       },
       "objectives": [
-        { "description": "Créer une branche feature", "check": { "type": "branchExists", "value": "feature" } },
-        { "description": "Faire au moins 2 commits sur la feature", "check": { "type": "minCommits", "value": 3 } },
-        { "description": "Stasher des changements", "check": { "type": "fileStatus", "file": "style.css", "status": "committed" } },
-        { "description": "Revenir sur main proprement", "check": { "type": "currentBranch", "value": "main" } }
+        { "description": "Create a feature branch", "check": { "type": "branchExists", "value": "feature" } },
+        { "description": "Make at least 2 commits on feature", "check": { "type": "minCommits", "value": 3 } },
+        { "description": "Stash changes", "check": { "type": "fileStatus", "file": "style.css", "status": "committed" } },
+        { "description": "Return to main cleanly", "check": { "type": "currentBranch", "value": "main" } }
       ]
     }
   ]

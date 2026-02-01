@@ -54,15 +54,15 @@ Claude 4.5 represents Anthropic's commitment to helpful, harmless, and honest AI
 
 ## Evolution
 
-| Version | Date | Score SWE-Bench Verified | Statut / Rôle |
+| Version | Date | Score SWE-Bench Verified | Status / Role |
 |---------|------|--------------------------|---------------|
-| Claude 3.5 Sonnet | Juin 2024 | 49.0% | La légende (point de départ). |
-| Claude 3.6 Sonnet | Oct 2024 | 54.2% | Amélioration Computer Use. |
-| Claude 3.7 Sonnet | Fév 2025 | 70.3% | Premier mode "Thinking". |
-| Claude 4.0 Sonnet | Mai 2025 | 72.7% | Passage à l'architecture v4. |
-| Claude 4.1 Opus | Sept 2025 | 70.8% | Raisonnement complexe (Lourd). |
-| **Claude 4.5 Sonnet** | **Oct 2025** | **77.2%** | **Standard actuel des devs.** |
-| Claude 4.5 Haiku | Nov 2025 | 68.8% | Performance/Prix imbattable. |
-| Claude 4.5 Opus | Jan 2026 | 80.9% | SOTA Mondial actuel. |
+| Claude 3.5 Sonnet | June 2024 | 49.0% | The legend (starting point). |
+| Claude 3.6 Sonnet | Oct 2024 | 54.2% | Computer Use improvement. |
+| Claude 3.7 Sonnet | Feb 2025 | 70.3% | First "Thinking" mode. |
+| Claude 4.0 Sonnet | May 2025 | 72.7% | Migration to v4 architecture. |
+| Claude 4.1 Opus | Sept 2025 | 70.8% | Complex reasoning (Heavy). |
+| **Claude 4.5 Sonnet** | **Oct 2025** | **77.2%** | **Current dev standard.** |
+| Claude 4.5 Haiku | Nov 2025 | 68.8% | Unbeatable Performance/Price. |
+| Claude 4.5 Opus | Jan 2026 | 80.9% | Current world SOTA. |
 
-Progression constante avec une amélioration de +31.9 points en 18 mois.
+Steady progression with a +31.9 point improvement in 18 months.

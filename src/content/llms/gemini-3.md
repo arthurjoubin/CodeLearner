@@ -58,10 +58,10 @@ Gemini 3 is Google's flagship multimodal model, setting the standard for native 
 
 ## Evolution
 
-| Version | Date | Score SWE-Bench Verified | Statut / Rôle |
+| Version | Date | Score SWE-Bench Verified | Status / Role |
 |---------|------|--------------------------|---------------|
-| Gemini 2.5 Pro | Mars 2025 | 59.6% | Roi du contexte (2M+). |
-| Gemini 3.0 Pro | Oct 2025 | 76.2% | Multimodal natif. |
-| **Gemini 3.0 Flash** | **Déc 2025** | **78.0%** | **Rapidité extrême / Haut score.** |
+| Gemini 2.5 Pro | Mar. 2025 | 59.6% | King of context (2M+). |
+| Gemini 3.0 Pro | Oct 2025 | 76.2% | Native multimodal. |
+| **Gemini 3.0 Flash** | **Dec. 2025** | **78.0%** | **Extreme speed / High score.** |
 
-Amélioration significative de +18.4 points, combinant vitesse et performance multimodale.
+Significant improvement of +18.4 points, combining speed and multimodal performance.

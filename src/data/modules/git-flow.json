@@ -2,7 +2,7 @@
   "module": {
     "id": "git-flow",
     "title": "Git Flow & Workflows",
-    "description": "Organisez votre travail en équipe avec Git Flow et les meilleures pratiques de branching",
+    "description": "Organize your team work with Git Flow and best branching practices",
     "icon": "GitBranch",
     "requiredXp": 700,
     "color": "from-cyan-400 to-blue-600",
@@ -12,30 +12,30 @@
     {
       "id": "git-flow-intro",
       "moduleId": "git-flow",
-      "title": "Introduction aux Workflows Git",
+      "title": "Introduction to Git Workflows",
       "order": 1,
       "difficulty": "beginner",
-      "content": "# Essential to know\n- Workflow = convention sur comment utiliser Git en équipe\n- Git Flow = workflow structuré avec branches spécifiques\n- GitHub Flow = workflow simple centré sur les PR\n- Trunk-Based Development = commits directs sur main\n- Le bon workflow dépend de la taille de l'équipe et de la fréquence de release\n\n---\n\n# Workflows Git : Organiser le Travail d'Équipe\n\n## Pourquoi un Workflow ?\n\nSans convention, le chaos :\n- ❌ Tout le monde commit sur main\n- ❌ Conflits constants\n- ❌ Code cassé en production\n- ❌ Impossible de savoir qui fait quoi\n\n**Avec un workflow :**\n- ✅ Code review avant merge\n- ✅ Branches isolées pour les features\n- ✅ Releases stables\n- ✅ Hotfixes rapides\n\n## Les Principaux Workflows\n\n### 1. GitHub Flow (Simple, recommandé)\n**Pour :** Petites équipes, déploiement continu\n\n```\nmain ─────────────────────────────────\n       \\                              /\nfeature ━━━━ PR ━━━━━━━━━━━━━━━━━━━━━━✓\n```\n\n**Règles :**\n- Une seule branche principale : `main`\n- Créer une branche pour chaque feature/bugfix\n- Ouvrir une Pull Request\n- Review + tests avant merge\n- Deploy automatique depuis main\n\n**Avantages :** Simple, rapide, idéal pour CI/CD\n\n---\n\n### 2. Git Flow (Structuré, enterprise)\n**Pour :** Grosses équipes, releases planifiées\n\n```\ndevelop  ───────○──○──○─────────────────○──\n               /      \\                   /\\\nfeature-a ○──○          \\feature-b ○──○──○     \\\n                         \\\nmain  ────────────────────●──────────────●──\n                           \\               \\\ntag v1.0                   tag v1.1\n                            \\hotfix  ○──○──────────────✓\n```\n\n**Branches :**\n- `main` : Code de production (stable)\n- `develop` : Branche de développement\n- `feature/*` : Nouvelles fonctionnalités\n- `release/*` : Préparation release\n- `hotfix/*` : Corrections urgentes production\n\n---\n\n### 3. Trunk-Based Development\n**Pour :** Très grosses équipes, releases fréquentes\n\n```\nmain (trunk) ──○──○──○──○──○──○──○──\n               │  │  │  │  │  │  │\n              PR  PR PR PR PR PR PR\n```\n\n**Règles :**\n- Une seule branche : `main`\n- Petits commits fréquents\n- Feature flags pour cacher code inachevé\n- Pas de branches longues\n\n**Avantages :** Intégration continue maximale\n\n---\n\n## Comparaison des Workflows\n\n| Critère | GitHub Flow | Git Flow | Trunk-Based |
-|---------|-------------|----------|-------------|\n| **Complexité** | ⭐ Simple | ⭐⭐⭐ Complexe | ⭐⭐ Moyen |\n| **Taille équipe** | 2-10 pers. | 10+ pers. | 50+ pers. |\n| **Fréquence release** | Continue | Planifiée | Plusieurs/jour |\n| **Branches** | 2 types | 5 types | 1 type |\n| **Code review** | PR | PR | Pair programming |\n| **Outils nécessaires** | GitHub/GitLab | Git Flow CLI | Feature flags |\n\n## Quel Workflow Choisir ?\n\n**Choisis GitHub Flow si :**\n- Startup ou petite équipe\n- Déploiement continu\n- Site web/application SaaS\n- Tu veux simplicité\n\n**Choisis Git Flow si :**\n- Logiciel avec versions (v1.0, v2.0)\n- Release planifiées (mensuelles)\n- Besoin de hotfixes\n- Enterprise avec process strict\n\n**Choisis Trunk-Based si :**\n- Google/Facebook scale\n- Releases multiples par jour\n- Feature flags déjà en place\n- Senior developers only",
-      "codeExample": "# Comparaison des workflows en pratique\n\n# ========== GITHUB FLOW ==========\n# Workflow simple et rapide\n\n# 1. Créer une feature branch\ngit checkout -b feature/login\n\n# 2. Développer\ngit commit -m \"Add login form\"\ngit commit -m \"Add validation\"\n\n# 3. Pusher et créer PR\ngit push -u origin feature/login\n# → Créer PR sur GitHub\n# → Review + Tests\n# → Merge sur main\n\n# 4. Deploy automatique depuis main\n\n\n# ========== GIT FLOW ==========\n# Installation : npm install -g git-flow-avh\n\n# Initialiser Git Flow\ngit flow init\n\n# Nouvelle feature\ngit flow feature start authentication\n# → Crée branche feature/authentication depuis develop\n\n# Développer...\ngit commit -m \"Add auth\"\n\n# Terminer la feature\ngit flow feature finish authentication\n# → Merge dans develop\n# → Supprime la branche feature\n\n# Préparer une release\ngit flow release start 1.2.0\n# → Crée branche release/1.2.0 depuis develop\n\n# Bugfixes de release...\ngit commit -m \"Fix version number\"\n\n# Terminer la release\ngit flow release finish 1.2.0\n# → Merge dans main (tag v1.2.0)\n# → Merge dans develop\n\n# Hotfix urgent\ngit flow hotfix start 1.2.1\n# → Crée depuis main\n\ngit commit -m \"Fix critical bug\"\n\ngit flow hotfix finish 1.2.1\n# → Merge dans main ET develop"
+      "content": "# Essential to know\n- Workflow = convention on how to use Git as a team\n- Git Flow = structured workflow with specific branches\n- GitHub Flow = simple workflow centered on PRs\n- Trunk-Based Development = direct commits on main\n- The right workflow depends on team size and release frequency\n\n---\n\n# Git Workflows: Organizing Team Work\n\n## Why a Workflow?\n\nWithout convention, chaos:\n- ❌ Everyone commits on main\n- ❌ Constant conflicts\n- ❌ Broken code in production\n- ❌ Impossible to know who does what\n\n**With a workflow:**\n- ✅ Code review before merge\n- ✅ Isolated branches for features\n- ✅ Stable releases\n- ✅ Quick hotfixes\n\n## Main Workflows\n\n### 1. GitHub Flow (Simple, recommended)\n**For:** Small teams, continuous deployment\n\n```\nmain ─────────────────────────────────\n       \\                              /\nfeature ━━━━ PR ━━━━━━━━━━━━━━━━━━━━━━✓\n```\n\n**Rules:**\n- Only one main branch: `main`\n- Create a branch for each feature/bugfix\n- Open a Pull Request\n- Review + tests before merge\n- Automatic deploy from main\n\n**Advantages:** Simple, fast, ideal for CI/CD\n\n---\n\n### 2. Git Flow (Structured, enterprise)\n**For:** Large teams, planned releases\n\n```\ndevelop  ───────○──○──○─────────────────○──\n               /      \\                   /\\\nfeature-a ○──○          \\feature-b ○──○──○     \\\n                         \\\nmain  ────────────────────●──────────────●──\n                           \\               \\\ntag v1.0                   tag v1.1\n                            \\hotfix  ○──○──────────────✓\n```\n\n**Branches:**\n- `main`: Production code (stable)\n- `develop`: Development branch\n- `feature/*`: New features\n- `release/*`: Release preparation\n- `hotfix/*`: Urgent production fixes\n\n---\n\n### 3. Trunk-Based Development\n**For:** Very large teams, multiple releases per day\n\n```\nmain ──○──○──○──○──○──○──○──○──○──○──\n       ↑  ↑  ↑  ↑  ↑  ↑  ↑  ↑  ↑  ↑\n      Short-lived feature flags\n```\n\n**Rules:**\n- Everyone commits on main\n- Feature flags to hide unfinished features\n- Maximum 1-day branches\n- Pair programming\n\n---\n\n## Comparison\n\n| Criteria | GitHub Flow | Git Flow | Trunk-Based |\n|----------|-------------|----------|-------------|\n| **Complexity** | ⭐ Simple | ⭐⭐⭐ Complex | ⭐⭐ Medium |\n| **Team size** | 2-10 people | 10+ people | 50+ people |\n| **Release frequency** | Continuous | Planned | Multiple/day |\n| **Branches** | 2 types | 5 types | 1 type |\n| **Code review** | PR | PR | Pair programming |\n| **Tools needed** | GitHub/GitLab | Git Flow CLI | Feature flags |\n\n## Which Workflow to Choose?\n\n**Choose GitHub Flow if:**\n- Startup or small team\n- Continuous deployment\n- Website/SaaS application\n- You want simplicity\n\n**Choose Git Flow if:**\n- Software with versions (v1.0, v2.0)\n- Planned releases (monthly)\n- Need hotfixes\n- Enterprise with strict process\n\n**Choose Trunk-Based if:**\n- Google/Facebook scale\n- Multiple releases per day\n- Feature flags already in place\n- Senior developers only",
+      "codeExample": "# Workflow comparison in practice\n\n# ========== GITHUB FLOW ==========\n# Simple and fast workflow\n\n# 1. Create a feature branch\ngit checkout -b feature/login\n\n# 2. Develop\ngit commit -m \"Add login form\"\ngit commit -m \"Add validation\"\n\n# 3. Push and create PR\ngit push -u origin feature/login\n# → Create PR on GitHub\n# → Review + Tests\n# → Merge to main\n\n# 4. Automatic deploy from main\n\n\n# ========== GIT FLOW ==========\n# Install: npm install -g git-flow-avh\n\n# Initialize Git Flow\ngit flow init\n\n# New feature\ngit flow feature start authentication\n# → Creates feature/authentication branch from develop\n\n# Develop...\ngit commit -m \"Add auth\"\n\n# Finish feature\ngit flow feature finish authentication\n# → Merge to develop\n# → Delete feature branch\n\n# Prepare release\ngit flow release start 1.2.0\n# → Creates release/1.2.0 branch from develop\n\n# Release bugfixes...\ngit commit -m \"Fix version number\"\n\n# Finish release\ngit flow release finish 1.2.0\n# → Merge to main (tag v1.2.0)\n# → Merge to develop\n\n# Urgent hotfix\ngit flow hotfix start 1.2.1\n# → Creates from main\n\ngit commit -m \"Fix critical bug\"\n\ngit flow hotfix finish 1.2.1\n# → Merge to main AND develop"
     },
     {
       "id": "github-flow",
       "moduleId": "git-flow",
-      "title": "GitHub Flow en Pratique",
+      "title": "GitHub Flow in Practice",
       "order": 2,
       "difficulty": "beginner",
-      "content": "# Essential to know\n- GitHub Flow = workflow simple avec main + feature branches\n- Une seule branche principale : main\n- Feature branches courtes (1-2 jours max)\n- Pull Request obligatoire pour merge\n- Tests automatiques avant merge\n- Déploiement automatique depuis main\n- Standard pour open source et startups\n\n---\n\n# GitHub Flow : Le Workflow Moderne\n\n## Règles du GitHub Flow\n\n### 1. Tout sur main est déployable\n\nLa branche `main` est toujours stable et prête pour la production.\n\n### 2. Créer une branche descriptive\n\n```bash\n# Bonnes pratiques de nommage\ngit checkout -b feature/user-authentication\ngit checkout -b fix/login-error\ngit checkout -b docs/api-documentation\ngit checkout -b refactor/button-component\n```\n\n### 3. Commits fréquents\n\n```bash\ngit commit -m \"Add login form UI\"\ngit commit -m \"Implement email validation\"\ngit commit -m \"Add error messages\"\n```\n\n### 4. Ouvrir une Pull Request tôt\n\n**Ne pas attendre d'avoir fini !**\n\n```bash\ngit push -u origin feature/authentication\n```\n\nPuis créer PR sur GitHub avec :\n- Titre descriptif\n- Description des changements\n- Screenshots si UI\n- Checklist de tests\n\n### 5. Discussion et Review\n\n**Pour l'auteur :**\n- Répondre aux commentaires\n- Faire les modifications demandées\n- Re-request review quand c'est prêt\n\n**Pour le reviewer :**\n- Vérifier le code\n- Tester localement si nécessaire\n- Approuver ou request changes\n\n### 6. Merge après validation\n\n**Options de merge :**\n- **Create a merge commit** : Garde l'historique complet\n- **Squash and merge** : Fusionne en un seul commit\n- **Rebase and merge** : Historique linéaire\n\n**Recommandé :** Squash pour features, merge pour hotfixes\n\n### 7. Déployer immédiatement\n\n```bash\n# Push sur main déclenche le déploiement\ngit checkout main\ngit pull origin main\n```\n\n## Workflow Complet : Exemple\n\n```bash\n# 1. Synchroniser\ngit checkout main\ngit pull origin main\n\n# 2. Créer feature branch\ngit checkout -b feature/dark-mode\n\n# 3. Développer avec commits réguliers\ngit commit -m \"Add dark mode toggle\"\ngit commit -m \"Update colors for dark theme\"\ngit commit -m \"Save preference in localStorage\"\n\n# 4. Pusher et créer PR\ngit push -u origin feature/dark-mode\n\n# 5. Sur GitHub : créer PR\n# Titre : \"Add dark mode support\"\n# Description : \"- Toggle in settings\\n- Persists preference\"\n\n# 6. Review par un collègue\n# → \"LGTM!\" (Looks Good To Me)\n\n# 7. Merge sur GitHub\n# → Squash and merge\n\n# 8. Nettoyer localement\ngit checkout main\ngit pull origin main\ngit branch -d feature/dark-mode\n```\n\n## Bonnes Pratiques\n\n### Nommage des Branches\n\n```\nfeature/brief-description\nfix/issue-description\ndocs/what-you-documented\nrefactor/component-name\ntest/what-you-tested\nchore/dependency-update\n```\n\n### Tailles de PR\n\n**✅ Bon :**\n- 200-400 lignes de code\n- 1 feature ou fix\n- Reviewable en 30 min\n\n**❌ Mauvais :**\n- 2000+ lignes\n- Multiple features\n- Review impossible\n\n### CI/CD\n\nAvant de merger :\n- ✅ Tests unitaires passent\n- ✅ Lint sans erreur\n- ✅ Build réussit\n- ✅ Review approuvée\n- ✅ Pas de conflits",
-      "codeExample": "# Template de Pull Request GitHub\n\n## Description\nBrief description of what this PR does\n\n## Type of Change\n- [ ] Bug fix\n- [ ] New feature\n- [ ] Breaking change\n- [ ] Documentation\n\n## How Has This Been Tested?\n- [ ] Unit tests\n- [ ] Integration tests\n- [ ] Manual testing\n\n## Screenshots (if applicable)\nAdd screenshots to help explain your changes\n\n## Checklist\n- [ ] My code follows the style guidelines\n- [ ] I have performed a self-review\n- [ ] I have commented my code\n- [ ] My changes generate no new warnings\n- [ ] I have added tests that prove my fix/feature works\n- [ ] New and existing tests pass\n\n## Related Issues\nCloses #123\n\n\n# Script pour automatiser le workflow\n#!/bin/bash\n\n# create-feature.sh\nFEATURE_NAME=$1\n\nif [ -z \"$FEATURE_NAME\" ]; then\n  echo \"Usage: ./create-feature.sh feature-name\"\n  exit 1\nfi\n\ngit checkout main\ngit pull origin main\ngit checkout -b feature/$FEATURE_NAME\n\necho \"Feature branch feature/$FEATURE_NAME created!\"\necho \"Start coding and commit regularly.\"\n\n\n# submit-pr.sh\nBRANCH=$(git branch --show-current)\n\ngit push -u origin $BRANCH\n\n# Ouvrir GitHub pour créer PR\nREPO_URL=$(git remote get-url origin | sed 's/.*://' | sed 's/\\.git$//')\nopen \"https://github.com/$REPO_URL/pull/new/$BRANCH\"\n\necho \"Create your PR on GitHub!\""
+      "content": "# Essential to know\n- GitHub Flow = simple workflow with main + feature branches\n- Only one main branch: main\n- Short feature branches (1-2 days max)\n- Pull Request required for merge\n- Automatic tests before merge\n- Automatic deployment from main\n- Standard for open source and startups\n\n---\n\n# GitHub Flow: The Modern Workflow\n\n## GitHub Flow Rules\n\n### 1. Everything on main is deployable\n\nThe `main` branch is always stable and ready for production.\n\n### 2. Create a descriptive branch\n\n```bash\n# Good naming practices\ngit checkout -b feature/user-authentication\ngit checkout -b fix/login-error\ngit checkout -b docs/api-documentation\ngit checkout -b refactor/button-component\n```\n\n### 3. Frequent commits\n\n```bash\ngit commit -m \"Add login form UI\"\ngit commit -m \"Implement email validation\"\ngit commit -m \"Add error messages\"\n```\n\n### 4. Open Pull Request early\n\n**Don't wait until you're finished!**\n\n```bash\ngit push -u origin feature/authentication\n```\n\nThen create PR on GitHub with:\n- Descriptive title\n- Description of changes\n- Screenshots if UI\n- Test checklist\n\n### 5. Discussion and Review\n\n**For the author:**\n- Respond to comments\n- Make requested changes\n- Re-request review when ready\n\n**For the reviewer:**\n- Check code\n- Test locally if necessary\n- Approve or request changes\n\n### 6. Merge after validation\n\n**Merge options:**\n- **Create a merge commit**: Keep complete history\n- **Squash and merge**: Merge into single commit\n- **Rebase and merge**: Linear history\n\n**Recommended:** Squash for features, merge for hotfixes\n\n### 7. Deploy immediately\n\n```bash\n# Push to main triggers deployment\ngit checkout main\ngit pull origin main\n```\n\n## Complete Workflow: Example\n\n```bash\n# 1. Sync\ngit checkout main\ngit pull origin main\n\n# 2. Create feature branch\ngit checkout -b feature/contact-form\n\n# 3. Develop\necho \"Contact form code\" > contact.html\ngit add .\ngit commit -m \"Add contact form\"\n\n# 4. Push\ngit push -u origin feature/contact-form\n\n# 5. Create PR on GitHub\n# → Add description\n# → Request review\n\n# 6. Review\n# → Address comments\ngit add .\ngit commit -m \"Fix review comments\"\ngit push\n\n# 7. Merge on GitHub\n# → Squash and merge\n\n# 8. Cleanup\ngit checkout main\ngit pull origin main\ngit branch -d feature/contact-form\ngit push origin --delete feature/contact-form\n\n# 9. Deploy (automatic or manual)\n```\n\n## PR Description Template\n\n```markdown\n## Description\nBrief description of what this PR does\n\n## Type of Change\n- [ ] Bug fix\n- [ ] New feature\n- [ ] Breaking change\n- [ ] Documentation\n\n## How Has This Been Tested?\n- [ ] Unit tests\n- [ ] Integration tests\n- [ ] Manual testing\n\n## Screenshots (if applicable)\nAdd screenshots to help explain your changes\n\n## Checklist\n- [ ] My code follows style guidelines\n- [ ] I performed a self-review\n- [ ] I commented my code\n- [ ] My changes generate no new warnings\n- [ ] I added tests proving my fix/feature works\n- [ ] New and existing tests pass\n\n## Related Issues\nCloses #123\n```\n\n## Review Best Practices\n\n### For the author:\n- Keep PRs small (< 400 lines)\n- Add clear description\n- Respond quickly to comments\n- Test before requesting review\n\n### For the reviewer:\n- Review within 24h\n- Be constructive\n- Approve if only minor issues\n- Test locally if complex\n\n## Common Mistakes\n
+❌ **Too big PR**\nSplit into smaller PRs\n\n❌ **No description**\nAlways explain what and why\n\n❌ **Merge without review**\nEven if urgent, get at least one approval\n\n❌ **Forget to delete branch**\nClean up after merge",
+      "codeExample": "# GitHub Pull Request template\n\n## Description\nBrief description of what this PR does\n\n## Type of Change\n- [ ] Bug fix\n- [ ] New feature\n- [ ] Breaking change\n- [ ] Documentation\n\n## How Has This Been Tested?\n- [ ] Unit tests\n- [ ] Integration tests\n- [ ] Manual testing\n\n## Screenshots (if applicable)\nAdd screenshots to help explain your changes\n\n## Checklist\n- [ ] My code follows the style guidelines\n- [ ] I have performed a self-review\n- [ ] I have commented my code\n- [ ] My changes generate no new warnings\n- [ ] I have added tests that prove my fix/feature works\n- [ ] New and existing tests pass\n\n## Related Issues\nCloses #123\n\n\n# Script to automate workflow\n#!/bin/bash\n\n# create-feature.sh\nFEATURE_NAME=$1\n\nif [ -z \"$FEATURE_NAME\" ]; then\n  echo \"Usage: ./create-feature.sh feature-name\"\n  exit 1\nfi\n\ngit checkout main\ngit pull origin main\ngit checkout -b feature/$FEATURE_NAME\n\necho \"Feature branch feature/$FEATURE_NAME created!\"\necho \"Start coding and commit regularly.\"\n\n\n# submit-pr.sh\nBRANCH=$(git branch --show-current)\n\ngit push -u origin $BRANCH\n\n# Open GitHub to create PR\nREPO_URL=$(git remote get-url origin | sed 's/.*://' | sed 's/\\.git$//')\nopen \"https://github.com/$REPO_URL/pull/new/$BRANCH\"\n\necho \"Create your PR on GitHub!\""
     },
     {
       "id": "git-flow-detailed",
       "moduleId": "git-flow",
-      "title": "Git Flow Avancé",
+      "title": "Advanced Git Flow",
       "order": 3,
       "difficulty": "intermediate",
-      "content": "# Essential to know\n- Git Flow = 5 types de branches avec rôles spécifiques\n- main = production stable (tags de version)\n- develop = intégration continue des features\n- feature/* = développement isolé\n- release/* = stabilisation avant production\n- hotfix/* = corrections urgentes production\n- git-flow CLI automatise les opérations\n\n---\n\n# Git Flow en Détail\n\n## Les 5 Types de Branches\n\n### 1. main (Production)\n- Code déployé en production\n- Seuls les hotfixes et releases y touchent\n- Chaque commit = version taggée (v1.0, v1.1...)\n\n### 2. develop (Développement)\n- Branche d'intégration\n- Features mergées ici\n- Doit rester stable mais peut avoir des bugs\n- Base pour les nouvelles features\n\n### 3. feature/* (Fonctionnalités)\n- Créées depuis develop\n- Une par feature\n- Mergées dans develop\n- Supprimées après merge\n\n### 4. release/* (Releases)\n- Créées depuis develop quand prêt pour prod\n- Version bump, dernières corrections\n- Mergées dans main ET develop\n- Tag avec numéro de version\n\n### 5. hotfix/* (Corrections urgentes)\n- Créées depuis main\n- Production cassée !\n- Mergées dans main ET develop\n- Tag avec version patch (v1.0.1)\n\n## Schéma Complet\n\n```\nmain:    ●────────●────────●────────●────────●\n         ↑        ↑        ↑        ↑        ↑\n       v1.0     v1.0.1   v1.1     v1.1.1   v1.2\n                  ↑                 ↑\n               hotfix           hotfix\n\ndevelop: ●──○──○──●──○──○──○──●──○──●──○──●\n             /      \\         /      /     \\\nfeature/a ○──○        \\       /      /       \\\n                      \\feature/b ○──○──○    /       \\\                                         \\\release/1.1 ──────────────○──○──●                 \\\                                         \\\release/1.2 ────────────────────────────○──○──●\n```\n\n## Installation et Configuration\n\n```bash\n# Installer git-flow\n# macOS\nbrew install git-flow-avh\n\n# Ubuntu/Debian\nsudo apt-get install git-flow\n\n# Initialiser dans un repo\ngit flow init\n\n# Répondre aux questions :\n# Branch name for production releases: [main]\n# Branch name for \"next release\" development: [develop]\n# Feature branches: [feature/]\n# Release branches: [release/]\n# Hotfix branches: [hotfix/]\n# Support branches: [support/]\n# Version tag prefix: [v]\n```\n\n## Commandes Git Flow\n\n### Feature Branches\n\n```bash\n# Démarrer une feature\ngit flow feature start authentication\n# Équivalent à : git checkout -b feature/authentication develop\n\n# Publier (push)\ngit flow feature publish authentication\n\n# Récupérer une feature\ngit flow feature pull origin authentication\n\n# Terminer\ngit flow feature finish authentication\n# → Checkout develop\n# → Merge feature/authentication\n# → Delete feature branch\n```\n\n### Release Branches\n\n```bash\n# Démarrer une release\ngit flow release start 1.2.0\n# → Crée release/1.2.0 depuis develop\n\n# Dernières corrections...\ngit commit -m \"Bump version to 1.2.0\"\ngit commit -m \"Update changelog\"\n\n# Publier pour review\ngit flow release publish 1.2.0\n\n# Terminer la release\ngit flow release finish 1.2.0\n# → Merge dans main (tag v1.2.0)\n# → Merge dans develop\n# → Delete release branch\n```\n\n### Hotfix Branches\n\n```bash\n# URGENT : Bug en production !\ngit flow hotfix start 1.2.1\n# → Crée hotfix/1.2.1 depuis main\n\n# Corriger vite...\ngit commit -m \"Fix critical security bug\"\n\n# Terminer\ngit flow hotfix finish 1.2.1\n# → Merge dans main (tag v1.2.1)\n# → Merge dans develop\n# → Delete hotfix branch\n\n# Push les tags\ngit push origin main --tags\n```\n\n## Stratégie de Versioning (SemVer)\n\n```\nFormat : MAJOR.MINOR.PATCH\n\n1.2.3\n│ │ │\n│ │ └── Patch : bugfix (hotfix)\n│ └──── Minor : nouvelle feature (release)\n└────── Major : breaking change (release)\n\nExemples :\n- v1.0.0 : Première release\n- v1.0.1 : Hotfix urgent\n- v1.1.0 : Nouvelle feature\n- v2.0.0 : Breaking changes\n```",
-      "codeExample": "# Workflow Git Flow complet\n\n# ========== DÉVELOPPEMENT NORMAL ==========\n\n# 1. Commencer une feature\ngit flow feature start payment-gateway\n\n# 2. Développer\ngit commit -m \"Add Stripe integration\"\ngit commit -m \"Add payment form\"\n\n# 3. Terminer la feature\ngit flow feature finish payment-gateway\n# → Merge dans develop\n\n\n# ========== PRÉPARER UNE RELEASE ==========\n\n# 1. develop est stable, on veut release\ngit flow release start 2.3.0\n\n# 2. Corrections finales\ngit commit -m \"Update version to 2.3.0\"\ngit commit -m \"Fix typo in about page\"\n\n# 3. Terminer la release\ngit flow release finish 2.3.0\n# → Tag v2.3.0 sur main\n# → Merge dans develop\n\n# 4. Push\ngit push origin main --tags\ngit push origin develop\n\n\n# ========== HOTFIX URGENT ==========\n\n# PROD est cassée !\n# v2.3.0 a un bug critique\n\n# 1. Créer hotfix\ngit flow hotfix start 2.3.1\n\n# 2. Corriger\ngit commit -m \"Fix: API endpoint returning 500\"\n\n# 3. Terminer (merge dans main ET develop)\ngit flow hotfix finish 2.3.1\n\n# 4. Deploy\ngit push origin main --tags\n\n\n# ========== GESTION DES VERSIONS ==========\n\n# Voir les tags\ngit tag -l\n\n# Push un tag spécifique\ngit push origin v2.3.0\n\n# Checkout une version spécifique\ngit checkout v2.3.0\n\n# Créer branche depuis tag\ngit checkout -b hotfix-legacy v1.5.0\n\n\n# ========== COMMANDES UTILES ==========\n\n# Liste des features en cours\ngit branch | grep feature\n\n# Voir où on en est\ngit flow feature list\ngit flow release list\n\n# Abandonner une feature\ngit flow feature finish -F authentication  # Force sans merge\ngit branch -D feature/authentication"
+      "content": "# Essential to know\n- Git Flow = 5 branch types with specific roles\n- main = stable production (version tags)\n- develop = continuous integration of features\n- feature/* = isolated development\n- release/* = stabilization before production\n- hotfix/* = urgent production fixes\n- git-flow CLI automates operations\n\n---\n\n# Git Flow in Detail\n\n## The 5 Branch Types\n\n### 1. main (Production)\n- Deployed production code\n- Only hotfixes and releases touch it\n- Each commit = tagged version (v1.0, v1.1...)\n\n### 2. develop (Development)\n- Integration branch\n- Features merged here\n- Should stay stable but may have bugs\n- Base for new features\n\n### 3. feature/* (Features)\n- Created from develop\n- One per feature\n- Merged to develop\n- Deleted after merge\n\n### 4. release/* (Releases)\n- Created from develop when ready for prod\n- Version bump, final fixes\n- Merged to main AND develop\n- Tagged with version number\n\n### 5. hotfix/* (Urgent fixes)\n- Created from main\n- Production is broken!\n- Merged to main AND develop\n- Tagged with patch version (v1.0.1)\n\n## Complete Diagram\n\n```\nmain:    ●────────●────────●────────●────────●\n         ↑        ↑        ↑        ↑        ↑\n       v1.0     v1.0.1   v1.1     v1.1.1   v1.2\n                  ↑                 ↑\n               hotfix           hotfix\n\ndevelop: ●──○──○──●──○──○──○──●──○──●──○──●\n             /      \\         /      /     \\\nfeature/a ○──○        \\       /      /       \\\n                      \\feature/b ○──○──○    /       \\\                                         \\\release/1.1 ──────────────○──○──●                 \\\                                         \\\release/1.2 ────────────────────────────○──○──●\n```\n\n## Installation and Configuration\n\n```bash\n# Install git-flow\n# macOS\nbrew install git-flow-avh\n\n# Ubuntu/Debian\nsudo apt-get install git-flow\n\n# Windows (Git Bash)\nhttps://github.com/petervanderdoes/gitflow-avh/wiki/Installing-on-Windows\n```\n\n### Initialize Git Flow\n\n```bash\n# In an existing repository\ngit flow init\n\n# Answer questions (or press Enter for defaults)\nNo branches exist yet. Base branches must be created now.\nBranch name for production releases: [main]\nBranch name for \"next release\" development: [develop]\n\nFeature branches? [feature/]\nRelease branches? [release/]\nHotfix branches? [hotfix/]\nSupport branches? [support/]\nVersion tag prefix? [] v\n```\n\n## Feature Workflow\n\n```bash\n# Start feature\ngit flow feature start user-profile\n# Creates and switches to feature/user-profile from develop\n\n# Develop...\ngit commit -m \"Add profile page\"\ngit commit -m \"Add avatar upload\"\n\n# Finish feature\ngit flow feature finish user-profile\n# Merges to develop\n# Deletes feature/user-profile\n# Switches to develop\n```\n\n## Release Workflow\n\n```bash\n# Start release (when develop is stable)\ngit flow release start 1.3.0\n# Creates release/1.3.0 from develop\n\n# Version bump, final fixes\ngit commit -m \"Update version to 1.3.0\"\ngit commit -m \"Fix changelog\"\n\n# Finish release\ngit flow release finish 1.3.0\n# Merges to main (tag v1.3.0)\n# Merges to develop\n# Deletes release/1.3.0\n```\n\n## Hotfix Workflow (URGENT)\n\n```bash\n# Production is broken!\ngit flow hotfix start 1.3.1\n# Creates hotfix/1.3.1 from main\n\n# Fix quickly\ngit commit -m \"Fix: correct API endpoint\"\n\n# Finish hotfix\ngit flow hotfix finish 1.3.1\n# Merges to main (tag v1.3.1)\n# Merges to develop\n# Deletes hotfix/1.3.1\n```\n\n## Semantic Versioning\n\nGit Flow uses SemVer: `MAJOR.MINOR.PATCH`\n\n- **MAJOR**: Breaking changes\n- **MINOR**: New features (backward compatible)\n- **PATCH**: Bug fixes\n\nExamples: v1.0.0 → v1.1.0 → v1.1.1 → v2.0.0\n\n## Without git-flow CLI\n\nIf you can't install the CLI:\n\n```bash\n# Feature\ngit checkout develop\ngit checkout -b feature/my-feature\n# ... work ...\ngit checkout develop\ngit merge --no-ff feature/my-feature\ngit branch -d feature/my-feature\n\n# Release\ngit checkout develop\ngit checkout -b release/1.0.0\n# ... bump version ...\ngit checkout main\ngit merge --no-ff release/1.0.0\ngit tag v1.0.0\ngit checkout develop\ngit merge --no-ff release/1.0.0\ngit branch -d release/1.0.0\n```",
+      "codeExample": "# Complete Git Flow workflow\n\n# ========== NORMAL DEVELOPMENT ==========\n\n# 1. Start a feature\ngit flow feature start payment-gateway\n\n# 2. Develop\ngit commit -m \"Add Stripe integration\"\ngit commit -m \"Add payment form\"\n\n# 3. Finish feature\ngit flow feature finish payment-gateway\n# → Merge to develop\n\n\n# ========== PREPARE RELEASE ==========\n\n# 1. develop is stable, we want to release\ngit flow release start 2.3.0\n\n# 2. Final fixes\ngit commit -m \"Update version to 2.3.0\"\ngit commit -m \"Fix typo in about page\"\n\n# 3. Finish release\ngit flow release finish 2.3.0\n# → Tag v2.3.0 on main\n# → Merge to develop\n\n# 4. Push\ngit push origin main --tags\ngit push origin develop\n\n\n# ========== URGENT HOTFIX ==========\n\n# PROD is broken!\n# v2.3.0 has a critical bug\n\n# 1. Create hotfix\ngit flow hotfix start 2.3.1\n\n# 2. Fix\ngit commit -m \"Fix: API endpoint returning 500\"\n\n# 3. Finish (merge to main AND develop)\ngit flow hotfix finish 2.3.1\n\n# 4. Deploy\ngit push origin main --tags\n\n\n# ========== VERSION MANAGEMENT ==========\n\n# View tags\ngit tag -l\n\n# Push specific tag\ngit push origin v2.3.0\n\n# Checkout specific version\ngit checkout v2.3.0\n\n# Create branch from tag\ngit checkout -b hotfix-legacy v1.5.0\n\n\n# ========== USEFUL COMMANDS ==========\n\n# List ongoing features\ngit branch | grep feature\n\n# See where we are\ngit flow feature list\ngit flow release list\n\n# Abandon a feature\ngit flow feature finish -F authentication  # Force without merge\ngit branch -D feature/authentication"
     }
   ],
   "exercises": [
@@ -43,23 +43,23 @@
       "id": "flow-ex-1",
       "lessonId": "git-flow-intro",
       "moduleId": "git-flow",
-      "title": "Quiz Workflows",
+      "title": "Workflows Quiz",
       "difficulty": "easy",
       "type": "quiz",
       "questions": [
         {
-          "question": "Quel workflow est recommandé pour une petite équipe avec déploiement continu ?",
+          "question": "Which workflow is recommended for a small team with continuous deployment?",
           "options": [
             "Git Flow",
             "GitHub Flow",
             "Trunk-Based Development",
-            "Aucun workflow"
+            "No workflow"
           ],
           "correctAnswer": 1,
-          "explanation": "GitHub Flow est simple, rapide et idéal pour les équipes qui déploient fréquemment. Il n'a qu'une seule branche principale (main) et des feature branches courtes."
+          "explanation": "GitHub Flow is simple, fast, and ideal for teams that deploy frequently. It has only one main branch (main) and short feature branches."
         },
         {
-          "question": "Dans Git Flow, sur quelle branche crée-t-on une feature ?",
+          "question": "In Git Flow, on which branch do you create a feature?",
           "options": [
             "main",
             "develop",
@@ -67,18 +67,18 @@
             "hotfix"
           ],
           "correctAnswer": 1,
-          "explanation": "Les feature branches sont créées depuis develop et mergées dans develop. Seules les releases et hotfixes touchent main."
+          "explanation": "Feature branches are created from develop and merged to develop. Only releases and hotfixes touch main."
         },
         {
-          "question": "Quel est l'avantage principal du rebase dans un workflow ?",
+          "question": "What is the main advantage of rebase in a workflow?",
           "options": [
-            "C'est plus rapide",
-            "Historique linéaire et propre",
-            "Pas besoin de tests",
-            "Plusieurs personnes peuvent travailler sur la même branche"
+            "It's faster",
+            "Clean and linear history",
+            "No tests needed",
+            "Multiple people can work on the same branch"
           ],
           "correctAnswer": 1,
-          "explanation": "Le rebase produit un historique linéaire sans commits de merge, ce qui facilite la lecture et le debug de l'historique."
+          "explanation": "Rebase produces a linear history without merge commits, making it easier to read and debug history."
         }
       ]
     },
@@ -86,34 +86,34 @@
       "id": "flow-ex-2",
       "lessonId": "github-flow",
       "moduleId": "git-flow",
-      "title": "Quiz GitHub Flow",
+      "title": "GitHub Flow Quiz",
       "difficulty": "easy",
       "type": "quiz",
       "questions": [
         {
-          "question": "Quand doit-on ouvrir une Pull Request dans GitHub Flow ?",
+          "question": "When should you open a Pull Request in GitHub Flow?",
           "options": [
-            "Quand la feature est 100% finie",
-            "Le plus tôt possible, même si pas fini",
-            "Jamais",
-            "Une fois par semaine"
+            "When the feature is 100% finished",
+            "As early as possible, even if not finished",
+            "Never",
+            "Once per week"
           ],
           "correctAnswer": 1,
-          "explanation": "Dans GitHub Flow, on ouvre une PR tôt pour avoir du feedback rapidement. On peut mettre [WIP] dans le titre si ce n'est pas fini."
+          "explanation": "In GitHub Flow, open a PR early to get quick feedback. You can put [WIP] in the title if it's not finished."
         },
         {
-          "question": "Quelle est la taille idéale d'une PR ?",
+          "question": "What is the ideal PR size?",
           "options": [
-            "5000 lignes de code",
-            "200-400 lignes",
-            "1 ligne",
-            "Ça n'a pas d'importance"
+            "5000 lines of code",
+            "200-400 lines",
+            "1 line",
+            "It doesn't matter"
           ],
           "correctAnswer": 1,
-          "explanation": "Une PR de 200-400 lignes est idéale : assez petite pour être relue rapidement (30 min), assez grande pour être cohérente."
+          "explanation": "A PR of 200-400 lines is ideal: small enough to be reviewed quickly (30 min), large enough to be coherent."
         },
         {
-          "question": "Que signifie 'LGTM' dans une review ?",
+          "question": "What does 'LGTM' mean in a review?",
           "options": [
             "Let's Go To Market",
             "Looks Good To Me",
@@ -121,7 +121,7 @@
             "Last Git Test Message"
           ],
           "correctAnswer": 1,
-          "explanation": "LGTM = 'Looks Good To Me'. C'est une approbation courante indiquant que le code a été relu et est approuvé."
+          "explanation": "LGTM = 'Looks Good To Me'. It's a common approval indicating the code has been reviewed and is approved."
         }
       ]
     },
@@ -129,12 +129,12 @@
       "id": "flow-ex-3",
       "lessonId": "git-flow-detailed",
       "moduleId": "git-flow",
-      "title": "Quiz Git Flow",
+      "title": "Git Flow Quiz",
       "difficulty": "medium",
       "type": "quiz",
       "questions": [
         {
-          "question": "Quelle branche dans Git Flow reçoit les hotfixes ?",
+          "question": "Which branch in Git Flow receives hotfixes?",
           "options": [
             "develop",
             "feature",
@@ -142,29 +142,29 @@
             "release"
           ],
           "correctAnswer": 2,
-          "explanation": "Les hotfixes sont créés depuis main (production) et mergés dans main ET develop pour corriger rapidement un bug critique en production."
+          "explanation": "Hotfixes are created from main (production) and merged to main AND develop to quickly fix a critical bug in production."
         },
         {
-          "question": "Que se passe-t-il quand on termine une release dans Git Flow ?",
+          "question": "What happens when you finish a release in Git Flow?",
           "options": [
-            "Elle est supprimée",
-            "Elle est mergée dans main ET develop",
-            "Elle devient une feature",
-            "Rien"
+            "It is deleted",
+            "It is merged to main AND develop",
+            "It becomes a feature",
+            "Nothing"
           ],
           "correctAnswer": 1,
-          "explanation": "Quand une release est terminée, elle est mergée dans main (avec un tag de version) ET dans develop pour que les corrections soient dans les deux branches."
+          "explanation": "When a release is finished, it is merged to main (with a version tag) AND to develop so fixes are in both branches."
         },
         {
-          "question": "Quelle convention de versioning est utilisée avec Git Flow ?",
+          "question": "Which versioning convention is used with Git Flow?",
           "options": [
             "Date (2023.12.20)",
             "SemVer (1.2.3)",
-            "Hash de commit",
-            "Numéro de build"
+            "Commit hash",
+            "Build number"
           ],
           "correctAnswer": 1,
-          "explanation": "Git Flow utilise Semantic Versioning (SemVer) : MAJOR.MINOR.PATCH (ex: v2.3.1) pour indiquer le type de changements."
+          "explanation": "Git Flow uses Semantic Versioning (SemVer): MAJOR.MINOR.PATCH (ex: v2.3.1) to indicate the type of changes."
         }
       ]
     }

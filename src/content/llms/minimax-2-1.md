@@ -55,9 +55,9 @@ Minimax 2.1 is MiniMax's flagship text model, designed for exceptional multiling
 
 ## Evolution
 
-| Version | Date | Score SWE-Bench Verified | Statut / Rôle |
+| Version | Date | Score SWE-Bench Verified | Status / Role |
 |---------|------|--------------------------|---------------|
-| MiniMax 2.0 | Juin 2025 | 69.4% | Stable et efficace. |
-| **MiniMax 2.1 (REAP)** | **Nov 2025** | **74.0%** | **Spécialiste C++ / Rust / Go.** |
+| MiniMax 2.0 | June 2025 | 69.4% | Stable and efficient. |
+| **MiniMax 2.1 (REAP)** | **Nov 2025** | **74.0%** | **C++ / Rust / Go Specialist.** |
 
-Amélioration constante avec un focus sur les langages système et le multilinguisme.
+Consistent improvement with a focus on system languages and multilingualism.

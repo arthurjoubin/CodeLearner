@@ -2,7 +2,7 @@
   "module": {
     "id": "i18n-basics",
     "title": "Internationalization (i18n)",
-    "description": "Rendez vos applications accessibles dans plusieurs langues avec la localisation et la traduction",
+    "description": "Make your applications accessible in multiple languages with localization and translation",
     "icon": "Globe",
     "requiredXp": 1400,
     "color": "from-sky-400 to-blue-600",
@@ -12,11 +12,11 @@
     {
       "id": "i18n-intro",
       "moduleId": "i18n-basics",
-      "title": "Introduction à l'Internationalization",
+      "title": "Introduction to Internationalization",
       "order": 1,
       "difficulty": "beginner",
-      "content": "# Essential to know\n- i18n = Internationalization (18 lettres entre i et n)\n- l10n = Localization (10 lettres entre l et n)\n- i18n = structure pour supporter plusieurs langues\n- l10n = traduction réelle dans une langue spécifique\n- Bonnes pratiques : séparer textes du code, supporter RTL, formats dates/nombres\n- Accessible à 95% d'Internet en traduisant top 10 langues\n\n---\n\n# Internationalization : Ouvrir au Monde\n\n## Pourquoi l'i18n est crucial ?\n\n**Les chiffres parlants :**\n- 🌍 5 milliards d'utilisateurs d'Internet\n- 🌐 Seulement 25% parlent anglais nativement\n- 💰 75% des consommateurs préfèrent acheter dans leur langue\n- 📱 Top 10 langues = accès à 95% des internautes\n\n**Langues prioritaires :**\n1. Anglais (1.5B)\n2. Chinois (1.1B)\n3. Hindi (600M)\n4. Espagnol (550M)\n5. Arabe (350M)\n6. Français (300M)\n7. Portugais (250M)\n8. Russe (250M)\n9. Japonais (125M)\n10. Allemand (130M)\n\n## i18n vs l10n\n\n**Internationalization (i18n)** :\n- Préparer le code pour supporter plusieurs langues\n- Architecture et structure\n- Une seule fois par projet\n\n**Localization (l10n)** :\n- Traduire réellement le contenu\n- Adaptation culturelle (dates, devises, couleurs)\n- Fait pour chaque nouvelle langue\n\n```\n┌─────────────────────────────────────────┐\n│           Internationalization          │\n│   (Préparer le code, structure, API)    │\n└──────────────────┬──────────────────────┘\n                   │\n       ┌───────────┼───────────┐\n       ▼           ▼           ▼\n┌──────────┐ ┌──────────┐ ┌──────────┐\n│  Anglais │ │ Français │ │ Espagnol │\n│   (l10n) │ │   (l10n) │ │   (l10n) │\n└──────────┘ └──────────┘ └──────────┘\n```\n\n## Aspects de l'i18n\n\n### 1. Texte\n- Traductions de chaînes\n- Pluriels (1 item, 2 items, 5 items...)\n- Interpolation de variables\n\n### 2. Formatage\n- Dates et heures\n- Nombres et devises\n- Ordre de tri alphabétique\n\n### 3. Layout\n- RTL (Right-to-Left) : Arabe, Hébreu\n- Text expansion (Allemand +40%, Japonais -40%)\n- Images avec texte\n\n### 4. Culture\n- Couleurs (blanc = deuil en Asie)\n- Formats d'adresse\n- Numéros de téléphone\n- Systèmes de mesure\n\n## Architecture i18n Basique\n\n### Structure de fichiers\n\n```\nsrc/\n├── i18n/\n│   ├── index.js          # Configuration i18n\n│   ├── resources/        # Traductions\n│   │   ├── en/\n│   │   │   ├── common.json\n│   │   │   └── pages.json\n│   │   ├── fr/\n│   │   │   ├── common.json\n│   │   │   └── pages.json\n│   │   └── es/\n│   │       ├── common.json\n│   │       └── pages.json\n│   └── utils/            # Helpers\n│       └── formatters.js\n```\n\n### Format de traductions\n\n```json\n{\n  \"welcome\": \"Welcome to our app\",\n  \"hello\": \"Hello, {{name}}!\",\n  \"items\": {\n    \"zero\": \"No items\",\n    \"one\": \"One item\",\n    \"other\": \"{{count}} items\"\n  },\n  \"buttons\": {\n    \"save\": \"Save\",\n    \"cancel\": \"Cancel\",\n    \"delete\": \"Delete\"\n  }\n}\n```\n\n## Processus de Traduction\n\n**1. Développement (Développeur)**\n- Mettre des clés dans le code : `t('welcome')`\n- Exporter les clés en JSON\n\n**2. Traduction (Traducteur)**\n- Recevoir fichiers JSON\n- Traduire dans leur langue\n- Retourner fichiers traduits\n\n**3. Intégration (Développeur)**\n- Importer traductions\n- Tester\n- Déployer\n\n**Outils de gestion :**\n- Crowdin\n- Lokalise\n- Phrase\n- POEditor\n- Weblate (open source)",
-      "codeExample": "// Structure de base i18n sans framework\n\n// translations.js\nconst translations = {\n  en: {\n    welcome: 'Welcome',\n    hello: 'Hello, {{name}}!',\n    items_zero: 'No items',\n    items_one: 'One item',\n    items_other: '{{count}} items',\n    buttons: {\n      save: 'Save',\n      cancel: 'Cancel'\n    }\n  },\n  fr: {\n    welcome: 'Bienvenue',\n    hello: 'Bonjour, {{name}} !',\n    items_zero: 'Aucun article',\n    items_one: 'Un article',\n    items_other: '{{count}} articles',\n    buttons: {\n      save: 'Enregistrer',\n      cancel: 'Annuler'\n    }\n  },\n  es: {\n    welcome: 'Bienvenido',\n    hello: '¡Hola, {{name}}!',\n    items_zero: 'Ningún artículo',\n    items_one: 'Un artículo',\n    items_other: '{{count}} artículos',\n    buttons: {\n      save: 'Guardar',\n      cancel: 'Cancelar'\n    }\n  }\n};\n\n// i18n.js - Système minimal\nclass I18n {\n  constructor() {\n    this.locale = 'en';\n    this.translations = translations;\n  }\n\n  setLocale(locale) {\n    this.locale = locale;\n    document.documentElement.lang = locale;\n  }\n\n  t(key, options = {}) {\n    const keys = key.split('.');\n    let value = this.translations[this.locale];\n    \n    for (const k of keys) {\n      value = value?.[k];\n      if (!value) break;\n    }\n    \n    if (!value) {\n      console.warn(`Missing translation: ${key}`);\n      return key;\n    }\n    \n    // Interpolation {{variable}}\n    return value.replace(/\\{\\{(\\w+)\\}\\}/g, (match, varName) => {\n      return options[varName] !== undefined ? options[varName] : match;\n    });\n  }\n\n  // Pluralization simple\n  tp(key, count, options = {}) {\n    const pluralKey = `${key}_${this.getPluralForm(count)}`;\n    return this.t(pluralKey, { ...options, count });\n  }\n\n  getPluralForm(count) {\n    // Règles simplifiées\n    if (count === 0) return 'zero';\n    if (count === 1) return 'one';\n    return 'other';\n  }\n}\n\nconst i18n = new I18n();\nexport default i18n;\n\n// Usage\ni18n.setLocale('fr');\nconsole.log(i18n.t('welcome')); // 'Bienvenue'\nconsole.log(i18n.t('hello', { name: 'Marie' })); // 'Bonjour, Marie !'\nconsole.log(i18n.tp('items', 0)); // 'Aucun article'\nconsole.log(i18n.tp('items', 5)); // '5 articles'\nconsole.log(i18n.t('buttons.save')); // 'Enregistrer'"
+      "content": "# Essential to know\n- i18n = Internationalization (18 letters between i and n)\n- l10n = Localization (10 letters between l and n)\n- i18n = structure to support multiple languages\n- l10n = actual translation into a specific language\n- Best practices: separate text from code, support RTL, date/number formats\n- Accessible to 95% of the Internet by translating top 10 languages\n\n---\n\n# Internationalization: Opening to the World\n\n## Why is i18n crucial?\n\n**The numbers speak:**\n- 🌍 5 billion Internet users\n- 🌐 Only 25% speak English natively\n- 💰 75% of consumers prefer to buy in their language\n- 📱 Top 10 languages = access to 95% of Internet users\n\n**Priority languages:**\n1. English (1.5B)\n2. Chinese (1.1B)\n3. Hindi (600M)\n4. Spanish (550M)\n5. Arabic (350M)\n6. French (300M)\n7. Portuguese (250M)\n8. Russian (250M)\n9. Japanese (125M)\n10. German (130M)\n\n## i18n vs l10n\n\n**Internationalization (i18n)**:\n- Prepare code to support multiple languages\n- Architecture and structure\n- Done once per project\n\n**Localization (l10n)**:\n- Actually translate content\n- Cultural adaptation (dates, currencies, colors)\n- Done for each new language\n\n```\n┌─────────────────────────────────────────┐\n│           Internationalization          │\n│   (Prepare code, structure, API)        │\n└──────────────────┬──────────────────────┘\n                   │\n       ┌───────────┼───────────┐\n       ▼           ▼           ▼\n┌──────────┐ ┌──────────┐ ┌──────────┐\n│  English │ │ French   │ │ Spanish  │\n│   (l10n) │ │   (l10n) │ │   (l10n) │\n└──────────┘ └──────────┘ └──────────┘\n```\n\n## Aspects of i18n\n\n### 1. Text\n- String translations\n- Plurals (1 item, 2 items, 5 items...)\n- Variable interpolation\n\n### 2. Formatting\n- Dates and times\n- Numbers and currencies\n- Alphabetical sort order\n\n### 3. Layout\n- RTL (Right-to-Left): Arabic, Hebrew\n- Text expansion (German is 30% longer than English)\n- Iconography and colors\n\n## Getting Started\n\n### Step 1: Extract Text\n\n```javascript\n// ❌ Before: Hardcoded text\nfunction Header() {\n  return <h1>Welcome</h1>;\n}\n\n// ✅ After: Using translation keys\nfunction Header() {\n  const { t } = useTranslation();\n  return <h1>{t('welcome')}</h1>;\n}\n```\n\n### Step 2: Create Translation Files\n\n```json\n// locales/en.json\n{\n  \"welcome\": \"Welcome\",\n  \"hello\": \"Hello, {{name}}!\"\n}\n\n// locales/fr.json\n{\n  \"welcome\": \"Bienvenue\",\n  \"hello\": \"Bonjour, {{name}} !\"\n}\n```\n\n### Step 3: Configure i18n\n\n```javascript\nimport i18n from 'i18next';\nimport { initReactI18next } from 'react-i18next';\n\ni18n\n  .use(initReactI18next)\n  .init({\n    resources: {\n      en: { translation: enTranslations },\n      fr: { translation: frTranslations }\n    },\n    lng: 'en',\n    fallbackLng: 'en'\n  });\n```",
+      "codeExample": "// Basic i18n structure without framework\n\n// translations.js\nconst translations = {\n  en: {\n    welcome: 'Welcome',\n    hello: 'Hello, {{name}}!',\n    items_zero: 'No items',\n    items_one: 'One item',\n    items_other: '{{count}} items',\n    buttons: {\n      save: 'Save',\n      cancel: 'Cancel'\n    }\n  },\n  fr: {\n    welcome: 'Bienvenue',\n    hello: 'Bonjour, {{name}} !',\n    items_zero: 'Aucun article',\n    items_one: 'Un article',\n    items_other: '{{count}} articles',\n    buttons: {\n      save: 'Enregistrer',\n      cancel: 'Annuler'\n    }\n  },\n  es: {\n    welcome: 'Bienvenido',\n    hello: '¡Hola, {{name}}!',\n    items_zero: 'Ningún artículo',\n    items_one: 'Un artículo',\n    items_other: '{{count}} artículos',\n    buttons: {\n      save: 'Guardar',\n      cancel: 'Cancelar'\n    }\n  }\n};\n\n// i18n.js - Minimal system\nclass I18n {\n  constructor() {\n    this.locale = 'en';\n    this.translations = translations;\n  }\n\n  setLocale(locale) {\n    this.locale = locale;\n    document.documentElement.lang = locale;\n  }\n\n  t(key, options = {}) {\n    const keys = key.split('.');\n    let value = this.translations[this.locale];\n    \n    for (const k of keys) {\n      value = value?.[k];\n      if (!value) break;\n    }\n    \n    if (!value) {\n      console.warn(`Missing translation: ${key}`);\n      return key;\n    }\n    \n    // Interpolation {{variable}}\n    return value.replace(/\{\{(\w+)\}\}/g, (match, varName) => {\n      return options[varName] !== undefined ? options[varName] : match;\n    });\n  }\n\n  // Simple pluralization\n  tp(key, count, options = {}) {\n    const pluralKey = `${key}_${this.getPluralForm(count)}`;\n    return this.t(pluralKey, { ...options, count });\n  }\n\n  getPluralForm(count) {\n    // Simplified rules\n    if (count === 0) return 'zero';\n    if (count === 1) return 'one';\n    return 'other';\n  }\n}\n\nconst i18n = new I18n();\nexport default i18n;\n\n// Usage\ni18n.setLocale('fr');\nconsole.log(i18n.t('welcome')); // 'Bienvenue'\nconsole.log(i18n.t('hello', { name: 'Marie' })); // 'Bonjour, Marie !'\nconsole.log(i18n.tp('items', 0)); // 'Aucun article'\nconsole.log(i18n.tp('items', 5)); // '5 articles'"
     },
     {
       "id": "react-i18next",
@@ -24,361 +24,17 @@
       "title": "React i18next",
       "order": 2,
       "difficulty": "intermediate",
-      "content": "# Essential to know\n- i18next = bibliothèque i18n standard pour JavaScript\n- react-i18next = intégration React pour i18next\n- useTranslation hook pour les composants fonctionnels\n- Trans component pour JSX complexe\n- Supporte interpolation, pluriels, contexte\n- Namespace pour organiser les traductions\n- Lazy loading des traductions possible\n\n---\n\n# React i18next : L'Industry Standard\n\n## Installation\n\n```bash\nnpm install react-i18next i18next\n\n# Plugins optionnels\nnpm install i18next-http-backend   # Chargement via HTTP\nnpm install i18next-browser-languagedetector  # Détection auto langue\n```\n\n## Configuration\n\n### i18n.js\n\n```javascript\nimport i18n from 'i18next';\nimport { initReactI18next } from 'react-i18next';\nimport Backend from 'i18next-http-backend';\nimport LanguageDetector from 'i18next-browser-languagedetector';\n\n// Import direct des traductions (pour bundler)\nimport enCommon from './locales/en/common.json';\nimport frCommon from './locales/fr/common.json';\n\ni18n\n  // Plugin de détection de langue\n  .use(LanguageDetector)\n  // Plugin de chargement backend\n  .use(Backend)\n  // Passer i18n instance à react-i18next\n  .use(initReactI18next)\n  // Initialisation\n  .init({\n    // Langue fallback\n    fallbackLng: 'en',\n    \n    // Debug en développement\n    debug: process.env.NODE_ENV === 'development',\n    \n    // Namespace par défaut\n    defaultNS: 'common',\n    \n    // Ressources (si import direct)\n    resources: {\n      en: { common: enCommon },\n      fr: { common: frCommon }\n    },\n    \n    // ou chargement via backend\n    backend: {\n      loadPath: '/locales/{{lng}}/{{ns}}.json'\n    },\n    \n    // Détection langue\n    detection: {\n      order: ['localStorage', 'navigator', 'htmlTag'],\n      caches: ['localStorage']\n    },\n    \n    // Interpolation\n    interpolation: {\n      escapeValue: false, // React déjà protège XSS\n    },\n  });\n\nexport default i18n;\n```\n\n### Importer dans index.js\n\n```javascript\nimport React from 'react';\nimport ReactDOM from 'react-dom';\nimport './i18n'; // Importer la config i18n\nimport App from './App';\n\nReactDOM.render(\n  <React.StrictMode>\n    <App />\n  </React.StrictMode>,\n  document.getElementById('root')\n);\n```\n\n## Utilisation de base\n\n### Hook useTranslation\n\n```jsx\nimport { useTranslation } from 'react-i18next';\n\nfunction Welcome() {\n  const { t } = useTranslation();\n  \n  return <h1>{t('welcome.title')}</h1>;\n}\n```\n\n### Avec namespace\n\n```jsx\nfunction UserProfile() {\n  // Utiliser namespace 'user'\n  const { t } = useTranslation('user');\n  \n  return (\n    <div>\n      <h2>{t('profile.title')}</h2>\n      <p>{t('profile.description')}</p>\n    </div>\n  );\n}\n\n// Ou plusieurs namespaces\nfunction Mixed() {\n  const { t } = useTranslation(['common', 'user']);\n  \n  return (\n    <div>\n      <p>{t('common:welcome')}</p>\n      <p>{t('user:profile.title')}</p>\n    </div>\n  );\n}\n```\n\n### Interpolation\n
-```json\n{\n  \"welcome\": \"Hello, {{name}}!\",\n  \"balance\": \"You have {{amount}} {{currency}}\",\n  \"date\": \"Today is {{date, DD/MM/YYYY}}\"\n}\n```\n
-```jsx
-function Greeting({ userName, balance }) {
-  const { t } = useTranslation();
-  
-  return (
-    <div>
-      <p>{t('welcome', { name: userName })}</p>
-      <p>{t('balance', { amount: balance, currency: '€' })}</p>
-    </div>
-  );
-}
-```
-
-### Pluriels
-
-```json
-{
-  "item_zero": "No items",
-  "item_one": "One item",
-  "item_other": "{{count}} items",
-  "item_few": "{{count}} items"
-}
-```
-
-```jsx
-function ItemCount({ count }) {
-  const { t } = useTranslation();
-  
-  return <p>{t('item', { count })}</p>;
-  // count=0 → "No items"
-  // count=1 → "One item"
-  // count=5 → "5 items"
-}
-```
-
-### Contexte
-
-```json
-{
-  "greeting": "Hello",
-  "greeting_male": "Hello sir",
-  "greeting_female": "Hello madam"
-}
-```
-
-```jsx
-function Greeting({ gender }) {
-  const { t } = useTranslation();
-  
-  return <p>{t('greeting', { context: gender })}</p>;
-}
-```
-
-## Component Trans pour JSX complexe
-
-```jsx
-import { Trans } from 'react-i18next';
-
-// JSON
-{
-  "terms": "I agree to the <1>terms of service</1> and <3>privacy policy</3>"
-}
-
-// Composant
-function TermsAgreement() {
-  return (
-    <p>
-      <Trans i18nKey="terms">
-        I agree to the
-        <a href="/terms">terms of service</a>
-        and
-        <a href="/privacy">privacy policy</a>
-      </Trans>
-    </p>
-  );
-}
-```
-
-## Changement de Langue
-
-```jsx
-import { useTranslation } from 'react-i18next';
-
-function LanguageSwitcher() {
-  const { i18n } = useTranslation();
-  
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng);
-  };
-  
-  return (
-    <div>
-      <button onClick={() => changeLanguage('en')}>🇬🇧 English</button>
-      <button onClick={() => changeLanguage('fr')}>🇫🇷 Français</button>
-      <button onClick={() => changeLanguage('es')}>🇪🇸 Español</button>
-    </div>
-  );
-}
-```
-
-## Lazy Loading des Traductions
-
-```jsx
-import i18n from 'i18next';
-
-// Charger une langue dynamiquement
-async function loadLanguage(language) {
-  const translations = await import(`./locales/${language}/common.json`);
-  i18n.addResourceBundle(language, 'common', translations.default);
-  i18n.changeLanguage(language);
-}
-```",
-      "codeExample": "// Exemple complet React i18next\n\n// ========== i18n.js ==========\nimport i18n from 'i18next';\nimport { initReactI18next } from 'react-i18next';\nimport LanguageDetector from 'i18next-browser-languagedetector';\n\nimport enCommon from './locales/en/common.json';\nimport enUser from './locales/en/user.json';\nimport frCommon from './locales/fr/common.json';\nimport frUser from './locales/fr/user.json';\nimport esCommon from './locales/es/common.json';\nimport esUser from './locales/es/user.json';\n\ni18n\n  .use(LanguageDetector)\n  .use(initReactI18next)\n  .init({\n    resources: {\n      en: {\n        common: enCommon,\n        user: enUser\n      },\n      fr: {\n        common: frCommon,\n        user: frUser\n      },\n      es: {\n        common: esCommon,\n        user: esUser\n      }\n    },\n    fallbackLng: 'en',\n    defaultNS: 'common',\n    detection: {\n      order: ['localStorage', 'navigator'],\n      caches: ['localStorage']\n    },\n    interpolation: {\n      escapeValue: false\n    }\n  });\n\nexport default i18n;\n\n// ========== locales/fr/common.json ==========\n{\n  \"app\": {\n    \"title\": \"Mon Application\",\n    \"welcome\": \"Bienvenue, {{name}} !\",\n    \"items\": {\n      \"zero\": \"Aucun article\",\n      \"one\": \"Un article\",\n      \"other\": \"{{count}} articles\"\n    }\n  },\n  \"buttons\": {\n    \"save\": \"Enregistrer\",\n    \"cancel\": \"Annuler\",\n    \"delete\": \"Supprimer\",\n    \"loading\": \"Chargement...\"\n  },\n  \"errors\": {\n    \"required\": \"Ce champ est requis\",\n    \"email\": \"Veuillez entrer un email valide\",\n    \"generic\": \"Une erreur est survenue\"\n  },\n  \"nav\": {\n    \"home\": \"Accueil\",\n    \"profile\": \"Profil\",\n    \"settings\": \"Paramètres\"\n  }\n}\n\n// ========== App.jsx ==========\nimport { useTranslation, Trans } from 'react-i18next';\nimport './i18n';\n\nfunction App() {\n  return (\n    \u003cdiv\u003e\n      \u003cHeader /\u003e\n      \u003cMain /\u003e\n    \u003c/div\u003e\n  );\n}\n\nfunction Header() {\n  const { t, i18n } = useTranslation();\n  \n  return (\n    \u003cheader\u003e\n      \u003ch1\u003e{t('app.title')}\u003c/h1\u003e\n      \u003cnav\u003e\n        \u003ca href=\"/\"\u003e{t('nav.home')}\u003c/a\u003e\n        \u003ca href=\"/profile\"\u003e{t('nav.profile')}\u003c/a\u003e\n        \u003ca href=\"/settings\"\u003e{t('nav.settings')}\u003c/a\u003e\n      \u003c/nav\u003e\n      \u003cLanguageSwitcher /\u003e\n    \u003c/header\u003e\n  );\n}\n\nfunction Main() {\n  const { t } = useTranslation();\n  const itemCount = 5;\n  \n  return (\n    \u003cmain\u003e\n      \u003ch2\u003e{t('app.welcome', { name: 'Marie' })}\u003c/h2\u003e\n      \u003cp\u003e{t('app.items', { count: itemCount })}\u003c/p\u003e\n      \n      \u003cTermsAgreement /\u003e\n      \n      \u003cbutton\u003e{t('buttons.save')}\u003c/button\u003e\n    \u003c/main\u003e\n  );\n}\n\nfunction LanguageSwitcher() {\n  const { i18n } = useTranslation();\n  \n  const languages = [\n    { code: 'en', label: '🇬🇧 English' },\n    { code: 'fr', label: '🇫🇷 Français' },\n    { code: 'es', label: '🇪🇸 Español' }\n  ];\n  \n  return (\n    \u003cselect\n      value={i18n.language}\n      onChange={(e) =\u003e i18n.changeLanguage(e.target.value)}\n    \u003e\n      {languages.map((lang) =\u003e (\n        \u003coption key={lang.code} value={lang.code}\u003e\n          {lang.label}\n        \u003c/option\u003e\n      ))}\n    \u003c/select\u003e\n  );\n}\n\nfunction TermsAgreement() {\n  return (\n    \u003cp\u003e\n      \u003cTrans i18nKey=\"terms\"\u003e\n        J'accepte les \u003ca href=\"/terms\"\u003econditions d'utilisation\u003c/a\u003e\n        et la \u003ca href=\"/privacy\"\u003epolitique de confidentialité\u003c/a\u003e\n      \u003c/Trans\u003e\n    \u003c/p\u003e\n  );\n}\n\nexport default App;"
+      "content": "# Essential to know\n- i18next = standard i18n library for JavaScript\n- react-i18next = React integration for i18next\n- useTranslation hook for functional components\n- Trans component for complex JSX\n- Supports interpolation, plurals, context\n- Namespace to organize translations\n- Lazy loading of translations possible\n\n---\n\n# React i18next: The Industry Standard\n\n## Installation\n\n```bash\nnpm install react-i18next i18next\n\n# Optional plugins\nnpm install i18next-http-backend   # Loading via HTTP\nnpm install i18next-browser-languagedetector  # Auto language detection\n```\n\n## Configuration\n\n### i18n.js\n\n```javascript\nimport i18n from 'i18next';\nimport { initReactI18next } from 'react-i18next';\nimport Backend from 'i18next-http-backend';\nimport LanguageDetector from 'i18next-browser-languagedetector';\n\n// Direct import of translations (for bundler)\nimport enCommon from './locales/en/common.json';\nimport frCommon from './locales/fr/common.json';\n\ni18n\n  // Language detection plugin\n  .use(LanguageDetector)\n  // Backend loading plugin\n  .use(Backend)\n  // Pass i18n instance to react-i18next\n  .use(initReactI18next)\n  // Initialization\n  .init({\n    // Fallback language\n    fallbackLng: 'en',\n    \n    // Debug in development\n    debug: process.env.NODE_ENV === 'development',\n    \n    // Default namespace\n    defaultNS: 'common',\n    \n    // Resources (if direct import)\n    resources: {\n      en: { common: enCommon },\n      fr: { common: frCommon }\n    },\n    \n    // or loading via backend\n    backend: {\n      loadPath: '/locales/{{lng}}/{{ns}}.json'\n    },\n    \n    // Language detection\n    detection: {\n      order: ['localStorage', 'navigator', 'htmlTag'],\n      caches: ['localStorage']\n    },\n    \n    // Interpolation\n    interpolation: {\n      escapeValue: false, // React already protects against XSS\n    },\n  });\n\nexport default i18n;\n```\n\n### App.jsx\n\n```jsx\nimport React from 'react';\nimport { I18nextProvider } from 'react-i18next';\nimport i18n from './i18n';\nimport App from './App';\n\nReactDOM.render(\n  <I18nextProvider i18n={i18n}>\n    <App />\n  </I18nextProvider>,\n  document.getElementById('root')\n);\n```\n\n## Using useTranslation Hook\n\n```jsx\nimport { useTranslation } from 'react-i18next';\n\nfunction Welcome() {\n  const { t, i18n } = useTranslation();\n  \n  return (\n    <div>\n      <h1>{t('welcome')}</h1>\n      <p>{t('hello', { name: 'Marie' })}</p>\n      \n      <button onClick={() => i18n.changeLanguage('en')}>\n        English\n      </button>\n      <button onClick={() => i18n.changeLanguage('fr')}>\n        Français\n      </button>\n    </div>\n  );\n}\n```\n\n### Interpolation\n\n```json\n{\n  \"welcome\": \"Hello, {{name}}!\",\n  \"balance\": \"You have {{amount}} {{currency}}\",\n  \"date\": \"Today is {{date, DD/MM/YYYY}}\"\n}\n```\n\n```jsx\nfunction Greeting({ userName, balance }) {\n  const { t } = useTranslation();\n  \n  return (\n    <div>\n      <p>{t('welcome', { name: userName })}</p>\n      <p>{t('balance', { amount: balance, currency: '€' })}</p>\n    </div>\n  );\n}\n```\n\n### Plurals\n\n```json\n{\n  \"item_zero\": \"No items\",\n  \"item_one\": \"One item\",\n  \"item_other\": \"{{count}} items\",\n  \"item_few\": \"{{count}} items\"\n}\n```\n\n```jsx\nfunction ItemCount({ count }) {\n  const { t } = useTranslation();\n  \n  return <p>{t('item', { count })}</p>;\n  // count=0 → \"No items\"\n  // count=1 → \"One item\"\n  // count=5 → \"5 items\"\n}\n```\n\n### Context\n\n```json\n{\n  \"greeting\": \"Hello\",\n  \"greeting_male\": \"Hello sir\",\n  \"greeting_female\": \"Hello madam\"\n}\n```\n\n```jsx\nfunction Greeting({ gender }) {\n  const { t } = useTranslation();\n  \n  return <p>{t('greeting', { context: gender })}</p>;\n}\n```\n\n## Trans Component for Complex JSX\n\n```jsx\nimport { Trans } from 'react-i18next';\n\n// JSON\n{\n  \"terms\": \"I agree to the <1>terms of service</1> and <3>privacy policy</3>\"\n}\n\n// Component\nfunction TermsAgreement() {\n  return (\n    <p>\n      <Trans i18nKey=\"terms\">\n        I agree to the\n        <a href=\"/terms\">terms of service</a>\n        and\n        <a href=\"/privacy\">privacy policy</a>\n      </Trans>\n    </p>\n  );\n}\n```\n\n## Language Switching\n\n```jsx\nimport { useTranslation } from 'react-i18next';\n\nfunction LanguageSwitcher() {\n  const { i18n } = useTranslation();\n  \n  const changeLanguage = (lng) => {\n    i18n.changeLanguage(lng);\n  };\n  \n  return (\n    <div>\n      <button onClick={() => changeLanguage('en')}>🇬🇧 English</button>\n      <button onClick={() => changeLanguage('fr')}>🇫🇷 Français</button>\n      <button onClick={() => changeLanguage('es')}>🇪🇸 Español</button>\n    </div>\n  );\n}\n```\n\n## Lazy Loading of Translations\n\n```jsx\nimport i18n from 'i18next';\n\n// Load a language dynamically\nasync function loadLanguage(language) {\n  const translations = await import(`./locales/${language}/common.json`);\n  i18n.addResourceBundle(language, 'common', translations.default);\n  i18n.changeLanguage(language);\n}\n```",
+      "codeExample": "// Complete React i18next example\n\n// ========== i18n.js ==========\nimport i18n from 'i18next';\nimport { initReactI18next } from 'react-i18next';\nimport LanguageDetector from 'i18next-browser-languagedetector';\n\nimport enCommon from './locales/en/common.json';\nimport enUser from './locales/en/user.json';\nimport frCommon from './locales/fr/common.json';\nimport frUser from './locales/fr/user.json';\nimport esCommon from './locales/es/common.json';\nimport esUser from './locales/es/user.json';\n\ni18n\n  .use(LanguageDetector)\n  .use(initReactI18next)\n  .init({\n    resources: {\n      en: {\n        common: enCommon,\n        user: enUser\n      },\n      fr: {\n        common: frCommon,\n        user: frUser\n      },\n      es: {\n        common: esCommon,\n        user: esUser\n      }\n    },\n    fallbackLng: 'en',\n    defaultNS: 'common',\n    detection: {\n      order: ['localStorage', 'navigator'],\n      caches: ['localStorage']\n    },\n    interpolation: {\n      escapeValue: false\n    }\n  });\n\nexport default i18n;\n\n// ========== locales/fr/common.json ==========\n{\n  \"app\": {\n    \"title\": \"Mon Application\",\n    \"welcome\": \"Bienvenue, {{name}} !\",\n    \"items\": {\n      \"zero\": \"Aucun article\",\n      \"one\": \"Un article\",\n      \"other\": \"{{count}} articles\"\n    }\n  },\n  \"buttons\": {\n    \"save\": \"Enregistrer\",\n    \"cancel\": \"Annuler\",\n    \"delete\": \"Supprimer\",\n    \"loading\": \"Chargement...\"\n  },\n  \"errors\": {\n    \"required\": \"Ce champ est requis\",\n    \"email\": \"Veuillez entrer un email valide\",\n    \"generic\": \"Une erreur est survenue\"\n  },\n  \"nav\": {\n    \"home\": \"Accueil\",\n    \"profile\": \"Profil\",\n    \"settings\": \"Paramètres\"\n  }\n}\n\n// ========== App.jsx ==========\nimport { useTranslation, Trans } from 'react-i18next';\nimport './i18n';\n\nfunction App() {\n  return (\n    <div>\n      <Header />\n      <Main />\n      <Footer />\n    </div>\n  );\n}\n\nfunction Header() {\n  const { t, i18n } = useTranslation('common');\n  \n  return (\n    <header>\n      <h1>{t('app.title')}</h1>\n      <nav>\n        <a href=\"/\">{t('nav.home')}</a>\n        <a href=\"/profile\">{t('nav.profile')}</a>\n        <button onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'fr' : 'en')}>\n          {i18n.language === 'en' ? '🇫🇷 FR' : '🇬🇧 EN'}\n        </button>\n      </nav>\n    </header>\n  );\n}\n\nfunction ItemList({ count }) {\n  const { t } = useTranslation('common');\n  \n  return (\n    <div>\n      <p>{t('app.items', { count })}</p>\n      <button>{t('buttons.save')}</button>\n    </div>\n  );\n}\n\nfunction Terms() {\n  return (\n    <p>\n      <Trans i18nKey=\"terms\" ns=\"common\">\n        By continuing, you agree to our <1>terms</1> and <3>privacy policy</3>\n      </Trans>\n    </p>\n  );\n}\n\nexport default App;"
     },
     {
       "id": "i18n-advanced",
       "moduleId": "i18n-basics",
-      "title": "i18n Avancé",
+      "title": "Advanced i18n",
       "order": 3,
       "difficulty": "advanced",
-      "content": "# Essential to know\n- RTL (Right-to-Left) pour Arabe/Hébreu : changer direction du layout\n- ICU MessageFormat pour pluriels complexes\n- Formatage dates/nombres avec Intl API\n- Pseudo-localization pour tester l'UI\n- Extracteurs de clés (i18next-parser)\n- Gestion contextuelle (genre, formalité)\n- Lazy loading et code splitting\n\n---\n\n# i18n Avancé : Techniques Pro\n\n## 1. Support RTL (Right-to-Left)\n\nLangues RTL : Arabe, Hébreu, Persan, Ourdou...
-
-### Détection et application
-
-```jsx
-// Détecter si langue est RTL
-const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur'];
-
-function isRTL(locale) {
-  return RTL_LANGUAGES.includes(locale);
-}
-
-// Application dans React
-function App() {
-  const { i18n } = useTranslation();
-  const rtl = isRTL(i18n.language);
-  
-  useEffect(() => {
-    document.documentElement.dir = rtl ? 'rtl' : 'ltr';
-  }, [rtl]);
-  
-  return (
-    <div className={rtl ? 'rtl' : 'ltr'}>
-      <Content />
-    </div>
-  );
-}
-```
-
-### CSS pour RTL
-
-```css
-/* Approche avec logical properties (recommandé) */
-.element {
-  /* Au lieu de margin-left */
-  margin-inline-start: 1rem;
-  
-  /* Au lieu de text-align: left */
-  text-align: start;
-  
-  /* Au lieu de border-right */
-  border-inline-end: 1px solid;
-}
-
-/* Ou avec classes RTL */
-[dir='rtl'] .sidebar {
-  left: auto;
-  right: 0;
-}
-
-[dir='rtl'] .icon-arrow {
-  transform: scaleX(-1);
-}
-```
-
-## 2. Formatage avec Intl API
-
-```javascript
-// Dates
-const date = new Date();
-
-new Intl.DateTimeFormat('en-US').format(date);     // "12/20/2023"
-new Intl.DateTimeFormat('fr-FR').format(date);     // "20/12/2023"
-new Intl.DateTimeFormat('ja-JP').format(date);     // "2023/12/20"
-
-new Intl.DateTimeFormat('fr-FR', {
-  weekday: 'long',
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
-}).format(date); // "mercredi 20 décembre 2023"
-
-// Nombres
-new Intl.NumberFormat('en-US').format(1234567.89); // "1,234,567.89"
-new Intl.NumberFormat('fr-FR').format(1234567.89); // "1 234 567,89"
-new Intl.NumberFormat('de-DE').format(1234567.89); // "1.234.567,89"
-
-// Devises
-new Intl.NumberFormat('fr-FR', {
-  style: 'currency',
-  currency: 'EUR'
-}).format(99.99); // "99,99 €"
-
-new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD'
-}).format(99.99); // "$99.99"
-
-// Unités
-new Intl.NumberFormat('en', {
-  style: 'unit',
-  unit: 'kilometer'
-}).format(5); // "5 km"
-
-// Temps relatif
-new Intl.RelativeTimeFormat('fr').format(-1, 'day');    // "il y a 1 jour"
-new Intl.RelativeTimeFormat('fr').format(3, 'month');   // "dans 3 mois"
-```
-
-### Composant FormatDate
-
-```jsx
-import { useTranslation } from 'react-i18next';
-
-function FormatDate({ date, options = {} }) {
-  const { i18n } = useTranslation();
-  
-  const formatter = new Intl.DateTimeFormat(i18n.language, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    ...options
-  });
-  
-  return <span>{formatter.format(new Date(date))}</span>;
-}
-
-// Usage
-<FormatDate date={post.createdAt} />
-<FormatDate date={event.date} options={{ weekday: 'long' }} />
-```
-
-## 3. Pluriels complexes (ICU Format)
-
-```json
-{
-  "message": "{count, plural,\n    =0 {No messages}\n    one {One message}\n    few {{count} messages}\n    many {{count} messages}\n    other {{count} messages}\n  }"
-}
-```
-
-```jsx
-import { useTranslation } from 'react-i18next';
-
-function MessageCount({ count }) {
-  const { t } = useTranslation();
-  
-  return (
-    <p>{t('message', { count, interpolation: { escapeValue: false } })}</p>
-  );
-}
-```
-
-## 4. Pseudo-localization (Test UI)
-
-Pour vérifier que ton UI supporte bien les langues longues :\n
-```json
-// pseudo.json\n{\n  "welcome": "[Ŵêļçøɱê ţø ɱý âppļîçâţîøɱ]",\n  "description": "[Ţĥîš îš â ɭøɳĝêř ţêхţ ţĥâţ šĥøûļð ƒîţ îɳ ţĥê ÜÎ]"
-}
-```
-
-## 5. Extracteur de clés
-
-```bash
-npm install --save-dev i18next-parser
-```
-
-```javascript
-// i18next-parser.config.js
-module.exports = {
-  locales: ['en', 'fr', 'es'],
-  output: 'src/locales/$LOCALE/$NAMESPACE.json',
-  input: ['src/**/*.{js,jsx}'],
-  
-  // Options
-  sort: true,
-  removeUnusedKeys: true,
-  keepRemoved: false
-};
-```
-
-```json
-// package.json
-{
-  "scripts": {
-    "i18n:extract": "i18next 'src/**/*.{js,jsx}' -c i18next-parser.config.js"
-  }
-}
-```
-
-## 6. Contexte de Traduction
-
-```json
-{
-  "greeting": "Hello",
-  "greeting_formal": "Good day",
-  "greeting_informal": "Hey",
-  "greeting_male": "Hello sir",
-  "greeting_female": "Hello madam"
-}
-```
-
-```jsx
-function Greeting({ formality, gender }) {
-  const { t } = useTranslation();
-  
-  // Contexte multiple
-  const context = `${formality}_${gender}`;
-  // t('greeting_formal_male')
-  
-  return <p>{t('greeting', { context })}</p>;
-}
-```
-
-## 7. Lazy Loading et Code Splitting
-
-```jsx
-// Chargement à la volée
-function LanguageLoader({ children }) {
-  const { i18n } = useTranslation();
-  const [loaded, setLoaded] = useState(false);
-  
-  useEffect(() => {
-    const loadResources = async () => {
-      const locale = i18n.language;
-      
-      // Charger seulement si pas déjà chargé
-      if (!i18n.hasResourceBundle(locale, 'common')) {
-        const resources = await import(`./locales/${locale}/common.json`);
-        i18n.addResourceBundle(locale, 'common', resources);
-      }
-      
-      setLoaded(true);
-    };
-    
-    loadResources();
-  }, [i18n.language]);
-  
-  if (!loaded) return <Loading />;
-  return children;
-}
-```",
-      "codeExample": "// Exemple i18n complet avec RTL et formatage\n\n// ========== utils/i18n-helpers.js ==========\nexport const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur'];
-\nexport function isRTL(locale) {\n  return RTL_LANGUAGES.includes(locale);\n}\n\nexport function useRTL() {\n  const { i18n } = useTranslation();\n  return isRTL(i18n.language);\n}\n\nexport function formatDate(date, locale, options = {}) {\n  return new Intl.DateTimeFormat(locale, {\n    year: 'numeric',\n    month: 'short',\n    day: 'numeric',\n    ...options\n  }).format(new Date(date));\n}\n\nexport function formatNumber(number, locale, options = {}) {\n  return new Intl.NumberFormat(locale, options).format(number);\n}\n\nexport function formatCurrency(amount, locale, currency) {\n  return new Intl.NumberFormat(locale, {\n    style: 'currency',\n    currency\n  }).format(amount);\n}\n\nexport function formatRelativeTime(value, unit, locale) {\n  return new Intl.RelativeTimeFormat(locale).format(value, unit);\n}\n\n// ========== components/FormattedDate.jsx ==========\nimport { useTranslation } from 'react-i18next';\n\nexport function FormattedDate({ date, options }) {\n  const { i18n } = useTranslation();\n  const formatted = formatDate(date, i18n.language, options);\n  return \u003ctime dateTime={date}\u003e{formatted}\u003c/time\u003e;\n}\n\n// ========== components/Currency.jsx ==========\nexport function Currency({ amount, currency = 'EUR' }) {\n  const { i18n } = useTranslation();\n  const formatted = formatCurrency(amount, i18n.language, currency);\n  return \u003cspan className=\"currency\"\u003e{formatted}\u003c/span\u003e;\n}\n\n// ========== components/RTLProvider.jsx ==========\nimport { useEffect } from 'react';\nimport { useTranslation } from 'react-i18next';\nimport { isRTL } from '../utils/i18n-helpers';\n\nexport function RTLProvider({ children }) {\n  const { i18n } = useTranslation();\n  const rtl = isRTL(i18n.language);\n  \n  useEffect(() =\u003e {\n    document.documentElement.dir = rtl ? 'rtl' : 'ltr';\n    document.documentElement.lang = i18n.language;\n  }, [i18n.language, rtl]);\n  \n  return (\n    \u003cdiv className={rtl ? 'rtl' : 'ltr'}\u003e\n      {children}\n    \u003c/div\u003e\n  );\n}\n\n// ========== App.jsx avec tout ==========\nimport { useTranslation } from 'react-i18next';\nimport { RTLProvider } from './components/RTLProvider';\nimport { FormattedDate } from './components/FormattedDate';\nimport { Currency } from './components/Currency';\n\nfunction App() {\n  return (\n    \u003cRTLProvider\u003e\n      \u003cHeader /\u003e\n      \u003cProductList /\u003e\n    \u003c/RTLProvider\u003e\n  );\n}\n\nfunction ProductList() {\n  const { t, i18n } = useTranslation();\n  \n  const products = [\n    { id: 1, name: 'Laptop', price: 999.99, date: new Date() },\n    { id: 2, name: 'Mouse', price: 29.99, date: new Date() }\n  ];\n  \n  return (\n    \u003cdiv className=\"product-list\"\u003e\n      \u003ch1\u003e{t('products.title')}\u003c/h1\u003e\n      \u003cp\u003e\n        {t('products.showing', { \n          count: products.length,\n          total: 100 \n        })}\n      \u003c/p\u003e\n      \n      {products.map(product =\u003e (\n        \u003cdiv key={product.id} className=\"product-card\"\u003e\n          \u003ch3\u003e{product.name}\u003c/h3\u003e\n          \u003cp\u003e\n            \u003cstrong\u003e{t('products.price')}:\u003c/strong\u003e{' '}\n            \u003cCurrency amount={product.price} currency=\"EUR\" /\u003e\n          \u003c/p\u003e\n          \u003cp\u003e\n            \u003cstrong\u003e{t('products.date')}:\u003c/strong\u003e{' '}\n            \u003cFormattedDate date={product.date} /\u003e\n          \u003c/p\u003e\n          \u003cbutton\u003e{t('buttons.addToCart')}\u003c/button\u003e\n        \u003c/div\u003e\n      ))}\n    \u003c/div\u003e\n  );\n}\n\n// CSS adapté\n/* styles.css */\n.product-card {\n  padding: 1rem;\n  border: 1px solid #ddd;\n  margin: 0.5rem 0;\n  /* Utiliser logical properties pour RTL */\n  border-inline-start: 4px solid #6366f1;\n  padding-inline-start: 1rem;\n}\n\n/* Inversion des flèches en RTL */\n.rtl .arrow-right {\n  transform: scaleX(-1);\n}\n\n.rtl .product-list {\n  text-align: right;\n}\n\n.rtl button {\n  margin-inline-start: 0;\n  margin-inline-end: 0.5rem;\n}"}
+      "content": "# Essential to know\n- RTL (Right-to-Left) for Arabic/Hebrew: change layout direction\n- ICU MessageFormat for complex plurals\n- Date/number formatting with Intl API\n- Pseudo-localization for testing UI\n- Key extractors (i18next-parser)\n- Contextual management (gender, formality)\n- Lazy loading and code splitting\n\n---\n\n# Advanced i18n: Pro Techniques\n\n## 1. RTL Support (Right-to-Left)\n\nRTL languages: Arabic, Hebrew, Persian, Urdu...\n\n### Detection and Application\n\n```jsx\n// Detect if language is RTL\nconst RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur'];\n\nfunction isRTL(locale) {\n  return RTL_LANGUAGES.includes(locale);\n}\n\n// Application in React\nfunction App() {\n  const { i18n } = useTranslation();\n  const rtl = isRTL(i18n.language);\n  \n  useEffect(() => {\n    document.documentElement.dir = rtl ? 'rtl' : 'ltr';\n  }, [rtl]);\n  \n  return (\n    <div className={rtl ? 'rtl' : 'ltr'}>\n      <Content />\n    </div>\n  );\n}\n```\n\n### CSS for RTL\n\n```css\n/* Approach with logical properties (recommended) */\n.element {\n  /* Instead of margin-left */\n  margin-inline-start: 1rem;\n  \n  /* Instead of text-align: left */\n  text-align: start;\n  \n  /* Instead of border-right */\n  border-inline-end: 1px solid;\n}\n\n/* Or with RTL classes */\n[dir='rtl'] .sidebar {\n  left: auto;\n  right: 0;\n}\n\n[dir='rtl'] .icon-arrow {\n  transform: scaleX(-1);\n}\n```\n\n## 2. Formatting with Intl API\n\n```javascript\n// Dates\nconst date = new Date();\n\nnew Intl.DateTimeFormat('en-US').format(date);     // \"12/20/2023\"\nnew Intl.DateTimeFormat('fr-FR').format(date);     // \"20/12/2023\"\nnew Intl.DateTimeFormat('ja-JP').format(date);     // \"2023/12/20\"\n\nnew Intl.DateTimeFormat('fr-FR', {\n  weekday: 'long',\n  year: 'numeric',\n  month: 'long',\n  day: 'numeric'\n}).format(date); // \"mercredi 20 décembre 2023\"\n\n// Numbers\nnew Intl.NumberFormat('en-US').format(1234567.89); // \"1,234,567.89\"\nnew Intl.NumberFormat('fr-FR').format(1234567.89); // \"1 234 567,89\"\nnew Intl.NumberFormat('de-DE').format(1234567.89); // \"1.234.567,89\"\n\n// Currencies\nnew Intl.NumberFormat('fr-FR', {\n  style: 'currency',\n  currency: 'EUR'\n}).format(99.99); // \"99,99 €\"\n\nnew Intl.NumberFormat('en-US', {\n  style: 'currency',\n  currency: 'USD'\n}).format(99.99); // \"$99.99\"\n\n// Units\nnew Intl.NumberFormat('en', {\n  style: 'unit',\n  unit: 'kilometer'\n}).format(5); // \"5 km\"\n\n// Relative time\nnew Intl.RelativeTimeFormat('fr').format(-1, 'day');    // \"il y a 1 jour\"\nnew Intl.RelativeTimeFormat('fr').format(3, 'month');   // \"dans 3 mois\"\n```\n\n### FormatDate Component\n\n```jsx\nimport { useTranslation } from 'react-i18next';\n\nfunction FormatDate({ date, options = {} }) {\n  const { i18n } = useTranslation();\n  \n  const formatter = new Intl.DateTimeFormat(i18n.language, {\n    year: 'numeric',\n    month: 'short',\n    day: 'numeric',\n    ...options\n  });\n  \n  return <span>{formatter.format(new Date(date))}</span>;\n}\n\n// Usage\n<FormatDate date={post.createdAt} />\n<FormatDate date={event.date} options={{ weekday: 'long' }} />\n```\n\n## 3. Complex Plurals (ICU Format)\n\n```json\n{\n  \"message\": \"{count, plural,\\n    =0 {No messages}\\n    one {One message}\\n    few {{count} messages}\\n    many {{count} messages}\\n    other {{count} messages}\\n  }\"\n}\n```\n\n```jsx\nimport { useTranslation } from 'react-i18next';\n\nfunction MessageCount({ count }) {\n  const { t } = useTranslation();\n  \n  return (\n    <p>{t('message', { count, interpolation: { escapeValue: false } })}</p>\n  );\n}\n```\n\n## 4. Pseudo-localization (UI Testing)\n\nTo verify that your UI supports long languages well:\n\n```json\n// pseudo.json\n{\n  \"welcome\": \"[Ŵêļçøɱê ţø ɱý âppļîçâţîøɱ]\",\n  \"description\": \"[Ţĥîš îš â ɭøɳĝêř ţêхţ ţĥâţ šĥøûļð ƒîţ îɳ ţĥê ÜÎ]\"\n}\n```\n\n## 5. Key Extractor\n\n```bash\nnpm install --save-dev i18next-parser\n```\n\n```javascript\n// i18next-parser.config.js\nmodule.exports = {\n  locales: ['en', 'fr', 'es'],\n  output: 'src/locales/$LOCALE/$NAMESPACE.json',\n  input: ['src/**/*.{js,jsx}'],\n  \n  // Options\n  sort: true,\n  removeUnusedKeys: true,\n  keepRemoved: false\n};\n```\n\n```json\n// package.json\n{\n  \"scripts\": {\n    \"i18n:extract\": \"i18next 'src/**/*.{js,jsx}' -c i18next-parser.config.js\"\n  }\n}\n```\n\n## 6. Translation Context\n\n```json\n{\n  \"greeting\": \"Hello\",\n  \"greeting_formal\": \"Good day\",\n  \"greeting_informal\": \"Hey\",\n  \"greeting_male\": \"Hello sir\",\n  \"greeting_female\": \"Hello madam\"\n}\n```\n\n```jsx\nfunction Greeting({ formality, gender }) {\n  const { t } = useTranslation();\n  \n  // Multiple context\n  const context = `${formality}_${gender}`;\n  // t('greeting_formal_male')\n  \n  return <p>{t('greeting', { context })}</p>;\n}\n```\n\n## 7. Lazy Loading and Code Splitting\n\n```jsx\n// On-the-fly loading\nfunction LanguageLoader({ children }) {\n  const { i18n } = useTranslation();\n  const [loaded, setLoaded] = useState(false);\n  \n  useEffect(() => {\n    const loadResources = async () => {\n      const locale = i18n.language;\n      \n      // Load only if not already loaded\n      if (!i18n.hasResourceBundle(locale, 'common')) {\n        const resources = await import(`./locales/${locale}/common.json`);\n        i18n.addResourceBundle(locale, 'common', resources);\n      }\n      \n      setLoaded(true);\n    };\n    \n    loadResources();\n  }, [i18n.language]);\n  \n  if (!loaded) return <Loading />;\n  return children;\n}\n```",
+      "codeExample": "// Complete i18n example with RTL and formatting\n\n// ========== utils/i18n-helpers.js ==========\nexport const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur'];\n\nexport function isRTL(locale) {\n  return RTL_LANGUAGES.includes(locale);\n}\n\nexport function useRTL() {\n  const { i18n } = useTranslation();\n  return isRTL(i18n.language);\n}\n\nexport function formatDate(date, locale, options = {}) {\n  return new Intl.DateTimeFormat(locale, {\n    year: 'numeric',\n    month: 'short',\n    day: 'numeric',\n    ...options\n  }).format(new Date(date));\n}\n\nexport function formatNumber(number, locale, options = {}) {\n  return new Intl.NumberFormat(locale, options).format(number);\n}\n\nexport function formatCurrency(amount, locale, currency) {\n  return new Intl.NumberFormat(locale, {\n    style: 'currency',\n    currency\n  }).format(amount);\n}\n\nexport function formatRelativeTime(value, unit, locale) {\n  return new Intl.RelativeTimeFormat(locale).format(value, unit);\n}\n\n// ========== components/FormattedDate.jsx ==========\nimport { useTranslation } from 'react-i18next';\n\nexport function FormattedDate({ date, options }) {\n  const { i18n } = useTranslation();\n  const formatted = formatDate(date, i18n.language, options);\n  return <time dateTime={date}>{formatted}</time>;\n}\n\n// ========== components/Currency.jsx ==========\nexport function Currency({ amount, currency = 'EUR' }) {\n  const { i18n } = useTranslation();\n  const formatted = formatCurrency(amount, i18n.language, currency);\n  return <span className=\"currency\">{formatted}</span>;\n}\n\n// ========== components/RTLProvider.jsx ==========\nimport { useEffect } from 'react';\nimport { useTranslation } from 'react-i18next';\nimport { isRTL } from '../utils/i18n-helpers';\n\nexport function RTLProvider({ children }) {\n  const { i18n } = useTranslation();\n  const rtl = isRTL(i18n.language);\n  \n  useEffect(() => {\n    document.documentElement.dir = rtl ? 'rtl' : 'ltr';\n    document.documentElement.lang = i18n.language;\n  }, [i18n.language, rtl]);\n  \n  return (\n    <div className={rtl ? 'rtl' : 'ltr'}>\n      {children}\n    </div>\n  );\n}\n\n// ========== Usage ==========\nfunction Post({ post }) {\n  return (\n    <article>\n      <h2>{post.title}</h2>\n      <FormattedDate date={post.createdAt} />\n      <Currency amount={post.price} currency=\"USD\" />\n      <p>{post.content}</p>\n    </article>\n  );\n}\n\n// App with RTL support\nfunction App() {\n  return (\n    <RTLProvider>\n      <Router>\n        <Routes />\n      </Router>\n    </RTLProvider>\n  );\n}\n\n// CSS with logical properties\n/* styles.css */\n.card {\n  /* Logical properties adapt to direction */\n  margin-inline-start: 1rem;\n  margin-inline-end: 1rem;\n  padding-inline: 1rem;\n  border-inline-start: 2px solid blue;\n  text-align: start;\n}\n\n/* RTL specific adjustments */\n[dir='rtl'] .icon-arrow {\n  transform: scaleX(-1);\n}\n\n[dir='rtl'] .sidebar {\n  left: auto;\n  right: 0;\n}"
     }
   ],
   "exercises": [
@@ -386,42 +42,42 @@ function LanguageLoader({ children }) {
       "id": "i18n-ex-1",
       "lessonId": "i18n-intro",
       "moduleId": "i18n-basics",
-      "title": "Quiz i18n Basics",
+      "title": "i18n Basics Quiz",
       "difficulty": "easy",
       "type": "quiz",
       "questions": [
         {
-          "question": "Que signifie 'i18n' ?",
+          "question": "What does 'i18n' stand for?",
           "options": [
-            "18 langues internationales",
-            "Internationalization (18 lettres entre i et n)",
+            "18 international languages",
+            "Internationalization (18 letters between i and n)",
             "Internet 2018",
-            "iPhone 18 nouvelles"
+            "iPhone 18 news"
           ],
           "correctAnswer": 1,
-          "explanation": "i18n est l'abréviation de 'Internationalization' - il y a 18 lettres entre le 'i' et le 'n'."
+          "explanation": "i18n is the abbreviation for 'Internationalization' - there are 18 letters between the 'i' and the 'n'."
         },
         {
-          "question": "Quelle est la différence entre i18n et l10n ?",
+          "question": "What is the difference between i18n and l10n?",
           "options": [
-            "i18n c'est pour le web, l10n pour mobile",
-            "i18n = préparer le code, l10n = traduire le contenu",
-            "Il n'y a pas de différence",
-            "l10n est obsolète"
+            "i18n is for web, l10n for mobile",
+            "i18n = prepare code, l10n = translate content",
+            "There is no difference",
+            "l10n is obsolete"
           ],
           "correctAnswer": 1,
-          "explanation": "i18n (Internationalization) c'est préparer l'architecture pour supporter plusieurs langues. l10n (Localization) c'est traduire réellement le contenu dans une langue spécifique."
+          "explanation": "i18n (Internationalization) is preparing the architecture to support multiple languages. l10n (Localization) is actually translating content into a specific language."
         },
         {
-          "question": "Quelle langue donne accès au plus grand nombre d'internautes ?",
+          "question": "Which language gives access to the largest number of Internet users?",
           "options": [
-            "Français",
-            "Anglais",
-            "Chinois",
-            "Espagnol"
+            "French",
+            "English",
+            "Chinese",
+            "Spanish"
           ],
           "correctAnswer": 1,
-          "explanation": "L'anglais reste la langue #1 avec environ 1.5 milliard d'utilisateurs, suivi par le chinois avec 1.1 milliard."
+          "explanation": "English remains the #1 language with approximately 1.5 billion users, followed by Chinese with 1.1 billion."
         }
       ]
     },
@@ -429,12 +85,12 @@ function LanguageLoader({ children }) {
       "id": "i18n-ex-2",
       "lessonId": "react-i18next",
       "moduleId": "i18n-basics",
-      "title": "Quiz React i18next",
+      "title": "React i18next Quiz",
       "difficulty": "medium",
       "type": "quiz",
       "questions": [
         {
-          "question": "Quel hook utilise-t-on pour la traduction dans React i18next ?",
+          "question": "Which hook is used for translation in React i18next?",
           "options": [
             "useTranslate",
             "useTranslation",
@@ -442,10 +98,10 @@ function LanguageLoader({ children }) {
             "useLocale"
           ],
           "correctAnswer": 1,
-          "explanation": "useTranslation est le hook principal de react-i18next pour accéder aux fonctionnalités de traduction."
+          "explanation": "useTranslation is the main hook from react-i18next to access translation features."
         },
         {
-          "question": "Comment passer une variable dans une traduction ?",
+          "question": "How do you pass a variable in a translation?",
           "options": [
             "t('key', variable)",
             "t('key', { variableName: value })",
@@ -453,18 +109,18 @@ function LanguageLoader({ children }) {
             "t('key', value)"
           ],
           "correctAnswer": 1,
-          "explanation": "On passe un objet avec les variables : t('welcome', { name: 'Marie' }). Dans le JSON : 'welcome': 'Hello, {{name}}!'"
+          "explanation": "Pass an object with variables: t('welcome', { name: 'Marie' }). In JSON: 'welcome': 'Hello, {{name}}!'"
         },
         {
-          "question": "À quoi sert le component Trans ?",
+          "question": "What is the Trans component used for?",
           "options": [
-            "À traduire automatiquement",
-            "À inclure du JSX dans les traductions",
-            "À changer de langue",
-            "À formater les dates"
+            "To translate automatically",
+            "To include JSX in translations",
+            "To change language",
+            "To format dates"
           ],
           "correctAnswer": 1,
-          "explanation": "Le component Trans permet d'inclure du JSX (liens, spans, etc.) dans les traductions tout en gardant le texte traduisible."
+          "explanation": "The Trans component allows including JSX (links, spans, etc.) in translations while keeping the text translatable."
         }
       ]
     },
@@ -472,23 +128,23 @@ function LanguageLoader({ children }) {
       "id": "i18n-ex-3",
       "lessonId": "i18n-advanced",
       "moduleId": "i18n-basics",
-      "title": "Quiz i18n Avancé",
+      "title": "Advanced i18n Quiz",
       "difficulty": "medium",
       "type": "quiz",
       "questions": [
         {
-          "question": "Qu'est-ce que RTL dans le contexte i18n ?",
+          "question": "What is RTL in the i18n context?",
           "options": [
             "Real-Time Language",
-            "Right-To-Left (langues s'écrivant de droite à gauche)",
+            "Right-To-Left (languages written from right to left)",
             "Ready To Launch",
             "Return To Language"
           ],
           "correctAnswer": 1,
-          "explanation": "RTL = Right-To-Left. Certaines langues comme l'arabe et l'hébreu se lisent de droite à gauche, ce qui nécessite d'adapter le layout."
+          "explanation": "RTL = Right-To-Left. Some languages like Arabic and Hebrew are read from right to left, requiring layout adaptation."
         },
         {
-          "question": "Quelle API native JavaScript permet de formater les dates selon la locale ?",
+          "question": "Which native JavaScript API allows formatting dates according to locale?",
           "options": [
             "Date.format()",
             "Intl.DateTimeFormat",
@@ -496,18 +152,18 @@ function LanguageLoader({ children }) {
             "i18n.formatDate()"
           ],
           "correctAnswer": 1,
-          "explanation": "Intl.DateTimeFormat est l'API native de JavaScript pour formater les dates selon la locale de l'utilisateur."
+          "explanation": "Intl.DateTimeFormat is the native JavaScript API for formatting dates according to the user's locale."
         },
         {
-          "question": "Pourquoi utiliser des 'logical properties' en CSS pour i18n ?",
+          "question": "Why use 'logical properties' in CSS for i18n?",
           "options": [
-            "Pour que ça aille plus vite",
-            "Pour que le layout s'adapte automatiquement au RTL",
-            "Pour réduire la taille du CSS",
-            "Pour les anciens navigateurs"
+            "To make it faster",
+            "To make layout automatically adapt to RTL",
+            "To reduce CSS size",
+            "For older browsers"
           ],
           "correctAnswer": 1,
-          "explanation": "Les logical properties (margin-inline-start au lieu de margin-left) s'adaptent automatiquement à la direction du texte (LTR ou RTL)."
+          "explanation": "Logical properties (margin-inline-start instead of margin-left) automatically adapt to text direction (LTR or RTL)."
         }
       ]
     }
