@@ -5,6 +5,8 @@ provider: "Moonshot AI"
 contextWindow: "256K tokens"
 pricing: "$0.50 per million tokens (input), $2.80 per million tokens (output)"
 website: "https://kimi.com"
+open: true
+specialty: "Cost-effective open"
 strengths:
   - "Excellent performance/cost ratio"
   - "Open-weight model"
@@ -29,6 +31,7 @@ benchmarks:
   - { name: "LiveCodeBench", score: "85.0%" }
   - { name: "HLE-Full", score: "50.2%" }
 pubDate: "2025-02-01"
+currentFavorite: true
 ---
 
 ## Overview

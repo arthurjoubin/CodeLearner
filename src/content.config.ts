@@ -63,11 +63,15 @@ const llms = defineCollection({
 		contextWindow: z.string(),
 		pricing: z.string(),
 		website: z.string().url(),
+		open: z.boolean().default(false),
+		specialty: z.string().default(''),
+		currentFavorite: z.boolean().default(false),
 		strengths: z.array(z.string()).default([]),
 		weaknesses: z.array(z.string()).default([]),
 		bestFor: z.array(z.string()).default([]),
 		benchmarks: z.array(z.object({ name: z.string(), score: z.string() })).default([]),
 		pubDate: z.coerce.date(),
+		tags: z.array(z.string()).default([]),
 	}),
 });
 

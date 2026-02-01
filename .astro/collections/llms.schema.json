@@ -23,6 +23,18 @@
           "type": "string",
           "format": "uri"
         },
+        "open": {
+          "type": "boolean",
+          "default": false
+        },
+        "specialty": {
+          "type": "string",
+          "default": ""
+        },
+        "currentFavorite": {
+          "type": "boolean",
+          "default": false
+        },
         "strengths": {
           "type": "array",
           "items": {
@@ -79,6 +91,13 @@
               "format": "unix-time"
             }
           ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
         },
         "$schema": {
           "type": "string"

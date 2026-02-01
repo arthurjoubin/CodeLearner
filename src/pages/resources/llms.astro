@@ -4,7 +4,15 @@ import { getCollection } from 'astro:content';
 import ResourceTabs from '../../components/ResourceTabs.astro';
 import { ArrowLeft } from 'lucide-react';
 
-const llms = await getCollection('llms');
+const llmsRaw = await getCollection('llms');
+
+// Sort: current favorite first, then by pubDate (newest first)
+const llms = llmsRaw.sort((a: any, b: any) => {
+	if (a.data.currentFavorite && !b.data.currentFavorite) return -1;
+	if (!a.data.currentFavorite && b.data.currentFavorite) return 1;
+	return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
+});
+
 const llmsByProvider = llms.reduce((acc: Record<string, typeof llms>, llm: typeof llms[0]) => {
 	const provider = llm.data.provider;
 	if (!acc[provider]) acc[provider] = [];
@@ -22,6 +30,8 @@ const providerLogos: Record<string, string> = {
 	'Google': 'https://raw.githubusercontent.com/github/explore/main/topics/google/google.png',
 	'DeepSeek': 'https://avatars.githubusercontent.com/u/148330874?s=200&v=4',
 	'Moonshot AI': '/images/providers/moonshot-ai.png',
+	'MiniMax': '/images/providers/minimax.png',
+	'Zhipu AI': '/images/providers/zhipu-ai.png',
 };
 
 function getProviderLogo(provider: string): string {
@@ -54,35 +64,44 @@ function getProviderLogo(provider: string): string {
 		<ResourceTabs active="llms" />
 
 		<div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3 p-1">
-			{llms.map((llm: typeof llms[0], index: number) => {
-				const llmSlug = llm.slug;
-				const logoUrl = getProviderLogo(llm.data.provider);
-				const isOpenSource = llm.data.strengths?.some((s: string) => s.toLowerCase().includes('open') || s.toLowerCase().includes('open-source'));
-				
-				return (
+{llms.map((llm: typeof llms[0], index: number) => {
+			const llmSlug = llm.slug;
+			const logoUrl = getProviderLogo(llm.data.provider);
+			const isFavorite = llm.data.currentFavorite;
+			const cardClass = isFavorite
+				? 'border-green-500 border-2 bg-green-50/30'
+				: 'border-gray-300 border-2 bg-white';
+
+			return (
 					<a
 						href={`/resources/llms/${llmSlug}`}
-						class="border-2 border-gray-300 rounded-lg p-3.5 transition-all hover:border-primary-500 hover:shadow-md bg-white relative group"
+						class={`${cardClass} rounded-lg p-3.5 transition-all hover:border-primary-500 hover:shadow-md relative group`}
 						style={`animation-delay: ${index * 50}ms`}
 					>
-						<div class="flex items-center gap-3">
-							<div class="w-11 h-11 rounded-lg overflow-hidden bg-gray-50 border border-gray-200 flex items-center justify-center shrink-0 group-hover:border-primary-300 transition-colors">
-								<img src={logoUrl} alt={llm.data.provider} class="w-8 h-8 object-contain" />
-							</div>
-							<div class="flex-1 min-w-0">
-								<div class="flex items-center gap-2">
-									<h3 class="font-bold text-gray-900 uppercase text-base leading-tight group-hover:text-primary-700 transition-colors truncate">{llm.data.name}</h3>
-									{isOpenSource && (
-										<span class="shrink-0 text-[9px] px-1.5 py-0.5 bg-green-100 text-green-700 rounded font-bold border border-green-200">OPEN</span>
-									)}
-								</div>
-								<p class="text-xs text-gray-500 font-medium truncate">{llm.data.provider}</p>
-							</div>
+						<div class="absolute top-3 right-3">
+							{isFavorite ? (
+								<span class="text-[8px] px-2 py-0.5 bg-green-500 text-white rounded-full font-bold tracking-wide">Current favorite</span>
+							) : (
+								<span class="text-[8px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full font-semibold tracking-wide">{llm.data.specialty}</span>
+							)}
 						</div>
 
-						<div class="h-px bg-gray-200 mt-4 mb-3 w-full"></div>
+					<div class="flex items-center gap-3 pr-16">
+						<div class="w-11 h-11 rounded-lg overflow-hidden bg-gray-50 border border-gray-200 flex items-center justify-center shrink-0 group-hover:border-primary-300 transition-colors">
+							<img src={logoUrl} alt={llm.data.provider} class="w-8 h-8 object-contain" />
+						</div>
+						<div class="flex-1 min-w-0">
+							<h3 class="font-bold text-gray-900 uppercase text-base leading-tight group-hover:text-primary-700 transition-colors truncate">{llm.data.name}</h3>
+							<p class="text-xs text-gray-500 font-medium truncate">{llm.data.provider}</p>
+							{llm.data.open && (
+								<p class="text-[10px] text-green-600 font-medium truncate mt-0.5">Open source</p>
+							)}
+						</div>
+					</div>
 
-						<p class="text-xs text-gray-600 line-clamp-2 leading-relaxed">{llm.data.description}</p>
+					<div class="border-t border-gray-300 mt-4 mb-3 w-full"></div>
+
+					<p class="text-xs text-gray-600 line-clamp-2 leading-relaxed">{llm.data.description}</p>
 					</a>
 				);
 			})}
