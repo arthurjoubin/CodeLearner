@@ -2,19 +2,27 @@ import { ReactNode } from 'react';
 
 interface PageTitleProps {
   children: ReactNode;
-  underlineColor?: string;
   className?: string;
+  showBullet?: boolean;
+}
+
+// Simple green bullet component
+function GreenBullet({ className = "" }: { className?: string }) {
+  return (
+    <div className={`w-3 h-3 bg-primary-500 rounded-full flex-shrink-0 ${className}`} />
+  );
 }
 
 export function PageTitle({ 
   children, 
-  underlineColor = "bg-primary-500",
-  className = ""
+  className = "",
+  showBullet = true
 }: PageTitleProps) {
   return (
-    <div className={`relative inline-block group ${className}`}>
+    <div className={`flex items-baseline gap-3 ${className}`}>
+      {showBullet && <GreenBullet className="self-center" />}
       {children}
-      <span className={`absolute -bottom-0.5 left-0 w-12 h-0.5 ${underlineColor} transition-all group-hover:w-full duration-300`} />
+      <span className="block h-1 w-12 bg-primary-500" />
     </div>
   );
 }
@@ -26,9 +34,10 @@ interface SectionTitleProps {
 
 export function SectionTitle({ children, className = "" }: SectionTitleProps) {
   return (
-    <div className={`relative inline-block group mb-6 ${className}`}>
+    <div className={`flex items-baseline gap-3 mb-6 ${className}`}>
+      <GreenBullet className="self-center" />
       <h2 className="text-xl md:text-3xl font-bold text-gray-900">{children}</h2>
-      <span className="absolute -bottom-1 left-0 w-12 h-1 bg-primary-500 transition-all group-hover:w-full duration-300" />
+      <span className="block h-1 w-12 bg-primary-500" />
     </div>
   );
 }
@@ -40,12 +49,6 @@ interface PageHeaderProps {
 }
 
 export function PageHeader({ title, subtitle, difficulty }: PageHeaderProps) {
-  const difficultyColors = {
-    beginner: 'bg-green-100 text-green-700 border-green-300',
-    medium: 'bg-yellow-100 text-yellow-700 border-yellow-300',
-    advanced: 'bg-red-100 text-red-700 border-red-300'
-  };
-
   return (
     <div className="mb-6">
       <PageTitle>

@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 /**
  * Variation 1: Target with Wobbly Arrow
@@ -43,26 +43,18 @@ export function TargetArrowWobble({ className = '' }: { className?: string }) {
 }
 
 /**
- * Variation 2: Mini Pulsing Target
- * Small target with a gently pulsing green center.
+ * Variation 2: Mini Static Target
+ * Small target with static green center.
  * Placement: Inline next to section titles as a decorative accent.
  */
 export function TargetPulse({ className = '' }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <style>{`
-        @keyframes tp-pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.3); opacity: 0.75; }
-        }
-        .tp-center { animation: tp-pulse 2s ease-in-out infinite; transform-origin: 50px 50px; }
-      `}</style>
-
       <circle cx="50" cy="50" r="45" fill="#000"/>
       <circle cx="50" cy="50" r="38" fill="#fff"/>
       <circle cx="50" cy="50" r="30" fill="#000"/>
       <circle cx="50" cy="50" r="22" fill="#fff"/>
-      <circle cx="50" cy="50" r="14" fill="#22c55e" className="tp-center"/>
+      <circle cx="50" cy="50" r="14" fill="#22c55e"/>
     </svg>
   );
 }
@@ -209,6 +201,23 @@ export function ArrowStrike({ className = '' }: { className?: string }) {
         <line x1="72" y1="75" x2="64" y2="68" stroke="#16a34a" strokeWidth="2" strokeLinecap="round"/>
         <line x1="72" y1="75" x2="64" y2="82" stroke="#16a34a" strokeWidth="2" strokeLinecap="round"/>
       </g>
+    </svg>
+  );
+}
+
+/**
+ * Variation 6: Static Target (Letter O replacement)
+ * Static target used as the letter O in titles.
+ * No animation.
+ */
+export function TargetSpinBounce({ className = '' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="45" fill="#000"/>
+      <circle cx="50" cy="50" r="38" fill="#fff"/>
+      <circle cx="50" cy="50" r="30" fill="#000"/>
+      <circle cx="50" cy="50" r="22" fill="#fff"/>
+      <circle cx="50" cy="50" r="14" fill="#22c55e"/>
     </svg>
   );
 }

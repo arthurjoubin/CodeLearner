@@ -110,7 +110,7 @@ export function HomePageContent() {
     <div className="page-enter bg-gradient-to-b from-gray-100 to-white min-h-[calc(100vh-120px)] pb-4">
       {resumes.length > 0 && (
         <div className="mb-8">
-          <SectionTitle className="text-sm">Continue Learning</SectionTitle>
+          <SectionTitle>Continue Learning</SectionTitle>
           <div className="space-y-3 mt-3">
             {resumes.map(resume => {
               const pathData = learningPaths.find(p => p.id === resume.courseId);
@@ -164,9 +164,7 @@ export function HomePageContent() {
         </div>
       )}
 
-      <div className="mb-4">
-        <SectionTitle className="text-sm">Learning Paths</SectionTitle>
-      </div>
+      <SectionTitle>Learning Paths</SectionTitle>
 
       <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide p-1">
         {[...learningPaths]
@@ -239,7 +237,7 @@ export function HomePageContent() {
         })}
       </div>
 
-      <SectionTitle className="text-sm mt-8">Our Method</SectionTitle>
+      <SectionTitle>Our Method</SectionTitle>
 
       <div className="border-2 border-gray-300 rounded-lg p-3 mt-3 bg-white">
         <div className="grid md:grid-cols-3 gap-4 text-sm">
