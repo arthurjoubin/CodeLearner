@@ -47,7 +47,7 @@ function LandingContent() {
             </div>
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4">
               Learn to code<br />
-              <span className="text-primary-500">by doing.</span>
+              <span className="text-primary-500">by doing   ___</span>
             </h1>
             <p className="text-base md:text-lg text-gray-600 mb-4 max-w-xl leading-relaxed">
               No videos. No passive tutorials. Write real code from lesson one, get instant AI feedback, and track your progression.

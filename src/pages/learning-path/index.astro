@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
+import PageTitle from '../../components/PageTitle.astro';
 import LearningPathCardLarge from '../../components/LearningPathCardLarge.astro';
 import LearningPathCardSoon from '../../components/LearningPathCardSoon.astro';
 import { modules } from '../../data/modules';
@@ -83,10 +84,9 @@ const comingSoonPaths = learningPaths.filter(p => p.comingSoon);
 	<div class="page-enter">
 		<!-- Header -->
 		<div class="mb-8">
-			<div class="relative inline-block group">
-				<h1 class="font-bold text-xl text-gray-900">Learning Paths</h1>
-				<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
-			</div>
+			<PageTitle>
+				<h1 slot="title" class="text-2xl font-black text-gray-900 uppercase">Learning Paths</h1>
+			</PageTitle>
 			<p class="text-gray-600 mt-2">Choose your learning journey and master modern development</p>
 		</div>
 

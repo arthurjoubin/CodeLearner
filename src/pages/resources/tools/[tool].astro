@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../../../layouts/MainLayout.astro';
+import PageTitle from '../../../components/PageTitle.astro';
 import { getCollection, getEntry } from 'astro:content';
 import { ArrowLeft, ExternalLink, CheckCircle, XCircle, Wrench, Star, Newspaper, Command, Brain, Tag } from 'lucide-react';
 
@@ -102,19 +103,16 @@ const logoUrl = getToolLogo(tool.data.name);
 		</div>
 
 		<div class="mb-6">
-			<div class="relative inline-block group">
-				<div class="flex items-center gap-3">
-					<div class="w-12 h-12 rounded-lg overflow-hidden bg-white border-2 border-gray-300 flex items-center justify-center">
-						<img src={logoUrl} alt={tool.data.name} class="w-10 h-10 object-contain" />
-					</div>
-					<div>
-						<h1 class="text-2xl font-black text-gray-900 uppercase">{tool.data.name}</h1>
-						<span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">
-							{tool.data.category}
-						</span>
-					</div>
+			<div class="flex items-center gap-3 mb-3">
+				<div class="w-12 h-12 rounded-lg overflow-hidden bg-white border-2 border-gray-300 flex items-center justify-center">
+					<img src={logoUrl} alt={tool.data.name} class="w-10 h-10 object-contain" />
 				</div>
-				<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+				<PageTitle>
+					<h1 slot="title" class="text-2xl font-black text-gray-900 uppercase">{tool.data.name}</h1>
+					<span slot="tag" class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">
+						{tool.data.category}
+					</span>
+				</PageTitle>
 			</div>
 			<p class="text-gray-700 mt-2">{tool.data.description}</p>
 		</div>

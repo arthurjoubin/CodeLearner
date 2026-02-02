@@ -367,7 +367,7 @@ function Variation6({ resumes }: { resumes: CourseResume[] }) {
           </div>
           <div>
             <h2 className="font-bold text-gray-900 tracking-wide">HACKUP</h2>
-            <p className="text-xs text-gray-500">Learn to code by doing</p>
+            <p className="text-xs text-gray-500">Learn to code___by doing</p>
           </div>
         </div>
 

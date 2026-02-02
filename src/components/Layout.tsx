@@ -315,7 +315,7 @@ function LayoutContent({ children }: LayoutProps) {
             </div>
           </div>
             <div className="mt-4 pt-4 border-t border-gray-100 text-center">
-            <p className="text-[10px] text-gray-500 uppercase font-bold">Learn to code, one day at a time</p>
+            <p className="text-[10px] text-gray-500 uppercase font-bold">Learn to code___one day at a time</p>
           </div>
         </div>
       </footer>

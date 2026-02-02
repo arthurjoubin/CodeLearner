@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
+import PageTitle from '../../components/PageTitle.astro';
 import { getCollection } from 'astro:content';
 import ResourceTabs from '../../components/ResourceTabs.astro';
 import { ArrowLeft, Newspaper, ExternalLink } from 'lucide-react';
@@ -29,15 +30,12 @@ const totalNews = news.length;
 		</div>
 
 		<div class="mb-6">
-			<div class="relative inline-block group">
-				<div class="flex items-center gap-2">
-					<h1 class="text-2xl font-black text-gray-900 uppercase">AI News</h1>
-					<span class="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider border border-gray-300 rounded">
-						{totalNews} articles
-					</span>
-				</div>
-				<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
-			</div>
+			<PageTitle>
+				<h1 slot="title" class="text-2xl font-black text-gray-900 uppercase">AI News</h1>
+				<span slot="tag" class="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider border border-gray-300 rounded">
+					{totalNews} articles
+				</span>
+			</PageTitle>
 			<p class="text-gray-700 mt-1">Latest updates on AI tools, models, and trends</p>
 		</div>
 
