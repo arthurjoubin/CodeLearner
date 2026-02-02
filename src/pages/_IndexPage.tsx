@@ -7,6 +7,7 @@ import { ExerciseDemo3 } from '../components/ExerciseDemo3';
 import { LearningPathCard } from '../components/LearningPathCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SectionTitle } from '../components/PageTitle';
+import { TargetArrowWobble, TargetPulse, ArrowScatter, ArrowStrike, TargetBrutal } from '../components/TargetSvgVariations';
 
 const demoComponents = [ExerciseDemo1, ExerciseDemo2, ExerciseDemo3];
 
@@ -39,6 +40,7 @@ function LandingContent() {
       {/* Hero */}
       <section className="pt-2 pb-4">
         <div className="max-w-6xl mx-auto px-4 py-4 md:py-6">
+          <div className="flex items-start justify-between gap-4">
           <div className="max-w-3xl">
             <div className="inline-block px-3 py-1 bg-primary-100 border border-primary-300 rounded text-xs font-bold uppercase text-primary-700 mb-2">
               Interactive Learning
@@ -68,6 +70,11 @@ function LandingContent() {
             </div>
           </div>
 
+          {/* === VARIATION 1: TargetArrowWobble === */}
+          {/* Cible avec flèche plantée dans le mille, wobble animé */}
+          <TargetArrowWobble className="hidden md:block w-32 lg:w-40 xl:w-48 flex-shrink-0 mt-6 drop-shadow-lg" />
+          </div>
+
           {/* Animated code demo */}
           <div className="mt-8 md:mt-10">
             <ExerciseDemoFlow />
@@ -78,9 +85,17 @@ function LandingContent() {
       {/* Features */}
       <section className="py-8 md:py-10 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4">
-          <SectionTitle className="mb-6">Why HackUp?</SectionTitle>
+          <div className="flex items-center gap-3 mb-6">
+            {/* === VARIATION 2: TargetPulse === */}
+            {/* Mini cible avec centre vert qui pulse */}
+            <TargetPulse className="w-8 h-8 flex-shrink-0" />
+            <SectionTitle className="!mb-0">Why HackUp?</SectionTitle>
+          </div>
 
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="relative grid md:grid-cols-3 gap-4">
+            {/* === VARIATION 3: ArrowScatter === */}
+            {/* Cluster de flèches + mini cibles flottantes en fond */}
+            <ArrowScatter className="absolute -top-6 right-0 w-64 opacity-[0.08] pointer-events-none hidden lg:block" />
             <div className="border-2 border-gray-300 rounded-lg p-5 bg-white hover:border-primary-500 hover:shadow-md transition-all group">
               <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary-500 transition-colors">
                 <svg className="w-5 h-5 text-primary-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,9 +129,19 @@ function LandingContent() {
         </div>
       </section>
 
+      {/* === VARIATION 4: ArrowStrike === */}
+      {/* Flèche animée qui vole et frappe la cible - divider entre sections */}
+      <div className="flex justify-center py-4">
+        <ArrowStrike className="w-56 md:w-72 h-auto" />
+      </div>
+
       {/* Learning Paths */}
       <section className="py-8 md:py-10 border-y border-gray-200">
-        <div className="max-w-6xl mx-auto px-4">
+        <div className="max-w-6xl mx-auto px-4 relative">
+          {/* === VARIATION 5: TargetBrutal === */}
+          {/* Style néo-brutaliste avec shadow offset et sparkles */}
+          <TargetBrutal className="absolute -top-4 -right-2 w-28 lg:w-36 opacity-[0.12] pointer-events-none hidden md:block" />
+
           <SectionTitle className="mb-6">Learning Paths</SectionTitle>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
