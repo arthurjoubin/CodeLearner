@@ -149,7 +149,7 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
                 <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto justify-end sm:justify-start ml-0 sm:ml-auto">
                   <button
                     onClick={() => handleShowEssential(lesson.id)}
-                    className="p-2 text-gray-600 hover:text-primary-700 hover:bg-gray-100 rounded-lg transition-colors hidden sm:flex"
+                    className="p-2 text-gray-600 border border-gray-300 rounded hover:border-primary-500 hover:text-primary-700 transition-colors hidden sm:flex"
                     title="Essential to know"
                   >
                     <BookOpen className="w-4 h-4" />
@@ -157,12 +157,12 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
                   <div className="flex items-center gap-2">
                     <a
                       href={`/lesson/${lesson.id}`}
-                      className={`inline-flex items-center gap-1 h-[46px] px-4 font-bold rounded-lg transition-colors text-xs uppercase ${isNextUp ? 'bg-gray-900 text-white hover:bg-gray-800' : 'bg-primary-600 text-white hover:bg-primary-700'}`}
+                      className={`inline-flex items-center gap-1 px-4 h-10 font-bold text-xs uppercase rounded border transition-all justify-center ${isNextUp ? 'bg-gray-900 text-white border-gray-900 hover:bg-gray-800 hover:border-gray-800' : isComplete ? 'border-gray-400 text-gray-700 hover:bg-gray-50 hover:border-primary-500 hover:text-primary-700 underline-offset-2 hover:underline' : 'border-primary-500 text-primary-700 hover:bg-primary-50'}`}
                     >
-                      {isNextUp ? <>Continue <ArrowRight className="w-3.5 h-3.5" /></> : 'Read Lesson'}
+                      {isNextUp ? <>Continue <ArrowRight className="w-3 h-3" /></> : isComplete ? 'View again' : 'Start'}
                     </a>
                     {exercises.length > 0 && (
-                      <div className="inline-flex items-center gap-2 border-2 border-gray-300 bg-white rounded-lg px-3 py-2">
+                      <div className="inline-flex items-center gap-2 border border-gray-300 bg-white rounded px-3 py-2 h-10 hover:bg-gray-50 transition-colors">
                         <span className="text-xs font-bold text-gray-500 uppercase">Exercises</span>
                         <div className="flex items-center gap-1.5">
                           {exercises.map((ex, idx) => {
@@ -171,9 +171,9 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
                               <a
                                 key={ex.id}
                                 href={`/exercise/${ex.id}`}
-                                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border-2 ${exCompleted
-                                  ? 'bg-primary-100 border-primary-500 text-primary-700 hover:bg-primary-200'
-                                  : 'bg-white border-gray-300 text-gray-600 hover:border-gray-400'
+                                className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold transition-all border ${exCompleted
+                                  ? 'bg-primary-100 border-primary-500 text-primary-700 hover:bg-primary-200 hover:border-primary-700'
+                                  : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-100 hover:border-primary-500'
                                   }`}
                                 title={`Exercise ${idx + 1}: ${ex.title}${exCompleted ? ' (completed)' : ''}`}
                               >

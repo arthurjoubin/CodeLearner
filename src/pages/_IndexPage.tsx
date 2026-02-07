@@ -38,8 +38,8 @@ function LandingContent() {
   return (
     <div className="page-enter min-h-screen bg-gray-50">
       {/* Hero */}
-      <section className="pt-2 pb-4">
-        <div className="max-w-6xl mx-auto px-4 py-4 md:py-6">
+      <section className="py-8 md:py-12 lg:py-16 border-b-2 border-gray-200">
+        <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-start justify-between gap-4">
           <div className="max-w-3xl">
             <div className="inline-block px-3 py-1 bg-primary-100 border border-primary-300 rounded text-xs font-bold uppercase text-primary-700 mb-3">
@@ -81,7 +81,7 @@ function LandingContent() {
       </section>
 
       {/* Features */}
-      <section className="py-8 md:py-10 scroll-mt-16">
+      <section className="py-8 md:py-12 lg:py-16 border-b-2 border-gray-200 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4">
           <SectionTitle>Why HackUp?</SectionTitle>
 
@@ -105,7 +105,7 @@ function LandingContent() {
       </section>
 
       {/* Learning Paths */}
-      <section className="py-8 md:py-10 border-y border-gray-200">
+      <section className="py-8 md:py-12 lg:py-16">
         <div className="max-w-6xl mx-auto px-4">
           <SectionTitle>Learning Paths</SectionTitle>
 

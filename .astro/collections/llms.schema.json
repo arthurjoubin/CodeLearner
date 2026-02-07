@@ -13,12 +13,6 @@
         "provider": {
           "type": "string"
         },
-        "contextWindow": {
-          "type": "string"
-        },
-        "pricing": {
-          "type": "string"
-        },
         "website": {
           "type": "string",
           "format": "uri"
@@ -107,8 +101,6 @@
         "name",
         "description",
         "provider",
-        "contextWindow",
-        "pricing",
         "website",
         "pubDate"
       ],

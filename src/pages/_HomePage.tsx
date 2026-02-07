@@ -24,6 +24,8 @@ interface CourseResume {
   progress: number;
   completedLessonsCount: number;
   totalLessonsCount: number;
+  moduleLessonsCompleted: number;
+  moduleLessonsTotal: number;
 }
 
 export function HomePageContent() {
@@ -69,13 +71,18 @@ export function HomePageContent() {
     for (const lesson of sortedLessons) {
       if (!isLessonEffectivelyDone(lesson.id)) {
         const mod = courseModules.find(m => m.id === lesson.moduleId);
+        const moduleLessons = sortedLessons.filter(l => l.moduleId === lesson.moduleId);
+        const moduleLessonsCompleted = moduleLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
+
         return {
           courseId,
           courseTitle: learningPaths.find(p => p.id === courseId)?.title || courseId,
           nextLesson: { id: lesson.id, title: lesson.title, moduleId: lesson.moduleId, moduleTitle: mod?.title || '' },
           progress: Math.round((completed / sortedLessons.length) * 100),
           completedLessonsCount: completed,
-          totalLessonsCount: sortedLessons.length
+          totalLessonsCount: sortedLessons.length,
+          moduleLessonsCompleted: moduleLessonsCompleted,
+          moduleLessonsTotal: moduleLessons.length
         };
       }
     }
@@ -86,7 +93,9 @@ export function HomePageContent() {
       nextLesson: { id: sortedLessons[0].id, title: sortedLessons[0].title, moduleId: sortedLessons[0].moduleId, moduleTitle: courseModules.find(m => m.id === sortedLessons[0].moduleId)?.title || '' },
       progress: 100,
       completedLessonsCount: sortedLessons.length,
-      totalLessonsCount: sortedLessons.length
+      totalLessonsCount: sortedLessons.length,
+      moduleLessonsCompleted: 0,
+      moduleLessonsTotal: 0
     };
   };
 
@@ -123,49 +132,47 @@ export function HomePageContent() {
                   key={resume.courseId}
                   className="block p-4 border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group bg-white"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="relative w-12 h-12">
-                      <svg className="w-12 h-12 transform -rotate-90">
-                        <circle cx="24" cy="24" r="20" stroke="#d1d5db" strokeWidth="3" fill="none" />
-                        <circle
-                          cx="24" cy="24" r="20"
-                          stroke="#22c55e"
-                          strokeWidth="3"
-                          fill="none"
-                          strokeDasharray={125.6}
-                          strokeDashoffset={125.6 - (125.6 * Math.max(1, resume.progress)) / 100}
-                          strokeLinecap="round"
-                        />
-                      </svg>
+                  <div className="space-y-3">
+                    {/* Header row */}
+                    <div className="flex items-center gap-3">
                       {pathData?.logo ? (
-                        <img src={pathData.logo} alt="" className="absolute inset-0 m-auto w-5 h-5 object-contain" />
+                        <img src={pathData.logo} alt={resume.courseTitle} className="w-6 h-6 object-contain" />
                       ) : (
-                        <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800">
+                        <div className="w-6 h-6 bg-gray-200 rounded-full flex-shrink-0" />
+                      )}
+                      <div className="flex-1 flex items-center gap-2">
+                        <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.courseTitle}</span>
+                        <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded">
                           {resume.completedLessonsCount}/{resume.totalLessonsCount}
                         </span>
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <div className="w-2 h-2 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />
-                        <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.courseTitle}</span>
-                        {pathData?.difficulty && (
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded border ml-auto transition-colors ${pathData.difficulty === 'beginner'
-                            ? 'bg-green-100 text-green-700 border-green-300 group-hover:border-green-500'
-                            : pathData.difficulty === 'medium'
-                              ? 'bg-yellow-100 text-yellow-700 border-yellow-300 group-hover:border-yellow-500'
-                              : 'bg-red-100 text-red-700 border-red-300 group-hover:border-red-500'
-                            }`}>
-                            {pathData.difficulty}
-                          </span>
-                        )}
                       </div>
-                      <p className="text-sm text-gray-700 ml-4">
-                        {resume.nextLesson.moduleTitle && <span className="text-gray-400">{resume.nextLesson.moduleTitle} &rsaquo; </span>}
-                        {resume.nextLesson.title}
+                      {pathData?.difficulty && (
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${pathData.difficulty === 'beginner'
+                          ? 'bg-green-100 text-green-700 border-green-300 group-hover:border-green-500'
+                          : pathData.difficulty === 'medium'
+                            ? 'bg-yellow-100 text-yellow-700 border-yellow-300 group-hover:border-yellow-500'
+                            : 'bg-red-100 text-red-700 border-red-300 group-hover:border-red-500'
+                          }`}>
+                          {pathData.difficulty}
+                        </span>
+                      )}
+                      <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-primary-600 flex-shrink-0" />
+                    </div>
+
+                    {/* Progress bar */}
+                    <div className="space-y-1">
+                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-primary-400 to-primary-500 rounded-full transition-all duration-500"
+                          style={{ width: `${Math.max(2, resume.progress)}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        {resume.nextLesson.moduleTitle && <span className="font-medium text-gray-600">{resume.nextLesson.moduleTitle} ({resume.moduleLessonsCompleted}/{resume.moduleLessonsTotal})</span>}
+                        {resume.nextLesson.moduleTitle && resume.nextLesson.title && <span className="mx-1">›</span>}
+                        <span className="text-gray-400">{resume.nextLesson.title}</span>
                       </p>
                     </div>
-                    <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-primary-600" />
                   </div>
                 </a>
               );
@@ -174,9 +181,10 @@ export function HomePageContent() {
         </div>
       )}
 
-      <SectionTitle>Learning Paths</SectionTitle>
+      <div className="py-8 md:py-10 border-b-2 border-gray-200">
+        <SectionTitle>Learning Paths</SectionTitle>
 
-      <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide p-1">
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide p-1">
         {[...learningPaths]
           .sort((a, b) => {
             const progressA = getPathProgress(a.id);
@@ -245,12 +253,14 @@ export function HomePageContent() {
             </a>
           );
         })}
+        </div>
       </div>
 
-      <SectionTitle>Our Method</SectionTitle>
+      <div className="py-8 md:py-10">
+        <SectionTitle>Our Method</SectionTitle>
 
-      <div className="border-2 border-gray-300 rounded-lg p-3 mt-3 bg-white">
-        <div className="grid md:grid-cols-3 gap-4 text-sm">
+        <div className="border-2 border-gray-300 rounded-lg p-3 bg-white">
+          <div className="grid md:grid-cols-3 gap-4 text-sm">
           <div className="pr-3 md:border-r md:border-gray-200 md:last:border-r-0">
             <div className="flex items-center gap-2 mb-0.5">
               <div className="w-2 h-2 bg-primary-500 rounded-full" />
@@ -272,6 +282,7 @@ export function HomePageContent() {
             </div>
             <p className="text-gray-700 ml-4">No passive watching. You code, you test, you learn by taking action.</p>
           </div>
+        </div>
         </div>
       </div>
 

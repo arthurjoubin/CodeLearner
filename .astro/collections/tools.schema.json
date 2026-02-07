@@ -25,9 +25,6 @@
           "type": "string",
           "format": "uri"
         },
-        "pricing": {
-          "type": "string"
-        },
         "features": {
           "type": "array",
           "items": {
@@ -74,7 +71,6 @@
         "description",
         "category",
         "website",
-        "pricing",
         "pubDate"
       ],
       "additionalProperties": false
