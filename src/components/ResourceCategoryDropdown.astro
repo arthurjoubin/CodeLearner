@@ -7,108 +7,72 @@ interface Props {
 
 const { currentCategory } = Astro.props;
 
-const categoryInfo: Record<string, { name: string; href: string }> = {
-  'news': { name: 'News', href: '/resources/news' },
-  'tools': { name: 'Tools', href: '/resources/tools' },
-  'llms': { name: 'LLMs', href: '/resources/llms' },
-  'coding-bench': { name: 'Coding Bench', href: '/resources/coding-bench' },
-  'devfinds': { name: 'Deals', href: '/resources/devfinds' },
-};
+const categories = [
+  { id: 'news', name: 'News', href: '/resources/news', Icon: Newspaper },
+  { id: 'tools', name: 'Tools', href: '/resources/tools', Icon: Command },
+  { id: 'llms', name: 'LLMs', href: '/resources/llms', Icon: Brain },
+  { id: 'coding-bench', name: 'Coding Bench', href: '/resources/coding-bench', Icon: Wrench },
+  { id: 'devfinds', name: 'Deals', href: '/resources/devfinds', Icon: Tag },
+];
 
-const currentInfo = categoryInfo[currentCategory];
+const currentInfo = categories.find(c => c.id === currentCategory);
+const CurrentIcon = currentInfo?.Icon || Newspaper;
 ---
 
-<div class="relative resource-category-dropdown">
-  <button class="flex items-center gap-2 px-3 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 focus:border-primary-500 transition-all text-xs sm:text-sm font-bold uppercase dropdown-btn shadow-sm hover:shadow-md">
-    {currentCategory === 'news' && <Newspaper className="w-4 h-4" />}
-    {currentCategory === 'tools' && <Command className="w-4 h-4" />}
-    {currentCategory === 'llms' && <Brain className="w-4 h-4" />}
-    {currentCategory === 'coding-bench' && <Wrench className="w-4 h-4" />}
-    {currentCategory === 'devfinds' && <Tag className="w-4 h-4" />}
-    {currentInfo?.name}
-    <ChevronDown className="w-4 h-4 ml-1 transition-transform dropdown-chevron" />
+<div class="relative category-dd">
+  <div class="dd-overlay fixed inset-0 z-40" onclick="this.closest('.category-dd').classList.remove('dd-open')"></div>
+  <button
+    type="button"
+    onclick="event.stopPropagation(); document.querySelectorAll('.resource-dd.dd-open, .category-dd.dd-open').forEach(el => el !== this.parentElement && el.classList.remove('dd-open')); this.parentElement.classList.toggle('dd-open')"
+    class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 bg-gray-900 text-white border border-gray-900 rounded-lg hover:bg-gray-800 transition-colors text-xs sm:text-sm font-bold cursor-pointer"
+  >
+    <CurrentIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+    <span class="hidden xs:inline">{currentInfo?.name}</span>
+    <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform dd-chevron" />
   </button>
-  <div class="absolute right-0 mt-2 w-48 bg-white border-2 border-gray-300 rounded-lg shadow-xl opacity-0 invisible transition-all z-50 dropdown-menu hidden max-h-72 overflow-y-auto">
-    <div class="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-2">
-      <p class="text-[10px] font-bold uppercase text-gray-500">Resources</p>
+
+  <div class="dd-menu fixed inset-x-3 bottom-3 sm:absolute sm:inset-auto sm:right-0 sm:bottom-auto sm:mt-2 w-auto sm:w-48 bg-white border-2 border-gray-300 rounded-lg z-50 overflow-hidden shadow-xl">
+    <div class="flex items-center justify-between px-3 py-2.5 border-b border-gray-200 bg-gray-50">
+      <span class="font-bold uppercase text-[10px] text-gray-500">Resources</span>
+      <button type="button" onclick="this.closest('.category-dd').classList.remove('dd-open')" class="sm:hidden p-1 hover:bg-gray-200 rounded transition-colors">
+        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
-    <a href="/resources/news" class={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 ${currentCategory === 'news' ? 'bg-primary-50 hover:bg-primary-100' : 'hover:bg-gray-50'}`}>
-      <Newspaper className="w-4 h-4" />
-      <div class="flex-1">
-        <p class={`text-sm font-bold ${currentCategory === 'news' ? 'text-primary-700' : 'text-gray-900'}`}>News</p>
-      </div>
-      {currentCategory === 'news' && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
-    </a>
-    <a href="/resources/tools" class={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 ${currentCategory === 'tools' ? 'bg-primary-50 hover:bg-primary-100' : 'hover:bg-gray-50'}`}>
-      <Command className="w-4 h-4" />
-      <div class="flex-1">
-        <p class={`text-sm font-bold ${currentCategory === 'tools' ? 'text-primary-700' : 'text-gray-900'}`}>Tools</p>
-      </div>
-      {currentCategory === 'tools' && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
-    </a>
-    <a href="/resources/llms" class={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 ${currentCategory === 'llms' ? 'bg-primary-50 hover:bg-primary-100' : 'hover:bg-gray-50'}`}>
-      <Brain className="w-4 h-4" />
-      <div class="flex-1">
-        <p class={`text-sm font-bold ${currentCategory === 'llms' ? 'text-primary-700' : 'text-gray-900'}`}>LLMs</p>
-      </div>
-      {currentCategory === 'llms' && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
-    </a>
-    <a href="/resources/coding-bench" class={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 ${currentCategory === 'coding-bench' ? 'bg-primary-50 hover:bg-primary-100' : 'hover:bg-gray-50'}`}>
-      <Wrench className="w-4 h-4" />
-      <div class="flex-1">
-        <p class={`text-sm font-bold ${currentCategory === 'coding-bench' ? 'text-primary-700' : 'text-gray-900'}`}>Coding Bench</p>
-      </div>
-      {currentCategory === 'coding-bench' && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
-    </a>
-    <a href="/resources/devfinds" class={`flex items-center gap-3 px-4 py-3 transition-colors ${currentCategory === 'devfinds' ? 'bg-primary-50 hover:bg-primary-100' : 'hover:bg-gray-50'}`}>
-      <Tag className="w-4 h-4" />
-      <div class="flex-1">
-        <p class={`text-sm font-bold ${currentCategory === 'devfinds' ? 'text-primary-700' : 'text-gray-900'}`}>Deals</p>
-      </div>
-      {currentCategory === 'devfinds' && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
-    </a>
+    {categories.map(({ id, name, href, Icon }) => (
+      <a
+        href={href}
+        class={`flex items-center gap-3 px-3 py-3 sm:py-2.5 transition-colors border-b border-gray-100 last:border-b-0 ${
+          id === currentCategory
+            ? 'bg-primary-50 text-primary-700'
+            : 'hover:bg-gray-50 active:bg-gray-100 text-gray-900'
+        }`}
+      >
+        <Icon className={`w-4 h-4 flex-shrink-0 ${id === currentCategory ? 'text-primary-600' : 'text-gray-500'}`} />
+        <span class="text-sm font-bold flex-1">{name}</span>
+        {id === currentCategory && (
+          <div class="w-2 h-2 bg-primary-500 rounded-full flex-shrink-0"></div>
+        )}
+      </a>
+    ))}
   </div>
 </div>
 
-<script define:vars={{ dropdownId: 'resource-category-dropdown' }}>
-  {
-    const dropdown = document.querySelector('.resource-category-dropdown');
-    const btn = dropdown?.querySelector('.dropdown-btn');
-    const menu = dropdown?.querySelector('.dropdown-menu');
-    const chevron = btn?.querySelector('.dropdown-chevron');
-
-    function toggleMenu() {
-      const isHidden = menu?.classList.contains('hidden');
-      if (isHidden) {
-        menu?.classList.remove('hidden', 'opacity-0', 'invisible');
-        menu?.classList.add('opacity-100', 'visible');
-        chevron?.classList.add('rotate-180');
-      } else {
-        menu?.classList.add('hidden', 'opacity-0', 'invisible');
-        menu?.classList.remove('opacity-100', 'visible');
-        chevron?.classList.remove('rotate-180');
-      }
-    }
-
-    btn?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleMenu();
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!dropdown?.contains(e.target)) {
-        menu?.classList.add('hidden', 'opacity-0', 'invisible');
-        menu?.classList.remove('opacity-100', 'visible');
-        chevron?.classList.remove('rotate-180');
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        menu?.classList.add('hidden', 'opacity-0', 'invisible');
-        menu?.classList.remove('opacity-100', 'visible');
-        chevron?.classList.remove('rotate-180');
-      }
-    });
+<style is:global>
+  .category-dd .dd-overlay {
+    display: none;
   }
-</script>
+  .category-dd .dd-menu {
+    display: none;
+  }
+  .category-dd.dd-open .dd-overlay {
+    display: block;
+  }
+  .category-dd.dd-open .dd-menu {
+    display: block;
+  }
+  .category-dd.dd-open .dd-chevron {
+    transform: rotate(180deg);
+  }
+</style>

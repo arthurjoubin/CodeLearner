@@ -22,75 +22,85 @@ const { items, currentSlug, getLogoFn, getSubtitleFn, basePath, dropdownId } = A
 const currentItem = items.find(item => item.slug === currentSlug);
 ---
 
-<div class={`relative ${dropdownId}`}>
-  <button class="flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 focus:border-primary-500 transition-all text-xs sm:text-sm font-bold uppercase dropdown-btn shadow-sm hover:shadow-md">
-    <img src={getLogoFn(currentItem!)} alt={currentItem?.data.name} class="w-5 h-5 rounded object-contain" />
-    {currentItem?.data.name}
-    <ChevronDown className="w-4 h-4 ml-1 transition-transform dropdown-chevron" />
+<div class="relative resource-dd" id={dropdownId}>
+  <div class="dd-overlay fixed inset-0 z-40" onclick="this.closest('.resource-dd').classList.remove('dd-open')"></div>
+  <button
+    type="button"
+    onclick="event.stopPropagation(); document.querySelectorAll('.resource-dd.dd-open, .category-dd.dd-open').forEach(el => el !== this.parentElement && el.classList.remove('dd-open')); this.parentElement.classList.toggle('dd-open')"
+    class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 bg-white border border-gray-300 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-colors text-xs sm:text-sm font-bold cursor-pointer"
+  >
+    <img src={getLogoFn(currentItem!)} alt={currentItem?.data.name} class="hidden sm:block w-5 h-5 rounded object-contain" />
+    <span class="max-w-[100px] truncate">{currentItem?.data.name}</span>
+    <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 transition-transform dd-chevron" />
   </button>
-  <div class="absolute right-0 mt-2 w-56 bg-white border-2 border-gray-300 rounded-lg shadow-xl opacity-0 invisible transition-all z-50 dropdown-menu hidden max-h-72 overflow-y-auto">
-    <div class="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-2">
-      <p class="text-[10px] font-bold uppercase text-gray-500">Select</p>
+
+  <div class="dd-menu fixed inset-x-3 bottom-3 sm:absolute sm:inset-auto sm:right-0 sm:bottom-auto sm:mt-2 w-auto sm:w-60 bg-white border-2 border-gray-300 rounded-lg z-50 overflow-hidden shadow-xl">
+    <div class="flex items-center justify-between px-3 py-2.5 border-b border-gray-200 bg-gray-50">
+      <span class="font-bold uppercase text-[10px] text-gray-500">Select</span>
+      <button type="button" onclick="this.closest('.resource-dd').classList.remove('dd-open')" class="sm:hidden p-1 hover:bg-gray-200 rounded transition-colors">
+        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
-    {items.map((item) => (
-      <a
-        href={`${basePath}${item.slug}`}
-        class={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 last:border-b-0 ${
-          item.slug === currentSlug
-            ? 'bg-primary-50 hover:bg-primary-100'
-            : 'hover:bg-gray-50'
-        }`}
-      >
-        <img src={getLogoFn(item)} alt={item.data.name} class="w-5 h-5 rounded object-contain" />
-        <div class="flex-1">
-          <p class={`text-sm font-bold ${item.slug === currentSlug ? 'text-primary-700' : 'text-gray-900'}`}>{item.data.name}</p>
-          <p class="text-[10px] text-gray-500">{getSubtitleFn(item)}</p>
-        </div>
-        {item.slug === currentSlug && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
-      </a>
-    ))}
+    <div class="max-h-[50vh] sm:max-h-64 overflow-y-auto">
+      {items.map((item) => (
+        <a
+          href={`${basePath}${item.slug}`}
+          class={`flex items-center gap-3 px-3 py-3 sm:py-2.5 transition-colors border-b border-gray-100 last:border-b-0 ${
+            item.slug === currentSlug
+              ? 'bg-primary-50 text-primary-700'
+              : 'hover:bg-gray-50 active:bg-gray-100 text-gray-900'
+          }`}
+        >
+          <img src={getLogoFn(item)} alt={item.data.name} class="w-5 h-5 rounded object-contain flex-shrink-0" />
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-bold truncate">{item.data.name}</p>
+            <p class="text-[10px] text-gray-500 truncate">{getSubtitleFn(item)}</p>
+          </div>
+          {item.slug === currentSlug && (
+            <div class="w-2 h-2 bg-primary-500 rounded-full flex-shrink-0"></div>
+          )}
+        </a>
+      ))}
+    </div>
   </div>
 </div>
 
-<script define:vars={{ dropdownId }}>
-  {
-    const dropdown = document.querySelector(`.${dropdownId}`);
-    const btn = dropdown?.querySelector('.dropdown-btn');
-    const menu = dropdown?.querySelector('.dropdown-menu');
-    const chevron = btn?.querySelector('.dropdown-chevron');
+<style is:global>
+  .resource-dd .dd-overlay {
+    display: none;
+  }
+  .resource-dd .dd-menu {
+    display: none;
+  }
+  .resource-dd.dd-open .dd-overlay {
+    display: block;
+  }
+  .resource-dd.dd-open .dd-menu {
+    display: block;
+  }
+  .resource-dd.dd-open .dd-chevron {
+    transform: rotate(180deg);
+  }
+</style>
 
-    function toggleMenu() {
-      const isHidden = menu?.classList.contains('hidden');
-      if (isHidden) {
-        menu?.classList.remove('hidden', 'opacity-0', 'invisible');
-        menu?.classList.add('opacity-100', 'visible');
-        chevron?.classList.add('rotate-180');
-      } else {
-        menu?.classList.add('hidden', 'opacity-0', 'invisible');
-        menu?.classList.remove('opacity-100', 'visible');
-        chevron?.classList.remove('rotate-180');
-      }
-    }
-
-    btn?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleMenu();
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!dropdown?.contains(e.target)) {
-        menu?.classList.add('hidden', 'opacity-0', 'invisible');
-        menu?.classList.remove('opacity-100', 'visible');
-        chevron?.classList.remove('rotate-180');
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        menu?.classList.add('hidden', 'opacity-0', 'invisible');
-        menu?.classList.remove('opacity-100', 'visible');
-        chevron?.classList.remove('rotate-180');
-      }
+<script is:inline>
+(function() {
+  function closeAllDropdowns() {
+    document.querySelectorAll('.resource-dd.dd-open, .category-dd.dd-open').forEach(function(el) {
+      el.classList.remove('dd-open');
     });
   }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.resource-dd') && !e.target.closest('.category-dd')) {
+      closeAllDropdowns();
+    }
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeAllDropdowns();
+    }
+  });
+})();
 </script>
