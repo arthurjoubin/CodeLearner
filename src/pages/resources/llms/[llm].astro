@@ -42,30 +42,42 @@ const logoUrl = getProviderLogo(llm.data.provider);
 <MainLayout title={`${llm.data.name} - LLM`}>
 	<div class="page-enter">
 		<!-- Navigation -->
-		<div class="flex items-center justify-between mb-6">
-			<a href="/resources/llms" class="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors text-sm">
-				<ArrowLeft className="w-4 h-4" /> Back
+		<div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
+			<a href="/resources/llms" class="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors text-xs sm:text-sm">
+				<ArrowLeft className="w-4 h-4" /> Back to LLMs
 			</a>
 
 			<!-- LLMs Dropdown -->
-			<div class="relative llms-dropdown">
-				<button class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 focus:border-primary-500 transition-all text-xs sm:text-sm font-bold uppercase dropdown-btn">
+			<div class="relative llms-dropdown group">
+				<button class="flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 focus:border-primary-500 transition-all text-xs sm:text-sm font-bold uppercase dropdown-btn shadow-sm hover:shadow-md">
+					<img src={logoUrl} alt={llm.data.provider} class="w-5 h-5 rounded object-contain" />
 					{llm.data.name}
-					<ChevronDown className="w-4 h-4" />
+					<ChevronDown className="w-4 h-4 ml-1 group-hover:rotate-180 transition-transform" />
 				</button>
-				<div class="absolute right-0 mt-1 w-44 sm:w-48 bg-white border-2 border-gray-300 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible md:opacity-0 md:invisible md:group-hover:opacity-100 md:group-hover:visible transition-all z-10 dropdown-menu hidden max-h-60 overflow-y-auto">
-					{allLlms.map((l) => (
-						<a
-							href={`/resources/llms/${l.slug}`}
-							class={`block px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold uppercase transition-colors ${
-								l.slug === llmSlug
-									? 'bg-primary-100 text-primary-700 border-b-2 border-primary-300'
-									: 'text-gray-700 hover:bg-gray-50 border-b border-gray-200'
-							}`}
-						>
-							{l.data.name}
-						</a>
-					))}
+				<div class="absolute right-0 mt-2 w-56 bg-white border-2 border-gray-300 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 dropdown-menu hidden max-h-72 overflow-y-auto">
+					<div class="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-2">
+						<p class="text-[10px] font-bold uppercase text-gray-500">Select LLM</p>
+					</div>
+					{allLlms.map((l) => {
+						const providerLogo = getProviderLogo(l.data.provider);
+						return (
+							<a
+								href={`/resources/llms/${l.slug}`}
+								class={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 last:border-b-0 ${
+									l.slug === llmSlug
+										? 'bg-primary-50 hover:bg-primary-100'
+										: 'hover:bg-gray-50'
+								}`}
+							>
+								<img src={providerLogo} alt={l.data.provider} class="w-5 h-5 rounded object-contain" />
+								<div class="flex-1">
+									<p class={`text-sm font-bold ${l.slug === llmSlug ? 'text-primary-700' : 'text-gray-900'}`}>{l.data.name}</p>
+									<p class="text-[10px] text-gray-500">{l.data.provider}</p>
+								</div>
+								{l.slug === llmSlug && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
+							</a>
+						);
+					})}
 				</div>
 			</div>
 		</div>
