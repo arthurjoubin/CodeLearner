@@ -1,14 +1,27 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
 import ModulePage from '../../pages/_ModulePage';
+import { getModule } from '../../data/modules';
+
+const learningPathTitles: Record<string, string> = {
+  react: 'React',
+  'web-stack': 'Web Fundamentals',
+  git: 'Git',
+  javascript: 'JavaScript',
+  'html-css': 'HTML & CSS',
+  fastapi: 'FastAPI',
+};
 
 export function getStaticPaths() {
   return [];
 }
 
 const { moduleId } = Astro.params;
+const module = moduleId ? getModule(moduleId) : undefined;
+const pathTitle = module ? learningPathTitles[module.courseId] || module.courseId : '';
+const pageTitle = pathTitle && module ? `${pathTitle} - ${module.title}` : `Module - ${moduleId}`;
 ---
 
-<MainLayout title={`Module - ${moduleId}`}>
+<MainLayout title={pageTitle}>
 	<ModulePage client:load moduleId={moduleId} />
 </MainLayout>
