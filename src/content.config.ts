@@ -46,7 +46,6 @@ const tools = defineCollection({
 		description: z.string(),
 		category: z.enum(['IDE', 'Agent', 'Vibe Framework', 'UI Generator', 'Code Review', 'Other']),
 		website: z.string().url(),
-		pricing: z.string(),
 		features: z.array(z.string()).default([]),
 		pros: z.array(z.string()).default([]),
 		cons: z.array(z.string()).default([]),
