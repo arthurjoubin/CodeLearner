@@ -10,7 +10,7 @@ export default function PricingPage() {
   const perMonth = billing === 'monthly' ? 10 : Math.round((50 / 12) * 100) / 100;
 
   const features = [
-    'All learning paths (React, Git, Web Stack & more)',
+    'All learning paths (React, Git, Web Fundamentals & more)',
     'Hands-on exercises with AI feedback',
     'Project Labs with guided steps',
     'XP, levels & leaderboard',

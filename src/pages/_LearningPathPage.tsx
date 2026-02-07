@@ -27,7 +27,7 @@ function LearningPathPageContent({ pathId }: LearningPathPageProps) {
     'html-css': 'HTML & CSS',
     javascript: 'JavaScript',
     react: 'React',
-    'web-stack': 'Web Stack Essentials',
+    'web-stack': 'Web Fundamentals',
     fastapi: 'FastAPI',
     git: 'Git',
   };
