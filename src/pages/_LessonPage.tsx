@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 // Link and useParams replaced for Astro compatibility
 
 import { useUser, UserProvider } from '../context/UserContext';
-import { getLesson, getModule, getExercisesForLesson, getLessonsForModule } from '../data/modules';
+import { getLesson, getModule, getExercisesForLesson, getLessonsForModule, getModulesForCourse, lessons as allLessons } from '../data/modules';
 import { getXpReward } from '../types';
 import {
   CheckCircle,
@@ -16,7 +16,7 @@ import { LessonCompletionModal } from '../components/completion-modals';
 
 const learningPathTitles: Record<string, string> = {
   react: 'React',
-  'web-stack': 'Web Stack',
+  'web-stack': 'Web Fundamentals',
   git: 'Git',
   fastapi: 'FastAPI',
 };
@@ -40,6 +40,15 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
   const nextLesson = currentIndex >= 0 ? moduleLessons[currentIndex + 1] : undefined;
 
   const completedExercisesCount = exercises.filter(ex => isExerciseCompleted(ex.id)).length;
+
+  // Course-level progress for breadcrumb
+  const courseModules = module ? getModulesForCourse(module.courseId) : [];
+  const courseLessons = courseModules.flatMap(m => allLessons.filter(l => l.moduleId === m.id));
+  const courseLessonsDone = courseLessons.filter(l => {
+    if (isLessonCompleted(l.id)) return true;
+    const exs = getExercisesForLesson(l.id);
+    return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
+  }).length;
 
   const handleComplete = useCallback(() => {
     if (lesson) {
@@ -88,7 +97,7 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
     <div className="page-enter max-w-6xl mx-auto px-3">
       <div className="mb-6">
         <Breadcrumb items={[
-          { label: learningPathTitles[module.courseId] || module.courseId, href: `/learning-path/${module.courseId}` },
+          { label: `${learningPathTitles[module.courseId] || module.courseId} (${courseLessonsDone}/${courseLessons.length})`, href: `/learning-path/${module.courseId}` },
           { label: module.title, href: `/module/${module.id}` },
         ]} />
         <PageHeader title={lesson.title} />

@@ -20,7 +20,7 @@ import { ExerciseCompletionModal } from '../components/completion-modals';
 
 const learningPathTitles: Record<string, string> = {
   react: 'React',
-  'web-stack': 'Web Stack',
+  'web-stack': 'Web Fundamentals',
   git: 'Git',
   fastapi: 'FastAPI',
 };

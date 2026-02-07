@@ -20,7 +20,7 @@ const learningPaths = [
 interface CourseResume {
   courseId: string;
   courseTitle: string;
-  nextLesson: { id: string; title: string; moduleId: string };
+  nextLesson: { id: string; title: string; moduleId: string; moduleTitle: string };
   progress: number;
   completedLessonsCount: number;
   totalLessonsCount: number;
@@ -68,10 +68,11 @@ export function HomePageContent() {
 
     for (const lesson of sortedLessons) {
       if (!isLessonEffectivelyDone(lesson.id)) {
+        const mod = courseModules.find(m => m.id === lesson.moduleId);
         return {
           courseId,
           courseTitle: learningPaths.find(p => p.id === courseId)?.title || courseId,
-          nextLesson: { id: lesson.id, title: lesson.title, moduleId: lesson.moduleId },
+          nextLesson: { id: lesson.id, title: lesson.title, moduleId: lesson.moduleId, moduleTitle: mod?.title || '' },
           progress: Math.round((completed / sortedLessons.length) * 100),
           completedLessonsCount: completed,
           totalLessonsCount: sortedLessons.length
@@ -82,7 +83,7 @@ export function HomePageContent() {
     return {
       courseId,
       courseTitle: learningPaths.find(p => p.id === courseId)?.title || courseId,
-      nextLesson: { id: sortedLessons[0].id, title: sortedLessons[0].title, moduleId: sortedLessons[0].moduleId },
+      nextLesson: { id: sortedLessons[0].id, title: sortedLessons[0].title, moduleId: sortedLessons[0].moduleId, moduleTitle: courseModules.find(m => m.id === sortedLessons[0].moduleId)?.title || '' },
       progress: 100,
       completedLessonsCount: sortedLessons.length,
       totalLessonsCount: sortedLessons.length
@@ -159,7 +160,10 @@ export function HomePageContent() {
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-700 ml-4">{resume.nextLesson.title}</p>
+                      <p className="text-sm text-gray-700 ml-4">
+                        {resume.nextLesson.moduleTitle && <span className="text-gray-400">{resume.nextLesson.moduleTitle} &rsaquo; </span>}
+                        {resume.nextLesson.title}
+                      </p>
                     </div>
                     <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-primary-600" />
                   </div>
