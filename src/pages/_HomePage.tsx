@@ -9,7 +9,7 @@ import { SectionTitle } from '../components/PageTitle';
 const learningPaths = [
   { id: 'html-css', title: 'HTML & CSS', description: 'Learn the building blocks of every web page', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/html/html.png', difficulty: 'beginner' as const },
   { id: 'javascript', title: 'JavaScript', description: 'Master the language of the web', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png', difficulty: 'beginner' as const },
-  { id: 'web-stack', title: 'VIBECODER BASIS', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const },
+  { id: 'web-stack', title: 'Web Fundamentals', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const },
   { id: 'react', title: 'React', description: 'Learn React and TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', difficulty: 'medium' as const },
   { id: 'git', title: 'Git', description: 'Master version control with Git', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png', difficulty: 'beginner' as const },
   { id: 'fastapi', title: 'FastAPI', description: 'Build modern APIs with FastAPI', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png' },
@@ -136,9 +136,13 @@ export function HomePageContent() {
                           strokeLinecap="round"
                         />
                       </svg>
-                      <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800">
-                        {resume.completedLessonsCount}/{resume.totalLessonsCount}
-                      </span>
+                      {pathData?.logo ? (
+                        <img src={pathData.logo} alt="" className="absolute inset-0 m-auto w-5 h-5 object-contain" />
+                      ) : (
+                        <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800">
+                          {resume.completedLessonsCount}/{resume.totalLessonsCount}
+                        </span>
+                      )}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
