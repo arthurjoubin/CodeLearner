@@ -1,0 +1,68 @@
+{
+  "module": {
+    "id": "js-variables-types",
+    "courseId": "javascript",
+    "title": "Variables & Data Types",
+    "description": "Master JavaScript variables, data types, and operators",
+    "icon": "Code",
+    "requiredXp": 0,
+    "color": "from-yellow-400 to-yellow-600"
+  },
+  "lessons": [
+    {
+      "id": "js-variables",
+      "moduleId": "js-variables-types",
+      "title": "Variables: let, const & var",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `let` for variables that change\n- `const` for values that don't change\n- `var` is the old way (avoid it)\n- Always prefer `const`, use `let` when needed\n\n---\n\n# Variables in JavaScript\n\nVariables are containers for storing data.\n\n## const - Constants\n```js\nconst name = \"Alice\";\nconst age = 25;\n// name = \"Bob\"; // Error! Can't reassign const\n```\n\n## let - Mutable variables\n```js\nlet score = 0;\nscore = 10; // OK!\nscore = score + 5; // OK!\n```\n\n## var - The old way\n```js\nvar old = \"avoid this\";\n// var is function-scoped, not block-scoped\n// It can cause bugs - prefer let/const\n```\n\n## Naming Rules\n- Start with letter, `_`, or `$`\n- Use camelCase: `myVariable`\n- Be descriptive: `userName` not `u`",
+      "codeExample": "// const for things that don't change\nconst PI = 3.14159;\nconst greeting = \"Hello World\";\n\n// let for things that do change\nlet count = 0;\ncount += 1;\n\n// Template literals use backticks\nconst message = `Count is: ${count}`;\nconsole.log(message);"
+    },
+    {
+      "id": "js-data-types",
+      "moduleId": "js-variables-types",
+      "title": "Data Types",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- **Primitives**: string, number, boolean, null, undefined\n- **Objects**: arrays, objects, functions\n- Use `typeof` to check types\n- JavaScript is dynamically typed\n\n---\n\n# JavaScript Data Types\n\n## Primitives\n```js\nconst str = \"hello\";       // string\nconst num = 42;             // number\nconst bool = true;          // boolean\nconst nothing = null;       // null\nconst notDefined = undefined; // undefined\n```\n\n## typeof operator\n```js\ntypeof \"hello\"  // \"string\"\ntypeof 42       // \"number\"\ntypeof true     // \"boolean\"\n```",
+      "codeExample": "const name = \"Alice\";\nconst age = 25;\nconst isStudent = true;\nconst hobbies = [\"coding\", \"reading\"];\nconst address = null;\n\nconsole.log(typeof name);      // \"string\"\nconsole.log(typeof age);       // \"number\"\nconsole.log(typeof isStudent); // \"boolean\"\nconsole.log(typeof hobbies);   // \"object\"\nconsole.log(typeof address);   // \"object\" (known JS quirk!)"
+    },
+    {
+      "id": "js-operators",
+      "moduleId": "js-variables-types",
+      "title": "Operators & Expressions",
+      "order": 3,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Arithmetic: `+`, `-`, `*`, `/`, `%`, `**`\n- Comparison: `===`, `!==`, `>`, `<`, `>=`, `<=`\n- Logical: `&&`, `||`, `!`\n- Always use `===` instead of `==`\n\n---\n\n# Operators",
+      "codeExample": "const a = 10;\nconst b = 3;\n\nconsole.log(a + b);  // 13\nconsole.log(a % b);  // 1 (remainder)\nconsole.log(a ** b); // 1000 (power)\n\nconsole.log(a === 10);  // true (strict equality)\nconsole.log(a !== b);   // true\n\nconst isAdult = a >= 18;\nconst canDrive = isAdult && true;"
+    },
+    {
+      "id": "js-type-coercion",
+      "moduleId": "js-variables-types",
+      "title": "Type Coercion & Conversion",
+      "order": 4,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- JavaScript auto-converts types (coercion)\n- `String()`, `Number()`, `Boolean()` for explicit conversion\n- Falsy values: `0`, `\"\"`, `null`, `undefined`, `NaN`, `false`\n- `===` avoids coercion bugs\n\n---\n\n# Type Coercion",
+      "codeExample": "// Implicit coercion\nconsole.log(\"5\" + 3);     // \"53\" (string concat)\nconsole.log(\"5\" - 3);     // 2 (number math)\nconsole.log(\"5\" == 5);    // true (loose)\nconsole.log(\"5\" === 5);   // false (strict)\n\n// Explicit conversion\nconsole.log(Number(\"42\")); // 42\nconsole.log(String(42));   // \"42\"\nconsole.log(Boolean(0));   // false\nconsole.log(Boolean(1));   // true"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "js-var-ex-1",
+      "lessonId": "js-variables",
+      "moduleId": "js-variables-types",
+      "title": "Declare & Use Variables",
+      "difficulty": "easy",
+      "description": "Practice declaring variables with let and const.",
+      "instructions": "Create a component that displays a user profile:\n1. Declare a `const` called `name` with the value \"Alice\"\n2. Declare a `const` called `age` with the value 25\n3. Declare a `let` called `score` with the value 0\n4. Increment `score` by 10\n5. Return a div showing: name, age, and the final score using template literals or JSX expressions",
+      "starterCode": "function UserProfile() {\n  // 1. Declare name (const)\n  // 2. Declare age (const)\n  // 3. Declare score (let) and increment it\n\n  return (\n    <div>\n      {/* Display name, age, and score */}\n    </div>\n  );\n}",
+      "solution": "function UserProfile() {\n  const name = \"Alice\";\n  const age = 25;\n  let score = 0;\n  score += 10;\n\n  return (\n    <div>\n      <h2>{name}</h2>\n      <p>Age: {age}</p>\n      <p>Score: {score}</p>\n    </div>\n  );\n}",
+      "hints": [
+        "Use const for values that won't change (name, age)",
+        "Use let for score since you need to modify it",
+        "Use {variableName} inside JSX to display values"
+      ],
+      "validationPrompt": "Check if the code declares name as const with 'Alice', age as const with 25, score as let starting at 0 then incremented to 10, and displays all three values in JSX"
+    }
+  ]
+}

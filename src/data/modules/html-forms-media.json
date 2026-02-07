@@ -1,0 +1,50 @@
+{
+  "module": {
+    "id": "html-forms-media",
+    "courseId": "html-css",
+    "title": "Forms & Media",
+    "description": "Build interactive forms and embed media content",
+    "icon": "FileInput",
+    "requiredXp": 100,
+    "color": "from-red-400 to-red-600"
+  },
+  "lessons": [
+    {
+      "id": "html-form-basics",
+      "moduleId": "html-forms-media",
+      "title": "Form Elements",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `<form>` wraps form elements\n- `<input>` for text fields, `<textarea>` for multi-line\n- `<label>` links to inputs via `for`/`htmlFor`\n- `<button type=\"submit\">` submits the form\n- `<select>` + `<option>` for dropdowns\n\n---\n\n# Form Elements",
+      "codeExample": "<form>\n  <label htmlFor=\"email\">Email:</label>\n  <input type=\"email\" id=\"email\" placeholder=\"you@example.com\" />\n  \n  <label htmlFor=\"message\">Message:</label>\n  <textarea id=\"message\" rows=\"4\"></textarea>\n  \n  <button type=\"submit\">Send</button>\n</form>"
+    },
+    {
+      "id": "html-input-types",
+      "moduleId": "html-forms-media",
+      "title": "Input Types",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `text`, `email`, `password`, `number`, `tel`, `url`\n- `checkbox`, `radio` for selections\n- `date`, `time`, `color`, `range` for specialized input\n- `required`, `minlength`, `pattern` for validation\n\n---\n\n# Input Types",
+      "codeExample": "<input type=\"text\" placeholder=\"Your name\" />\n<input type=\"email\" required />\n<input type=\"password\" minLength=\"8\" />\n<input type=\"number\" min=\"0\" max=\"100\" />\n<input type=\"date\" />\n<input type=\"checkbox\" /> Remember me\n<input type=\"range\" min=\"0\" max=\"100\" />"
+    },
+    {
+      "id": "html-media",
+      "moduleId": "html-forms-media",
+      "title": "Media Elements",
+      "order": 3,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `<video>` embeds video with `controls` attribute\n- `<audio>` embeds audio\n- `<iframe>` embeds external content (YouTube, maps)\n- `<figure>` + `<figcaption>` for media with captions\n\n---\n\n# Media Elements",
+      "codeExample": "<video controls width=\"400\">\n  <source src=\"video.mp4\" type=\"video/mp4\" />\n  Your browser doesn't support video.\n</video>\n\n<figure>\n  <img src=\"chart.png\" alt=\"Sales chart\" />\n  <figcaption>Q4 2024 Sales Data</figcaption>\n</figure>"
+    },
+    {
+      "id": "html-tables",
+      "moduleId": "html-forms-media",
+      "title": "Tables",
+      "order": 4,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `<table>` wraps the table\n- `<thead>`, `<tbody>`, `<tfoot>` for sections\n- `<tr>` for rows, `<th>` for headers, `<td>` for data\n- Use tables for tabular data, not layout\n\n---\n\n# Tables",
+      "codeExample": "<table>\n  <thead>\n    <tr>\n      <th>Name</th>\n      <th>Role</th>\n      <th>XP</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Alice</td>\n      <td>Developer</td>\n      <td>1500</td>\n    </tr>\n  </tbody>\n</table>"
+    }
+  ],
+  "exercises": []
+}

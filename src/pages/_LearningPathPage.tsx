@@ -24,15 +24,19 @@ function LearningPathPageContent({ pathId }: LearningPathPageProps) {
   if (!user) return null;
 
   const learningPathTitles: Record<string, string> = {
+    'html-css': 'HTML & CSS',
+    javascript: 'JavaScript',
     react: 'React',
     'web-stack': 'Web Stack Essentials',
-    javascript: 'JavaScript',
     fastapi: 'FastAPI',
     git: 'Git',
   };
 
   const learningPathDifficulty: Record<string, string> = {
+    'html-css': 'beginner',
+    javascript: 'beginner',
     'web-stack': 'beginner',
+    git: 'beginner',
     react: 'medium',
   };
 

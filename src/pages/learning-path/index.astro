@@ -11,31 +11,51 @@ function getModuleCount(courseId: string): number {
 }
 
 const learningPaths = [
-	{ 
-		id: 'web-stack', 
-		title: 'VIBECODER BASIS', 
-		description: 'Understand the full web development ecosystem from HTTP to deployment', 
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', 
+	{
+		id: 'html-css',
+		title: 'HTML & CSS',
+		description: 'Learn the building blocks of every web page: structure, styling, and Tailwind CSS',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/html/html.png',
+		difficulty: 'beginner' as const,
+		get modules() { return getModuleCount('html-css'); },
+		estimatedTime: '20 hours',
+		topics: ['HTML', 'CSS', 'Flexbox', 'Grid', 'Tailwind', 'Responsive']
+	},
+	{
+		id: 'javascript',
+		title: 'JavaScript',
+		description: 'Master the language of the web: variables, functions, async, and DOM',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png',
+		difficulty: 'beginner' as const,
+		get modules() { return getModuleCount('javascript'); },
+		estimatedTime: '25 hours',
+		topics: ['Variables', 'Functions', 'Arrays', 'Async/Await', 'DOM', 'ES6+']
+	},
+	{
+		id: 'web-stack',
+		title: 'VIBECODER BASIS',
+		description: 'Understand the full web development ecosystem from HTTP to deployment',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png',
 		difficulty: 'beginner' as const,
 		get modules() { return getModuleCount('web-stack'); },
 		estimatedTime: '40 hours',
 		topics: ['HTTP', 'Frontend', 'Backend', 'Databases', 'DevOps', 'Security']
 	},
-	{ 
-		id: 'git', 
-		title: 'Git', 
-		description: 'Master version control with Git and GitHub workflows', 
+	{
+		id: 'git',
+		title: 'Git',
+		description: 'Master version control with Git and GitHub workflows',
 		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png',
 		difficulty: 'beginner' as const,
 		get modules() { return getModuleCount('git'); },
 		estimatedTime: '20 hours',
 		topics: ['Commits', 'Branches', 'Merging', 'Rebase', 'GitHub']
 	},
-	{ 
-		id: 'react', 
-		title: 'React', 
-		description: 'Master React and TypeScript from JSX to advanced patterns', 
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', 
+	{
+		id: 'react',
+		title: 'React',
+		description: 'Master React and TypeScript from JSX to advanced patterns',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png',
 		difficulty: 'medium' as const,
 		get modules() { return getModuleCount('react'); },
 		estimatedTime: '35 hours',
@@ -89,6 +109,28 @@ const comingSoonPaths = learningPaths.filter(p => p.comingSoon);
 			</PageTitle>
 			<p class="text-gray-600 mt-2">Choose your learning journey and master modern development</p>
 		</div>
+
+		<!-- Frontend Journey Banner -->
+		<a href="/learning-path/frontend-journey" class="block mb-8 p-5 border-2 border-primary-400 rounded-lg bg-gradient-to-r from-orange-50 via-yellow-50 to-cyan-50 hover:shadow-lg transition-all group relative overflow-hidden">
+			<div class="absolute top-0 right-0 w-32 h-32 bg-primary-100 rounded-full -mr-16 -mt-16 opacity-30 group-hover:scale-150 transition-transform duration-500"></div>
+			<div class="relative z-10 flex items-center gap-4">
+				<div class="flex items-center gap-1">
+					<img src="https://raw.githubusercontent.com/github/explore/main/topics/html/html.png" alt="HTML" class="w-8 h-8" />
+					<span class="text-gray-400 font-bold">&rarr;</span>
+					<img src="https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png" alt="JS" class="w-8 h-8" />
+					<span class="text-gray-400 font-bold">&rarr;</span>
+					<img src="https://raw.githubusercontent.com/github/explore/main/topics/react/react.png" alt="React" class="w-8 h-8" />
+				</div>
+				<div class="flex-1">
+					<div class="flex items-center gap-2 mb-0.5">
+						<h2 class="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">Frontend Journey</h2>
+						<span class="text-[10px] px-2 py-0.5 bg-primary-100 text-primary-700 rounded border border-primary-300 uppercase font-bold">Guided Path</span>
+					</div>
+					<p class="text-xs text-gray-600">A structured 3-phase progression: HTML & CSS &rarr; JavaScript &rarr; React</p>
+				</div>
+				<span class="text-primary-600 font-bold text-lg group-hover:translate-x-1 transition-transform">&rarr;</span>
+			</div>
+		</a>
 
 		<!-- Available Paths -->
 		<div class="grid md:grid-cols-2 gap-6 mb-8">

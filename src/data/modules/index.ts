@@ -62,6 +62,22 @@ import gitAdvancedData from './git-advanced.json';
 import gitRebaseData from './git-rebase.json';
 import gitFlowData from './git-flow.json';
 
+// JavaScript course modules
+import jsVariablesTypesData from './js-variables-types.json';
+import jsFunctionsData from './js-functions.json';
+import jsArraysObjectsData from './js-arrays-objects.json';
+import jsAsyncData from './js-async.json';
+import jsDomData from './js-dom.json';
+import jsModernData from './js-modern.json';
+
+// HTML & CSS course modules
+import htmlFundamentalsData from './html-fundamentals.json';
+import htmlFormsMediaData from './html-forms-media.json';
+import cssFundamentalsData from './css-fundamentals.json';
+import cssLayoutData from './css-layout.json';
+import tailwindBasicsData from './tailwind-basics.json';
+import tailwindComponentsData from './tailwind-components.json';
+
 // Type for the JSON file structure
 interface ModuleData {
   module: Omit<Module, 'lessons'>;
@@ -119,6 +135,22 @@ const moduleFiles: ModuleData[] = [
   gitRemotesData as ModuleData,
   gitHistoryData as ModuleData,
   gitAdvancedData as ModuleData,
+
+  // JavaScript course
+  jsVariablesTypesData as ModuleData,
+  jsFunctionsData as ModuleData,
+  jsArraysObjectsData as ModuleData,
+  jsAsyncData as ModuleData,
+  jsDomData as ModuleData,
+  jsModernData as ModuleData,
+
+  // HTML & CSS course
+  htmlFundamentalsData as ModuleData,
+  htmlFormsMediaData as ModuleData,
+  cssFundamentalsData as ModuleData,
+  cssLayoutData as ModuleData,
+  tailwindBasicsData as ModuleData,
+  tailwindComponentsData as ModuleData,
 ];
 
 // Type for module metadata in JSON (includes courseId)

@@ -175,6 +175,40 @@
           "explanation": "IndexedDB is asynchronous, which allows processing large volumes without blocking the user interface."
         }
       ]
+    },
+    {
+      "id": "storage-code-ex-1",
+      "lessonId": "local-session-storage",
+      "moduleId": "browser-storage",
+      "title": "Build a Theme Switcher with localStorage",
+      "difficulty": "medium",
+      "description": "Use localStorage to persist a user's theme preference across page reloads.",
+      "instructions": "Create a `ThemeSwitcher` component that:\n1. Reads the saved theme from `localStorage` key `'theme'` on mount (default to `'light'`)\n2. Has a button that toggles between `'light'` and `'dark'`\n3. Saves the new theme to `localStorage` when toggled\n4. Applies different background and text colors based on theme\n5. Shows the current theme name",
+      "starterCode": "function ThemeSwitcher() {\n  // Read initial theme from localStorage\n  // Add state for current theme\n\n  const toggleTheme = () => {\n    // Toggle and save to localStorage\n  };\n\n  return (\n    <div style={{ /* theme-based styles */ }}>\n      <h2>Theme Switcher</h2>\n      <p>Current theme: </p>\n      <button onClick={toggleTheme}>Toggle Theme</button>\n    </div>\n  );\n}",
+      "solution": "function ThemeSwitcher() {\n  const [theme, setTheme] = React.useState(\n    () => localStorage.getItem('theme') || 'light'\n  );\n\n  const toggleTheme = () => {\n    const newTheme = theme === 'light' ? 'dark' : 'light';\n    setTheme(newTheme);\n    localStorage.setItem('theme', newTheme);\n  };\n\n  const isDark = theme === 'dark';\n\n  return (\n    <div style={{\n      backgroundColor: isDark ? '#1a1a1a' : '#ffffff',\n      color: isDark ? '#ffffff' : '#1a1a1a',\n      padding: '2rem',\n      borderRadius: '8px',\n      minHeight: '200px'\n    }}>\n      <h2>Theme Switcher</h2>\n      <p>Current theme: {theme}</p>\n      <button onClick={toggleTheme}\n        style={{ padding: '8px 16px', cursor: 'pointer' }}>\n        Toggle Theme\n      </button>\n    </div>\n  );\n}",
+      "hints": [
+        "Use localStorage.getItem('theme') to read the saved value",
+        "Use localStorage.setItem('theme', newTheme) to save",
+        "Initialize state with a function: useState(() => localStorage.getItem('theme') || 'light')"
+      ],
+      "validationPrompt": "Check if the code: 1) Reads initial theme from localStorage 2) Uses useState for theme state 3) Has a toggleTheme function that switches between light/dark 4) Saves to localStorage.setItem when toggling 5) Applies conditional styles based on theme"
+    },
+    {
+      "id": "storage-code-ex-2",
+      "lessonId": "local-session-storage",
+      "moduleId": "browser-storage",
+      "title": "Persistent Note Pad",
+      "difficulty": "medium",
+      "description": "Build a simple note pad that saves content to localStorage in real-time.",
+      "instructions": "Create a `NotePad` component that:\n1. Has a `<textarea>` for writing notes\n2. Loads any previously saved note from `localStorage` key `'note'` on mount\n3. Saves the note to `localStorage` on every change (onChange)\n4. Has a \"Clear\" button that empties the textarea and removes the item from localStorage\n5. Shows a character count below the textarea",
+      "starterCode": "function NotePad() {\n  // Load saved note from localStorage\n  // Add state for note text\n\n  const handleChange = (e) => {\n    // Update state and save to localStorage\n  };\n\n  const handleClear = () => {\n    // Clear note and localStorage\n  };\n\n  return (\n    <div>\n      <h2>My Notes</h2>\n      <textarea rows={6} cols={40} />\n      <p>Characters: </p>\n      <button>Clear</button>\n    </div>\n  );\n}",
+      "solution": "function NotePad() {\n  const [note, setNote] = React.useState(\n    () => localStorage.getItem('note') || ''\n  );\n\n  const handleChange = (e) => {\n    const value = e.target.value;\n    setNote(value);\n    localStorage.setItem('note', value);\n  };\n\n  const handleClear = () => {\n    setNote('');\n    localStorage.removeItem('note');\n  };\n\n  return (\n    <div>\n      <h2>My Notes</h2>\n      <textarea\n        rows={6}\n        cols={40}\n        value={note}\n        onChange={handleChange}\n        placeholder=\"Write your notes here...\"\n      />\n      <p>Characters: {note.length}</p>\n      <button onClick={handleClear}>Clear</button>\n    </div>\n  );\n}",
+      "hints": [
+        "Initialize state from localStorage: useState(() => localStorage.getItem('note') || '')",
+        "In onChange, update both state and localStorage",
+        "Use localStorage.removeItem('note') in the clear handler"
+      ],
+      "validationPrompt": "Check if the code: 1) Loads initial note from localStorage 2) Has a controlled textarea with value and onChange 3) Saves to localStorage on every change 4) Has a clear button that removes from localStorage 5) Shows character count using note.length"
     }
   ]
 }

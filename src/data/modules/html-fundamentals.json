@@ -1,0 +1,68 @@
+{
+  "module": {
+    "id": "html-fundamentals",
+    "courseId": "html-css",
+    "title": "HTML Fundamentals",
+    "description": "Learn the building blocks of every web page",
+    "icon": "Code",
+    "requiredXp": 0,
+    "color": "from-orange-400 to-red-500"
+  },
+  "lessons": [
+    {
+      "id": "html-structure",
+      "moduleId": "html-fundamentals",
+      "title": "Document Structure",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Every HTML page has `<!DOCTYPE html>`, `<html>`, `<head>`, `<body>`\n- `<head>` contains metadata (title, links, meta tags)\n- `<body>` contains visible content\n- Tags are opened `<tag>` and closed `</tag>`\n\n---\n\n# HTML Document Structure\n\nEvery web page starts with the same skeleton:\n\n```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>My Page</title>\n</head>\n<body>\n  <h1>Hello World!</h1>\n</body>\n</html>\n```\n\n## The `<head>` Section\n- `<title>` sets the browser tab title\n- `<meta charset>` sets character encoding\n- `<meta viewport>` enables responsive design\n- `<link>` connects CSS files\n\n## The `<body>` Section\nEverything visible on the page goes here.",
+      "codeExample": "<!-- A complete HTML page -->\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>My First Page</title>\n</head>\n<body>\n  <h1>Welcome!</h1>\n  <p>This is my first web page.</p>\n</body>\n</html>"
+    },
+    {
+      "id": "html-text-elements",
+      "moduleId": "html-fundamentals",
+      "title": "Text & Heading Elements",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Headings: `<h1>` to `<h6>` (h1 is largest)\n- Paragraphs: `<p>`\n- Bold: `<strong>`, Italic: `<em>`\n- Line break: `<br>`, Horizontal rule: `<hr>`\n- Lists: `<ul>` (bullets), `<ol>` (numbers), `<li>` (items)\n\n---\n\n# Text Elements",
+      "codeExample": "<h1>Main Title</h1>\n<h2>Section Title</h2>\n<p>A paragraph of text with <strong>bold</strong> and <em>italic</em>.</p>\n\n<ul>\n  <li>First item</li>\n  <li>Second item</li>\n</ul>"
+    },
+    {
+      "id": "html-links-images",
+      "moduleId": "html-fundamentals",
+      "title": "Links & Images",
+      "order": 3,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Links: `<a href=\"url\">text</a>`\n- Images: `<img src=\"url\" alt=\"description\">`\n- `alt` attribute is required for accessibility\n- `target=\"_blank\"` opens in new tab\n- Relative vs absolute URLs\n\n---\n\n# Links & Images",
+      "codeExample": "<!-- Link -->\n<a href=\"https://example.com\">Visit Example</a>\n<a href=\"/about\">About Page</a>\n\n<!-- Image -->\n<img src=\"photo.jpg\" alt=\"A landscape photo\" width=\"400\">\n\n<!-- Image as a link -->\n<a href=\"/profile\">\n  <img src=\"avatar.jpg\" alt=\"User avatar\">\n</a>"
+    },
+    {
+      "id": "html-semantic",
+      "moduleId": "html-fundamentals",
+      "title": "Semantic HTML",
+      "order": 4,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Semantic tags describe meaning: `<header>`, `<nav>`, `<main>`, `<article>`, `<footer>`\n- Better than generic `<div>` for accessibility and SEO\n- Screen readers use semantic tags to navigate\n- `<section>` groups related content, `<aside>` for sidebars\n\n---\n\n# Semantic HTML",
+      "codeExample": "<header>\n  <nav>\n    <a href=\"/\">Home</a>\n    <a href=\"/about\">About</a>\n  </nav>\n</header>\n\n<main>\n  <article>\n    <h1>Article Title</h1>\n    <p>Article content...</p>\n  </article>\n  <aside>\n    <h2>Related Links</h2>\n  </aside>\n</main>\n\n<footer>\n  <p>&copy; 2025 My Site</p>\n</footer>"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "html-ex-1",
+      "lessonId": "html-structure",
+      "moduleId": "html-fundamentals",
+      "title": "Build a Profile Card",
+      "difficulty": "easy",
+      "description": "Create a simple profile card using basic HTML elements.",
+      "instructions": "Create a component that renders a profile card with:\n1. An `<h2>` with the name \"Alice Johnson\"\n2. A `<p>` with the role \"Frontend Developer\"\n3. A `<ul>` with 3 skills: \"HTML\", \"CSS\", \"JavaScript\"\n4. Wrap everything in a `<div>`",
+      "starterCode": "function ProfileCard() {\n  return (\n    <div>\n      {/* Add h2 with name */}\n      {/* Add p with role */}\n      {/* Add ul with 3 skills */}\n    </div>\n  );\n}",
+      "solution": "function ProfileCard() {\n  return (\n    <div>\n      <h2>Alice Johnson</h2>\n      <p>Frontend Developer</p>\n      <ul>\n        <li>HTML</li>\n        <li>CSS</li>\n        <li>JavaScript</li>\n      </ul>\n    </div>\n  );\n}",
+      "hints": [
+        "Use <h2>Name</h2> for the heading",
+        "Use <ul> with <li> items for the skill list",
+        "Remember to close all tags properly"
+      ],
+      "validationPrompt": "Check if the code returns a div containing an h2 with 'Alice Johnson', a p with 'Frontend Developer', and a ul with 3 li items for HTML, CSS, and JavaScript"
+    }
+  ]
+}

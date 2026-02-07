@@ -1,0 +1,50 @@
+{
+  "module": {
+    "id": "css-fundamentals",
+    "courseId": "html-css",
+    "title": "CSS Fundamentals",
+    "description": "Style your pages with selectors, colors, and the box model",
+    "icon": "Palette",
+    "requiredXp": 250,
+    "color": "from-blue-400 to-blue-600"
+  },
+  "lessons": [
+    {
+      "id": "css-selectors",
+      "moduleId": "css-fundamentals",
+      "title": "Selectors & Specificity",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Element: `p {}`, Class: `.btn {}`, ID: `#header {}`\n- Combinators: `div p` (descendant), `div > p` (child)\n- Pseudo-classes: `:hover`, `:focus`, `:first-child`\n- Specificity: ID > Class > Element\n\n---\n\n# CSS Selectors",
+      "codeExample": "/* Element selector */\np { color: gray; }\n\n/* Class selector */\n.btn { padding: 8px 16px; }\n\n/* ID selector */\n#header { background: black; }\n\n/* Pseudo-class */\n.btn:hover { background: blue; }\n\n/* Combinator */\n.card > h2 { font-size: 1.5rem; }"
+    },
+    {
+      "id": "css-box-model",
+      "moduleId": "css-fundamentals",
+      "title": "The Box Model",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Every element is a box: content + padding + border + margin\n- `box-sizing: border-box` includes padding/border in width\n- `margin` is space outside, `padding` is space inside\n- Use `border-box` globally for predictable sizing\n\n---\n\n# The Box Model",
+      "codeExample": "/* Always use border-box */\n* { box-sizing: border-box; }\n\n.card {\n  width: 300px;\n  padding: 20px;\n  border: 2px solid black;\n  margin: 16px;\n  /* Total visual width = 300px (thanks to border-box) */\n}"
+    },
+    {
+      "id": "css-colors-typography",
+      "moduleId": "css-fundamentals",
+      "title": "Colors & Typography",
+      "order": 3,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Colors: named, hex `#ff0000`, rgb `rgb(255,0,0)`, hsl\n- `font-family`, `font-size`, `font-weight`, `line-height`\n- `text-align`, `text-decoration`, `text-transform`\n- Use `rem` for font sizes (relative to root)\n\n---\n\n# Colors & Typography",
+      "codeExample": ".title {\n  color: #1a1a1a;\n  font-family: 'Inter', sans-serif;\n  font-size: 2rem;\n  font-weight: 700;\n  line-height: 1.2;\n}\n\n.subtitle {\n  color: rgb(100, 100, 100);\n  font-size: 1.125rem;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}"
+    },
+    {
+      "id": "css-units",
+      "moduleId": "css-fundamentals",
+      "title": "CSS Units",
+      "order": 4,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `px` - fixed pixels\n- `rem` - relative to root font size (best for font sizes)\n- `em` - relative to parent font size\n- `%` - relative to parent\n- `vw`/`vh` - viewport width/height\n\n---\n\n# CSS Units",
+      "codeExample": "html { font-size: 16px; }\n\n.container {\n  width: 90%;          /* 90% of parent */\n  max-width: 1200px;   /* Never wider than 1200px */\n  padding: 2rem;       /* 32px (2 * 16px) */\n  margin: 0 auto;      /* Centered */\n}\n\n.hero {\n  height: 100vh;       /* Full viewport height */\n  font-size: 1.5rem;   /* 24px */\n}"
+    }
+  ],
+  "exercises": []
+}

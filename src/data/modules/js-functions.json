@@ -1,0 +1,50 @@
+{
+  "module": {
+    "id": "js-functions",
+    "courseId": "javascript",
+    "title": "Functions & Scope",
+    "description": "Learn function declarations, arrow functions, and scope",
+    "icon": "Zap",
+    "requiredXp": 100,
+    "color": "from-yellow-500 to-orange-500"
+  },
+  "lessons": [
+    {
+      "id": "js-func-declarations",
+      "moduleId": "js-functions",
+      "title": "Function Declarations & Expressions",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Functions are reusable blocks of code\n- Declaration: `function greet() {}`\n- Expression: `const greet = function() {}`\n- Functions can take parameters and return values\n\n---\n\n# Functions in JavaScript",
+      "codeExample": "// Function declaration\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\n\n// Function expression\nconst add = function(a, b) {\n  return a + b;\n};\n\nconsole.log(greet(\"Alice\")); // \"Hello, Alice!\"\nconsole.log(add(2, 3));      // 5"
+    },
+    {
+      "id": "js-arrow-functions",
+      "moduleId": "js-functions",
+      "title": "Arrow Functions",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Arrow syntax: `const fn = (params) => expression`\n- Implicit return for single expressions\n- No own `this` binding\n- Preferred in modern JavaScript\n\n---\n\n# Arrow Functions",
+      "codeExample": "// Regular function\nfunction double(x) { return x * 2; }\n\n// Arrow function\nconst double2 = (x) => x * 2;\n\n// Multiple params\nconst add = (a, b) => a + b;\n\n// Multi-line needs braces + return\nconst greet = (name) => {\n  const msg = `Hello, ${name}!`;\n  return msg;\n};"
+    },
+    {
+      "id": "js-scope-closures",
+      "moduleId": "js-functions",
+      "title": "Scope & Closures",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Block scope: `let`/`const` are limited to their `{}` block\n- Function scope: variables declared inside a function stay inside\n- Closures: inner functions remember their outer scope\n- Global scope: accessible everywhere (avoid polluting it)\n\n---\n\n# Scope & Closures",
+      "codeExample": "// Closure example\nfunction createCounter() {\n  let count = 0;\n  return {\n    increment: () => ++count,\n    getCount: () => count\n  };\n}\n\nconst counter = createCounter();\ncounter.increment();\ncounter.increment();\nconsole.log(counter.getCount()); // 2"
+    },
+    {
+      "id": "js-higher-order",
+      "moduleId": "js-functions",
+      "title": "Higher-Order Functions",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Functions that take or return other functions\n- `map`, `filter`, `reduce` are built-in higher-order functions\n- Callbacks: functions passed as arguments\n- Essential for functional programming in JS\n\n---\n\n# Higher-Order Functions",
+      "codeExample": "const numbers = [1, 2, 3, 4, 5];\n\n// map: transform each element\nconst doubled = numbers.map(n => n * 2);\n// [2, 4, 6, 8, 10]\n\n// filter: keep elements that pass a test\nconst evens = numbers.filter(n => n % 2 === 0);\n// [2, 4]\n\n// reduce: combine into single value\nconst sum = numbers.reduce((acc, n) => acc + n, 0);\n// 15"
+    }
+  ],
+  "exercises": []
+}

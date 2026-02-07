@@ -1,0 +1,50 @@
+{
+  "module": {
+    "id": "js-modern",
+    "courseId": "javascript",
+    "title": "Modern JavaScript (ES6+)",
+    "description": "Template literals, modules, optional chaining, and more",
+    "icon": "Zap",
+    "requiredXp": 850,
+    "color": "from-red-400 to-red-600"
+  },
+  "lessons": [
+    {
+      "id": "js-template-literals",
+      "moduleId": "js-modern",
+      "title": "Template Literals & Tagged Templates",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Backticks: `` `Hello ${name}` ``\n- Multi-line strings without `\\n`\n- Expression interpolation: `${expression}`\n- Tagged templates for custom processing\n\n---\n\n# Template Literals",
+      "codeExample": "const name = \"Alice\";\nconst age = 25;\n\n// Template literal\nconst greeting = `Hello, ${name}! You are ${age} years old.`;\n\n// Multi-line\nconst html = `\n  <div>\n    <h1>${name}</h1>\n    <p>Age: ${age}</p>\n  </div>\n`;"
+    },
+    {
+      "id": "js-modules",
+      "moduleId": "js-modern",
+      "title": "ES Modules (import/export)",
+      "order": 2,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `export` makes code available to other files\n- `import` brings code from other files\n- Named exports: `export { fn }` / `import { fn }`\n- Default export: `export default fn` / `import fn`\n\n---\n\n# ES Modules",
+      "codeExample": "// math.js\nexport const add = (a, b) => a + b;\nexport const subtract = (a, b) => a - b;\nexport default function multiply(a, b) { return a * b; }\n\n// app.js\nimport multiply, { add, subtract } from './math.js';"
+    },
+    {
+      "id": "js-optional-chaining",
+      "moduleId": "js-modern",
+      "title": "Optional Chaining & Nullish Coalescing",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `?.` safely accesses nested properties\n- Returns `undefined` instead of throwing errors\n- `??` returns right side only for `null`/`undefined`\n- Combine them: `obj?.prop ?? 'default'`\n\n---\n\n# Optional Chaining & Nullish Coalescing",
+      "codeExample": "const user = { name: \"Alice\", address: { city: \"Paris\" } };\n\n// Optional chaining\nconsole.log(user?.address?.city);    // \"Paris\"\nconsole.log(user?.phone?.number);    // undefined (no error!)\n\n// Nullish coalescing\nconst name = null ?? \"Anonymous\";     // \"Anonymous\"\nconst count = 0 ?? 42;               // 0 (0 is not null!)"
+    },
+    {
+      "id": "js-spread-rest",
+      "moduleId": "js-modern",
+      "title": "Spread & Rest Operators",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Spread `...` expands arrays/objects\n- Rest `...` collects remaining elements\n- Clone arrays: `[...arr]`\n- Merge objects: `{ ...obj1, ...obj2 }`\n\n---\n\n# Spread & Rest",
+      "codeExample": "// Spread in arrays\nconst a = [1, 2, 3];\nconst b = [...a, 4, 5]; // [1, 2, 3, 4, 5]\n\n// Spread in objects\nconst user = { name: \"Alice\" };\nconst full = { ...user, age: 25 };\n\n// Rest in functions\nfunction sum(...numbers) {\n  return numbers.reduce((a, b) => a + b, 0);\n}\nsum(1, 2, 3, 4); // 10"
+    }
+  ],
+  "exercises": []
+}

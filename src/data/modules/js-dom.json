@@ -1,0 +1,50 @@
+{
+  "module": {
+    "id": "js-dom",
+    "courseId": "javascript",
+    "title": "DOM Manipulation",
+    "description": "Select, modify, and interact with HTML elements using JavaScript",
+    "icon": "MousePointer",
+    "requiredXp": 600,
+    "color": "from-orange-500 to-red-500"
+  },
+  "lessons": [
+    {
+      "id": "js-dom-selecting",
+      "moduleId": "js-dom",
+      "title": "Selecting Elements",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `document.querySelector()` selects first match\n- `document.querySelectorAll()` selects all matches\n- Uses CSS selectors: `#id`, `.class`, `tag`\n- `getElementById()` is faster for IDs\n\n---\n\n# Selecting Elements",
+      "codeExample": "// Select by ID\nconst title = document.getElementById('title');\n\n// Select by CSS selector\nconst btn = document.querySelector('.submit-btn');\nconst items = document.querySelectorAll('li');\n\n// Select by tag\nconst paragraphs = document.querySelectorAll('p');"
+    },
+    {
+      "id": "js-dom-modifying",
+      "moduleId": "js-dom",
+      "title": "Modifying the DOM",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `textContent` changes text\n- `innerHTML` changes HTML (use with caution)\n- `classList` adds/removes CSS classes\n- `style` changes inline styles\n- `setAttribute()` modifies attributes\n\n---\n\n# Modifying the DOM",
+      "codeExample": "const el = document.querySelector('#title');\n\nel.textContent = 'New Title';\nel.classList.add('active');\nel.classList.toggle('hidden');\nel.style.color = 'red';\nel.setAttribute('data-id', '42');"
+    },
+    {
+      "id": "js-dom-events",
+      "moduleId": "js-dom",
+      "title": "Event Listeners",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `addEventListener(event, handler)` attaches events\n- Common events: `click`, `input`, `submit`, `keydown`\n- `event.preventDefault()` stops default behavior\n- `event.target` is the element that triggered the event\n\n---\n\n# Event Listeners",
+      "codeExample": "const btn = document.querySelector('button');\n\nbtn.addEventListener('click', (event) => {\n  console.log('Clicked!', event.target);\n});\n\nconst form = document.querySelector('form');\nform.addEventListener('submit', (e) => {\n  e.preventDefault();\n  const data = new FormData(form);\n  console.log(data.get('email'));\n});"
+    },
+    {
+      "id": "js-dom-creating",
+      "moduleId": "js-dom",
+      "title": "Creating & Removing Elements",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `document.createElement()` creates new elements\n- `parent.appendChild()` adds to DOM\n- `element.remove()` removes from DOM\n- Build dynamic UIs by creating elements in code\n\n---\n\n# Creating & Removing Elements",
+      "codeExample": "// Create a new element\nconst li = document.createElement('li');\nli.textContent = 'New item';\nli.classList.add('list-item');\n\n// Add to DOM\nconst list = document.querySelector('ul');\nlist.appendChild(li);\n\n// Remove\nli.remove();"
+    }
+  ],
+  "exercises": []
+}

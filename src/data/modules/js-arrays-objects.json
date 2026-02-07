@@ -1,0 +1,50 @@
+{
+  "module": {
+    "id": "js-arrays-objects",
+    "courseId": "javascript",
+    "title": "Arrays & Objects",
+    "description": "Work with collections of data using arrays and objects",
+    "icon": "Boxes",
+    "requiredXp": 250,
+    "color": "from-orange-400 to-orange-600"
+  },
+  "lessons": [
+    {
+      "id": "js-arrays",
+      "moduleId": "js-arrays-objects",
+      "title": "Arrays",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Arrays store ordered lists: `[1, 2, 3]`\n- Access by index: `arr[0]`\n- Methods: `push`, `pop`, `shift`, `unshift`, `splice`\n- `.length` gives the count\n\n---\n\n# Arrays",
+      "codeExample": "const fruits = [\"apple\", \"banana\", \"cherry\"];\n\nconsole.log(fruits[0]);     // \"apple\"\nconsole.log(fruits.length); // 3\n\nfruits.push(\"date\");       // add to end\nfruits.pop();              // remove from end\n\n// Check if item exists\nconsole.log(fruits.includes(\"banana\")); // true"
+    },
+    {
+      "id": "js-array-methods",
+      "moduleId": "js-arrays-objects",
+      "title": "Array Methods",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- `map()` transforms each element\n- `filter()` keeps elements passing a test\n- `find()` returns first match\n- `reduce()` combines into one value\n- These return new arrays (immutable)\n\n---\n\n# Array Methods",
+      "codeExample": "const prices = [29.99, 9.99, 49.99, 14.99];\n\nconst withTax = prices.map(p => p * 1.2);\nconst expensive = prices.filter(p => p > 20);\nconst total = prices.reduce((sum, p) => sum + p, 0);\nconst found = prices.find(p => p < 10);"
+    },
+    {
+      "id": "js-objects",
+      "moduleId": "js-arrays-objects",
+      "title": "Objects",
+      "order": 3,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Objects store key-value pairs: `{ name: \"Alice\" }`\n- Access: `obj.name` or `obj[\"name\"]`\n- Nest objects and arrays inside objects\n- `Object.keys()`, `Object.values()`, `Object.entries()`\n\n---\n\n# Objects",
+      "codeExample": "const user = {\n  name: \"Alice\",\n  age: 25,\n  hobbies: [\"coding\", \"reading\"],\n  address: {\n    city: \"Paris\",\n    country: \"France\"\n  }\n};\n\nconsole.log(user.name);          // \"Alice\"\nconsole.log(user.address.city);  // \"Paris\"\nconsole.log(Object.keys(user));  // [\"name\", \"age\", ...]"
+    },
+    {
+      "id": "js-destructuring",
+      "moduleId": "js-arrays-objects",
+      "title": "Destructuring & Spread",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Destructuring extracts values: `const { name } = user`\n- Array destructuring: `const [first, second] = arr`\n- Spread: `...` copies/merges arrays and objects\n- Rest: `...rest` collects remaining items\n\n---\n\n# Destructuring & Spread",
+      "codeExample": "// Object destructuring\nconst { name, age } = { name: \"Alice\", age: 25 };\n\n// Array destructuring\nconst [first, ...rest] = [1, 2, 3, 4];\n// first = 1, rest = [2, 3, 4]\n\n// Spread to merge\nconst defaults = { theme: \"dark\", lang: \"en\" };\nconst settings = { ...defaults, lang: \"fr\" };\n// { theme: \"dark\", lang: \"fr\" }"
+    }
+  ],
+  "exercises": []
+}

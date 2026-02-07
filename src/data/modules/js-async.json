@@ -1,0 +1,50 @@
+{
+  "module": {
+    "id": "js-async",
+    "courseId": "javascript",
+    "title": "Async JavaScript",
+    "description": "Handle asynchronous operations with Promises and async/await",
+    "icon": "Zap",
+    "requiredXp": 400,
+    "color": "from-amber-400 to-amber-600"
+  },
+  "lessons": [
+    {
+      "id": "js-promises",
+      "moduleId": "js-async",
+      "title": "Promises",
+      "order": 1,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Promises represent future values\n- States: pending, fulfilled, rejected\n- `.then()` for success, `.catch()` for errors\n- `Promise.all()` runs multiple in parallel\n\n---\n\n# Promises",
+      "codeExample": "const fetchUser = new Promise((resolve, reject) => {\n  setTimeout(() => {\n    resolve({ name: \"Alice\", age: 25 });\n  }, 1000);\n});\n\nfetchUser\n  .then(user => console.log(user.name))\n  .catch(err => console.error(err));"
+    },
+    {
+      "id": "js-async-await",
+      "moduleId": "js-async",
+      "title": "Async / Await",
+      "order": 2,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `async` makes a function return a Promise\n- `await` pauses until a Promise resolves\n- Use `try/catch` for error handling\n- Cleaner than `.then()` chains\n\n---\n\n# Async / Await",
+      "codeExample": "async function getUser() {\n  try {\n    const response = await fetch('/api/user');\n    const data = await response.json();\n    return data;\n  } catch (error) {\n    console.error('Failed:', error);\n  }\n}"
+    },
+    {
+      "id": "js-fetch-api",
+      "moduleId": "js-async",
+      "title": "The Fetch API",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `fetch()` makes HTTP requests\n- Returns a Promise\n- `response.json()` parses JSON body\n- Can set method, headers, body for POST requests\n\n---\n\n# The Fetch API",
+      "codeExample": "// GET request\nconst res = await fetch('https://api.example.com/users');\nconst users = await res.json();\n\n// POST request\nconst res2 = await fetch('https://api.example.com/users', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({ name: 'Alice' })\n});"
+    },
+    {
+      "id": "js-error-handling",
+      "moduleId": "js-async",
+      "title": "Error Handling",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `try/catch` catches synchronous and async errors\n- `finally` runs regardless of outcome\n- Always handle fetch errors (network + HTTP status)\n- Custom error messages help debugging\n\n---\n\n# Error Handling",
+      "codeExample": "async function safeFetch(url) {\n  try {\n    const res = await fetch(url);\n    if (!res.ok) {\n      throw new Error(`HTTP ${res.status}`);\n    }\n    return await res.json();\n  } catch (error) {\n    console.error('Fetch failed:', error.message);\n    return null;\n  } finally {\n    console.log('Request completed');\n  }\n}"
+    }
+  ],
+  "exercises": []
+}

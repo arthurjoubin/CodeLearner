@@ -1,0 +1,50 @@
+{
+  "module": {
+    "id": "tailwind-basics",
+    "courseId": "html-css",
+    "title": "Tailwind CSS Basics",
+    "description": "Build UIs fast with utility-first CSS classes",
+    "icon": "Palette",
+    "requiredXp": 600,
+    "color": "from-cyan-400 to-blue-500"
+  },
+  "lessons": [
+    {
+      "id": "tw-utility-first",
+      "moduleId": "tailwind-basics",
+      "title": "Utility-First Approach",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Tailwind uses small utility classes instead of custom CSS\n- `p-4` = padding, `m-2` = margin, `text-lg` = font size\n- Combine classes: `bg-blue-500 text-white font-bold p-4 rounded`\n- No more switching between HTML and CSS files\n\n---\n\n# Utility-First CSS",
+      "codeExample": "<!-- Traditional CSS approach -->\n<div class=\"card\">Card</div>\n<!-- .card { padding: 16px; background: white; border-radius: 8px; } -->\n\n<!-- Tailwind approach -->\n<div class=\"p-4 bg-white rounded-lg shadow\">Card</div>\n<!-- No CSS file needed! -->"
+    },
+    {
+      "id": "tw-spacing-sizing",
+      "moduleId": "tailwind-basics",
+      "title": "Spacing & Sizing",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Spacing scale: `1` = 0.25rem, `4` = 1rem, `8` = 2rem\n- Padding: `p-4`, `px-2`, `py-6`, `pt-3`, `pb-1`\n- Margin: `m-4`, `mx-auto`, `my-2`, `mt-8`\n- Width: `w-full`, `w-1/2`, `w-64`, `max-w-lg`\n- Height: `h-screen`, `h-16`, `min-h-full`\n\n---\n\n# Spacing & Sizing",
+      "codeExample": "<div class=\"p-6 m-4 max-w-md mx-auto\">\n  <h1 class=\"mb-4\">Title</h1>\n  <p class=\"mb-2\">Paragraph with bottom margin</p>\n  <div class=\"w-full h-32 bg-gray-200\">Box</div>\n</div>"
+    },
+    {
+      "id": "tw-colors-typography",
+      "moduleId": "tailwind-basics",
+      "title": "Colors & Typography",
+      "order": 3,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Colors: `bg-blue-500`, `text-red-600`, `border-gray-300`\n- Shades from 50 (lightest) to 950 (darkest)\n- Text: `text-sm`, `text-lg`, `text-2xl`, `font-bold`, `font-mono`\n- Custom colors in `tailwind.config.js`\n\n---\n\n# Colors & Typography",
+      "codeExample": "<h1 class=\"text-3xl font-black text-gray-900\">\n  Big Bold Title\n</h1>\n<p class=\"text-sm text-gray-600 leading-relaxed\">\n  Smaller descriptive text with relaxed line height.\n</p>\n<span class=\"bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded\">\n  Success\n</span>"
+    },
+    {
+      "id": "tw-responsive",
+      "moduleId": "tailwind-basics",
+      "title": "Responsive Utilities",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Breakpoint prefixes: `sm:`, `md:`, `lg:`, `xl:`, `2xl:`\n- Mobile-first: unprefixed = all sizes\n- `md:grid-cols-2` = 2 columns on medium+\n- `hidden md:block` = hidden on mobile, visible on md+\n\n---\n\n# Responsive Design in Tailwind",
+      "codeExample": "<!-- 1 col mobile, 2 cols tablet, 3 cols desktop -->\n<div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4\">\n  <div class=\"p-4 bg-white rounded shadow\">Card 1</div>\n  <div class=\"p-4 bg-white rounded shadow\">Card 2</div>\n  <div class=\"p-4 bg-white rounded shadow\">Card 3</div>\n</div>\n\n<!-- Responsive text -->\n<h1 class=\"text-xl md:text-3xl lg:text-5xl\">Responsive Title</h1>"
+    }
+  ],
+  "exercises": []
+}
