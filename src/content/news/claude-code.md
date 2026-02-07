@@ -3,7 +3,6 @@ title: "Claude Code: The AI Agent That Actually Codes"
 description: "Anthropic launches its autonomous programming agent. A deep dive into this new era of vibecoding."
 pubDate: "2025-01-15"
 author: "Arthur"
-tags: ["llm", "vibecoding", "anthropic", "claude"]
 mentionedTools: ["Claude Code", "Claude 3.5"]
 ---
 

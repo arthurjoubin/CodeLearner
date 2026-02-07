@@ -7,7 +7,6 @@ const news = defineCollection({
 		description: z.string(),
 		pubDate: z.coerce.date(),
 		author: z.string().default('Arthur'),
-		tags: z.array(z.string()).default(['llm', 'vibecoding']),
 		mentionedTools: z.array(z.string()).default([]),
 	}),
 });

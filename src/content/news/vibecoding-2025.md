@@ -3,7 +3,6 @@ title: "Vibecoding 2025: The Phenomenon Takes Over"
 description: "Why vibecoding is becoming the new dev trend and what it means for the industry."
 pubDate: "2025-01-20"
 author: "Arthur"
-tags: ["vibecoding", "trends", "future"]
 mentionedTools: ["Bolt.new", "Lovable", "V0"]
 ---
 

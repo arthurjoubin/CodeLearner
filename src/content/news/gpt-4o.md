@@ -3,7 +3,6 @@ title: "GPT-4o and the Future of Coding Assistants"
 description: "OpenAI strikes hard with GPT-4o. How this model is changing the game for developers."
 pubDate: "2025-01-10"
 author: "Arthur"
-tags: ["llm", "openai", "gpt", "vibecoding"]
 mentionedTools: ["GPT-4"]
 ---
 
