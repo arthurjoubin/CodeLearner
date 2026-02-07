@@ -136,9 +136,13 @@ export function HomePageContent() {
                           strokeLinecap="round"
                         />
                       </svg>
-                      <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800">
-                        {resume.completedLessonsCount}/{resume.totalLessonsCount}
-                      </span>
+                      {pathData?.logo ? (
+                        <img src={pathData.logo} alt="" className="absolute inset-0 m-auto w-5 h-5 object-contain" />
+                      ) : (
+                        <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800">
+                          {resume.completedLessonsCount}/{resume.totalLessonsCount}
+                        </span>
+                      )}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
