@@ -41,16 +41,6 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
 
   const completedExercisesCount = exercises.filter(ex => isExerciseCompleted(ex.id)).length;
 
-  // Course-level progress for breadcrumb
-  const courseModules = module ? getModulesForCourse(module.courseId) : [];
-  const courseLessons = courseModules.flatMap(m => allLessons.filter(l => l.moduleId === m.id));
-  const courseLessonsDone = courseLessons.filter(l => {
-    if (isLessonCompleted(l.id)) return true;
-    const exs = getExercisesForLesson(l.id);
-    return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
-  }).length;
-  const moduleLessonsDone = moduleLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
-
   const handleComplete = useCallback(() => {
     if (lesson) {
       addXp(getXpReward(lesson.xpReward));
@@ -64,6 +54,12 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
     const exs = getExercisesForLesson(lid);
     return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
   }, [isLessonCompleted, isExerciseCompleted]);
+
+  // Course & module level progress for breadcrumb
+  const courseModules = module ? getModulesForCourse(module.courseId) : [];
+  const courseLessons = courseModules.flatMap(m => allLessons.filter(l => l.moduleId === m.id));
+  const courseLessonsDone = courseLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
+  const moduleLessonsDone = moduleLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
 
   // Auto-complete lesson when all exercises are done
   useEffect(() => {
