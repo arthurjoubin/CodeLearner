@@ -2,7 +2,7 @@
 import MainLayout from '../../layouts/MainLayout.astro';
 import PageTitle from '../../components/PageTitle.astro';
 import ResourceTabs from '../../components/ResourceTabs.astro';
-import { ArrowLeft, TrendingUp, Trophy, Calendar, ChevronUp, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Trophy } from 'lucide-react';
 
 // All models with their benchmark data - now with llmSlug to link to LLM pages
 const allModels = [
@@ -52,15 +52,6 @@ const getRankColor = (index: number) => {
   return 'text-gray-500';
 };
 
-// Parse date string like "Jan 2026" to a sortable format
-function parseDate(dateStr: string): number {
-  const months: Record<string, number> = {
-    'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'June': 5,
-    'July': 6, 'Aug': 7, 'Sept': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
-  };
-  const [month, year] = dateStr.split(' ');
-  return parseInt(year) * 12 + (months[month] || 0);
-}
 ---
 
 <MainLayout title="Coding Bench - LLM Rankings">
@@ -75,61 +66,11 @@ function parseDate(dateStr: string): number {
     <div class="mb-6">
       <PageTitle>
         <h1 slot="title" class="text-2xl font-black text-gray-900 uppercase">Coding Bench</h1>
-        <span slot="tag" class="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider border border-gray-300 rounded">
-          <TrendingUp class="w-3 h-3 inline mr-1" />SWE-Bench
-        </span>
       </PageTitle>
       <p class="text-gray-700 mt-1">Model progression on SWE-Bench Verified benchmark</p>
     </div>
 
     <ResourceTabs active="coding-bench" />
-
-    <!-- Sort Controls -->
-    <div class="flex flex-wrap items-center gap-3 mb-4">
-      <span class="text-sm font-bold text-gray-600 uppercase">Sort by:</span>
-      <div class="flex items-center gap-2">
-        <button 
-          id="sort-score-desc"
-          class="sort-btn flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase bg-gray-900 text-white rounded hover:bg-gray-700 transition-colors"
-          data-sort="score"
-          data-order="desc"
-        >
-          <TrendingUp className="w-3 h-3" />
-          Score
-          <ChevronDown className="w-3 h-3" />
-        </button>
-        <button 
-          id="sort-score-asc"
-          class="sort-btn flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase bg-gray-100 text-gray-600 border border-gray-300 rounded hover:bg-gray-200 transition-colors"
-          data-sort="score"
-          data-order="asc"
-        >
-          <TrendingUp className="w-3 h-3" />
-          Score
-          <ChevronUp className="w-3 h-3" />
-        </button>
-        <button 
-          id="sort-date-desc"
-          class="sort-btn flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase bg-gray-100 text-gray-600 border border-gray-300 rounded hover:bg-gray-200 transition-colors"
-          data-sort="date"
-          data-order="desc"
-        >
-          <Calendar className="w-3 h-3" />
-          Date
-          <ChevronDown className="w-3 h-3" />
-        </button>
-        <button 
-          id="sort-date-asc"
-          class="sort-btn flex items-center gap-1 px-3 py-1.5 text-xs font-bold uppercase bg-gray-100 text-gray-600 border border-gray-300 rounded hover:bg-gray-200 transition-colors"
-          data-sort="date"
-          data-order="asc"
-        >
-          <Calendar className="w-3 h-3" />
-          Date
-          <ChevronUp className="w-3 h-3" />
-        </button>
-      </div>
-    </div>
 
     <div class="bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
       <div class="overflow-x-auto">
@@ -146,7 +87,7 @@ function parseDate(dateStr: string): number {
           </thead>
           <tbody id="models-tbody">
             {allModels.sort((a, b) => b.score - a.score).map((model, index) => (
-              <tr class={`border-b border-gray-200 hover:bg-gray-50 transition-colors ${model.current ? 'bg-gray-50/50' : ''}`} data-score={model.score} data-date={parseDate(model.date)}>
+              <tr class={`border-b border-gray-200 hover:bg-gray-50 transition-colors ${model.current ? 'bg-gray-50/50' : ''}`}>
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-2">
                     {index < 3 && (
@@ -225,93 +166,4 @@ function parseDate(dateStr: string): number {
     </div>
   </div>
 
-  <script>
-    // Sorting functionality
-    const sortButtons = document.querySelectorAll('.sort-btn');
-    const tbody = document.getElementById('models-tbody');
-    
-    // Parse date string like "Jan 2026" to a number
-    function parseDate(dateStr: string): number {
-      const months: Record<string, number> = {
-        'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'June': 5,
-        'July': 6, 'Aug': 7, 'Sept': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
-      };
-      const [month, year] = dateStr.split(' ');
-      return parseInt(year) * 12 + (months[month] || 0);
-    }
-    
-    sortButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const sortType = btn.getAttribute('data-sort');
-        const sortOrder = btn.getAttribute('data-order');
-        
-        // Update button styles
-        sortButtons.forEach(b => {
-          b.classList.remove('bg-gray-900', 'text-white');
-          b.classList.add('bg-gray-100', 'text-gray-600', 'border', 'border-gray-300');
-        });
-        btn.classList.remove('bg-gray-100', 'text-gray-600', 'border', 'border-gray-300');
-        btn.classList.add('bg-gray-900', 'text-white');
-        
-        // Get all rows
-        const rows = Array.from(tbody?.querySelectorAll('tr') || []);
-        
-        // Sort rows
-        rows.sort((a, b) => {
-          if (sortType === 'score') {
-            const scoreA = parseFloat(a.getAttribute('data-score') || '0');
-            const scoreB = parseFloat(b.getAttribute('data-score') || '0');
-            return sortOrder === 'desc' ? scoreB - scoreA : scoreA - scoreB;
-          } else {
-            const dateA = parseInt(a.getAttribute('data-date') || '0');
-            const dateB = parseInt(b.getAttribute('data-date') || '0');
-            return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
-          }
-        });
-        
-        // Re-append rows in new order and update ranks
-        rows.forEach((row, index) => {
-          tbody?.appendChild(row);
-          
-          // Update rank display
-          const rankEl = row.querySelector('.rank-number');
-          if (rankEl) {
-            rankEl.textContent = `#${index + 1}`;
-          }
-          
-          // Update trophy icons
-          const trophyEl = row.querySelector('td:first-child > div');
-          if (trophyEl) {
-            const existingTrophy = trophyEl.querySelector('svg');
-            if (existingTrophy) {
-              existingTrophy.remove();
-            }
-            if (index < 3) {
-              const colors = ['text-yellow-500', 'text-gray-400', 'text-orange-400'];
-              const trophy = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-              trophy.setAttribute('class', `w-4 h-4 ${colors[index]}`);
-              trophy.setAttribute('viewBox', '0 0 24 24');
-              trophy.setAttribute('fill', 'none');
-              trophy.setAttribute('stroke', 'currentColor');
-              trophy.setAttribute('stroke-width', '2');
-              trophy.innerHTML = '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>';
-              trophyEl.insertBefore(trophy, rankEl);
-            }
-          }
-          
-          // Update score color
-          const scoreEl = row.querySelector('.score-display');
-          if (scoreEl) {
-            if (index < 3) {
-              scoreEl.classList.remove('text-gray-700');
-              scoreEl.classList.add('text-green-600');
-            } else {
-              scoreEl.classList.remove('text-green-600');
-              scoreEl.classList.add('text-gray-700');
-            }
-          }
-        });
-      });
-    });
-  </script>
 </MainLayout>
