@@ -7,9 +7,11 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SectionTitle } from '../components/PageTitle';
 
 const learningPaths = [
+  { id: 'html-css', title: 'HTML & CSS', description: 'Learn the building blocks of every web page', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/html/html.png', difficulty: 'beginner' as const },
+  { id: 'javascript', title: 'JavaScript', description: 'Master the language of the web', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png', difficulty: 'beginner' as const },
   { id: 'web-stack', title: 'VIBECODER BASIS', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const },
   { id: 'react', title: 'React', description: 'Learn React and TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', difficulty: 'medium' as const },
-  { id: 'git', title: 'Git', description: 'Master version control with Git', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png' },
+  { id: 'git', title: 'Git', description: 'Master version control with Git', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png', difficulty: 'beginner' as const },
   { id: 'fastapi', title: 'FastAPI', description: 'Build modern APIs with FastAPI', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png' },
   { id: 'go', title: 'Go', description: 'Learn Go programming language', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/go/go.png' },
   { id: 'python', title: 'Python', description: 'Learn Python programming language', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png' },
@@ -89,7 +91,7 @@ export function HomePageContent() {
 
   const resumes = (courseIds
     .map(id => getCourseProgress(id))
-    .filter((r): r is CourseResume => r !== null)
+    .filter((r): r is CourseResume => r !== null && r.progress > 0 && r.progress < 100)
     .sort((a, b) => b.progress - a.progress));
 
   const getPathProgress = (courseId: string): number => {
@@ -174,7 +176,7 @@ export function HomePageContent() {
             return progressB - progressA;
           })
           .map((path) => {
-          const isAvailable = path.id === 'react' || path.id === 'web-stack' || path.id === 'git';
+          const isAvailable = path.id === 'react' || path.id === 'web-stack' || path.id === 'git' || path.id === 'javascript' || path.id === 'html-css';
           const resume = resumes.find(r => r.courseId === path.id);
           const progress = resume
             ? Math.max(1, getPathProgress(path.id))
