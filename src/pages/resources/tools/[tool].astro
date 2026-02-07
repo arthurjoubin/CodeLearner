@@ -1,7 +1,8 @@
 ---
 import MainLayout from '../../../layouts/MainLayout.astro';
 import { getEntry, getCollection } from 'astro:content';
-import { ArrowLeft, ExternalLink, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ExternalLink, CheckCircle, XCircle } from 'lucide-react';
+import ResourceDropdown from '../../../components/ResourceDropdown.astro';
 
 export async function getStaticPaths() {
 	const tools = await getCollection('tools');
@@ -45,36 +46,14 @@ const logoUrl = getToolLogo(tool.data.name);
 				<ArrowLeft className="w-4 h-4" /> Back to Tools
 			</a>
 
-			<!-- Tools Dropdown -->
-			<div class="relative tools-dropdown">
-				<button class="flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 focus:border-primary-500 transition-all text-xs sm:text-sm font-bold uppercase dropdown-btn shadow-sm hover:shadow-md">
-					<img src={logoUrl} alt={tool.data.name} class="w-5 h-5 rounded object-contain" />
-					{tool.data.name}
-					<ChevronDown className="w-4 h-4 ml-1 transition-transform dropdown-chevron" />
-				</button>
-				<div class="absolute right-0 mt-2 w-56 bg-white border-2 border-gray-300 rounded-lg shadow-xl opacity-0 invisible transition-all z-50 dropdown-menu hidden max-h-72 overflow-y-auto">
-					<div class="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-2">
-						<p class="text-[10px] font-bold uppercase text-gray-500">Select Tool</p>
-					</div>
-					{allTools.map((t) => (
-						<a
-							href={`/resources/tools/${t.slug}`}
-							class={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 last:border-b-0 ${
-								t.slug === toolSlug
-									? 'bg-primary-50 hover:bg-primary-100'
-									: 'hover:bg-gray-50'
-							}`}
-						>
-							<img src={getToolLogo(t.data.name)} alt={t.data.name} class="w-5 h-5 rounded object-contain" />
-							<div class="flex-1">
-								<p class={`text-sm font-bold ${t.slug === toolSlug ? 'text-primary-700' : 'text-gray-900'}`}>{t.data.name}</p>
-								<p class="text-[10px] text-gray-500">{t.data.category}</p>
-							</div>
-							{t.slug === toolSlug && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
-						</a>
-					))}
-				</div>
-			</div>
+			<ResourceDropdown
+				items={allTools}
+				currentSlug={toolSlug}
+				getLogoFn={(t) => getToolLogo(t.data.name)}
+				getSubtitleFn={(t) => t.data.category}
+				basePath="/resources/tools/"
+				dropdownId="tools-dropdown"
+			/>
 		</div>
 
 		<!-- Tool header -->
@@ -151,47 +130,3 @@ const logoUrl = getToolLogo(tool.data.name);
 
 	</div>
 </MainLayout>
-
-<script>
-	// Dropdown functionality
-	const dropdown = document.querySelector('.tools-dropdown');
-	const btn = dropdown?.querySelector('.dropdown-btn');
-	const menu = dropdown?.querySelector('.dropdown-menu');
-	const chevron = btn?.querySelector('.dropdown-chevron');
-
-	function toggleMenu() {
-		const isHidden = menu?.classList.contains('hidden');
-		if (isHidden) {
-			menu?.classList.remove('hidden', 'opacity-0', 'invisible');
-			menu?.classList.add('opacity-100', 'visible');
-			chevron?.classList.add('rotate-180');
-		} else {
-			menu?.classList.add('hidden', 'opacity-0', 'invisible');
-			menu?.classList.remove('opacity-100', 'visible');
-			chevron?.classList.remove('rotate-180');
-		}
-	}
-
-	btn?.addEventListener('click', (e) => {
-		e.stopPropagation();
-		toggleMenu();
-	});
-
-	// Close on click outside
-	document.addEventListener('click', (e) => {
-		if (!dropdown?.contains(e.target as Node)) {
-			menu?.classList.add('hidden', 'opacity-0', 'invisible');
-			menu?.classList.remove('opacity-100', 'visible');
-			chevron?.classList.remove('rotate-180');
-		}
-	});
-
-	// Close on escape
-	document.addEventListener('keydown', (e) => {
-		if (e.key === 'Escape') {
-			menu?.classList.add('hidden', 'opacity-0', 'invisible');
-			menu?.classList.remove('opacity-100', 'visible');
-			chevron?.classList.remove('rotate-180');
-		}
-	});
-</script>

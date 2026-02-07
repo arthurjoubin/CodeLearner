@@ -1,0 +1,96 @@
+---
+import { ChevronDown } from 'lucide-react';
+
+interface Item {
+  slug: string;
+  data: {
+    name: string;
+    [key: string]: any;
+  };
+}
+
+interface Props {
+  items: Item[];
+  currentSlug: string;
+  getLogoFn: (item: Item) => string;
+  getSubtitleFn: (item: Item) => string;
+  basePath: string;
+  dropdownId: string;
+}
+
+const { items, currentSlug, getLogoFn, getSubtitleFn, basePath, dropdownId } = Astro.props;
+const currentItem = items.find(item => item.slug === currentSlug);
+---
+
+<div class={`relative ${dropdownId}`}>
+  <button class="flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 focus:border-primary-500 transition-all text-xs sm:text-sm font-bold uppercase dropdown-btn shadow-sm hover:shadow-md">
+    <img src={getLogoFn(currentItem!)} alt={currentItem?.data.name} class="w-5 h-5 rounded object-contain" />
+    {currentItem?.data.name}
+    <ChevronDown className="w-4 h-4 ml-1 transition-transform dropdown-chevron" />
+  </button>
+  <div class="absolute right-0 mt-2 w-56 bg-white border-2 border-gray-300 rounded-lg shadow-xl opacity-0 invisible transition-all z-50 dropdown-menu hidden max-h-72 overflow-y-auto">
+    <div class="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-2">
+      <p class="text-[10px] font-bold uppercase text-gray-500">Select</p>
+    </div>
+    {items.map((item) => (
+      <a
+        href={`${basePath}${item.slug}`}
+        class={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 last:border-b-0 ${
+          item.slug === currentSlug
+            ? 'bg-primary-50 hover:bg-primary-100'
+            : 'hover:bg-gray-50'
+        }`}
+      >
+        <img src={getLogoFn(item)} alt={item.data.name} class="w-5 h-5 rounded object-contain" />
+        <div class="flex-1">
+          <p class={`text-sm font-bold ${item.slug === currentSlug ? 'text-primary-700' : 'text-gray-900'}`}>{item.data.name}</p>
+          <p class="text-[10px] text-gray-500">{getSubtitleFn(item)}</p>
+        </div>
+        {item.slug === currentSlug && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
+      </a>
+    ))}
+  </div>
+</div>
+
+<script define:vars={{ dropdownId }}>
+  {
+    const dropdown = document.querySelector(`.${dropdownId}`);
+    const btn = dropdown?.querySelector('.dropdown-btn');
+    const menu = dropdown?.querySelector('.dropdown-menu');
+    const chevron = btn?.querySelector('.dropdown-chevron');
+
+    function toggleMenu() {
+      const isHidden = menu?.classList.contains('hidden');
+      if (isHidden) {
+        menu?.classList.remove('hidden', 'opacity-0', 'invisible');
+        menu?.classList.add('opacity-100', 'visible');
+        chevron?.classList.add('rotate-180');
+      } else {
+        menu?.classList.add('hidden', 'opacity-0', 'invisible');
+        menu?.classList.remove('opacity-100', 'visible');
+        chevron?.classList.remove('rotate-180');
+      }
+    }
+
+    btn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMenu();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!dropdown?.contains(e.target)) {
+        menu?.classList.add('hidden', 'opacity-0', 'invisible');
+        menu?.classList.remove('opacity-100', 'visible');
+        chevron?.classList.remove('rotate-180');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        menu?.classList.add('hidden', 'opacity-0', 'invisible');
+        menu?.classList.remove('opacity-100', 'visible');
+        chevron?.classList.remove('rotate-180');
+      }
+    });
+  }
+</script>
