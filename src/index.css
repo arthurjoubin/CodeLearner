@@ -89,6 +89,15 @@
   box-shadow: 2px 2px 0 0 black;
 }
 
+/* Hide scrollbar for horizontal scroll areas */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Safe area for mobile devices with notches/home indicator */
 .safe-area-pb {
   padding-bottom: env(safe-area-inset-bottom, 0);
@@ -97,4 +106,37 @@
 /* Touch manipulation for better mobile responsiveness */
 .touch-manipulation {
   touch-action: manipulation;
+}
+
+/* Mobile menu slide-down animation */
+@keyframes slide-down {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(0); }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.2s ease-out;
+}
+
+/* Strikethrough animation for hero */
+@keyframes strike {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+.strike-through {
+  position: relative;
+  display: inline-block;
+}
+
+.strike-through::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  right: -2px;
+  height: 4px;
+  background: #ef4444;
+  transform: translateY(-50%) rotate(-1deg);
+  animation: strike 0.6s ease-out 0.3s both;
 }

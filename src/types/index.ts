@@ -38,6 +38,7 @@ export interface Lab {
   requiredLevel: number;
   steps: LabStep[];
   xpReward: number;
+  technologies: string[];
 }
 
 export interface LabStep {

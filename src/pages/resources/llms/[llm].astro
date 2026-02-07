@@ -57,42 +57,43 @@ const logoUrl = getProviderLogo(llm.data.provider);
 
 <MainLayout title={`${llm.data.name} - LLM`}>
 	<div class="page-enter">
-		<div class="flex items-start justify-between mb-6">
-			<div class="relative inline-block group">
+		<!-- Back + navigation tabs -->
+		<div class="mb-6">
+			<div class="relative inline-block group mb-4">
 				<a href="/resources/llms" class="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors text-sm">
 					<ArrowLeft className="w-4 h-4" /> Back to LLMs
 				</a>
 				<span class="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-32 duration-200" />
 			</div>
 
-			<div class="flex items-center gap-2">
-				<a 
-					href="/resources/news" 
-					class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group"
+			<div class="flex items-center gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+				<a
+					href="/resources/news"
+					class="flex items-center gap-2 px-3 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group flex-shrink-0"
 					title="News"
 				>
 					<Newspaper className="w-4 h-4 text-gray-600 group-hover:text-primary-600" />
 					<span class="text-xs font-bold text-gray-700 group-hover:text-primary-700 uppercase">News</span>
 				</a>
-				<a 
-					href="/resources/tools" 
-					class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group"
+				<a
+					href="/resources/tools"
+					class="flex items-center gap-2 px-3 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group flex-shrink-0"
 					title="Tools"
 				>
 					<Command className="w-4 h-4 text-gray-600 group-hover:text-primary-600" />
 					<span class="text-xs font-bold text-gray-700 group-hover:text-primary-700 uppercase">Tools</span>
 				</a>
-				<a 
-					href="/resources/llms" 
-					class="flex items-center gap-2 px-3 py-2 bg-green-50 border-2 border-green-500 rounded-lg shadow-sm"
+				<a
+					href="/resources/llms"
+					class="flex items-center gap-2 px-3 py-2.5 bg-green-50 border-2 border-green-500 rounded-lg shadow-sm flex-shrink-0"
 					title="LLMs"
 				>
 					<Brain className="w-4 h-4 text-green-600" />
 					<span class="text-xs font-bold text-green-700 uppercase">LLMs</span>
 				</a>
-				<a 
-					href="/resources/devfinds" 
-					class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group"
+				<a
+					href="/resources/devfinds"
+					class="flex items-center gap-2 px-3 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group flex-shrink-0"
 					title="Dev Finds"
 				>
 					<Tag className="w-4 h-4 text-gray-600 group-hover:text-primary-600" />
@@ -101,23 +102,25 @@ const logoUrl = getProviderLogo(llm.data.provider);
 			</div>
 		</div>
 
+		<!-- LLM header -->
 		<div class="mb-6">
 			<div class="flex items-center gap-3 mb-3">
-				<div class="w-12 h-12 rounded-lg overflow-hidden bg-white border-2 border-gray-300 flex items-center justify-center">
-					<img src={logoUrl} alt={llm.data.provider} class="w-10 h-10 object-contain" />
+				<div class="w-14 h-14 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-white border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
+					<img src={logoUrl} alt={llm.data.provider} class="w-12 h-12 sm:w-10 sm:h-10 object-contain" />
 				</div>
-				<PageTitle>
-					<h1 slot="title" class="text-2xl font-black text-gray-900 uppercase">{llm.data.name}</h1>
-					<span slot="tag" class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">
+				<div>
+					<h1 class="text-xl sm:text-2xl font-black text-gray-900 uppercase">{llm.data.name}</h1>
+					<span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">
 						{llm.data.provider}
 					</span>
-				</PageTitle>
+				</div>
 			</div>
-			<p class="text-gray-700 mt-2">{llm.data.description}</p>
+			<p class="text-gray-700 mt-2 text-sm sm:text-base">{llm.data.description}</p>
 		</div>
 
-		<div class="border-2 border-gray-300 rounded-lg p-4 bg-white mb-6">
-			<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+		<!-- Specs card -->
+		<div class="border-2 border-gray-300 rounded-lg p-3 sm:p-4 bg-white mb-6">
+			<div class="grid grid-cols-2 gap-3 sm:gap-4">
 				<div>
 					<p class="text-[10px] text-gray-500 font-bold uppercase mb-1">Context</p>
 					<p class="text-sm font-bold text-gray-900">{llm.data.contextWindow}</p>
@@ -133,10 +136,10 @@ const logoUrl = getProviderLogo(llm.data.provider);
 					</div>
 				))}
 			</div>
-			<div class="mt-4 pt-4 border-t border-gray-200">
-				<a 
-					href={llm.data.website} 
-					target="_blank" 
+			<div class="mt-3 pt-3 border-t border-gray-200">
+				<a
+					href={llm.data.website}
+					target="_blank"
 					rel="noopener noreferrer"
 					class="inline-flex items-center gap-2 text-sm font-bold text-gray-900 hover:text-primary-600 transition-colors"
 				>

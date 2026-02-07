@@ -58,42 +58,43 @@ const logoUrl = getToolLogo(tool.data.name);
 
 <MainLayout title={`${tool.data.name} - AI Tool`}>
 	<div class="page-enter">
-		<div class="flex items-start justify-between mb-6">
-			<div class="relative inline-block group">
+		<!-- Back + navigation tabs -->
+		<div class="mb-6">
+			<div class="relative inline-block group mb-4">
 				<a href="/resources/tools" class="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors text-sm">
 					<ArrowLeft className="w-4 h-4" /> Back to Tools
 				</a>
 				<span class="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-32 duration-200" />
 			</div>
 
-			<div class="flex items-center gap-2">
-				<a 
-					href="/resources/news" 
-					class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group"
+			<div class="flex items-center gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+				<a
+					href="/resources/news"
+					class="flex items-center gap-2 px-3 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group flex-shrink-0"
 					title="News"
 				>
 					<Newspaper className="w-4 h-4 text-gray-600 group-hover:text-primary-600" />
 					<span class="text-xs font-bold text-gray-700 group-hover:text-primary-700 uppercase">News</span>
 				</a>
-				<a 
-					href="/resources/tools" 
-					class="flex items-center gap-2 px-3 py-2 bg-green-50 border-2 border-green-500 rounded-lg shadow-sm"
+				<a
+					href="/resources/tools"
+					class="flex items-center gap-2 px-3 py-2.5 bg-green-50 border-2 border-green-500 rounded-lg shadow-sm flex-shrink-0"
 					title="Tools"
 				>
 					<Command className="w-4 h-4 text-green-600" />
 					<span class="text-xs font-bold text-green-700 uppercase">Tools</span>
 				</a>
-				<a 
-					href="/resources/llms" 
-					class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group"
+				<a
+					href="/resources/llms"
+					class="flex items-center gap-2 px-3 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group flex-shrink-0"
 					title="LLMs"
 				>
 					<Brain className="w-4 h-4 text-gray-600 group-hover:text-primary-600" />
 					<span class="text-xs font-bold text-gray-700 group-hover:text-primary-700 uppercase">LLMs</span>
 				</a>
-				<a 
-					href="/resources/devfinds" 
-					class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group"
+				<a
+					href="/resources/devfinds"
+					class="flex items-center gap-2 px-3 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group flex-shrink-0"
 					title="Dev Finds"
 				>
 					<Tag className="w-4 h-4 text-gray-600 group-hover:text-primary-600" />
@@ -102,43 +103,45 @@ const logoUrl = getToolLogo(tool.data.name);
 			</div>
 		</div>
 
+		<!-- Tool header -->
 		<div class="mb-6">
 			<div class="flex items-center gap-3 mb-3">
-				<div class="w-12 h-12 rounded-lg overflow-hidden bg-white border-2 border-gray-300 flex items-center justify-center">
-					<img src={logoUrl} alt={tool.data.name} class="w-10 h-10 object-contain" />
+				<div class="w-14 h-14 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-white border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
+					<img src={logoUrl} alt={tool.data.name} class="w-12 h-12 sm:w-10 sm:h-10 object-contain" />
 				</div>
-				<PageTitle>
-					<h1 slot="title" class="text-2xl font-black text-gray-900 uppercase">{tool.data.name}</h1>
-					<span slot="tag" class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">
+				<div>
+					<h1 class="text-xl sm:text-2xl font-black text-gray-900 uppercase">{tool.data.name}</h1>
+					<span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-bold uppercase">
 						{tool.data.category}
 					</span>
-				</PageTitle>
+				</div>
 			</div>
-			<p class="text-gray-700 mt-2">{tool.data.description}</p>
+			<p class="text-gray-700 mt-2 text-sm sm:text-base">{tool.data.description}</p>
 		</div>
 
-		<div class="grid gap-4 md:grid-cols-3 mb-6">
-			<div class="border-2 border-gray-300 rounded-lg p-4 bg-white">
-				<div class="flex items-center gap-2 mb-2">
+		<!-- Info cards -->
+		<div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+			<div class="border-2 border-gray-300 rounded-lg p-3 sm:p-4 bg-white">
+				<div class="flex items-center gap-2 mb-1.5">
 					<Wrench className="w-4 h-4 text-gray-500" />
 					<span class="text-[10px] text-gray-500 font-bold uppercase">Category</span>
 				</div>
-				<p class="text-lg font-black text-gray-900">{tool.data.category}</p>
+				<p class="text-base sm:text-lg font-black text-gray-900">{tool.data.category}</p>
 			</div>
 
-			<div class="border-2 border-gray-300 rounded-lg p-4 bg-white">
-				<div class="flex items-center gap-2 mb-2">
+			<div class="border-2 border-gray-300 rounded-lg p-3 sm:p-4 bg-white">
+				<div class="flex items-center gap-2 mb-1.5">
 					<Star className="w-4 h-4 text-gray-500" />
 					<span class="text-[10px] text-gray-500 font-bold uppercase">Pricing</span>
 				</div>
-				<p class="text-sm font-bold text-gray-900">{tool.data.pricing}</p>
+				<p class="text-xs sm:text-sm font-bold text-gray-900">{tool.data.pricing}</p>
 			</div>
 
-			<a 
-				href={tool.data.website} 
-				target="_blank" 
+			<a
+				href={tool.data.website}
+				target="_blank"
 				rel="noopener noreferrer"
-				class="border-2 border-gray-300 rounded-lg p-4 bg-white hover:border-primary-500 hover:shadow-md transition-all flex items-center justify-center gap-2 group"
+				class="col-span-2 md:col-span-1 border-2 border-gray-300 rounded-lg p-3 sm:p-4 bg-white hover:border-primary-500 hover:shadow-md transition-all flex items-center justify-center gap-2 group"
 			>
 				<ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-primary-600" />
 				<span class="text-sm font-bold text-gray-900 group-hover:text-primary-700">Visit Website</span>
