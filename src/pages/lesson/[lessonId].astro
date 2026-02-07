@@ -1,16 +1,28 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
 import LessonPage from '../../pages/_LessonPage';
+import { getLesson, getModule } from '../../data/modules';
+
+const learningPathTitles: Record<string, string> = {
+  react: 'React',
+  'web-stack': 'Web Fundamentals',
+  git: 'Git',
+  javascript: 'JavaScript',
+  'html-css': 'HTML & CSS',
+  fastapi: 'FastAPI',
+};
 
 export function getStaticPaths() {
-  // In a real migration, we might fetch this from a data source. 
-  // For now, we allow dynamic routing if we use SSR (output: 'server' in config).
   return [];
 }
 
 const { lessonId } = Astro.params;
+const lesson = lessonId ? getLesson(lessonId) : undefined;
+const module = lesson ? getModule(lesson.moduleId) : undefined;
+const pathTitle = module ? learningPathTitles[module.courseId] || module.courseId : '';
+const pageTitle = pathTitle && lesson ? `${pathTitle} - ${lesson.title}` : `Lesson - ${lessonId}`;
 ---
 
-<MainLayout title={`Lesson - ${lessonId}`}>
+<MainLayout title={pageTitle}>
 	<LessonPage client:load lessonId={lessonId} />
 </MainLayout>

@@ -49,6 +49,7 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
     const exs = getExercisesForLesson(l.id);
     return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
   }).length;
+  const moduleLessonsDone = moduleLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
 
   const handleComplete = useCallback(() => {
     if (lesson) {
@@ -98,7 +99,7 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
       <div className="mb-6">
         <Breadcrumb items={[
           { label: `${learningPathTitles[module.courseId] || module.courseId} (${courseLessonsDone}/${courseLessons.length})`, href: `/learning-path/${module.courseId}` },
-          { label: module.title, href: `/module/${module.id}` },
+          { label: `${module.title} (${moduleLessonsDone}/${moduleLessons.length})`, href: `/module/${module.id}` },
         ]} />
         <PageHeader title={lesson.title} />
 

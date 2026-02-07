@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 // Link and useParams replaced for Astro compatibility
 
 import { useUser, UserProvider } from '../context/UserContext';
-import { getExercise, getModule, getLesson, getExercisesForLesson } from '../data/modules';
+import { getExercise, getModule, getLesson, getExercisesForLesson, getModulesForCourse, getLessonsForModule, lessons as allLessons } from '../data/modules';
 import { api } from '../services/api';
 import { isQuizExercise, isCodeExercise, isGitScenarioExercise } from '../types';
 import Editor from '@monaco-editor/react';
@@ -54,6 +54,18 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const alreadyCompleted = exerciseId ? isExerciseCompleted(exerciseId) : false;
+
+  // Course & module level progress for breadcrumb
+  const courseModules = module ? getModulesForCourse(module.courseId) : [];
+  const courseLessons = courseModules.flatMap(m => allLessons.filter(l => l.moduleId === m.id));
+  const isLessonDone = (lid: string) => {
+    if (isLessonCompleted(lid)) return true;
+    const exs = getExercisesForLesson(lid);
+    return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
+  };
+  const courseLessonsDone = courseLessons.filter(l => isLessonDone(l.id)).length;
+  const moduleLessons = module ? getLessonsForModule(module.id) : [];
+  const moduleLessonsDone = moduleLessons.filter(l => isLessonDone(l.id)).length;
 
   useEffect(() => {
     if (exercise && isCodeExercise(exercise)) {
@@ -210,8 +222,8 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
     <div className="page-enter pb-20 lg:pb-0">
       <div className="mb-4 lg:mb-6">
         <Breadcrumb items={[
-          { label: learningPathTitles[module.courseId] || module.courseId, href: `/learning-path/${module.courseId}` },
-          { label: module.title, href: `/module/${module.id}` },
+          { label: `${learningPathTitles[module.courseId] || module.courseId} (${courseLessonsDone}/${courseLessons.length})`, href: `/learning-path/${module.courseId}` },
+          { label: `${module.title} (${moduleLessonsDone}/${moduleLessons.length})`, href: `/module/${module.id}` },
           { label: lesson.title, href: `/lesson/${lesson.id}` },
         ]} />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">

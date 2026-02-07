@@ -1,7 +1,16 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
 import ExercisePage from '../../pages/_ExercisePage';
-import { exercises } from '../../data/modules';
+import { exercises, getExercise, getModule, getLesson } from '../../data/modules';
+
+const learningPathTitles: Record<string, string> = {
+  react: 'React',
+  'web-stack': 'Web Fundamentals',
+  git: 'Git',
+  javascript: 'JavaScript',
+  'html-css': 'HTML & CSS',
+  fastapi: 'FastAPI',
+};
 
 export const prerender = true;
 
@@ -12,8 +21,13 @@ export function getStaticPaths() {
 }
 
 const { exerciseId } = Astro.params;
+const exercise = exerciseId ? getExercise(exerciseId) : undefined;
+const lesson = exercise ? getLesson(exercise.lessonId) : undefined;
+const module = exercise ? getModule(exercise.moduleId) : undefined;
+const pathTitle = module ? learningPathTitles[module.courseId] || module.courseId : '';
+const pageTitle = pathTitle && lesson ? `${pathTitle} - ${lesson.title}` : `Exercise - ${exerciseId}`;
 ---
 
-<MainLayout title={`Exercise - ${exerciseId}`}>
+<MainLayout title={pageTitle}>
 	<ExercisePage client:load exerciseId={exerciseId} />
 </MainLayout>

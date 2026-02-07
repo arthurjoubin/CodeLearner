@@ -2,13 +2,23 @@
 import MainLayout from '../../layouts/MainLayout.astro';
 import LearningPathPage from '../../pages/_LearningPathPage';
 
+const learningPathTitles: Record<string, string> = {
+  react: 'React',
+  'web-stack': 'Web Fundamentals',
+  git: 'Git',
+  javascript: 'JavaScript',
+  'html-css': 'HTML & CSS',
+  fastapi: 'FastAPI',
+};
+
 export function getStaticPaths() {
   return [];
 }
 
 const { pathId } = Astro.params;
+const pageTitle = pathId ? learningPathTitles[pathId] || pathId : 'Learning Path';
 ---
 
-<MainLayout title={`Learning Path - ${pathId}`}>
+<MainLayout title={pageTitle}>
 	<LearningPathPage client:load pathId={pathId} />
 </MainLayout>
