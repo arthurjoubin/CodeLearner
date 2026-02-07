@@ -42,30 +42,32 @@ function LandingContent() {
         <div className="max-w-6xl mx-auto px-4 py-4 md:py-6">
           <div className="flex items-start justify-between gap-4">
           <div className="max-w-3xl">
-            <div className="inline-block px-3 py-1 bg-primary-100 border border-primary-300 rounded text-xs font-bold uppercase text-primary-700 mb-2">
+            <div className="inline-block px-3 py-1 bg-primary-100 border border-primary-300 rounded text-xs font-bold uppercase text-primary-700 mb-3">
               Interactive Learning
             </div>
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4">
-              Learn to code<br />
-              <span className="text-primary-500">by doing   ___</span>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-tight mb-2">
+              <span className="strike-through text-gray-400">Learn to code</span>
             </h1>
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black leading-tight mb-4">
+              <span className="text-primary-500">Understand code.</span>
+            </h2>
             <p className="text-base md:text-lg text-gray-600 mb-4 max-w-xl leading-relaxed">
-              No videos. No passive tutorials. Write real code from lesson one, get instant AI feedback, and track your progression.
+              AI writes code. You need to <strong className="text-gray-900">understand</strong> it. Build real projects, get instant feedback, and learn the skills that matter in the AI era.
             </p>
 
             {/* Course Tags */}
             <div className="flex flex-wrap gap-2 mb-6">
-              <a href="/learning-path/web-stack" className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
-                <img src="https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png" alt="Vibecoder Basis" className="w-4 h-4 object-contain" />
-                <span className="text-xs font-medium text-gray-700">Vibecoder Basis</span>
+              <a href="/learning-path/web-stack" className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
+                <img src="https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png" alt="Vibecoder Basis" className="w-5 h-5 object-contain" />
+                <span className="text-sm font-medium text-gray-700">Vibecoder Basis</span>
               </a>
-              <a href="/learning-path/react" className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
-                <img src="https://raw.githubusercontent.com/github/explore/main/topics/react/react.png" alt="React" className="w-4 h-4 object-contain" />
-                <span className="text-xs font-medium text-gray-700">React</span>
+              <a href="/learning-path/react" className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
+                <img src="https://raw.githubusercontent.com/github/explore/main/topics/react/react.png" alt="React" className="w-5 h-5 object-contain" />
+                <span className="text-sm font-medium text-gray-700">React</span>
               </a>
-              <a href="/learning-path/git" className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
-                <img src="https://raw.githubusercontent.com/github/explore/main/topics/git/git.png" alt="Git" className="w-4 h-4 object-contain" />
-                <span className="text-xs font-medium text-gray-700">Git</span>
+              <a href="/learning-path/git" className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
+                <img src="https://raw.githubusercontent.com/github/explore/main/topics/git/git.png" alt="Git" className="w-5 h-5 object-contain" />
+                <span className="text-sm font-medium text-gray-700">Git</span>
               </a>
             </div>
           </div>
@@ -85,13 +87,13 @@ function LandingContent() {
 
           <div className="grid md:grid-cols-3 gap-4">
             <div className="border-2 border-gray-300 rounded-lg p-5 bg-white hover:border-primary-500 hover:shadow-md transition-all group">
-              <h3 className="font-bold text-gray-900 mb-1">Code from Day One</h3>
-              <p className="text-sm text-gray-600">Every lesson includes hands-on exercises. Write real code in a real editor, right in your browser.</p>
+              <h3 className="font-bold text-gray-900 mb-1">Read & Write Real Code</h3>
+              <p className="text-sm text-gray-600">Every lesson includes hands-on exercises. Write and debug real code in a real editor, right in your browser.</p>
             </div>
 
             <div className="border-2 border-gray-300 rounded-lg p-5 bg-white hover:border-primary-500 hover:shadow-md transition-all group">
               <h3 className="font-bold text-gray-900 mb-1">AI-Powered Feedback</h3>
-              <p className="text-sm text-gray-600">Get instant, intelligent feedback on your code. The AI validates your solutions and guides you.</p>
+              <p className="text-sm text-gray-600">Get instant, intelligent feedback on your code. The AI validates your solutions and guides you toward understanding.</p>
             </div>
 
             <div className="border-2 border-gray-300 rounded-lg p-5 bg-white hover:border-primary-500 hover:shadow-md transition-all group">

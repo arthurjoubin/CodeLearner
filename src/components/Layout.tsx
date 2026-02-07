@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 import { useUser, UserProvider } from '../context/UserContext';
 import { getLevelFromXp, getXpProgress } from '../types';
-import { Flame, FlaskConical, Trophy, Lightbulb, Menu, X, LogOut, BookOpen, Tag, Github, Twitter, Mail } from 'lucide-react';
+import { Flame, FlaskConical, Trophy, Lightbulb, Menu, X, LogOut, BookOpen, Tag, Github, Twitter, Mail, CreditCard } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -71,43 +71,79 @@ function LayoutContent({ children }: LayoutProps) {
                   Resources
                 </a>
                 <a
+                  href="/pricing"
+                  className={`hidden sm:block relative px-3 py-2 text-sm font-bold uppercase rounded-lg transition-colors ${
+                    currentPath === '/pricing'
+                      ? 'text-primary-600 border border-primary-500 bg-primary-50'
+                      : 'text-gray-700 border border-gray-300 hover:border-gray-400 hover:text-gray-900'
+                  }`}
+                >
+                  Pricing
+                </a>
+                <a
                   href="/login"
                   className="flex items-center gap-1 bg-gray-900 text-white px-4 py-2 text-sm font-bold hover:bg-gray-700 transition-colors rounded-lg"
                 >
                   Login
                 </a>
-                <div className="relative sm:hidden">
-                  <button
-                    onClick={() => setMenuOpen(!menuOpen)}
-                    className="p-2 hover:bg-gray-100 border border-transparent hover:border-gray-300 transition-colors rounded"
-                    title="Menu"
-                  >
-                    {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                  </button>
-                  {menuOpen && (
-                    <>
-                      <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                      <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-300 rounded-lg z-50">
-                        <div className="py-1">
-                          <a
-                            href="/learning-path"
-                            onClick={() => setMenuOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            <Lightbulb className="w-4 h-4" /> Learning Paths
-                          </a>
-                          <a
-                            href="/resources"
-                            onClick={() => setMenuOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            <BookOpen className="w-4 h-4" /> Resources
-                          </a>
-                        </div>
+                <button
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  className="sm:hidden p-2.5 hover:bg-gray-100 border border-transparent hover:border-gray-300 transition-colors rounded-lg"
+                  title="Menu"
+                >
+                  {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                </button>
+                {menuOpen && (
+                  <>
+                    <div className="fixed inset-0 bg-black/30 z-40 sm:hidden" onClick={() => setMenuOpen(false)} />
+                    <div className="fixed inset-x-0 top-0 z-50 bg-white border-b-2 border-gray-200 sm:hidden animate-slide-down">
+                      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                        <span className="text-xl font-bold tracking-widest text-gray-900">HACK<span className="text-primary-500">UP</span></span>
+                        <button onClick={() => setMenuOpen(false)} className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors">
+                          <X className="w-6 h-6" />
+                        </button>
                       </div>
-                    </>
-                  )}
-                </div>
+                      <nav className="px-3 py-3 space-y-1">
+                        <a
+                          href="/learning-path"
+                          onClick={() => setMenuOpen(false)}
+                          className={`flex items-center gap-3 px-4 py-4 rounded-xl text-base font-bold transition-colors ${
+                            currentPath.startsWith('/learning-path') ? 'bg-primary-50 text-primary-700' : 'text-gray-800 hover:bg-gray-50 active:bg-gray-100'
+                          }`}
+                        >
+                          <Lightbulb className="w-5 h-5" /> Learning Paths
+                        </a>
+                        <a
+                          href="/resources"
+                          onClick={() => setMenuOpen(false)}
+                          className={`flex items-center gap-3 px-4 py-4 rounded-xl text-base font-bold transition-colors ${
+                            currentPath.startsWith('/resources') ? 'bg-primary-50 text-primary-700' : 'text-gray-800 hover:bg-gray-50 active:bg-gray-100'
+                          }`}
+                        >
+                          <BookOpen className="w-5 h-5" /> Resources
+                        </a>
+                        <a
+                          href="/pricing"
+                          onClick={() => setMenuOpen(false)}
+                          className={`flex items-center gap-3 px-4 py-4 rounded-xl text-base font-bold transition-colors ${
+                            currentPath === '/pricing' ? 'bg-primary-50 text-primary-700' : 'text-gray-800 hover:bg-gray-50 active:bg-gray-100'
+                          }`}
+                        >
+                          <CreditCard className="w-5 h-5" /> Pricing
+                        </a>
+                      </nav>
+                      <div className="px-5 py-4 border-t border-gray-100">
+                        <a
+                          href="/login"
+                          onClick={() => setMenuOpen(false)}
+                          className="block w-full text-center bg-gray-900 text-white px-4 py-3.5 text-base font-bold hover:bg-gray-700 transition-colors rounded-xl"
+                        >
+                          Login
+                        </a>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             ) : (
             <div className="flex items-center gap-2 sm:gap-3">
@@ -236,43 +272,50 @@ function LayoutContent({ children }: LayoutProps) {
 
                 {menuOpen && (
                   <>
-                    <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                    <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-300 rounded-lg z-50">
-                      <div className="py-1">
+                    <div className="fixed inset-0 bg-black/30 z-40 sm:bg-transparent" onClick={() => setMenuOpen(false)} />
+                    <div className="fixed inset-x-0 top-0 z-50 bg-white border-b-2 border-gray-200 sm:absolute sm:inset-x-auto sm:top-auto sm:right-0 sm:mt-2 sm:w-56 sm:border sm:border-gray-300 sm:rounded-lg sm:fixed-auto animate-slide-down sm:animate-none">
+                      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 sm:hidden">
+                        <span className="text-xl font-bold tracking-widest text-gray-900">HACK<span className="text-primary-500">UP</span></span>
+                        <button onClick={() => setMenuOpen(false)} className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors">
+                          <X className="w-6 h-6" />
+                        </button>
+                      </div>
+                      <nav className="px-3 py-3 sm:px-0 sm:py-1 space-y-1 sm:space-y-0">
                         <a
                           href="/leaderboard"
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="flex items-center gap-3 px-4 py-4 sm:py-2.5 rounded-xl sm:rounded-none text-base sm:text-sm font-bold sm:font-normal text-gray-800 sm:text-gray-700 hover:bg-gray-50 sm:hover:bg-gray-100 transition-colors"
                         >
-                          <Trophy className="w-4 h-4" /> Leaderboard
+                          <Trophy className="w-5 h-5 sm:w-4 sm:h-4" /> Leaderboard
                         </a>
                         <a
                           href="/learning-path"
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="flex items-center gap-3 px-4 py-4 sm:py-2.5 rounded-xl sm:rounded-none text-base sm:text-sm font-bold sm:font-normal text-gray-800 sm:text-gray-700 hover:bg-gray-50 sm:hover:bg-gray-100 transition-colors"
                         >
-                          <Lightbulb className="w-4 h-4" /> Learning Paths
+                          <Lightbulb className="w-5 h-5 sm:w-4 sm:h-4" /> Learning Paths
                         </a>
                         <a
                           href="/resources"
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="flex items-center gap-3 px-4 py-4 sm:py-2.5 rounded-xl sm:rounded-none text-base sm:text-sm font-bold sm:font-normal text-gray-800 sm:text-gray-700 hover:bg-gray-50 sm:hover:bg-gray-100 transition-colors"
                         >
-                          <BookOpen className="w-4 h-4" /> Resources
+                          <BookOpen className="w-5 h-5 sm:w-4 sm:h-4" /> Resources
                         </a>
                         <a
                           href="/resources/devfinds"
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50"
+                          className="flex items-center gap-3 px-4 py-4 sm:py-2.5 rounded-xl sm:rounded-none text-base sm:text-sm font-bold sm:font-normal text-yellow-700 hover:bg-yellow-50 transition-colors"
                         >
-                          <Tag className="w-4 h-4" /> Dev Finds
+                          <Tag className="w-5 h-5 sm:w-4 sm:h-4" /> Dev Finds
                         </a>
-                        <hr className="my-1 border-gray-200" />
+                      </nav>
+                      <div className="px-3 py-3 sm:px-0 sm:py-1 border-t border-gray-200 sm:border-gray-200">
                         <button
                           onClick={() => { logout(); setMenuOpen(false); }}
-                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                          className="flex items-center gap-3 w-full px-4 py-4 sm:py-2.5 rounded-xl sm:rounded-none text-base sm:text-sm font-bold sm:font-normal text-gray-800 sm:text-gray-700 hover:bg-gray-50 sm:hover:bg-gray-100 text-left transition-colors"
                         >
-                          <LogOut className="w-4 h-4" /> Log out
+                          <LogOut className="w-5 h-5 sm:w-4 sm:h-4" /> Log out
                         </button>
                       </div>
                     </div>
@@ -298,6 +341,7 @@ function LayoutContent({ children }: LayoutProps) {
             </div>
             <div className="flex items-center gap-4">
               <a href="/resources" className="text-xs font-bold text-gray-600 hover:text-primary-600 transition-colors uppercase">Resources</a>
+              <a href="/pricing" className="text-xs font-bold text-gray-600 hover:text-primary-600 transition-colors uppercase">Pricing</a>
               <a href="/resources/devfinds" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors uppercase">Dev Finds</a>
               <a href="/leaderboard" className="text-xs font-bold text-gray-600 hover:text-primary-600 transition-colors uppercase">Leaderboard</a>
               <a href="/labs" className="text-xs font-bold text-gray-600 hover:text-primary-600 transition-colors uppercase">Labs</a>
@@ -315,7 +359,7 @@ function LayoutContent({ children }: LayoutProps) {
             </div>
           </div>
             <div className="mt-4 pt-4 border-t border-gray-100 text-center">
-            <p className="text-[10px] text-gray-500 uppercase font-bold">Learn to code___one day at a time</p>
+            <p className="text-[10px] text-gray-500 uppercase font-bold">Understand code___one day at a time</p>
           </div>
         </div>
       </footer>

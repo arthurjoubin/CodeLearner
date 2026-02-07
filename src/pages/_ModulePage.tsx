@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { useUser, UserProvider } from '../context/UserContext';
 import { getModule, getLessonsForModule, getExercisesForLesson, getLesson } from '../data/modules';
-import { CheckCircle, Lock, BookOpen, X } from 'lucide-react';
+import { CheckCircle, Lock, BookOpen, X, ArrowRight } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { PageHeader } from '../components/PageTitle';
@@ -91,6 +91,13 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
           const prevLesson = index > 0 ? lessons[index - 1] : null;
           const isUnlocked = index === 0 || (prevLesson && isLessonEffectivelyDone(prevLesson.id));
 
+          // Is this the next lesson to do? (first unlocked + not complete)
+          const isNextUp = isUnlocked && !isComplete && !lessons.slice(0, index).some((l, i) => {
+            const prevL = i > 0 ? lessons[i - 1] : null;
+            const unlocked = i === 0 || (prevL && isLessonEffectivelyDone(prevL.id));
+            return unlocked && !isLessonEffectivelyDone(l.id);
+          });
+
           if (!isUnlocked) {
             return (
               <div key={lesson.id} className="border-2 border-gray-300 bg-gray-100 p-4 rounded-lg opacity-60 grayscale cursor-not-allowed" title="Complete previous lesson first">
@@ -111,8 +118,14 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
           return (
             <div
               key={lesson.id}
-              className={`border-2 rounded-lg p-4 transition-all hover:shadow-md ${isComplete ? 'border-primary-500 bg-primary-50/50' : 'border-gray-300 bg-white hover:border-primary-500'}`}
+              className={`border-2 rounded-lg p-4 transition-all hover:shadow-md ${isComplete ? 'border-primary-500 bg-primary-50/50' : isNextUp ? 'border-primary-500 bg-white ring-2 ring-primary-200' : 'border-gray-300 bg-white hover:border-primary-500'}`}
             >
+              {isNextUp && (
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-primary-200">
+                  <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
+                  <span className="text-xs font-bold text-primary-700 uppercase">Continue here</span>
+                </div>
+              )}
               <div className="flex items-start sm:items-center gap-3 flex-col sm:flex-row">
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                   <a href={`/lesson/${lesson.id}`} className={`w-10 h-10 flex-shrink-0 flex items-center justify-center font-bold border-2 rounded-lg transition-all hover:shadow-md ${isComplete ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-gray-800 border-gray-300 hover:border-primary-500'}`}>
@@ -139,9 +152,9 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
                   <div className="flex items-center gap-2">
                     <a
                       href={`/lesson/${lesson.id}`}
-                      className="inline-flex items-center h-[46px] px-4 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 transition-colors text-xs uppercase"
+                      className={`inline-flex items-center gap-1 h-[46px] px-4 font-bold rounded-lg transition-colors text-xs uppercase ${isNextUp ? 'bg-gray-900 text-white hover:bg-gray-800' : 'bg-primary-600 text-white hover:bg-primary-700'}`}
                     >
-                      Read Lesson
+                      {isNextUp ? <>Continue <ArrowRight className="w-3.5 h-3.5" /></> : 'Read Lesson'}
                     </a>
                     {exercises.length > 0 && (
                       <div className="inline-flex items-center gap-2 border-2 border-gray-300 bg-white rounded-lg px-3 py-2">

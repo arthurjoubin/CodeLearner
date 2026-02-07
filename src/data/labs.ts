@@ -7,6 +7,7 @@ export const labs: Lab[] = [
     description: 'Build a complete todo application with add, delete, and toggle functionality.',
     requiredLevel: 1,
     xpReward: 200,
+    technologies: ['React', 'JavaScript'],
     steps: [
       {
         id: 'step-1',
@@ -111,6 +112,7 @@ export default function TodoApp() {
     description: 'Build a weather dashboard with conditional rendering and dynamic styling.',
     requiredLevel: 2,
     xpReward: 300,
+    technologies: ['React', 'CSS'],
     steps: [
       {
         id: 'step-1',
@@ -172,6 +174,7 @@ export default function Weather() {
     description: 'Build a counter with increment, decrement, reset, and custom step.',
     requiredLevel: 2,
     xpReward: 250,
+    technologies: ['React'],
     steps: [
       {
         id: 'step-1',
@@ -243,6 +246,7 @@ export default function Counter() {
     description: 'Create a reusable profile card component with props and styling.',
     requiredLevel: 3,
     xpReward: 350,
+    technologies: ['React', 'CSS'],
     steps: [
       {
         id: 'step-1',
@@ -306,6 +310,7 @@ export default function Counter() {
     description: 'Build a dark/light theme toggle with Context API.',
     requiredLevel: 4,
     xpReward: 400,
+    technologies: ['React', 'CSS'],
     steps: [
       {
         id: 'step-1',
@@ -357,6 +362,7 @@ export default function ThemeApp() {
     description: 'Build a signup form with real-time validation.',
     requiredLevel: 4,
     xpReward: 450,
+    technologies: ['React', 'JavaScript'],
     steps: [
       {
         id: 'step-1',
@@ -456,6 +462,7 @@ export default function SignupForm() {
     description: 'Create a custom hook to track browser window dimensions.',
     requiredLevel: 5,
     xpReward: 500,
+    technologies: ['React', 'JavaScript'],
     steps: [
       {
         id: 'step-1',
