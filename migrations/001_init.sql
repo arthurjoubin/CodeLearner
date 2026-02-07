@@ -1,15 +1,15 @@
--- Users table
+-- Migration 001: Initial schema
+-- This matches the production state (with password_hash that was added manually)
+
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL,
   password_hash TEXT,
   avatar_url TEXT,
-  is_admin INTEGER DEFAULT 0,
   created_at TEXT DEFAULT (datetime('now'))
 );
 
--- User progress table
 CREATE TABLE IF NOT EXISTS user_progress (
   user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
   xp INTEGER DEFAULT 0,
@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS user_progress (
   lab_progress TEXT DEFAULT '{}'
 );
 
--- Sessions table (for auth)
 CREATE TABLE IF NOT EXISTS sessions (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -30,6 +29,5 @@ CREATE TABLE IF NOT EXISTS sessions (
   created_at TEXT DEFAULT (datetime('now'))
 );
 
--- Index for faster session lookups
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);

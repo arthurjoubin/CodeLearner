@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { api } from '../services/api';
 
 export default function ResetPasswordPage() {
-  const [email, setEmail] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -15,9 +15,9 @@ export default function ResetPasswordPage() {
     setIsSubmitting(true);
 
     try {
-      await api.resetPassword(email, newPassword);
-      setSuccess('Password reset successfully! You can now login with your new password.');
-      setEmail('');
+      await api.resetPassword(currentPassword, newPassword);
+      setSuccess('Mot de passe mis à jour ! Tu peux maintenant te reconnecter.');
+      setCurrentPassword('');
       setNewPassword('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -34,7 +34,7 @@ export default function ResetPasswordPage() {
             <span className="text-2xl font-bold tracking-widest text-gray-900">
               HACK<span className="text-primary-500">UP</span>
             </span>
-            <p className="text-sm text-gray-600 mt-2">Reset your password</p>
+            <p className="text-sm text-gray-600 mt-2">Changer ton mot de passe</p>
           </div>
 
           {error && (
@@ -51,19 +51,19 @@ export default function ResetPasswordPage() {
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Mot de passe actuel</label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                placeholder="you@example.com"
+                placeholder="••••••"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">New Password</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Nouveau mot de passe</label>
               <input
                 type="password"
                 value={newPassword}
@@ -80,16 +80,16 @@ export default function ResetPasswordPage() {
               disabled={isSubmitting}
               className="w-full bg-primary-500 text-white px-4 py-2.5 text-sm font-bold rounded hover:bg-primary-600 transition-colors disabled:opacity-50"
             >
-              {isSubmitting ? 'Please wait...' : 'Reset Password'}
+              {isSubmitting ? 'Patiente...' : 'Changer le mot de passe'}
             </button>
           </form>
 
           <div className="mt-6 text-center space-y-2">
             <a href="/login" className="block text-xs text-gray-500 hover:text-primary-600 transition-colors">
-              Back to login
+              Retour au login
             </a>
             <a href="/" className="block text-xs text-gray-500 hover:text-primary-600 transition-colors">
-              Back to home
+              Retour à l'accueil
             </a>
           </div>
         </div>
