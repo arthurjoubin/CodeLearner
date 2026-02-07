@@ -60,8 +60,6 @@ const llms = defineCollection({
 		name: z.string(),
 		description: z.string(),
 		provider: z.string(),
-		contextWindow: z.string(),
-		pricing: z.string(),
 		website: z.string().url(),
 		open: z.boolean().default(false),
 		specialty: z.string().default(''),
