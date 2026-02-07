@@ -1,0 +1,114 @@
+---
+import { ChevronDown, Newspaper, Command, Brain, Wrench, Tag } from 'lucide-react';
+
+interface Props {
+  currentCategory: 'news' | 'tools' | 'llms' | 'coding-bench' | 'devfinds';
+}
+
+const { currentCategory } = Astro.props;
+
+const categoryInfo: Record<string, { name: string; href: string }> = {
+  'news': { name: 'News', href: '/resources/news' },
+  'tools': { name: 'Tools', href: '/resources/tools' },
+  'llms': { name: 'LLMs', href: '/resources/llms' },
+  'coding-bench': { name: 'Coding Bench', href: '/resources/coding-bench' },
+  'devfinds': { name: 'Deals', href: '/resources/devfinds' },
+};
+
+const currentInfo = categoryInfo[currentCategory];
+---
+
+<div class="relative resource-category-dropdown">
+  <button class="flex items-center gap-2 px-3 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 focus:border-primary-500 transition-all text-xs sm:text-sm font-bold uppercase dropdown-btn shadow-sm hover:shadow-md">
+    {currentCategory === 'news' && <Newspaper className="w-4 h-4" />}
+    {currentCategory === 'tools' && <Command className="w-4 h-4" />}
+    {currentCategory === 'llms' && <Brain className="w-4 h-4" />}
+    {currentCategory === 'coding-bench' && <Wrench className="w-4 h-4" />}
+    {currentCategory === 'devfinds' && <Tag className="w-4 h-4" />}
+    {currentInfo?.name}
+    <ChevronDown className="w-4 h-4 ml-1 transition-transform dropdown-chevron" />
+  </button>
+  <div class="absolute right-0 mt-2 w-48 bg-white border-2 border-gray-300 rounded-lg shadow-xl opacity-0 invisible transition-all z-50 dropdown-menu hidden max-h-72 overflow-y-auto">
+    <div class="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-2">
+      <p class="text-[10px] font-bold uppercase text-gray-500">Resources</p>
+    </div>
+    <a href="/resources/news" class={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 ${currentCategory === 'news' ? 'bg-primary-50 hover:bg-primary-100' : 'hover:bg-gray-50'}`}>
+      <Newspaper className="w-4 h-4" />
+      <div class="flex-1">
+        <p class={`text-sm font-bold ${currentCategory === 'news' ? 'text-primary-700' : 'text-gray-900'}`}>News</p>
+      </div>
+      {currentCategory === 'news' && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
+    </a>
+    <a href="/resources/tools" class={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 ${currentCategory === 'tools' ? 'bg-primary-50 hover:bg-primary-100' : 'hover:bg-gray-50'}`}>
+      <Command className="w-4 h-4" />
+      <div class="flex-1">
+        <p class={`text-sm font-bold ${currentCategory === 'tools' ? 'text-primary-700' : 'text-gray-900'}`}>Tools</p>
+      </div>
+      {currentCategory === 'tools' && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
+    </a>
+    <a href="/resources/llms" class={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 ${currentCategory === 'llms' ? 'bg-primary-50 hover:bg-primary-100' : 'hover:bg-gray-50'}`}>
+      <Brain className="w-4 h-4" />
+      <div class="flex-1">
+        <p class={`text-sm font-bold ${currentCategory === 'llms' ? 'text-primary-700' : 'text-gray-900'}`}>LLMs</p>
+      </div>
+      {currentCategory === 'llms' && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
+    </a>
+    <a href="/resources/coding-bench" class={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100 ${currentCategory === 'coding-bench' ? 'bg-primary-50 hover:bg-primary-100' : 'hover:bg-gray-50'}`}>
+      <Wrench className="w-4 h-4" />
+      <div class="flex-1">
+        <p class={`text-sm font-bold ${currentCategory === 'coding-bench' ? 'text-primary-700' : 'text-gray-900'}`}>Coding Bench</p>
+      </div>
+      {currentCategory === 'coding-bench' && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
+    </a>
+    <a href="/resources/devfinds" class={`flex items-center gap-3 px-4 py-3 transition-colors ${currentCategory === 'devfinds' ? 'bg-primary-50 hover:bg-primary-100' : 'hover:bg-gray-50'}`}>
+      <Tag className="w-4 h-4" />
+      <div class="flex-1">
+        <p class={`text-sm font-bold ${currentCategory === 'devfinds' ? 'text-primary-700' : 'text-gray-900'}`}>Deals</p>
+      </div>
+      {currentCategory === 'devfinds' && <div class="w-2 h-2 bg-primary-500 rounded-full"></div>}
+    </a>
+  </div>
+</div>
+
+<script define:vars={{ dropdownId: 'resource-category-dropdown' }}>
+  {
+    const dropdown = document.querySelector('.resource-category-dropdown');
+    const btn = dropdown?.querySelector('.dropdown-btn');
+    const menu = dropdown?.querySelector('.dropdown-menu');
+    const chevron = btn?.querySelector('.dropdown-chevron');
+
+    function toggleMenu() {
+      const isHidden = menu?.classList.contains('hidden');
+      if (isHidden) {
+        menu?.classList.remove('hidden', 'opacity-0', 'invisible');
+        menu?.classList.add('opacity-100', 'visible');
+        chevron?.classList.add('rotate-180');
+      } else {
+        menu?.classList.add('hidden', 'opacity-0', 'invisible');
+        menu?.classList.remove('opacity-100', 'visible');
+        chevron?.classList.remove('rotate-180');
+      }
+    }
+
+    btn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMenu();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!dropdown?.contains(e.target)) {
+        menu?.classList.add('hidden', 'opacity-0', 'invisible');
+        menu?.classList.remove('opacity-100', 'visible');
+        chevron?.classList.remove('rotate-180');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        menu?.classList.add('hidden', 'opacity-0', 'invisible');
+        menu?.classList.remove('opacity-100', 'visible');
+        chevron?.classList.remove('rotate-180');
+      }
+    });
+  }
+</script>

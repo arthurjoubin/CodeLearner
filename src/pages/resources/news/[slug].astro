@@ -2,7 +2,8 @@
 import MainLayout from '../../../layouts/MainLayout.astro';
 import PageTitle from '../../../components/PageTitle.astro';
 import { getCollection, getEntry } from 'astro:content';
-import { ArrowLeft, Calendar, User, Tag, Newspaper, Command, Brain, Wrench } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Tag } from 'lucide-react';
+import ResourceCategoryDropdown from '../../../components/ResourceCategoryDropdown.astro';
 
 export async function getStaticPaths() {
 	const news = await getCollection('news');
@@ -76,48 +77,12 @@ function getToolLogo(toolName: string): string | null {
 
 <MainLayout title={post.data.title}>
 	<div class="page-enter">
-		<div class="flex items-start justify-between mb-6">
-			<div class="relative inline-block group">
-				<a href="/resources/news" class="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors text-sm">
-					<ArrowLeft className="w-4 h-4" /> Back to News
-				</a>
-				<span class="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary-500 transition-all group-hover:w-32 duration-200" />
-			</div>
+		<div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
+			<a href="/resources/news" class="inline-flex items-center gap-2 text-gray-800 font-bold uppercase hover:text-primary-600 transition-colors text-xs sm:text-sm">
+				<ArrowLeft className="w-4 h-4" /> Back to News
+			</a>
 
-			<div class="flex items-center gap-2">
-				<a 
-					href="/resources/news" 
-					class="flex items-center gap-2 px-3 py-2 bg-green-50 border-2 border-green-500 rounded-lg shadow-sm"
-					title="News"
-				>
-					<Newspaper className="w-4 h-4 text-green-600" />
-					<span class="text-xs font-bold text-green-700 uppercase">News</span>
-				</a>
-				<a 
-					href="/resources/tools" 
-					class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group"
-					title="Tools"
-				>
-					<Command className="w-4 h-4 text-gray-600 group-hover:text-primary-600" />
-					<span class="text-xs font-bold text-gray-700 group-hover:text-primary-700 uppercase">Tools</span>
-				</a>
-				<a 
-					href="/resources/llms" 
-					class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group"
-					title="LLMs"
-				>
-					<Brain className="w-4 h-4 text-gray-600 group-hover:text-primary-600" />
-					<span class="text-xs font-bold text-gray-700 group-hover:text-primary-700 uppercase">LLMs</span>
-				</a>
-				<a 
-					href="/resources/devfinds" 
-					class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group"
-					title="Dev Finds"
-				>
-					<Tag className="w-4 h-4 text-gray-600 group-hover:text-primary-600" />
-					<span class="text-xs font-bold text-gray-700 group-hover:text-primary-700 uppercase">Deals</span>
-				</a>
-			</div>
+			<ResourceCategoryDropdown currentCategory="news" />
 		</div>
 
 		<div class="mb-6">

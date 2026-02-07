@@ -3,6 +3,7 @@ import MainLayout from '../../../layouts/MainLayout.astro';
 import { getEntry, getCollection } from 'astro:content';
 import { ArrowLeft, ExternalLink, CheckCircle, XCircle } from 'lucide-react';
 import ResourceDropdown from '../../../components/ResourceDropdown.astro';
+import ResourceCategoryDropdown from '../../../components/ResourceCategoryDropdown.astro';
 
 export async function getStaticPaths() {
 	const llms = await getCollection('llms');
@@ -48,15 +49,18 @@ const logoUrl = getProviderLogo(llm.data.provider);
 				<ArrowLeft className="w-4 h-4" /> Back to LLMs
 			</a>
 
-			<!-- LLMs Dropdown -->
-			<ResourceDropdown
-				items={allLlms}
-				currentSlug={llmSlug}
-				getLogoFn={(l) => getProviderLogo(l.data.provider)}
-				getSubtitleFn={(l) => l.data.provider}
-				basePath="/resources/llms/"
-				dropdownId="llms-dropdown"
-			/>
+			<div class="flex gap-2">
+				<ResourceCategoryDropdown currentCategory="llms" />
+				<!-- LLMs Dropdown -->
+				<ResourceDropdown
+					items={allLlms}
+					currentSlug={llmSlug}
+					getLogoFn={(l) => getProviderLogo(l.data.provider)}
+					getSubtitleFn={(l) => l.data.provider}
+					basePath="/resources/llms/"
+					dropdownId="llms-dropdown"
+				/>
+			</div>
 		</div>
 
 		<!-- LLM header -->

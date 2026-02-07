@@ -3,6 +3,7 @@ import MainLayout from '../../../layouts/MainLayout.astro';
 import { getEntry, getCollection } from 'astro:content';
 import { ArrowLeft, ExternalLink, CheckCircle, XCircle } from 'lucide-react';
 import ResourceDropdown from '../../../components/ResourceDropdown.astro';
+import ResourceCategoryDropdown from '../../../components/ResourceCategoryDropdown.astro';
 
 export async function getStaticPaths() {
 	const tools = await getCollection('tools');
@@ -46,14 +47,17 @@ const logoUrl = getToolLogo(tool.data.name);
 				<ArrowLeft className="w-4 h-4" /> Back to Tools
 			</a>
 
-			<ResourceDropdown
-				items={allTools}
-				currentSlug={toolSlug}
-				getLogoFn={(t) => getToolLogo(t.data.name)}
-				getSubtitleFn={(t) => t.data.category}
-				basePath="/resources/tools/"
-				dropdownId="tools-dropdown"
-			/>
+			<div class="flex gap-2">
+				<ResourceCategoryDropdown currentCategory="tools" />
+				<ResourceDropdown
+					items={allTools}
+					currentSlug={toolSlug}
+					getLogoFn={(t) => getToolLogo(t.data.name)}
+					getSubtitleFn={(t) => t.data.category}
+					basePath="/resources/tools/"
+					dropdownId="tools-dropdown"
+				/>
+			</div>
 		</div>
 
 		<!-- Tool header -->
