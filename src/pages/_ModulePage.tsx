@@ -2,7 +2,7 @@ import { useState } from 'react';
 // Link and useParams replaced for Astro compatibility
 
 import { useUser, UserProvider } from '../context/UserContext';
-import { getModule, getLessonsForModule, getExercisesForLesson, getLesson } from '../data/modules';
+import { getModule, getLessonsForModule, getExercisesForLesson, getLesson, getModulesForCourse, lessons as allLessons } from '../data/modules';
 import { CheckCircle, Lock, BookOpen, X, ArrowRight } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -33,6 +33,11 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
     const exs = getExercisesForLesson(lessonId);
     return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
   };
+
+  // Course-level progress for breadcrumb
+  const courseModules = module ? getModulesForCourse(module.courseId) : [];
+  const courseLessons = courseModules.flatMap(m => allLessons.filter(l => l.moduleId === m.id));
+  const courseLessonsDone = courseLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
 
   const handleShowEssential = (lessonId: string) => {
     const lesson = getLesson(lessonId);
@@ -71,7 +76,7 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
     <div className="page-enter">
       <div className="mb-6">
         <Breadcrumb items={[
-          { label: learningPathTitles[module.courseId] || module.courseId, href: `/learning-path/${module.courseId}` },
+          { label: `${learningPathTitles[module.courseId] || module.courseId} (${courseLessonsDone}/${courseLessons.length})`, href: `/learning-path/${module.courseId}` },
         ]} />
         <PageHeader
           title={module.title}
