@@ -30,7 +30,8 @@ function getToolLogo(toolName: string): string {
 }
 
 // Format pricing text to be more condensed
-function formatPricing(pricing: string): string {
+function formatPricing(pricing: string | undefined): string {
+	if (!pricing) return '';
 	if (pricing.toLowerCase().includes('free')) {
 		if (pricing.toLowerCase().includes('$20')) return 'Free / $20';
 		if (pricing.toLowerCase().includes('$10')) return 'Free / $10';
