@@ -33,12 +33,12 @@ export const api = {
     return data.user;
   },
 
-  async resetPassword(email: string, newPassword: string): Promise<void> {
+  async resetPassword(currentPassword: string, newPassword: string): Promise<void> {
     const res = await fetch(`${WORKER_URL}/auth/reset-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ email, newPassword }),
+      body: JSON.stringify({ currentPassword, newPassword }),
     });
     if (!res.ok) {
       const data = await res.json();
