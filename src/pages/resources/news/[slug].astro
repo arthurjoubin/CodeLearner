@@ -2,7 +2,7 @@
 import MainLayout from '../../../layouts/MainLayout.astro';
 import PageTitle from '../../../components/PageTitle.astro';
 import { getCollection, getEntry } from 'astro:content';
-import { ArrowLeft, Calendar, User, Tag } from 'lucide-react';
+import { ArrowLeft, Calendar, User } from 'lucide-react';
 import ResourceCategoryDropdown from '../../../components/ResourceCategoryDropdown.astro';
 
 export async function getStaticPaths() {
@@ -86,11 +86,6 @@ function getToolLogo(toolName: string): string | null {
 		</div>
 
 		<div class="mb-6">
-			<div class="flex flex-wrap gap-2 mb-3">
-				{post.data.tags.map((tag: string) => (
-					<span class="text-[10px] px-2 py-0.5 bg-primary-100 text-primary-700 border border-primary-300 rounded font-bold uppercase">{tag}</span>
-				))}
-			</div>
 			<PageTitle>
 				<h1 slot="title" class="text-2xl font-black text-gray-900">{post.data.title}</h1>
 			</PageTitle>

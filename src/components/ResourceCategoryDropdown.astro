@@ -31,7 +31,7 @@ const CurrentIcon = currentInfo?.Icon || Newspaper;
     <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform dd-chevron" />
   </button>
 
-  <div class="dd-menu fixed inset-x-3 bottom-3 sm:absolute sm:inset-auto sm:right-0 sm:bottom-auto sm:mt-2 w-auto sm:w-48 bg-white border-2 border-gray-300 rounded-lg z-50 overflow-hidden shadow-xl">
+  <div class="dd-menu absolute right-0 top-full mt-2 w-48 bg-white border-2 border-gray-300 rounded-lg z-50 overflow-hidden shadow-xl">
     <div class="flex items-center justify-between px-3 py-2.5 border-b border-gray-200 bg-gray-50">
       <span class="font-bold uppercase text-[10px] text-gray-500">Resources</span>
       <button type="button" onclick="this.closest('.category-dd').classList.remove('dd-open')" class="sm:hidden p-1 hover:bg-gray-200 rounded transition-colors">
