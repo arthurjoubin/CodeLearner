@@ -264,6 +264,23 @@
           "explanation": "DNS records are cached at multiple levels (browser, ISP, etc.) for performance."
         }
       ]
+    },
+    {
+      "id": "web-code-ex-1",
+      "lessonId": "http-basics",
+      "moduleId": "how-web-works",
+      "title": "Build a Fetch Request",
+      "difficulty": "medium",
+      "description": "Write a function that fetches data from an API and handles errors.",
+      "instructions": "Create a `UserFetcher` component that:\n1. Has a button labeled \"Load User\"\n2. When clicked, fetches from `https://jsonplaceholder.typicode.com/users/1`\n3. Displays the user's `name` and `email` once loaded\n4. Shows \"Loading...\" while the request is in progress\n5. Shows an error message if the fetch fails\n\nUse `useState` for state and `async/await` for the fetch.",
+      "starterCode": "function UserFetcher() {\n  // Add states for user, loading, and error\n\n  const fetchUser = async () => {\n    // Implement fetch logic\n  };\n\n  return (\n    <div>\n      <h2>User Fetcher</h2>\n      <button onClick={fetchUser}>Load User</button>\n      {/* Show loading, error, or user data */}\n    </div>\n  );\n}",
+      "solution": "function UserFetcher() {\n  const [user, setUser] = React.useState(null);\n  const [loading, setLoading] = React.useState(false);\n  const [error, setError] = React.useState(null);\n\n  const fetchUser = async () => {\n    setLoading(true);\n    setError(null);\n    try {\n      const res = await fetch('https://jsonplaceholder.typicode.com/users/1');\n      if (!res.ok) throw new Error('Failed to fetch');\n      const data = await res.json();\n      setUser(data);\n    } catch (err) {\n      setError(err.message);\n    } finally {\n      setLoading(false);\n    }\n  };\n\n  return (\n    <div>\n      <h2>User Fetcher</h2>\n      <button onClick={fetchUser}>Load User</button>\n      {loading && <p>Loading...</p>}\n      {error && <p style={{color: 'red'}}>{error}</p>}\n      {user && (\n        <div>\n          <p>Name: {user.name}</p>\n          <p>Email: {user.email}</p>\n        </div>\n      )}\n    </div>\n  );\n}",
+      "hints": [
+        "Use React.useState(null) for user, React.useState(false) for loading",
+        "Wrap the fetch call in a try/catch block",
+        "Use response.json() to parse the JSON body"
+      ],
+      "validationPrompt": "Check if the code: 1) Uses useState for user, loading, and error states 2) Has an async fetchUser function that calls fetch() 3) Handles loading state 4) Has try/catch for error handling 5) Displays the user name and email when loaded"
     }
   ]
 }

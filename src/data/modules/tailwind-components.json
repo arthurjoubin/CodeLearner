@@ -1,0 +1,50 @@
+{
+  "module": {
+    "id": "tailwind-components",
+    "courseId": "html-css",
+    "title": "Building with Tailwind",
+    "description": "Build real UI components: cards, navbars, forms, and more",
+    "icon": "Boxes",
+    "requiredXp": 850,
+    "color": "from-indigo-400 to-purple-500"
+  },
+  "lessons": [
+    {
+      "id": "tw-cards-buttons",
+      "moduleId": "tailwind-components",
+      "title": "Cards & Buttons",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Cards: `border rounded-lg p-6 shadow` + content inside\n- Buttons: `px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600`\n- Hover states: `hover:` prefix\n- Transitions: `transition-colors duration-200`\n\n---\n\n# Cards & Buttons",
+      "codeExample": "<!-- Card -->\n<div class=\"border rounded-lg p-6 bg-white shadow-md\">\n  <h3 class=\"font-bold text-lg mb-2\">Card Title</h3>\n  <p class=\"text-gray-600 mb-4\">Card description.</p>\n  <button class=\"px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors\">\n    Learn More\n  </button>\n</div>"
+    },
+    {
+      "id": "tw-navigation",
+      "moduleId": "tailwind-components",
+      "title": "Navigation Bars",
+      "order": 2,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Flexbox for layout: `flex items-center justify-between`\n- Sticky nav: `sticky top-0 z-50`\n- Mobile hamburger with `hidden md:flex`\n- Active states with conditional classes\n\n---\n\n# Navigation Bars",
+      "codeExample": "<nav class=\"sticky top-0 z-50 bg-white border-b px-6 py-3\">\n  <div class=\"flex items-center justify-between max-w-6xl mx-auto\">\n    <a href=\"/\" class=\"font-bold text-xl\">Logo</a>\n    <div class=\"hidden md:flex gap-6\">\n      <a href=\"/\" class=\"text-gray-600 hover:text-black\">Home</a>\n      <a href=\"/about\" class=\"text-gray-600 hover:text-black\">About</a>\n    </div>\n  </div>\n</nav>"
+    },
+    {
+      "id": "tw-forms",
+      "moduleId": "tailwind-components",
+      "title": "Styled Forms",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Input: `w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500`\n- Label: `block text-sm font-bold mb-1`\n- Focus states: `focus:` prefix\n- Ring utility for focus outlines\n\n---\n\n# Styled Forms",
+      "codeExample": "<form class=\"max-w-md mx-auto space-y-4\">\n  <div>\n    <label class=\"block text-sm font-bold mb-1\">Email</label>\n    <input\n      type=\"email\"\n      class=\"w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none\"\n      placeholder=\"you@example.com\"\n    />\n  </div>\n  <button class=\"w-full py-2 bg-black text-white rounded-lg hover:bg-gray-800 font-bold\">\n    Submit\n  </button>\n</form>"
+    },
+    {
+      "id": "tw-animations",
+      "moduleId": "tailwind-components",
+      "title": "Transitions & Animations",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- `transition` enables smooth changes\n- `duration-200`, `duration-300` control speed\n- `hover:scale-105` for zoom effect\n- `animate-spin`, `animate-pulse`, `animate-bounce` built-in\n- `transform` utilities: `scale`, `rotate`, `translate`\n\n---\n\n# Transitions & Animations",
+      "codeExample": "<!-- Hover scale effect -->\n<div class=\"transform transition-transform duration-200 hover:scale-105\">\n  Hover me!\n</div>\n\n<!-- Loading spinner -->\n<div class=\"animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full\"></div>\n\n<!-- Pulse effect -->\n<div class=\"animate-pulse bg-gray-200 rounded h-4 w-3/4\"></div>"
+    }
+  ],
+  "exercises": []
+}
