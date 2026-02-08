@@ -36,12 +36,12 @@ function CoursePageContent({ courseId }: CoursePageProps) {
   // Map courses to their learning paths
   const courseToLearningPath: Record<string, { id: string; name: string }> = {
     'html-css-tailwind': { id: 'frontend', name: 'Frontend' },
-    'javascript-core': { id: 'frontend', name: 'Frontend' },
+    'javascript-core': { id: 'web-fundamentals', name: 'Web Fundamentals' },
     'react': { id: 'frontend', name: 'Frontend' },
     'node-express': { id: 'backend', name: 'Backend' },
     'databases': { id: 'backend', name: 'Backend' },
     'auth-security': { id: 'backend', name: 'Backend' },
-    'dev-environment': { id: 'web-fundamentals', name: 'Web Fundamentals' },
+    'internet-tools': { id: 'web-fundamentals', name: 'Web Fundamentals' },
     'git-mastery': { id: 'web-fundamentals', name: 'Web Fundamentals' },
     'nextjs': { id: 'fullstack', name: 'Fullstack' },
     'deployment': { id: 'fullstack', name: 'Fullstack' },

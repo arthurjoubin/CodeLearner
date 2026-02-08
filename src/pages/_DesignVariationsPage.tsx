@@ -9,7 +9,7 @@ import {
 import { LoadingSpinner } from '../components/LoadingSpinner';
 
 const learningPaths = [
-  { id: 'dev-environment', title: 'Web Fundamentals', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png' },
+  { id: 'internet-tools', title: 'Internet & Tools', description: 'Master essential developer skills', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png' },
   { id: 'react', title: 'React', description: 'Learn React and TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png' },
   { id: 'javascript-core', title: 'JavaScript', description: 'Master the language of the web', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png' },
   { id: 'fastapi', title: 'FastAPI', description: 'Build modern APIs with FastAPI', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png' },
