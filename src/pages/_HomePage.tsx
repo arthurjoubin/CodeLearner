@@ -7,19 +7,16 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SectionTitle } from '../components/PageTitle';
 
 const learningPaths = [
-  { id: 'html-css-tailwind', title: 'HTML & CSS', description: 'Learn the building blocks of every web page', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/html/html.png', difficulty: 'beginner' as const },
-  { id: 'javascript-core', title: 'JavaScript', description: 'Master the language of the web', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png', difficulty: 'beginner' as const },
-  { id: 'dev-environment', title: 'Web Fundamentals', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const },
-  { id: 'react', title: 'React', description: 'Learn React and TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', difficulty: 'medium' as const },
-  { id: 'git-mastery', title: 'Git', description: 'Master version control with Git', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png', difficulty: 'beginner' as const },
-  { id: 'node-express', title: 'Node.js & Express', description: 'Build scalable APIs and servers', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nodejs/nodejs.png', difficulty: 'medium' as const },
-  { id: 'databases', title: 'Databases', description: 'Master data persistence with SQL and NoSQL', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/postgresql/postgresql.png', difficulty: 'medium' as const },
-  { id: 'nextjs', title: 'Next.js', description: 'Full-stack React framework', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nextjs/nextjs.png', difficulty: 'advanced' as const },
+  { id: 'web-fundamentals', title: 'Web Fundamentals', description: 'Master the fundamentals of web development', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const, courses: ['dev-environment', 'git-mastery', 'javascript-core', 'html-css-tailwind'] },
+  { id: 'frontend', title: 'Frontend', description: 'Learn React and build modern web applications', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', difficulty: 'medium' as const, courses: ['html-css-tailwind', 'react', 'frontend-production'] },
+  { id: 'backend', title: 'Backend', description: 'Master server-side development with Node.js', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nodejs/nodejs.png', difficulty: 'medium' as const, courses: ['node-express', 'databases', 'auth-security'] },
+  { id: 'fullstack', title: 'Fullstack', description: 'Learn full-stack development with Next.js', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nextjs/nextjs.png', difficulty: 'advanced' as const, courses: ['nextjs', 'architecture-patterns', 'advanced-topics'] },
+  { id: 'deployment', title: 'Deployment', description: 'Deploy applications to production', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/github-pages/github-pages.png', difficulty: 'advanced' as const, courses: ['deployment'] },
 ];
 
-interface CourseResume {
-  courseId: string;
-  courseTitle: string;
+interface LearningPathResume {
+  pathId: string;
+  pathTitle: string;
   nextLesson: { id: string; title: string; moduleId: string; moduleTitle: string };
   progress: number;
   completedLessonsCount: number;
@@ -49,19 +46,23 @@ export function HomePageContent() {
     return exs.length > 0 && exs.every(e => completedExercises.includes(e.id));
   };
 
-  const getCourseProgress = (courseId: string): CourseResume | null => {
-    const courseModules = getModulesForCourse(courseId);
-    const courseLessons = courseModules.flatMap(m =>
+  const getPathProgress = (pathId: string): LearningPathResume | null => {
+    const path = learningPaths.find(p => p.id === pathId);
+    if (!path) return null;
+
+    // Get all modules for all courses in this learning path
+    const pathModules = path.courses.flatMap(courseId => getModulesForCourse(courseId));
+    const pathLessons = pathModules.flatMap(m =>
       lessons.filter(l => l.moduleId === m.id).map(l => ({ ...l, moduleId: m.id }))
     );
 
-    if (courseLessons.length === 0) return null;
+    if (pathLessons.length === 0) return null;
 
-    const sortedLessons = courseLessons.sort((a, b) => {
-      const moduleA = courseModules.find(m => m.id === a.moduleId);
-      const moduleB = courseModules.find(m => m.id === b.moduleId);
-      const orderA = courseModules.indexOf(moduleA!);
-      const orderB = courseModules.indexOf(moduleB!);
+    const sortedLessons = pathLessons.sort((a, b) => {
+      const moduleA = pathModules.find(m => m.id === a.moduleId);
+      const moduleB = pathModules.find(m => m.id === b.moduleId);
+      const orderA = pathModules.indexOf(moduleA!);
+      const orderB = pathModules.indexOf(moduleB!);
       if (orderA !== orderB) return orderA - orderB;
       return a.order - b.order;
     });
@@ -70,13 +71,13 @@ export function HomePageContent() {
 
     for (const lesson of sortedLessons) {
       if (!isLessonEffectivelyDone(lesson.id)) {
-        const mod = courseModules.find(m => m.id === lesson.moduleId);
+        const mod = pathModules.find(m => m.id === lesson.moduleId);
         const moduleLessons = sortedLessons.filter(l => l.moduleId === lesson.moduleId);
         const moduleLessonsCompleted = moduleLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
 
         return {
-          courseId,
-          courseTitle: learningPaths.find(p => p.id === courseId)?.title || courseId,
+          pathId,
+          pathTitle: path.title,
           nextLesson: { id: lesson.id, title: lesson.title, moduleId: lesson.moduleId, moduleTitle: mod?.title || '' },
           progress: Math.round((completed / sortedLessons.length) * 100),
           completedLessonsCount: completed,
@@ -88,9 +89,9 @@ export function HomePageContent() {
     }
 
     return {
-      courseId,
-      courseTitle: learningPaths.find(p => p.id === courseId)?.title || courseId,
-      nextLesson: { id: sortedLessons[0].id, title: sortedLessons[0].title, moduleId: sortedLessons[0].moduleId, moduleTitle: courseModules.find(m => m.id === sortedLessons[0].moduleId)?.title || '' },
+      pathId,
+      pathTitle: path.title,
+      nextLesson: { id: sortedLessons[0].id, title: sortedLessons[0].title, moduleId: sortedLessons[0].moduleId, moduleTitle: pathModules.find(m => m.id === sortedLessons[0].moduleId)?.title || '' },
       progress: 100,
       completedLessonsCount: sortedLessons.length,
       totalLessonsCount: sortedLessons.length,
@@ -99,49 +100,51 @@ export function HomePageContent() {
     };
   };
 
-  const resumes = (courseIds
-    .map(id => getCourseProgress(id))
-    .filter((r): r is CourseResume => r !== null && r.progress > 0 && r.progress < 100)
+  const pathResumes = (learningPaths
+    .map(path => getPathProgress(path.id))
+    .filter((r): r is LearningPathResume => r !== null && r.progress > 0 && r.progress < 100)
     .sort((a, b) => b.progress - a.progress));
 
-  const getPathProgress = (courseId: string): number => {
-    const resume = resumes.find(r => r.courseId === courseId);
+  const getOverallPathProgress = (pathId: string): number => {
+    const resume = pathResumes.find(r => r.pathId === pathId);
     if (resume) {
       return Math.max(1, resume.progress);
     }
-    const courseModules = getModulesForCourse(courseId);
-    const courseLessons = courseModules.flatMap(m =>
+    const path = learningPaths.find(p => p.id === pathId);
+    if (!path) return 0;
+    const pathModules = path.courses.flatMap(courseId => getModulesForCourse(courseId));
+    const pathLessons = pathModules.flatMap(m =>
       lessons.filter(l => l.moduleId === m.id)
     );
-    if (courseLessons.length === 0) return 0;
-    const completed = courseLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
-    return Math.round((completed / courseLessons.length) * 100);
+    if (pathLessons.length === 0) return 0;
+    const completed = pathLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
+    return Math.round((completed / pathLessons.length) * 100);
   };
 
   return (
     <div className="page-enter bg-gradient-to-b from-gray-100 to-white min-h-[calc(100vh-120px)] pb-4">
-      {resumes.length > 0 && (
+      {pathResumes.length > 0 && (
         <div className="mb-8">
           <SectionTitle>Continue Learning</SectionTitle>
           <div className="space-y-3 mt-3">
-            {resumes.map(resume => {
-              const pathData = learningPaths.find(p => p.id === resume.courseId);
+            {pathResumes.map(resume => {
+              const pathData = learningPaths.find(p => p.id === resume.pathId);
               return (
                 <a
                   href={`/lesson/${resume.nextLesson.id}`}
-                  key={resume.courseId}
+                  key={resume.pathId}
                   className="block p-4 border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all group bg-white"
                 >
                   <div className="space-y-3">
                     {/* Header row */}
                     <div className="flex items-center gap-3">
                       {pathData?.logo ? (
-                        <img src={pathData.logo} alt={resume.courseTitle} className="w-6 h-6 object-contain" />
+                        <img src={pathData.logo} alt={resume.pathTitle} className="w-6 h-6 object-contain" />
                       ) : (
                         <div className="w-6 h-6 bg-gray-200 rounded-full flex-shrink-0" />
                       )}
                       <div className="flex-1 flex items-center gap-2">
-                        <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.courseTitle}</span>
+                        <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.pathTitle}</span>
                         <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded">
                           {resume.completedLessonsCount}/{resume.totalLessonsCount}
                         </span>
@@ -182,74 +185,69 @@ export function HomePageContent() {
       )}
 
       <div className="py-8 md:py-10 border-b-2 border-gray-200">
-        <SectionTitle>Learning Paths</SectionTitle>
+        <div className="flex items-center justify-between mb-4">
+          <SectionTitle>Learning Paths</SectionTitle>
+          <a href="/learning-path" className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors inline-flex items-center gap-1">
+            View more <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide p-1">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {[...learningPaths]
           .sort((a, b) => {
-            const progressA = getPathProgress(a.id);
-            const progressB = getPathProgress(b.id);
+            const progressA = getOverallPathProgress(a.id);
+            const progressB = getOverallPathProgress(b.id);
             return progressB - progressA;
           })
           .map((path) => {
-          const isAvailable = ['react', 'dev-environment', 'git-mastery', 'javascript-core', 'html-css-tailwind', 'node-express', 'databases', 'nextjs'].includes(path.id);
-          const resume = resumes.find(r => r.courseId === path.id);
+          const resume = pathResumes.find(r => r.pathId === path.id);
           const progress = resume
-            ? Math.max(1, getPathProgress(path.id))
-            : getPathProgress(path.id);
+            ? Math.max(1, getOverallPathProgress(path.id))
+            : getOverallPathProgress(path.id);
 
           return (
             <a
-              href={isAvailable ? `/learning-path/${path.id}` : '#'}
+              href={`/learning-path/${path.id}`}
               key={path.id}
-              className={`border-2 border-gray-300 p-3 relative transition-all flex-shrink-0 w-44 rounded-lg bg-white ${isAvailable
-                ? 'hover:border-primary-500 hover:shadow-md cursor-pointer'
-                : 'opacity-60 grayscale cursor-not-allowed'
-                }`}
+              className="border-2 border-gray-300 p-4 relative transition-all rounded-lg bg-white hover:border-primary-500 hover:shadow-md group"
             >
-              {!isAvailable && (
-                <div className="absolute bottom-1.5 right-1.5">
-                  <span className="px-1.5 py-0.5 bg-gray-300 text-gray-700 text-[8px] font-bold uppercase tracking-wider border border-gray-400 rounded">
-                    Soon
-                  </span>
-                </div>
-              )}
-              {isAvailable && resume && resume.progress < 100 && (
-                <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 bg-primary-500 text-white text-[8px] font-bold uppercase tracking-wider rounded">
+              {resume && resume.progress < 100 && (
+                <div className="absolute top-3 right-3 px-2 py-1 bg-primary-500 text-white text-[10px] font-bold uppercase tracking-wider rounded">
                   {progress}%
                 </div>
               )}
-              {isAvailable && resume && resume.progress === 100 && (
-                <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 bg-primary-500 text-white text-[8px] font-bold uppercase tracking-wider rounded">
-                  ✓
+              {resume && resume.progress === 100 && (
+                <div className="absolute top-3 right-3 px-2 py-1 bg-primary-500 text-white text-[10px] font-bold uppercase tracking-wider rounded">
+                  ✓ Complete
                 </div>
               )}
-              {isAvailable && !resume && (
-                <div className="absolute bottom-1.5 right-1.5">
-                  <span className="px-1.5 py-0.5 bg-gray-200 text-gray-700 text-[8px] font-bold uppercase tracking-wider border border-gray-300 rounded">
-                    New
-                  </span>
-                </div>
-              )}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3 mb-3">
                 <img
                   src={path.logo}
                   alt={path.title}
-                  className="w-6 h-6 object-contain"
+                  className="w-8 h-8 object-contain"
                 />
-                <h3 className="font-bold text-xs uppercase text-gray-900 group-hover:text-primary-700 transition-colors">{path.title}</h3>
+                <h3 className="font-bold text-sm text-gray-900 group-hover:text-primary-700 transition-colors">{path.title}</h3>
               </div>
+              <p className="text-xs text-gray-600 mb-3">{path.description}</p>
               {path.difficulty && (
-                <span className={`mt-1.5 inline-block px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider rounded ${path.difficulty === 'beginner'
-                  ? 'bg-green-100 text-green-700 border border-green-300'
+                <span className={`inline-block px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded ${path.difficulty === 'beginner'
+                  ? 'bg-green-100 text-green-700'
                   : path.difficulty === 'medium'
-                    ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
-                    : 'bg-red-100 text-red-700 border border-red-300'
+                    ? 'bg-yellow-100 text-yellow-700'
+                    : 'bg-red-100 text-red-700'
                   }`}>
                   {path.difficulty}
                 </span>
               )}
-              <div className="w-2 h-2 bg-primary-500 rounded-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+              {progress > 0 && progress < 100 && (
+                <div className="mt-3 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary-500 transition-all duration-500"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              )}
             </a>
           );
         })}
