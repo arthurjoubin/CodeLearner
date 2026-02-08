@@ -21,7 +21,7 @@ import type { Module, Lesson, Exercise } from '../../types';
 // LEARNING PATH 1: WEB FUNDAMENTALS
 // ============================================
 
-// Course: dev-environment (Developer Environment)
+// Course: internet-tools (Internet & Tools)
 import ideSetupData from './ide-setup.json';
 import terminalCliData from './terminal-cli.json';
 import howWebWorksData from './how-web-works.json';
@@ -161,8 +161,8 @@ const moduleFiles: ModuleData[] = [
   // ============================================
   // LEARNING PATH 1: WEB FUNDAMENTALS
   // ============================================
-  
-  // Course: dev-environment
+
+  // Course: internet-tools
   ideSetupData as ModuleData,
   terminalCliData as ModuleData,
   howWebWorksData as ModuleData,
@@ -370,7 +370,7 @@ export const LEARNING_PATHS: Record<string, LearningPathConfig> = {
   'web-fundamentals': {
     name: 'Web Fundamentals',
     description: 'Prerequisite knowledge for everything',
-    courses: ['dev-environment', 'git-mastery', 'javascript-core'],
+    courses: ['internet-tools', 'git-mastery', 'javascript-core'],
     isPrerequisite: true,
     color: 'from-gray-600 to-gray-800'
   },
