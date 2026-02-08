@@ -6,7 +6,6 @@ import { Lock, CheckCircle, Code, Code2, Boxes, Database, MousePointer, Zap, Shi
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { PageTitle } from '../components/PageTitle';
 import Breadcrumb from '../components/Breadcrumb';
-import ProgressPath from '../components/ProgressPath';
 
 interface CoursePageProps {
   courseId?: string;
@@ -136,26 +135,18 @@ function CoursePageContent({ courseId }: CoursePageProps) {
         )}
       </div>
 
-      <div className="mb-2">
-        <ProgressPath items={[
-          { 
-            name: courseTitle, 
-            current: coursePosition, 
-            total: allCourseLessons.length,
-            parent: learningPath ? { name: learningPath.name, href: `/learning-path/${learningPath.id}` } : undefined
-          },
-        ]} />
-      </div>
-
       <div className="mb-6">
         <PageTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-2xl font-black text-gray-900 uppercase">{courseTitle}</h1>
             {difficulty && (
               <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider border border-gray-300 rounded">
                 {difficulty}
               </span>
             )}
+            <span className="inline-flex items-center px-2 py-1 bg-primary-100 text-primary-700 rounded text-[10px] font-bold border border-primary-200">
+              {coursePosition}/{allCourseLessons.length} lessons
+            </span>
           </div>
         </PageTitle>
         <p className="text-gray-700 mt-1">Master {courseTitle} from basics to advanced</p>
