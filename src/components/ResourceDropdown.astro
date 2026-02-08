@@ -30,7 +30,7 @@ const currentItem = items.find(item => item.slug === currentSlug);
     class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 bg-white border border-gray-300 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-colors text-xs sm:text-sm font-bold cursor-pointer"
   >
     <img src={getLogoFn(currentItem!)} alt={currentItem?.data.name} class="hidden sm:block w-5 h-5 rounded object-contain" />
-    <span class="max-w-[100px] truncate">{currentItem?.data.name}</span>
+    <span class="truncate">{currentItem?.data.name}</span>
     <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 transition-transform dd-chevron" />
   </button>
 
