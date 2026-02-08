@@ -34,7 +34,7 @@ const learningPathTitles: Record<string, string> = {
   'node-express': 'Backend',
   'databases': 'Backend',
   'auth-security': 'Backend',
-  'dev-environment': 'Web Fundamentals',
+  'dev-environment': 'Terminal & CLI',
   'frontend-production': 'Frontend Production',
   'nextjs': 'Next.js',
   'deployment': 'Deployment',

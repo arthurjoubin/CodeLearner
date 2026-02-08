@@ -32,7 +32,7 @@ function CoursePageContent({ courseId }: CoursePageProps) {
     'advanced-topics': 'Web Stack',
     'fastapi': 'FastAPI',
     'git-mastery': 'Git',
-    'dev-environment': 'Web Fundamentals',
+    'dev-environment': 'Terminal & CLI',
     'frontend-production': 'Engineering Practices',
     'node-express': 'Node.js & Express',
     'databases': 'Databases & SQL',

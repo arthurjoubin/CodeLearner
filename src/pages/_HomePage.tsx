@@ -14,7 +14,7 @@ const courseTitles: Record<string, string> = {
   'advanced-topics': 'Web Stack',
   'fastapi': 'FastAPI',
   'git-mastery': 'Git',
-  'dev-environment': 'Dev Environment',
+  'dev-environment': 'Terminal & CLI',
   'frontend-production': 'Engineering Practices',
   'node-express': 'Node.js & Express',
   'databases': 'Databases & SQL',
