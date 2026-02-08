@@ -76,7 +76,7 @@
       "id": "router-ex-3",
       "lessonId": "router-navigation",
       "moduleId": "react-router",
-      "title": "Programmatic Navigation",
+      "title": "Navigation with useNavigate Hook",
       "difficulty": "medium",
       "description": "Navigate after form submission",
       "instructions": "Complete the LoginForm to navigate to /dashboard after clicking login.\nUse the useNavigate hook.\nAlso add a button on Dashboard to go back.",

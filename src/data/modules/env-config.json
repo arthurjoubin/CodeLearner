@@ -52,7 +52,7 @@
       "type": "quiz",
       "lessonId": "env-basics",
       "moduleId": "env-config",
-      "title": "Environment Variables Basics",
+      "title": "Environment Variables Quiz",
       "description": "Test your understanding of environment variables",
       "order": 1,
       "difficulty": "easy",
