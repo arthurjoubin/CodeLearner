@@ -2,9 +2,10 @@
 
 import { useUser } from '../context/UserContext';
 import { lessons, modules, getModulesForCourse, getExercisesForLesson } from '../data/modules';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Clock } from 'lucide-react';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SectionTitle } from '../components/PageTitle';
+import { estimateLessonHours, estimatePathHours, formatHours } from '../utils/estimateHours';
 
 const learningPaths = [
   { id: 'web-fundamentals', title: 'Web Fundamentals', description: 'Master the fundamentals of web development', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const, courses: ['dev-environment', 'git-mastery', 'javascript-core', 'html-css-tailwind'] },
@@ -132,6 +133,8 @@ export function HomePageContent() {
               const courseModule = modules.find(m => m.id === resume.nextLesson.moduleId);
               const courseData = courseModule ? learningPaths.find(p => p.courses.includes(courseModule.courseId)) : null;
               const courseName = courseModule?.courseId || '';
+              const nextLesson = lessons.find(l => l.id === resume.nextLesson.id);
+              const estimatedHours = nextLesson ? estimateLessonHours(nextLesson) : 0;
 
               return (
                 <a
@@ -148,7 +151,7 @@ export function HomePageContent() {
                         <div className="w-6 h-6 bg-gray-200 rounded-full flex-shrink-0" />
                       )}
                       <div className="flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.pathTitle}</span>
                           {courseName && (
                             <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded">
@@ -157,6 +160,10 @@ export function HomePageContent() {
                           )}
                           <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded">
                             {resume.completedLessonsCount}/{resume.totalLessonsCount}
+                          </span>
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary-50 text-primary-600 text-xs font-semibold rounded">
+                            <Clock className="w-3 h-3" />
+                            {formatHours(estimatedHours)}
                           </span>
                         </div>
                       </div>
@@ -216,6 +223,8 @@ export function HomePageContent() {
             ? Math.max(1, getOverallPathProgress(path.id))
             : getOverallPathProgress(path.id);
 
+          const pathHours = estimatePathHours(path.courses);
+
           return (
             <a
               href={`/learning-path/${path.id}`}
@@ -241,16 +250,22 @@ export function HomePageContent() {
                 <h3 className="font-bold text-sm text-gray-900 group-hover:text-primary-700 transition-colors">{path.title}</h3>
               </div>
               <p className="text-xs text-gray-600 mb-3">{path.description}</p>
-              {path.difficulty && (
-                <span className={`inline-block px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded ${path.difficulty === 'beginner'
-                  ? 'bg-green-100 text-green-700'
-                  : path.difficulty === 'medium'
-                    ? 'bg-yellow-100 text-yellow-700'
-                    : 'bg-red-100 text-red-700'
-                  }`}>
-                  {path.difficulty}
+              <div className="flex items-center gap-2 mb-3">
+                {path.difficulty && (
+                  <span className={`inline-block px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded ${path.difficulty === 'beginner'
+                    ? 'bg-green-100 text-green-700'
+                    : path.difficulty === 'medium'
+                      ? 'bg-yellow-100 text-yellow-700'
+                      : 'bg-red-100 text-red-700'
+                    }`}>
+                    {path.difficulty}
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded bg-gray-100 text-gray-600">
+                  <Clock className="w-3 h-3" />
+                  {formatHours(pathHours)}
                 </span>
-              )}
+              </div>
               {progress > 0 && progress < 100 && (
                 <div className="mt-3 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                   <div
