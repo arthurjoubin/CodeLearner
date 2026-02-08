@@ -5,6 +5,7 @@
  * 1. Module title must not be the same as courseId
  * 2. Lesson title must not be the same as module title
  * 3. Exercise title must not be the same as lesson title or module title
+ * 4. Course IDs should be distinct from learning path IDs (avoid "frontend" as both path and course)
  */
 
 import fs from 'fs';
