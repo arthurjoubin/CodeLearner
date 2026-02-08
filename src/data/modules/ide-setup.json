@@ -6,7 +6,7 @@
     "icon": "Monitor",
     "requiredXp": 0,
     "color": "from-blue-500 to-blue-700",
-    "courseId": "dev-environment"
+    "courseId": "internet-tools"
   },
   "lessons": [
     {

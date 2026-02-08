@@ -5,6 +5,7 @@ import { useUser, UserProvider } from '../context/UserContext';
 import { getExercise, getModule, getLesson, getExercisesForLesson, getModulesForCourse, getLessonsForModule, lessons as allLessons } from '../data/modules';
 import { api } from '../services/api';
 import { isQuizExercise, isCodeExercise, isGitScenarioExercise } from '../types';
+import { getLearningPathTitles } from '../data/course-metadata';
 import Editor from '@monaco-editor/react';
 import QuizPage from './_QuizPage';
 import GitScenarioPage from './_GitScenarioPage';
@@ -24,22 +25,7 @@ import Breadcrumb from '../components/Breadcrumb';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ExerciseCompletionModal } from '../components/completion-modals';
 
-const learningPathTitles: Record<string, string> = {
-  react: 'React',
-  'advanced-topics': 'Web Stack',
-  'git-mastery': 'Git',
-  'javascript-core': 'JavaScript',
-  'html-css-tailwind': 'HTML & CSS',
-  fastapi: 'FastAPI',
-  'node-express': 'Backend',
-  'databases': 'Backend',
-  'auth-security': 'Backend',
-  'dev-environment': 'Web Fundamentals',
-  'frontend-production': 'Frontend Production',
-  'nextjs': 'Next.js',
-  'deployment': 'Deployment',
-  'internet-tools': 'Internet Tools',
-};
+const learningPathTitles = getLearningPathTitles();
 
 interface ExercisePageProps {
   exerciseId?: string;

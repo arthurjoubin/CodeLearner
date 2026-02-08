@@ -7,9 +7,9 @@
   "prerequisiteMessage": "Complete this path before Frontend or Backend",
   "courses": [
     {
-      "id": "dev-environment",
-      "title": "Terminal & CLI",
-      "subtitle": "Command Line Basics",
+      "id": "internet-tools",
+      "title": "Internet & Tools",
+      "subtitle": "Terminal, Web, DevTools, Package Managers",
       "logo": "https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png",
       "color": "from-gray-600 to-gray-800",
       "borderColor": "border-gray-600",
@@ -17,18 +17,6 @@
       "textColor": "text-gray-700",
       "accentColor": "bg-gray-600",
       "phase": 1
-    },
-    {
-      "id": "internet-tools",
-      "title": "HTTP & DevTools",
-      "subtitle": "Web Protocols & Debugging",
-      "logo": "https://raw.githubusercontent.com/github/explore/main/topics/chrome/chrome.png",
-      "color": "from-cyan-500 to-blue-600",
-      "borderColor": "border-cyan-500",
-      "bgColor": "bg-cyan-50",
-      "textColor": "text-cyan-700",
-      "accentColor": "bg-cyan-500",
-      "phase": 2
     },
     {
       "id": "git-mastery",

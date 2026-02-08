@@ -1,25 +1,9 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
 import CoursePage from '../../pages/_CoursePage';
+import { getCourseTitles } from '../../data/course-metadata';
 
-const courseTitles: Record<string, string> = {
-  react: 'React',
-  'advanced-topics': 'Web Stack',
-  'git-mastery': 'Git',
-  'javascript-core': 'JavaScript',
-  'html-css-tailwind': 'HTML & CSS',
-  fastapi: 'FastAPI',
-  backend: 'Backend',
-  'dev-environment': 'Web Fundamentals',
-  'frontend-production': 'Engineering Practices',
-  'node-express': 'Node.js & Express',
-  'databases': 'Databases & SQL',
-  'auth-security': 'Backend Advanced',
-  'internet-tools': 'Internet Tools',
-  'nextjs': 'Next.js',
-  'deployment': 'Deployment',
-  'architecture-patterns': 'Architecture Patterns',
-};
+const courseTitles = getCourseTitles();
 
 export function getStaticPaths() {
   return [];
