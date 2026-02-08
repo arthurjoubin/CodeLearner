@@ -11,7 +11,7 @@ const learningPaths = [
   { id: 'frontend', title: 'Frontend', description: 'Learn React and build modern web applications', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', difficulty: 'medium' as const, courses: ['html-css-tailwind', 'react', 'frontend-production'] },
   { id: 'backend', title: 'Backend', description: 'Master server-side development with Node.js', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nodejs/nodejs.png', difficulty: 'medium' as const, courses: ['node-express', 'databases', 'auth-security'] },
   { id: 'fullstack', title: 'Fullstack', description: 'Learn full-stack development with Next.js', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nextjs/nextjs.png', difficulty: 'advanced' as const, courses: ['nextjs', 'architecture-patterns', 'advanced-topics'] },
-  { id: 'deployment', title: 'Deployment', description: 'Deploy applications to production', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/github-pages/github-pages.png', difficulty: 'advanced' as const, courses: ['deployment'] },
+  { id: 'deployment', title: 'Deployment', description: 'Deploy applications to production', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/docker/docker.png', difficulty: 'advanced' as const, courses: ['deployment'] },
 ];
 
 interface LearningPathResume {
@@ -129,6 +129,10 @@ export function HomePageContent() {
           <div className="space-y-3 mt-3">
             {pathResumes.map(resume => {
               const pathData = learningPaths.find(p => p.id === resume.pathId);
+              const courseModule = modules.find(m => m.id === resume.nextLesson.moduleId);
+              const courseData = courseModule ? learningPaths.find(p => p.courses.includes(courseModule.courseId)) : null;
+              const courseName = courseModule?.courseId || '';
+
               return (
                 <a
                   href={`/lesson/${resume.nextLesson.id}`}
@@ -143,11 +147,18 @@ export function HomePageContent() {
                       ) : (
                         <div className="w-6 h-6 bg-gray-200 rounded-full flex-shrink-0" />
                       )}
-                      <div className="flex-1 flex items-center gap-2">
-                        <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.pathTitle}</span>
-                        <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded">
-                          {resume.completedLessonsCount}/{resume.totalLessonsCount}
-                        </span>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.pathTitle}</span>
+                          {courseName && (
+                            <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded">
+                              {courseName}
+                            </span>
+                          )}
+                          <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded">
+                            {resume.completedLessonsCount}/{resume.totalLessonsCount}
+                          </span>
+                        </div>
                       </div>
                       {pathData?.difficulty && (
                         <span className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${pathData.difficulty === 'beginner'
