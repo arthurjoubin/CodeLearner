@@ -1,7 +1,7 @@
 /**
- * Centralized course metadata
+ * Centralized course and learning path metadata
  *
- * Single source of truth for all course display names, paths, and configuration.
+ * Single source of truth for all course display names, learning paths, and configuration.
  * Import from this file instead of maintaining duplicate mappings in every page component.
  */
 
@@ -84,6 +84,62 @@ export function getCourseDifficulty(): Record<string, string> {
 
 export function getCourseDifficultyLevel(courseId: string): string {
   return COURSE_DIFFICULTY[courseId] || 'beginner';
+}
+
+// Learning paths - centralized configuration
+export const LEARNING_PATHS_DATA = {
+  'web-fundamentals': {
+    title: 'Web Fundamentals',
+    description: 'Master the fundamentals of web development',
+    logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png',
+    difficulty: 'beginner' as const,
+    courses: ['internet-tools', 'git-mastery', 'javascript-core'],
+  },
+  'frontend': {
+    title: 'Frontend',
+    description: 'Learn React and build modern web applications',
+    logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png',
+    difficulty: 'medium' as const,
+    courses: ['html-css-tailwind', 'react', 'frontend-production'],
+  },
+  'backend': {
+    title: 'Backend',
+    description: 'Master server-side development with Node.js',
+    logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nodejs/nodejs.png',
+    difficulty: 'medium' as const,
+    courses: ['node-express', 'databases', 'auth-security'],
+  },
+  'fullstack': {
+    title: 'Fullstack',
+    description: 'Learn full-stack development with Next.js',
+    logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nextjs/nextjs.png',
+    difficulty: 'advanced' as const,
+    courses: ['nextjs', 'architecture-patterns', 'advanced-topics'],
+  },
+  'deployment': {
+    title: 'Deployment',
+    description: 'Deploy applications to production',
+    logo: 'https://raw.githubusercontent.com/github/explore/main/topics/docker/docker.png',
+    difficulty: 'advanced' as const,
+    courses: ['deployment'],
+  },
+};
+
+/**
+ * Get all learning paths as an array
+ */
+export function getLearningPaths() {
+  return Object.entries(LEARNING_PATHS_DATA).map(([id, data]) => ({
+    id,
+    ...data,
+  }));
+}
+
+/**
+ * Get a specific learning path
+ */
+export function getLearningPath(id: string) {
+  return LEARNING_PATHS_DATA[id as keyof typeof LEARNING_PATHS_DATA];
 }
 
 // Export raw maps for backwards compatibility if needed

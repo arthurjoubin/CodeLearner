@@ -2,19 +2,14 @@
 
 import { useUser, UserProvider } from '../context/UserContext';
 import { lessons, modules, getModulesForCourse } from '../data/modules';
+import { getLearningPaths } from '../data/course-metadata';
 import {
   ChevronRight, ArrowRight, ArrowUpRight, Play,
   Code2, GraduationCap, Clock, Check
 } from 'lucide-react';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 
-const learningPaths = [
-  { id: 'internet-tools', title: 'Internet & Tools', description: 'Master essential developer skills', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png' },
-  { id: 'react', title: 'React', description: 'Learn React and TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png' },
-  { id: 'javascript-core', title: 'JavaScript', description: 'Master the language of the web', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png' },
-  { id: 'fastapi', title: 'FastAPI', description: 'Build modern APIs with FastAPI', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png' },
-  { id: 'git-mastery', title: 'Git', description: 'Master version control with Git', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png' },
-];
+const learningPaths = getLearningPaths();
 
 interface CourseResume {
   courseId: string;
