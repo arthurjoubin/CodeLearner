@@ -7,6 +7,24 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SectionTitle } from '../components/PageTitle';
 import { estimateLessonHours, estimatePathHours, formatHours } from '../utils/estimateHours';
 
+const courseTitles: Record<string, string> = {
+  'html-css-tailwind': 'HTML & CSS',
+  'javascript-core': 'JavaScript',
+  'react': 'React',
+  'advanced-topics': 'Web Stack',
+  'fastapi': 'FastAPI',
+  'git-mastery': 'Git',
+  'dev-environment': 'Dev Environment',
+  'frontend-production': 'Engineering Practices',
+  'node-express': 'Node.js & Express',
+  'databases': 'Databases & SQL',
+  'auth-security': 'Backend Advanced',
+  'nextjs': 'Next.js',
+  'deployment': 'Deployment',
+  'architecture-patterns': 'Architecture Patterns',
+  'internet-tools': 'Internet Tools',
+};
+
 const learningPaths = [
   { id: 'web-fundamentals', title: 'Web Fundamentals', description: 'Master the fundamentals of web development', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const, courses: ['dev-environment', 'git-mastery', 'javascript-core', 'html-css-tailwind'] },
   { id: 'frontend', title: 'Frontend', description: 'Learn React and build modern web applications', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', difficulty: 'medium' as const, courses: ['html-css-tailwind', 'react', 'frontend-production'] },
@@ -131,8 +149,8 @@ export function HomePageContent() {
             {pathResumes.map(resume => {
               const pathData = learningPaths.find(p => p.id === resume.pathId);
               const courseModule = modules.find(m => m.id === resume.nextLesson.moduleId);
-              const courseData = courseModule ? learningPaths.find(p => p.courses.includes(courseModule.courseId)) : null;
-              const courseName = courseModule?.courseId || '';
+              const courseTitle = courseModule ? (courseTitles[courseModule.courseId] || courseModule.courseId) : '';
+              const showCourseTitle = courseTitle && courseTitle !== resume.pathTitle;
               const nextLesson = lessons.find(l => l.id === resume.nextLesson.id);
               const estimatedHours = nextLesson ? estimateLessonHours(nextLesson) : 0;
 
@@ -150,25 +168,21 @@ export function HomePageContent() {
                       ) : (
                         <div className="w-6 h-6 bg-gray-200 rounded-full flex-shrink-0" />
                       )}
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.pathTitle}</span>
-                          {resume.nextLesson.moduleTitle && (
+                          {showCourseTitle && (
                             <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded">
-                              {resume.nextLesson.moduleTitle}
+                              {courseTitle}
                             </span>
                           )}
-                          <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded">
-                            {resume.completedLessonsCount}/{resume.totalLessonsCount}
-                          </span>
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary-50 text-primary-600 text-xs font-semibold rounded">
-                            <Clock className="w-3 h-3" />
-                            {formatHours(estimatedHours)}
-                          </span>
                         </div>
                       </div>
+                      <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded flex-shrink-0">
+                        {resume.completedLessonsCount}/{resume.totalLessonsCount}
+                      </span>
                       {pathData?.difficulty && (
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${pathData.difficulty === 'beginner'
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors flex-shrink-0 ${pathData.difficulty === 'beginner'
                           ? 'bg-green-100 text-green-700 border-green-300 group-hover:border-green-500'
                           : pathData.difficulty === 'medium'
                             ? 'bg-yellow-100 text-yellow-700 border-yellow-300 group-hover:border-yellow-500'
@@ -181,18 +195,24 @@ export function HomePageContent() {
                     </div>
 
                     {/* Progress bar */}
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                       <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-primary-400 to-primary-500 rounded-full transition-all duration-500"
                           style={{ width: `${Math.max(2, resume.progress)}%` }}
                         />
                       </div>
-                      <p className="text-xs text-gray-500">
-                        {resume.nextLesson.moduleTitle && <span className="font-medium text-gray-600">{resume.nextLesson.moduleTitle} ({resume.moduleLessonsCompleted}/{resume.moduleLessonsTotal})</span>}
-                        {resume.nextLesson.moduleTitle && resume.nextLesson.title && <span className="mx-1">›</span>}
-                        <span className="text-gray-400">{resume.nextLesson.title}</span>
-                      </p>
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs text-gray-500 truncate">
+                          {resume.nextLesson.moduleTitle && <span className="font-medium text-gray-600">{resume.nextLesson.moduleTitle} ({resume.moduleLessonsCompleted}/{resume.moduleLessonsTotal})</span>}
+                          {resume.nextLesson.moduleTitle && resume.nextLesson.title && <span className="mx-1">›</span>}
+                          <span className="text-gray-400">{resume.nextLesson.title}</span>
+                        </p>
+                        <span className="inline-flex items-center gap-1 text-xs text-gray-400 flex-shrink-0">
+                          <Clock className="w-3 h-3" />
+                          {formatHours(estimatedHours)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </a>
