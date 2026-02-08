@@ -6,7 +6,7 @@
     "icon": "Server",
     "requiredXp": 1400,
     "color": "from-red-400 to-red-600",
-    "courseId": "web-stack"
+    "courseId": "node-express"
   },
   "lessons": [
     {

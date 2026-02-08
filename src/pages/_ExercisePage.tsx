@@ -26,9 +26,19 @@ import { ExerciseCompletionModal } from '../components/completion-modals';
 
 const learningPathTitles: Record<string, string> = {
   react: 'React',
-  'web-stack': 'Web Fundamentals',
-  git: 'Git',
+  'advanced-topics': 'Web Stack',
+  'git-mastery': 'Git',
+  'javascript-core': 'JavaScript',
+  'html-css-tailwind': 'HTML & CSS',
   fastapi: 'FastAPI',
+  'node-express': 'Backend',
+  'databases': 'Backend',
+  'auth-security': 'Backend',
+  'dev-environment': 'Web Fundamentals',
+  'frontend-production': 'Frontend Production',
+  'nextjs': 'Next.js',
+  'deployment': 'Deployment',
+  'internet-tools': 'Internet Tools',
 };
 
 interface ExercisePageProps {

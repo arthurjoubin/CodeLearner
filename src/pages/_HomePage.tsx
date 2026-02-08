@@ -7,14 +7,14 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SectionTitle } from '../components/PageTitle';
 
 const learningPaths = [
-  { id: 'html-css', title: 'HTML & CSS', description: 'Learn the building blocks of every web page', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/html/html.png', difficulty: 'beginner' as const },
-  { id: 'javascript', title: 'JavaScript', description: 'Master the language of the web', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png', difficulty: 'beginner' as const },
-  { id: 'web-stack', title: 'Web Fundamentals', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const },
+  { id: 'html-css-tailwind', title: 'HTML & CSS', description: 'Learn the building blocks of every web page', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/html/html.png', difficulty: 'beginner' as const },
+  { id: 'javascript-core', title: 'JavaScript', description: 'Master the language of the web', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png', difficulty: 'beginner' as const },
+  { id: 'dev-environment', title: 'Web Fundamentals', description: 'Understand the full web development ecosystem', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const },
   { id: 'react', title: 'React', description: 'Learn React and TypeScript', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', difficulty: 'medium' as const },
-  { id: 'git', title: 'Git', description: 'Master version control with Git', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png', difficulty: 'beginner' as const },
-  { id: 'fastapi', title: 'FastAPI', description: 'Build modern APIs with FastAPI', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png' },
-  { id: 'go', title: 'Go', description: 'Learn Go programming language', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/go/go.png' },
-  { id: 'python', title: 'Python', description: 'Learn Python programming language', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png' },
+  { id: 'git-mastery', title: 'Git', description: 'Master version control with Git', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png', difficulty: 'beginner' as const },
+  { id: 'node-express', title: 'Node.js & Express', description: 'Build scalable APIs and servers', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nodejs/nodejs.png', difficulty: 'medium' as const },
+  { id: 'databases', title: 'Databases', description: 'Master data persistence with SQL and NoSQL', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/postgresql/postgresql.png', difficulty: 'medium' as const },
+  { id: 'nextjs', title: 'Next.js', description: 'Full-stack React framework', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nextjs/nextjs.png', difficulty: 'advanced' as const },
 ];
 
 interface CourseResume {
@@ -192,7 +192,7 @@ export function HomePageContent() {
             return progressB - progressA;
           })
           .map((path) => {
-          const isAvailable = path.id === 'react' || path.id === 'web-stack' || path.id === 'git' || path.id === 'javascript' || path.id === 'html-css';
+          const isAvailable = ['react', 'dev-environment', 'git-mastery', 'javascript-core', 'html-css-tailwind', 'node-express', 'databases', 'nextjs'].includes(path.id);
           const resume = resumes.find(r => r.courseId === path.id);
           const progress = resume
             ? Math.max(1, getPathProgress(path.id))

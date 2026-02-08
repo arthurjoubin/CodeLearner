@@ -1,0 +1,9 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import LearningPathPage from '../../components/LearningPathPage';
+import webFundamentalsData from '../../data/learning-paths/web-fundamentals.json';
+---
+
+<MainLayout title="Web Fundamentals Learning Path - Terminal → HTTP & DevTools → Git">
+	<LearningPathPage client:load pathData={webFundamentalsData} />
+</MainLayout>

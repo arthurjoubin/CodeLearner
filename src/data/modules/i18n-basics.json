@@ -6,7 +6,7 @@
     "icon": "Globe",
     "requiredXp": 1400,
     "color": "from-sky-400 to-blue-600",
-    "courseId": "web-stack"
+    "courseId": "frontend-production"
   },
   "lessons": [
     {

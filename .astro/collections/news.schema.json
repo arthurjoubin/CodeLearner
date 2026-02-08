@@ -30,16 +30,6 @@
           "type": "string",
           "default": "Arthur"
         },
-        "tags": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": [
-            "llm",
-            "vibecoding"
-          ]
-        },
         "mentionedTools": {
           "type": "array",
           "items": {

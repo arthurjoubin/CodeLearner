@@ -1,0 +1,134 @@
+{
+  "module": {
+    "id": "env-config",
+    "title": "Environment Configuration",
+    "description": "Learn to manage configuration and secrets safely with environment variables",
+    "icon": "Settings",
+    "requiredXp": 500,
+    "color": "from-emerald-500 to-emerald-700",
+    "courseId": "dev-environment"
+  },
+  "lessons": [
+    {
+      "id": "env-basics",
+      "moduleId": "env-config",
+      "title": "Environment Variables Basics",
+      "order": 1,
+      "difficulty": "beginner",
+      "xpReward": 50,
+      "content": "# Essential to know\n- Environment variables store configuration outside your code\n- They keep secrets out of version control\n- process.env provides access in Node.js\n- Different values for different environments (dev, staging, prod)\n\n---\n\n## What Are Environment Variables?\n\nEnvironment variables are key-value pairs stored in your operating system or runtime environment. They're used to configure applications without hardcoding values in your source code.\n\n### Common Use Cases\n- **API Keys**: Third-party service credentials\n- **Database URLs**: Connection strings\n- **Feature Flags**: Enable/disable features\n- **Port Numbers**: Which port your app runs on\n- **Debug Settings**: Log levels, verbose mode\n\n## Why Use Environment Variables?\n\n### 1. Security\n```javascript\n// BAD: Secrets in code\nconst API_KEY = 'sk-1234567890abcdef';\n\n// GOOD: From environment\nconst API_KEY = process.env.API_KEY;\n```\n\n### 2. Portability\nSame code runs in different environments with different configs:\n- Developer laptop: localhost:3000\n- Staging: staging-api.example.com\n- Production: api.example.com\n\n### 3. Flexibility\nChange configuration without redeploying code.\n\n## Accessing Environment Variables\n\n### In Node.js\n```javascript\n// Access a variable\nconst port = process.env.PORT || 3000;\nconst dbUrl = process.env.DATABASE_URL;\n\n// Check if it exists\nif (process.env.NODE_ENV === 'production') {\n  // Production-specific logic\n}\n```\n\n### In Browser (Vite/Create React App)\n```javascript\n// Vite\nconst apiUrl = import.meta.env.VITE_API_URL;\n\n// Create React App\nconst apiUrl = process.env.REACT_APP_API_URL;\n```\n\nNote: Browser env vars must be prefixed (VITE_, REACT_APP_) to be exposed.\n\n## Setting Environment Variables\n\n### Temporary (current session only)\n```bash\n# macOS/Linux\nexport API_KEY=secret123\nexport PORT=3000\n\n# Windows (Command Prompt)\nset API_KEY=secret123\n\n# Windows (PowerShell)\n$env:API_KEY=\"secret123\"\n```\n\n### Permanent\nAdd to shell config file:\n- Bash: `~/.bashrc` or `~/.bash_profile`\n- Zsh: `~/.zshrc`\n- Fish: `~/.config/fish/config.fish`\n\n```bash\n# Add to ~/.zshrc\nexport PATH=\"$HOME/bin:$PATH\"\nexport EDITOR=\"code\"\n```\n\n## Common Mistakes\n\n- **Committing secrets**: Never put API keys in Git\n- **Not providing defaults**: Always have fallback values\n- **Confusing build-time and runtime**: Browser apps bake env vars at build time\n- **Inconsistent naming**: Stick to UPPER_SNAKE_CASE\n\n## Try It Yourself\n\n1. Open your terminal\n2. Set a test variable: `export MY_VAR=hello`\n3. Check it: `echo $MY_VAR`\n4. Create a simple Node.js script that logs process.env\n5. Run it and see your variable"
+    },
+    {
+      "id": "env-dotenv",
+      "moduleId": "env-config",
+      "title": "Working with .env Files",
+      "order": 2,
+      "difficulty": "beginner",
+      "xpReward": 75,
+      "content": "# Essential to know\n- .env files store environment variables for your project\n- The dotenv package loads them automatically\n- Never commit .env files to Git\n- Use .env.example to document required variables\n\n---\n\n## What is dotenv?\n\nThe `dotenv` package loads environment variables from a `.env` file into `process.env`. This is the standard way to manage configuration in Node.js projects.\n\n## Setting Up dotenv\n\n### 1. Install\n```bash\nnpm install dotenv\n```\n\n### 2. Create .env file\n```\n# .env\nPORT=3000\nDATABASE_URL=postgresql://localhost:5432/mydb\nAPI_KEY=sk_test_1234567890\nNODE_ENV=development\n```\n\n### 3. Load early in your app\n```javascript\n// At the very top of your main file\nrequire('dotenv').config();\n\n// Or with ES modules\nimport 'dotenv/config';\n\n// Now use your variables\nconst port = process.env.PORT;\n```\n\n## .env File Conventions\n\n### Format\n```bash\n# Comments start with #\nKEY=value\nKEY2=\"values with spaces\"\n\n# No spaces around =\nWRONG = value  # Don't do this\nRIGHT=value    # Do this\n```\n\n### Multiple .env Files\n\n```\n.env              # Loaded in all environments\n.env.local        # Local overrides (not committed)\n.env.development  # Development-specific\n.env.test         # Test environment\n.env.production   # Production (usually set by hosting)\n```\n\nLoading order (later overrides earlier):\n1. `.env`\n2. `.env.local`\n3. `.env.[development/test/production]`\n4. `.env.[development/test/production].local`\n\n## Never Commit Secrets!\n\n### Add to .gitignore\n```gitignore\n# Environment variables\n.env\n.env.local\n.env.*.local\n\n# But commit example\n!.env.example\n```\n\n### Create .env.example\n```bash\n# .env.example - Document required variables\nPORT=3000\nDATABASE_URL=\nAPI_KEY=\nNODE_ENV=development\n```\n\nThis shows teammates what variables they need without exposing real values.\n\n## Advanced dotenv Usage\n\n### Custom Path\n```javascript\nrequire('dotenv').config({ path: '/custom/path/.env' });\n```\n\n### Conditional Loading\n```javascript\nif (process.env.NODE_ENV !== 'production') {\n  require('dotenv').config();\n}\n```\n\n### Debugging\n```javascript\nconst result = require('dotenv').config();\n\nif (result.error) {\n  console.error('Error loading .env:', result.error);\n}\n\nconsole.log('Loaded env vars:', result.parsed);\n```\n\n## Common Mistakes\n\n- **Committing .env**: Always add to .gitignore immediately\n- **Forgetting to load dotenv**: Must be at the top of your entry file\n- **Spaces around =**: KEY = value won't work\n- **Quotes in value**: Usually not needed, can cause issues\n\n## Try It Yourself\n\n1. Create a new Node.js project: `npm init -y`\n2. Install dotenv: `npm install dotenv`\n3. Create `.env` with PORT=4000\n4. Create `.env.example` with the same keys (empty values)\n5. Create `index.js` that loads dotenv and logs process.env.PORT\n6. Add `.env` to `.gitignore`\n7. Run the script and verify it reads the port"
+    },
+    {
+      "id": "env-environments",
+      "moduleId": "env-config",
+      "title": "Environment-Specific Configuration",
+      "order": 3,
+      "difficulty": "intermediate",
+      "xpReward": 75,
+      "content": "# Essential to know\n- Different environments need different configs\n- NODE_ENV determines your environment\n- Feature flags enable gradual rollouts\n- Config management patterns keep code clean\n\n---\n\n## Common Environments\n\n### Development\n```bash\nNODE_ENV=development\nDEBUG=true\nLOG_LEVEL=debug\nDATABASE_URL=postgresql://localhost:5432/devdb\n```\n\n### Staging\n```bash\nNODE_ENV=staging\nDEBUG=false\nLOG_LEVEL=info\nDATABASE_URL=postgresql://staging-db:5432/staging\n```\n\n### Production\n```bash\nNODE_ENV=production\nDEBUG=false\nLOG_LEVEL=warn\nDATABASE_URL=postgresql://prod-db:5432/production\n```\n\n## Environment-Based Logic\n\n### Basic Pattern\n```javascript\nconst config = {\n  port: process.env.PORT || 3000,\n  isDev: process.env.NODE_ENV === 'development',\n  isProd: process.env.NODE_ENV === 'production',\n};\n\n// Use in your code\nif (config.isDev) {\n  console.log('Debug mode enabled');\n}\n```\n\n### Config Module Pattern\n```javascript\n// config.js\nconst env = process.env.NODE_ENV || 'development';\n\nconst configs = {\n  development: {\n    port: 3000,\n    database: 'dev_db',\n    logLevel: 'debug',\n  },\n  test: {\n    port: 3001,\n    database: 'test_db',\n    logLevel: 'silent',\n  },\n  production: {\n    port: process.env.PORT,\n    database: process.env.DATABASE_URL,\n    logLevel: 'warn',\n  },\n};\n\nmodule.exports = configs[env];\n```\n\n## Feature Flags\n\nEnable features gradually or for specific users:\n\n```bash\n# .env\nFEATURE_NEW_DASHBOARD=true\nFEATURE_BETA_API=false\n```\n\n```javascript\n// Usage\nif (process.env.FEATURE_NEW_DASHBOARD === 'true') {\n  // Show new dashboard\n} else {\n  // Show old dashboard\n}\n```\n\nBenefits:\n- Test in production with small user groups\n- Roll back instantly without deploy\n- A/B testing capabilities\n\n## Config Validation\n\nFail fast if required variables are missing:\n\n```javascript\n// config/validate.js\nconst requiredEnvVars = [\n  'DATABASE_URL',\n  'JWT_SECRET',\n  'API_KEY',\n];\n\nfunction validateEnv() {\n  const missing = requiredEnvVars.filter(\n    key => !process.env[key]\n  );\n  \n  if (missing.length > 0) {\n    console.error('Missing required environment variables:');\n  missing.forEach(key => console.error(`  - ${key}`));\n    process.exit(1);\n  }\n}\n\nmodule.exports = { validateEnv };\n```\n\n## Platform-Specific Config\n\n### Vercel\n```bash\n# Set via CLI or dashboard\nvercel env add DATABASE_URL\n```\n\n### Railway\nVariables set in dashboard, automatically injected.\n\n### Docker\n```dockerfile\nENV NODE_ENV=production\nENV PORT=8080\n```\n\nOr at runtime:\n```bash\ndocker run -e DATABASE_URL=... -e API_KEY=... myapp\n```\n\n## Common Mistakes\n\n- **Assuming NODE_ENV is set**: Always provide a default\n- **Environment-specific code scattered**: Centralize in config module\n- **Not validating config**: App crashes mysteriously in production\n- **Overusing feature flags**: Adds complexity, use sparingly\n\n## Try It Yourself\n\n1. Create a config.js with development/production objects\n2. Export the config based on NODE_ENV\n3. Create a validateEnv function\n4. Test with different NODE_ENV values\n5. Add a feature flag that changes behavior"
+    },
+    {
+      "id": "env-secrets",
+      "moduleId": "env-config",
+      "title": "Secrets Management",
+      "order": 4,
+      "difficulty": "intermediate",
+      "xpReward": 50,
+      "content": "# Essential to know\n- Secrets are sensitive data: API keys, passwords, tokens\n- Never commit secrets to version control\n- Use platform secrets management when available\n- Rotate secrets regularly\n\n---\n\n## What Counts as a Secret?\n\n### Definitely Secrets\n- API keys (Stripe, OpenAI, etc.)\n- Database passwords\n- JWT signing secrets\n- OAuth client secrets\n- Encryption keys\n\n### Sometimes Secrets\n- Internal API URLs (if they expose sensitive endpoints)\n- Third-party service IDs (if they can be exploited)\n\n### Not Secrets\n- Public API endpoints\n- Feature flags\n- Port numbers\n- Log levels\n\n## Platform Secrets Management\n\n### Vercel\n```bash\n# Add secret\nvercel secrets add my-api-key sk_live_123\n\n# Use in project\nvercel env add API_KEY production\n# Enter: @my-api-key\n```\n\n### Railway\n1. Go to project dashboard\n2. Variables tab\n3. Add key-value pairs\n4. Automatically injected as env vars\n\n### Cloudflare Workers\n```bash\n# Using Wrangler\nwrangler secret put API_KEY\n```\n\n### AWS/GCP/Azure\n- AWS Secrets Manager\n- Google Secret Manager\n- Azure Key Vault\n\n## Best Practices\n\n### 1. Separation of Concerns\n```bash\n# .env.development - safe to share\nAPI_URL=http://localhost:3000\nDEBUG=true\n\n# .env.local - NEVER share\nAPI_KEY=sk_live_...\nDATABASE_PASSWORD=...\n```\n\n### 2. Key Rotation\n- Set calendar reminders\n- Rotate after team member departures\n- Rotate after potential exposure\n\n### 3. Access Control\n- Limit who can see production secrets\n- Use team/role-based access\n- Audit secret access\n\n### 4. No Default Secrets\n```javascript\n// BAD - security through obscurity\nconst API_KEY = process.env.API_KEY || 'default-key-123';\n\n// GOOD - fail if missing\nconst API_KEY = process.env.API_KEY;\nif (!API_KEY) {\n  throw new Error('API_KEY is required');\n}\n```\n\n## Secrets in Development\n\n### Share Without Exposing\n```bash\n# .env.example\nDATABASE_URL=postgresql://user:password@localhost:5432/db\n\n# In README.md\n## Setup\n1. Copy .env.example to .env\n2. Ask a team member for the dev database credentials\n3. Paste them into your .env file\n```\n\n## Detecting Leaked Secrets\n\n### git-secrets\n```bash\n# Install\nbrew install git-secrets\n\n# Setup in repo\ngit secrets --install\ngit secrets --register-aws\n\n# Scan\ngit secrets --scan\n```\n\n### GitHub Secret Scanning\n- Automatically scans repos\n- Alerts on detected secrets\n- Can revoke automatically\n\n## Common Mistakes\n\n- **Thinking \"it's just a dev key\"**: Practice good habits everywhere\n- **Sharing .env files**: Use secure channels (1Password, etc.)\n- **Hardcoding fallbacks**: Always fail if secret is missing\n- **Not rotating**: Old team members might still have access\n- **Logging secrets**: Never console.log(process.env)\n\n## Try It Yourself\n\n1. Check if any of your repos have secrets in git history\n2. Install git-secrets\n3. Create a secrets management plan for a project\n4. Practice rotating a fake API key\n5. Set up environment variables on your deployment platform"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "env-quiz-1",
+      "type": "quiz",
+      "lessonId": "env-basics",
+      "moduleId": "env-config",
+      "title": "Environment Variables Basics",
+      "description": "Test your understanding of environment variables",
+      "order": 1,
+      "difficulty": "easy",
+      "xpReward": 100,
+      "questions": [
+        {
+          "text": "In Node.js, how do you access an environment variable named API_KEY?",
+          "options": ["env.API_KEY", "process.env.API_KEY", "environment.API_KEY", "getEnv('API_KEY')"],
+          "correctAnswer": 1,
+          "explanation": "Node.js uses process.env to access environment variables. This is a global object containing the user environment."
+        },
+        {
+          "text": "Why should you use environment variables for API keys instead of hardcoding them?",
+          "options": ["They make the code faster", "They keep secrets out of version control", "They reduce bundle size", "They enable autocomplete"],
+          "correctAnswer": 1,
+          "explanation": "Environment variables keep sensitive information like API keys out of your source code and version control, which is a security best practice."
+        },
+        {
+          "text": "What happens to environment variables in a frontend (browser) app?",
+          "options": ["They're hidden from users", "They're bundled at build time", "They update in real-time", "They're encrypted automatically"],
+          "correctAnswer": 1,
+          "explanation": "In frontend apps, environment variables are baked into the code at build time. They must be prefixed (e.g., VITE_, REACT_APP_) and are visible to anyone who inspects the page."
+        }
+      ]
+    },
+    {
+      "id": "env-quiz-2",
+      "type": "quiz",
+      "lessonId": "env-dotenv",
+      "moduleId": "env-config",
+      "title": "dotenv and .env Files",
+      "description": "Test your knowledge of dotenv package and .env files",
+      "order": 2,
+      "difficulty": "easy",
+      "xpReward": 100,
+      "questions": [
+        {
+          "text": "Should you commit your .env file to Git?",
+          "options": ["Yes, always", "Only in development", "No, never", "Only if it's encrypted"],
+          "correctAnswer": 2,
+          "explanation": "Never commit .env files to Git as they typically contain secrets. Always add .env to your .gitignore file."
+        },
+        {
+          "text": "What is the purpose of .env.example?",
+          "options": ["To store real secrets", "To document required variables", "To override .env.local", "It's a backup file"],
+          "correctAnswer": 1,
+          "explanation": ".env.example shows what environment variables are needed without exposing real values. It should be committed to help teammates set up their environment."
+        },
+        {
+          "text": "Where should you load dotenv in your application?",
+          "options": ["At the end of the file", "In the middle of the file", "At the very top", "In a separate config file only"],
+          "correctAnswer": 2,
+          "explanation": "dotenv should be loaded at the very top of your main entry file (e.g., index.js or server.js) so environment variables are available throughout your app."
+        }
+      ]
+    },
+    {
+      "id": "env-setup-exercise",
+      "type": "code",
+      "lessonId": "env-dotenv",
+      "moduleId": "env-config",
+      "title": "Set Up dotenv Configuration",
+      "description": "Practice setting up a Node.js project with environment variables using dotenv",
+      "instructions": "Create a Node.js configuration that:\n1. Loads environment variables from a .env file\n2. Exports a config object with port, databaseUrl, and isDev properties\n3. Provides sensible defaults if env vars are not set\n4. Includes validation that logs a warning if DATABASE_URL is missing\n\nWrite the code for a config.js file.",
+      "order": 3,
+      "difficulty": "medium",
+      "xpReward": 150,
+      "starterCode": "// config.js\n// Load dotenv here\n\nconst config = {\n  // Your configuration here\n};\n\nmodule.exports = config;",
+      "solution": "// config.js\nrequire('dotenv').config();\n\nconst config = {\n  port: process.env.PORT || 3000,\n  databaseUrl: process.env.DATABASE_URL,\n  isDev: process.env.NODE_ENV === 'development',\n  logLevel: process.env.LOG_LEVEL || 'info'\n};\n\n// Validation\nif (!config.databaseUrl) {\n  console.warn('Warning: DATABASE_URL is not set. Database operations will fail.');\n}\n\nmodule.exports = config;",
+      "hints": [
+        "Remember to require dotenv at the very top",
+        "Use the || operator to provide default values",
+        "Check for undefined or empty string for validation",
+        "You can check NODE_ENV to determine if you're in development"
+      ],
+      "validationPrompt": "Check if the user's code:\n1. Loads dotenv with require('dotenv').config() at the top\n2. Creates a config object with at least port, databaseUrl, and isDev\n3. Provides default values for port and isDev\n4. Includes validation that warns if DATABASE_URL is missing\n\nThe code should be valid Node.js JavaScript."
+    }
+  ]
+}

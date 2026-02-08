@@ -1,7 +1,7 @@
 {
   "module": {
     "id": "js-async",
-    "courseId": "javascript",
+    "courseId": "javascript-core",
     "title": "Async JavaScript",
     "description": "Handle asynchronous operations with Promises and async/await",
     "icon": "Zap",

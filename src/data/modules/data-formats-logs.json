@@ -6,7 +6,7 @@
     "icon": "FileText",
     "requiredXp": 1100,
     "color": "from-orange-400 to-orange-600",
-    "courseId": "web-stack"
+    "courseId": "internet-tools"
   },
   "lessons": [
     {

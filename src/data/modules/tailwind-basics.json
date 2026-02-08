@@ -1,7 +1,7 @@
 {
   "module": {
     "id": "tailwind-basics",
-    "courseId": "html-css",
+    "courseId": "html-css-tailwind",
     "title": "Tailwind CSS Basics",
     "description": "Build UIs fast with utility-first CSS classes",
     "icon": "Palette",

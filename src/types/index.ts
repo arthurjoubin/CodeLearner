@@ -222,3 +222,18 @@ export function getXpProgress(xp: number): number {
 export function getXpReward(xpReward?: number): number {
   return xpReward ?? DEFAULT_XP_REWARD;
 }
+
+// ============================================
+// Learning Path Types
+// ============================================
+
+export interface LearningPathInfo {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  courses: string[];
+  prerequisites?: string[];
+  isPrerequisite?: boolean;
+  color: string;
+}

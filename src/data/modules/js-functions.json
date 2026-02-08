@@ -1,7 +1,7 @@
 {
   "module": {
     "id": "js-functions",
-    "courseId": "javascript",
+    "courseId": "javascript-core",
     "title": "Functions & Scope",
     "description": "Learn function declarations, arrow functions, and scope",
     "icon": "Zap",

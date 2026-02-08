@@ -6,7 +6,7 @@
     "icon": "Network",
     "requiredXp": 0,
     "color": "from-purple-400 to-purple-600",
-    "courseId": "web-stack"
+    "courseId": "internet-tools"
   },
   "lessons": [
     {

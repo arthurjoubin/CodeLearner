@@ -1,0 +1,45 @@
+{
+  "id": "backend",
+  "title": "Backend Learning Path",
+  "description": "Master backend development: Node.js → Databases → Auth & Security",
+  "icon": "🖥️",
+  "prerequisites": ["web-fundamentals"],
+  "courses": [
+    {
+      "id": "node-express",
+      "title": "Node.js & Express",
+      "subtitle": "Runtime & API Framework",
+      "logo": "https://raw.githubusercontent.com/github/explore/main/topics/nodejs/nodejs.png",
+      "color": "from-green-500 to-green-700",
+      "borderColor": "border-green-500",
+      "bgColor": "bg-green-50",
+      "textColor": "text-green-700",
+      "accentColor": "bg-green-500",
+      "phase": 1
+    },
+    {
+      "id": "databases",
+      "title": "Databases & SQL",
+      "subtitle": "Data Persistence",
+      "logo": "https://raw.githubusercontent.com/github/explore/main/topics/postgresql/postgresql.png",
+      "color": "from-blue-500 to-indigo-600",
+      "borderColor": "border-blue-500",
+      "bgColor": "bg-blue-50",
+      "textColor": "text-blue-700",
+      "accentColor": "bg-blue-500",
+      "phase": 2
+    },
+    {
+      "id": "auth-security",
+      "title": "Auth & Advanced",
+      "subtitle": "Security & Patterns",
+      "logo": "/images/courses/auth-security.svg",
+      "color": "from-red-500 to-pink-600",
+      "borderColor": "border-red-500",
+      "bgColor": "bg-red-50",
+      "textColor": "text-red-700",
+      "accentColor": "bg-red-500",
+      "phase": 3
+    }
+  ]
+}

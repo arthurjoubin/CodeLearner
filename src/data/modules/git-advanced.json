@@ -6,7 +6,7 @@
     "icon": "Zap",
     "requiredXp": 600,
     "color": "from-pink-400 to-rose-600",
-    "courseId": "git"
+    "courseId": "git-mastery"
   },
   "lessons": [
     {

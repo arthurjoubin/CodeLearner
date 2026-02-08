@@ -6,7 +6,7 @@
     "icon": "Zap",
     "requiredXp": 600,
     "color": "from-indigo-400 to-indigo-600",
-    "courseId": "web-stack"
+    "courseId": "advanced-topics"
   },
   "lessons": [
     {

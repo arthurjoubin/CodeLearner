@@ -1,7 +1,7 @@
 {
   "module": {
     "id": "css-layout",
-    "courseId": "html-css",
+    "courseId": "html-css-tailwind",
     "title": "CSS Layout: Flexbox & Grid",
     "description": "Master modern layout techniques with Flexbox and CSS Grid",
     "icon": "Layers",

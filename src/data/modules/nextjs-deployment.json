@@ -1,0 +1,81 @@
+{
+  "module": {
+    "id": "nextjs-deployment",
+    "title": "Deployment and Production",
+    "description": "Deploy Next.js apps to Vercel and optimize for production",
+    "icon": "Rocket",
+    "requiredXp": 3600,
+    "color": "from-orange-500 to-red-500",
+    "courseId": "deployment"
+  },
+  "lessons": [
+    {
+      "id": "nextjs-production",
+      "moduleId": "nextjs-deployment",
+      "title": "Production Optimization",
+      "order": 1,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Use next/image for automatic image optimization\n- Code splitting happens automatically\n- Analyze bundle size with @next/bundle-analyzer\n- Use dynamic imports for large components\n- Configure environment variables properly\n\n---\n\n# Optimizing Next.js for Production\n\n## Automatic Optimizations\n\nNext.js does a lot automatically:\n- **Code splitting** - Only load JS needed for current page\n- **Minification** - Shrinks JS/CSS size\n- **Compression** - Gzip/Brotli enabled\n- **Tree shaking** - Removes unused code\n\n## Image Optimization\n\nAlways use next/image:\n```javascript\nimport Image from 'next/image';\n\n<Image\n  src=\"/photo.jpg\"\n  alt=\"Photo\"\n  width={800}\n  height={600}\n  priority  // For above-fold images\n/>\n```\n\nBenefits:\n- Automatic WebP conversion\n- Responsive sizing\n- Lazy loading\n- Prevents layout shift\n\n## Dynamic Imports\n\nLoad components only when needed:\n\n```javascript\nimport dynamic from 'next/dynamic';\n\n// Heavy component loaded only when rendered\nconst HeavyChart = dynamic(() => import('./HeavyChart'), {\n  loading: () => <p>Loading chart...</p>,\n  ssr: false,  // Disable server-side rendering\n});\n\nexport default function Page() {\n  const [showChart, setShowChart] = useState(false);\n  \n  return (\n    <div>\n      <button onClick={() => setShowChart(true)}>\n        Show Chart\n      </button>\n      {showChart && <HeavyChart />}\n    </div>\n  );\n}\n```\n\n## Bundle Analysis\n\n**1. Install analyzer:**\n```bash\nnpm install @next/bundle-analyzer\n```\n\n**2. Update next.config.js:**\n```javascript\nconst withBundleAnalyzer = require('@next/bundle-analyzer')({\n  enabled: process.env.ANALYZE === 'true',\n});\n\nmodule.exports = withBundleAnalyzer({\n  // your config\n});\n```\n\n**3. Run analysis:**\n```bash\nANALYZE=true npm run build\n```\n\n## Environment Variables\n\n```\n# .env.local (not committed)\nSECRET_API_KEY=super-secret\n\n# .env (committed, safe values)\nNEXT_PUBLIC_API_URL=https://api.example.com\n```\n\n**Rules:**\n- `NEXT_PUBLIC_*` - Available in browser\n- Without prefix - Server only\n- `.env.local` - Not committed, for secrets\n- `.env` - Committed, safe defaults\n\n## Performance Monitoring\n\n**Built-in metrics:**\n```javascript\n// app/layout.js\nexport function reportWebVitals(metric) {\n  console.log(metric);\n  // Send to analytics\n}\n```\n\n**Core Web Vitals:**\n- LCP (Largest Contentful Paint) - Loading speed\n- FID (First Input Delay) - Interactivity\n- CLS (Cumulative Layout Shift) - Visual stability",
+      "codeExample": "// next.config.js\nmodule.exports = {\n  images: {\n    domains: ['cdn.example.com'],\n  },\n  // Enable compression\n  compress: true,\n  // Custom headers\n  async headers() {\n    return [\n      {\n        source: '/:path*',\n        headers: [\n          {\n            key: 'X-Frame-Options',\n            value: 'DENY',\n          },\n        ],\n      },\n    ];\n  },\n};\n\n// Example of dynamic import\nimport { useState } from 'react';\nimport dynamic from 'next/dynamic';\n\nconst MonacoEditor = dynamic(\n  () => import('@monaco-editor/react'),\n  { ssr: false }\n);\n\nexport default function CodeEditor() {\n  const [code, setCode] = useState('');\n  \n  return (\n    <div>\n      <MonacoEditor\n        height=\"400px\"\n        language=\"javascript\"\n        value={code}\n        onChange={setCode}\n      />\n    </div>\n  );\n}\n\n// Using next/image effectively\nimport Image from 'next/image';\n\nexport default function Gallery() {\n  return (\n    <div className=\"grid grid-cols-3 gap-4\">\n      <Image\n        src=\"/photo1.jpg\"\n        alt=\"Photo 1\"\n        width={400}\n        height={300}\n        priority  // Load immediately\n      />\n      <Image\n        src=\"/photo2.jpg\"\n        alt=\"Photo 2\"\n        width={400}\n        height={300}\n        loading=\"lazy\"  // Load when in viewport\n      />\n    </div>\n  );\n}"
+    },
+    {
+      "id": "nextjs-vercel",
+      "moduleId": "nextjs-deployment",
+      "title": "Deploying to Vercel",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Vercel is the easiest platform for Next.js\n- Connect GitHub repo for automatic deployments\n- Preview deployments on every PR\n- Environment variables in dashboard\n- Custom domains supported\n\n---\n\n# Deploying Next.js to Vercel\n\n## Why Vercel?\n\nVercel created Next.js, so they have the best integration:\n- Zero configuration\n- Automatic preview deployments\n- Edge network (fast globally)\n- Analytics and monitoring\n- Generous free tier\n\n## Deployment Steps\n\n**1. Push to GitHub:**\n```bash\ngit init\ngit add .\ngit commit -m \"Initial commit\"\ngit push origin main\n```\n\n**2. Import to Vercel:**\n- Go to vercel.com\n- Click \"Add New Project\"\n- Import your GitHub repo\n- Vercel auto-detects Next.js\n\n**3. Configure (if needed):**\n- Build command: `next build`\n- Output directory: (leave default)\n- Install command: `npm install`\n\n**4. Add environment variables:**\n- DATABASE_URL\n- NEXTAUTH_SECRET\n- GOOGLE_CLIENT_ID\n- etc.\n\n**5. Deploy!**\n\n## Preview Deployments\n\nEvery pull request gets its own URL:\n- Test changes in production environment\n- Share with team for review\n- Merge → Auto-deploy to production\n\n## Environment Variables\n\n**In Vercel Dashboard:**\n1. Go to Project Settings → Environment Variables\n2. Add variables for:\n   - Production\n   - Preview (PR deployments)\n   - Development\n\n## Custom Domains\n\n**Add your domain:**\n1. Project Settings → Domains\n2. Enter your domain\n3. Update DNS records\n4. Auto HTTPS enabled\n\n## Other Deployment Options\n\n**Netlify:**\n- Great for JAMstack\n- Similar to Vercel\n\n**AWS Amplify:**\n- AWS ecosystem\n- More control, more complex\n\n**Self-hosted:**\n- Docker container\n- Any VPS (DigitalOcean, Linode)\n- More control, more maintenance",
+      "codeExample": "// vercel.json (optional config)\n{\n  \"version\": 2,\n  \"builds\": [\n    {\n      \"src\": \"package.json\",\n      \"use\": \"@vercel/next\"\n    }\n  ],\n  \"routes\": [\n    {\n      \"src\": \"/(.*)\",\n      \"dest\": \"/$1\"\n    }\n  ],\n  \"env\": {\n    \"DATABASE_URL\": \"@database-url\"\n  }\n}\n\n// .github/workflows/ci.yml (optional GitHub Actions)\nname: CI\n\non: [push, pull_request]\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v3\n      - uses: actions/setup-node@v3\n        with:\n          node-version: 18\n      - run: npm ci\n      - run: npm run build\n      - run: npm test\n\n// Environment setup helper\n// lib/env.js\nexport function getRequiredEnvVar(name) {\n  const value = process.env[name];\n  if (!value) {\n    throw new Error(`Missing required environment variable: ${name}`);\n  }\n  return value;\n}\n\n// Usage\nconst dbUrl = getRequiredEnvVar('DATABASE_URL');\nconst authSecret = getRequiredEnvVar('NEXTAUTH_SECRET');"
+    },
+    {
+      "id": "nextjs-monitoring",
+      "moduleId": "nextjs-deployment",
+      "title": "Monitoring and Analytics",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Use Vercel Analytics for Core Web Vitals\n- Error tracking with Sentry or LogRocket\n- Uptime monitoring with services like UptimeRobot\n- Log management for debugging\n- Performance budgets\n\n---\n\n# Monitoring Production Apps\n\n## Vercel Analytics\n\nBuilt-in performance monitoring:\n\n**Enable:**\n```javascript\n// app/layout.js\nimport { Analytics } from '@vercel/analytics/react';\n\nexport default function RootLayout({ children }) {\n  return (\n    <html>\n      <body>\n        {children}\n        <Analytics />\n      </body>\n    </html>\n  );\n}\n```\n\n**Tracks:**\n- Core Web Vitals\n- Real user metrics\n- Page views\n- Performance scores\n\n## Error Tracking with Sentry\n\n**1. Install:**\n```bash\nnpx @sentry/wizard@latest -i nextjs\n```\n\n**2. Configure:**\n```javascript\n// sentry.client.config.js\nimport * as Sentry from '@sentry/nextjs';\n\nSentry.init({\n  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,\n  tracesSampleRate: 1.0,\n});\n```\n\n**3. Capturing errors:**\n```javascript\n// Automatic error capture\n// Or manual:\ntry {\n  riskyOperation();\n} catch (error) {\n  Sentry.captureException(error);\n}\n```\n\n## Logging Best Practices\n\n**Structured logging:**\n```javascript\n// lib/logger.js\nconst logger = {\n  info: (message, meta) => {\n    console.log(JSON.stringify({\n      level: 'info',\n      message,\n      timestamp: new Date().toISOString(),\n      ...meta,\n    }));\n  },\n  error: (message, error) => {\n    console.error(JSON.stringify({\n      level: 'error',\n      message,\n      error: error.message,\n      stack: error.stack,\n      timestamp: new Date().toISOString(),\n    }));\n  },\n};\n\nexport default logger;\n```\n\n## Health Checks\n\n**Create health endpoint:**\n```javascript\n// app/api/health/route.js\nexport async function GET() {\n  // Check database\n  await prisma.$queryRaw`SELECT 1`;\n  \n  return Response.json({\n    status: 'healthy',\n    timestamp: new Date().toISOString(),\n    uptime: process.uptime(),\n  });\n}\n```\n\n**Monitor with:**\n- UptimeRobot (free tier)\n- Pingdom\n- StatusCake\n\n## Performance Budgets\n\nSet limits on bundle size:\n\n```javascript\n// next.config.js\nmodule.exports = {\n  experimental: {\n    // Warn if bundle size exceeds\n    largePageDataBytes: 128 * 1000,  // 128KB\n  },\n};\n```\n\n## Alerting\n\nSet up alerts for:\n- Error rate spikes\n- High response times\n- Downtime\n- Disk space (self-hosted)\n\nServices:\n- PagerDuty\n- Opsgenie\n- Discord webhooks",
+      "codeExample": "// lib/analytics.js\nexport function trackEvent(eventName, properties = {}) {\n  if (typeof window !== 'undefined' && window.gtag) {\n    window.gtag('event', eventName, properties);\n  }\n}\n\nexport function trackPageView(url) {\n  if (typeof window !== 'undefined' && window.gtag) {\n    window.gtag('config', 'GA_MEASUREMENT_ID', {\n      page_path: url,\n    });\n  }\n}\n\n// app/api/health/route.js\nimport { prisma } from '@/lib/prisma';\n\nexport async function GET() {\n  const checks = {\n    database: false,\n    timestamp: new Date().toISOString(),\n  };\n  \n  try {\n    await prisma.$queryRaw`SELECT 1`;\n    checks.database = true;\n  } catch (error) {\n    console.error('Health check failed:', error);\n  }\n  \n  const healthy = checks.database;\n  \n  return Response.json(\n    {\n      status: healthy ? 'healthy' : 'unhealthy',\n      checks,\n      uptime: process.uptime(),\n    },\n    { status: healthy ? 200 : 503 }\n  );\n}\n\n// Using Sentry\n// app/error.js\n'use client';\n\nimport { useEffect } from 'react';\nimport * as Sentry from '@sentry/nextjs';\n\nexport default function Error({ error, reset }) {\n  useEffect(() => {\n    Sentry.captureException(error);\n  }, [error]);\n\n  return (\n    <div className=\"p-4\">\n      <h2>Something went wrong!</h2>\n      <button onClick={reset}>Try again</button>\n    </div>\n  );\n}\n\n// lib/logger.js\nconst isProduction = process.env.NODE_ENV === 'production';\n\nexport const logger = {\n  info: (msg, meta) => {\n    if (isProduction) {\n      console.log(JSON.stringify({ level: 'info', msg, ...meta }));\n    } else {\n      console.log(msg, meta);\n    }\n  },\n  error: (msg, error) => {\n    if (isProduction) {\n      console.error(JSON.stringify({\n        level: 'error',\n        msg,\n        error: error?.message,\n        stack: error?.stack,\n      }));\n    } else {\n      console.error(msg, error);\n    }\n  },\n};"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "nextjs-deploy-ex-1",
+      "lessonId": "nextjs-vercel",
+      "moduleId": "nextjs-deployment",
+      "title": "Environment Variable Usage",
+      "difficulty": "easy",
+      "description": "Access environment variables in Next.js",
+      "instructions": "Create a component that displays a message using an environment variable.\n1. Create a Server Component that reads process.env.NEXT_PUBLIC_APP_NAME\n2. Display the value in a paragraph: 'Welcome to {appName}'\n3. Provide a fallback value 'My App' if the env var is not set",
+      "starterCode": "// app/page.js\n",
+      "solution": "// app/page.js\nexport default function Home() {\n  const appName = process.env.NEXT_PUBLIC_APP_NAME || 'My App';\n  \n  return (\n    <main>\n      <p>Welcome to {appName}</p>\n    </main>\n  );\n}",
+      "hints": ["Access process.env.NEXT_PUBLIC_APP_NAME", "Use || operator for fallback", "Display in JSX with curly braces"],
+      "validationPrompt": "Check if the component reads NEXT_PUBLIC_APP_NAME from process.env with a fallback and displays it"
+    },
+    {
+      "id": "nextjs-deploy-ex-2",
+      "lessonId": "nextjs-production",
+      "moduleId": "nextjs-deployment",
+      "title": "Dynamic Import",
+      "difficulty": "medium",
+      "description": "Use dynamic imports to lazy load a component",
+      "instructions": "Use dynamic import to load a heavy component:\n1. Import dynamic from 'next/dynamic'\n2. Create a HeavyComponent using dynamic() that imports './HeavyChart'\n3. Add loading fallback that shows 'Loading chart...'\n4. Set ssr: false\n5. Render the HeavyComponent in a div",
+      "starterCode": "'use client';\n\nimport { useState } from 'react';\n\nexport default function Page() {\n  return (\n    <div>\n      <button>Show Chart</button>\n    </div>\n  );\n}\n",
+      "solution": "'use client';\n\nimport { useState } from 'react';\nimport dynamic from 'next/dynamic';\n\nconst HeavyComponent = dynamic(() => import('./HeavyChart'), {\n  loading: () => <p>Loading chart...</p>,\n  ssr: false,\n});\n\nexport default function Page() {\n  const [show, setShow] = useState(false);\n  \n  return (\n    <div>\n      <button onClick={() => setShow(true)}>Show Chart</button>\n      {show && <HeavyComponent />}\n    </div>\n  );\n}",
+      "hints": ["Import dynamic from next/dynamic", "Use dynamic(() => import(...))", "Add loading option with JSX", "Set ssr: false"],
+      "validationPrompt": "Check if dynamic is imported, HeavyComponent uses dynamic import with loading fallback and ssr: false"
+    },
+    {
+      "id": "nextjs-deploy-ex-3",
+      "lessonId": "nextjs-monitoring",
+      "moduleId": "nextjs-deployment",
+      "title": "Health Check Endpoint",
+      "difficulty": "easy",
+      "description": "Create a health check API endpoint",
+      "instructions": "Create a health check endpoint at app/api/health/route.js:\n1. Export an async GET function\n2. Return JSON with status: 'healthy' and a timestamp (new Date().toISOString())\n3. Return status 200",
+      "starterCode": "// app/api/health/route.js\n",
+      "solution": "// app/api/health/route.js\nexport async function GET() {\n  return Response.json(\n    {\n      status: 'healthy',\n      timestamp: new Date().toISOString(),\n    },\n    { status: 200 }\n  );\n}",
+      "hints": ["Export async GET function", "Create object with status and timestamp", "Use Response.json with status option"],
+      "validationPrompt": "Check if GET returns JSON with status 'healthy' and timestamp, with HTTP 200 status"
+    }
+  ]
+}

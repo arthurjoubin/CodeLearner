@@ -6,7 +6,7 @@
     "icon": "Zap",
     "requiredXp": 1800,
     "color": "from-green-400 to-emerald-600",
-    "courseId": "web-stack"
+    "courseId": "architecture-patterns"
   },
   "lessons": [
     {

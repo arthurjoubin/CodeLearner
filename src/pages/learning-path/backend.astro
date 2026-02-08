@@ -1,0 +1,9 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import LearningPathPage from '../../components/LearningPathPage';
+import backendData from '../../data/learning-paths/backend.json';
+---
+
+<MainLayout title="Backend Learning Path - Node.js → Databases → Auth">
+	<LearningPathPage client:load pathData={backendData} />
+</MainLayout>

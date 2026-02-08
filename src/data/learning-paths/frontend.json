@@ -1,0 +1,45 @@
+{
+  "id": "frontend",
+  "title": "Frontend Learning Path",
+  "description": "Master frontend development step by step: HTML → JavaScript → React",
+  "icon": "🎓",
+  "prerequisites": ["web-fundamentals"],
+  "courses": [
+    {
+      "id": "html-css-tailwind",
+      "title": "HTML & CSS",
+      "subtitle": "Structure & Style",
+      "logo": "https://raw.githubusercontent.com/github/explore/main/topics/html/html.png",
+      "color": "from-orange-400 to-red-500",
+      "borderColor": "border-orange-400",
+      "bgColor": "bg-orange-50",
+      "textColor": "text-orange-700",
+      "accentColor": "bg-orange-500",
+      "phase": 1
+    },
+    {
+      "id": "javascript-core",
+      "title": "JavaScript",
+      "subtitle": "Logic & Interactivity",
+      "logo": "https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png",
+      "color": "from-yellow-400 to-yellow-600",
+      "borderColor": "border-yellow-400",
+      "bgColor": "bg-yellow-50",
+      "textColor": "text-yellow-700",
+      "accentColor": "bg-yellow-500",
+      "phase": 2
+    },
+    {
+      "id": "react",
+      "title": "React",
+      "subtitle": "Components & State",
+      "logo": "https://raw.githubusercontent.com/github/explore/main/topics/react/react.png",
+      "color": "from-cyan-400 to-blue-500",
+      "borderColor": "border-cyan-400",
+      "bgColor": "bg-cyan-50",
+      "textColor": "text-cyan-700",
+      "accentColor": "bg-cyan-500",
+      "phase": 3
+    }
+  ]
+}

@@ -6,7 +6,7 @@
     "icon": "GitBranch",
     "requiredXp": 700,
     "color": "from-cyan-400 to-blue-600",
-    "courseId": "git"
+    "courseId": "git-mastery"
   },
   "lessons": [
     {

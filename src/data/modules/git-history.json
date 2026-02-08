@@ -6,7 +6,7 @@
     "icon": "History",
     "requiredXp": 450,
     "color": "from-green-400 to-emerald-600",
-    "courseId": "git"
+    "courseId": "git-mastery"
   },
   "lessons": [
     {

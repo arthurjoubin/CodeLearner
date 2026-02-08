@@ -1,0 +1,286 @@
+{
+  "module": {
+    "id": "deployment-fundamentals",
+    "courseId": "deployment",
+    "title": "Deployment Fundamentals",
+    "description": "Learn the core concepts of deploying web applications",
+    "icon": "Rocket",
+    "requiredXp": 2000,
+    "color": "from-purple-500 to-indigo-600"
+  },
+  "lessons": [
+    {
+      "id": "how-deployment-works",
+      "moduleId": "deployment-fundamentals",
+      "title": "How Deployment Works",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Deployment moves your code from development to production\n- Servers store and serve your application to users\n- CDNs deliver content quickly from locations near users\n- Build process transforms your code into optimized production files\n- The deployment pipeline automates testing, building, and releasing\n\n---\n\n# How Deployment Works\n\n## The Journey: From Code to Production\n\nWhen you write code on your computer, it needs to reach users somehow. Here's what happens:\n\n```\nYour Code → Build → Server → Users\n```\n\n### 1. Development\nYou write code on your local machine using an editor like VS Code.\n\n### 2. Build Process\nBefore deployment, your code must be built:\n\n```bash\n# Example build steps\nnpm install    # Download dependencies\nnpm run lint   # Check code quality\nnpm test       # Run tests\nnpm run build  # Compile/transpile code\n```\n\n**What happens during build:**\n- Install dependencies (node_modules)\n- Transpile modern JavaScript to compatible versions\n- Bundle multiple files into optimized bundles\n- Minify code (remove whitespace, shorten names)\n- Optimize images and assets\n\n### 3. Servers\n\nA **server** is a computer that stores your application and responds to user requests.\n\n**Types of servers:**\n- **Web servers** (Nginx, Apache) - Serve static files\n- **Application servers** (Node.js, Python) - Run your backend code\n- **Database servers** - Store and retrieve data\n\n**Cloud providers:**\n- AWS (Amazon Web Services)\n- Google Cloud Platform\n- Microsoft Azure\n- DigitalOcean\n- Hetzner\n\n### 4. CDNs (Content Delivery Networks)\n\nA **CDN** is a network of servers distributed worldwide that cache and deliver content from the location closest to each user.\n\n```\nUser in Tokyo → Nearest CDN server in Tokyo\nUser in London → Nearest CDN server in London\nUser in NYC → Nearest CDN server in NYC\n```\n\n**Benefits:**\n- Faster loading (content closer to users)\n- Reduced server load\n- Better handling of traffic spikes\n- Protection against DDoS attacks\n\n**Popular CDNs:**\n- Cloudflare\n- Vercel Edge Network\n- AWS CloudFront\n- Fastly\n\n### 5. The Deployment Pipeline\n\nA **deployment pipeline** automates the entire process:\n\n```\nPush Code → Test → Build → Deploy → Monitor\n```\n\n**Pipeline stages:**\n\n1. **Source**\n   - Developer pushes code to Git\n   - CI/CD system detects the change\n\n2. **Build**\n   - Install dependencies\n   - Compile/transpile code\n   - Run static analysis (linting)\n   - Create deployable artifacts\n\n3. **Test**\n   - Unit tests\n   - Integration tests\n   - E2E tests\n\n4. **Deploy**\n   - Upload to staging environment\n   - Run smoke tests\n   - Promote to production\n\n5. **Monitor**\n   - Track errors and performance\n   - Alert on issues\n   - Collect feedback\n\n## Deployment Environments\n\n**Typical setup:**\n\n```\nDevelopment → Staging → Production\n(local)      (testing)   (live)\n```\n\n| Environment | Purpose | Who Uses It |\n|-------------|---------|-------------|\n| Development | Local coding | Developers |\n| Staging | Pre-production testing | Team/QA |\n| Production | Live for users | Everyone |\n\n## Key Concepts\n\n**Latency:** Time for data to travel (lower = better)\n**Uptime:** Percentage of time the site is available (aim for 99.9%+)\n**Scalability:** Ability to handle more users/requests\n**Redundancy:** Backup systems to prevent downtime",
+      "codeExample": "// Example: Package.json scripts for build pipeline\n{\n  \"name\": \"my-app\",\n  \"scripts\": {\n    \"dev\": \"vite\",                    // Development server\n    \"build\": \"tsc && vite build\",     // Type check + build\n    \"lint\": \"eslint . --ext ts,tsx\",  // Code quality\n    \"test\": \"vitest\",                 // Run tests\n    \"preview\": \"vite preview\"         // Preview production build\n  },\n  \"dependencies\": {\n    \"react\": \"^18.0.0\"\n  },\n  \"devDependencies\": {\n    \"vite\": \"^5.0.0\",\n    \"typescript\": \"^5.0.0\"\n  }\n}\n\n// ---\n// Example CI/CD pipeline (GitHub Actions)\n// .github/workflows/deploy.yml\n\nname: Deploy Pipeline\n\non:\n  push:\n    branches: [main]\n\njobs:\n  build-and-deploy:\n    runs-on: ubuntu-latest\n    steps:\n      # 1. Checkout code\n      - uses: actions/checkout@v4\n      \n      # 2. Setup Node.js\n      - uses: actions/setup-node@v4\n        with:\n          node-version: '20'\n      \n      # 3. Install dependencies\n      - name: Install\n        run: npm ci\n      \n      # 4. Run linter\n      - name: Lint\n        run: npm run lint\n      \n      # 5. Run tests\n      - name: Test\n        run: npm test\n      \n      # 6. Build\n      - name: Build\n        run: npm run build\n      \n      # 7. Deploy (example: to Vercel)\n      - name: Deploy\n        run: npx vercel --prod --yes\n        env:\n          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}"
+    },
+    {
+      "id": "static-vs-server-hosting",
+      "moduleId": "deployment-fundamentals",
+      "title": "Static vs Server Hosting",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Static hosting serves pre-built files (HTML, CSS, JS)\n- Server hosting runs code on each request\n- Client-side rendering (CSR) builds UI in browser\n- Server-side rendering (SSR) builds UI on server\n- Choose based on content type, SEO needs, and interactivity\n\n---\n\n# Static vs Server Hosting\n\n## Static Site Hosting\n\n**What it is:**\nServing pre-built HTML, CSS, and JavaScript files directly to users.\n\n```\nRequest → Server reads file → Returns file → Browser displays\n```\n\n**Best for:**\n- Landing pages\n- Blogs\n- Documentation\n- Marketing sites\n- Portfolios\n\n**Examples:**\n- Vercel (static sites)\n- Netlify\n- GitHub Pages\n- Cloudflare Pages\n- AWS S3 + CloudFront\n\n**Pros:**\n- ✅ Fast (just serve files)\n- ✅ Cheap or free\n- ✅ Scales easily\n- ✅ Secure (no server code to exploit)\n- ✅ CDN-friendly\n\n**Cons:**\n- ❌ No dynamic content per request\n- ❌ No server-side APIs\n- ❌ Limited personalization\n\n## Server Hosting\n\n**What it is:**\nRunning code on a server to generate responses dynamically.\n\n```\nRequest → Server runs code → Generates response → Returns to browser\n```\n\n**Best for:**\n- User dashboards\n- E-commerce\n- Real-time apps\n- APIs\n- Applications requiring user sessions\n\n**Examples:**\n- AWS EC2\n- DigitalOcean Droplets\n- Railway\n- Render\n- Fly.io\n\n**Pros:**\n- ✅ Dynamic content per request\n- ✅ Access to databases\n- ✅ User authentication\n- ✅ APIs and business logic\n\n**Cons:**\n- ❌ More expensive\n- ❌ More complex to maintain\n- ❌ Scaling is harder\n- ❌ Security considerations\n\n## Rendering Approaches\n\n### Client-Side Rendering (CSR)\n\n**How it works:**\n```\n1. Browser requests page\n2. Server sends minimal HTML + JavaScript\n3. Browser downloads and executes JS\n4. JavaScript fetches data and builds the page\n```\n\n**Example (React SPA):**\n```html\n<!DOCTYPE html>\n<html>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"/app.js\"></script>\n  </body>\n</html>\n```\n\n**When to use CSR:**\n- Highly interactive applications\n- User dashboards\n- Apps where SEO doesn't matter (internal tools)\n- Real-time data visualization\n\n**Pros:**\n- ✅ Fast navigation after initial load\n- ✅ App-like feel\n- ✅ Offloads work to user's browser\n\n**Cons:**\n- ❌ Slower initial load\n- ❌ Poor SEO (search engines may not see content)\n- ❌ Requires JavaScript to be enabled\n\n### Server-Side Rendering (SSR)\n\n**How it works:**\n```\n1. Browser requests page\n2. Server runs code to generate full HTML\n3. Server sends complete HTML page\n4. Browser displays immediately\n5. JavaScript hydrates for interactivity\n```\n\n**Example (Next.js page):**\n```jsx\n// Server generates this HTML on each request\nexport default function Page({ posts }) {\n  return (\n    <div>\n      <h1>Blog Posts</h1>\n      {posts.map(post => <PostCard key={post.id} {...post} />)}\n    </div>\n  );\n}\n\n// Runs on server before rendering\nexport async function getServerSideProps() {\n  const posts = await fetchPosts();\n  return { props: { posts } };\n}\n```\n\n**When to use SSR:**\n- Content-heavy sites needing SEO\n- User-specific content\n- E-commerce product pages\n- News sites\n- Social media\n\n**Pros:**\n- ✅ Better SEO (search engines see content)\n- ✅ Faster initial paint\n- ✅ Works without JavaScript initially\n\n**Cons:**\n- ❌ Slower subsequent navigation\n- ❌ More server resources\n- ❌ More complex caching\n\n### Static Site Generation (SSG)\n\n**How it works:**\n```\n1. Build time: Generate all HTML pages\n2. Deployment: Upload static files\n3. Request: Serve pre-built HTML\n```\n\n**When to use SSG:**\n- Blogs with infrequent updates\n- Marketing sites\n- Documentation\n- E-commerce with static catalogs\n\n**Pros:**\n- ✅ Fastest possible response\n- ✅ Excellent SEO\n- ✅ Cheap hosting\n- ✅ Easy caching\n\n**Cons:**\n- ❌ Content is static (requires rebuild to update)\n- ❌ Not suitable for personalized content\n\n## Choosing the Right Approach\n\n| Factor | Choose | Because |\n|--------|--------|---------|\n| SEO critical | SSR or SSG | Search engines need content |\n| Highly interactive | CSR | App-like feel, fast navigation |\n| User-specific data | SSR | Generate personalized content |\n| Rarely changing content | SSG | Fastest, cheapest |\n| Real-time updates | CSR + WebSockets | Dynamic data feeds |\n| Form submissions | SSR or API | Handle POST requests |\n\n## Hybrid Approaches\n\nModern frameworks (Next.js, Nuxt, SvelteKit) support multiple rendering strategies:\n\n```\nHomepage → SSG (static)\nBlog posts → SSG with ISR (update without full rebuild)\nUser dashboard → SSR (personalized)\nAdmin panel → CSR (highly interactive)\n```\n\n**Incremental Static Regeneration (ISR):**\n```jsx\n// Next.js example: Static page that updates in background\nexport async function getStaticProps() {\n  return {\n    props: { data },\n    revalidate: 60 // Regenerate every 60 seconds\n  };\n}\n```",
+      "codeExample": "// Comparing different approaches with Next.js\n\n// 1. STATIC SITE GENERATION (SSG)\n// Built at deploy time, served as static files\nexport async function getStaticProps() {\n  const posts = await fetchPosts();\n  return {\n    props: { posts },\n    // ISR: Regenerate in background every hour\n    revalidate: 3600\n  };\n}\n\nexport default function Blog({ posts }) {\n  return (\n    <div>\n      {posts.map(post => <Post key={post.id} {...post} />)}\n    </div>\n  );\n}\n\n// 2. SERVER-SIDE RENDERING (SSR)\n// Generated fresh on each request\nexport async function getServerSideProps({ req }) {\n  const user = await getUser(req.cookies.token);\n  const dashboard = await fetchDashboard(user.id);\n  return { props: { dashboard } };\n}\n\nexport default function Dashboard({ dashboard }) {\n  return <UserDashboard data={dashboard} />;\n}\n\n// 3. CLIENT-SIDE RENDERING (CSR) with SWR\n// Static shell, data fetched in browser\nimport useSWR from 'swr';\n\nexport default function LiveData() {\n  const { data, error } = useSWR(\n    '/api/realtime-data',\n    fetcher,\n    { refreshInterval: 5000 } // Refresh every 5s\n  );\n  \n  if (!data) return <Loading />;\n  return <DataDisplay data={data} />;\n}\n\n// 4. API ROUTE (Server-side logic)\n// pages/api/user.js\nexport default function handler(req, res) {\n  if (req.method === 'GET') {\n    const user = getUserFromSession(req);\n    res.status(200).json(user);\n  } else if (req.method === 'POST') {\n    const updated = updateUser(req.body);\n    res.status(200).json(updated);\n  }\n}\n\n// ---\n// Decision flowchart in code comments\n\nfunction chooseRenderingStrategy(content) {\n  if (content.isStatic && !content.needsRealTime) {\n    return 'SSG'; // Static Site Generation\n  }\n  \n  if (content.isUserSpecific || content.needsSEO) {\n    return 'SSR'; // Server-Side Rendering\n  }\n  \n  if (content.isHighlyInteractive) {\n    return 'CSR'; // Client-Side Rendering\n  }\n  \n  // Modern approach: Use a hybrid framework\n  return 'Hybrid (Next.js/Nuxt)';\n}"
+    },
+    {
+      "id": "environment-variables-production",
+      "moduleId": "deployment-fundamentals",
+      "title": "Environment Variables in Production",
+      "order": 3,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Environment variables configure apps without changing code\n- Never commit secrets to Git (API keys, passwords)\n- .env files store local environment variables\n- Production variables are set in hosting platform\n- Different values for development vs production\n\n---\n\n# Environment Variables in Production\n\n## What Are Environment Variables?\n\n**Environment variables** are key-value pairs that configure your application without hardcoding values into your source code.\n\n```\nDATABASE_URL=postgres://user:pass@host/db\nAPI_KEY=sk_live_1234567890\nNODE_ENV=production\n```\n\n**Why use them:**\n- ✅ Same code runs in different environments\n- ✅ Secrets stay out of code repositories\n- ✅ Easy to change configuration\n- ✅ Team members can have different local settings\n\n## Common Environment Variables\n\n**Database:**\n```\nDATABASE_URL=postgresql://user:password@localhost:5432/mydb\nDATABASE_HOST=db.example.com\nDATABASE_PORT=5432\n```\n\n**API Keys (NEVER commit these!):**\n```\nSTRIPE_SECRET_KEY=sk_live_...\nOPENAI_API_KEY=sk-...\nSENDGRID_API_KEY=SG.xxx\n```\n\n**Application Settings:**\n```\nNODE_ENV=production\nPORT=3000\nNEXT_PUBLIC_APP_URL=https://myapp.com\n```\n\n**Feature Flags:**\n```\nENABLE_NEW_FEATURE=true\nDEBUG_MODE=false\n```\n\n## The .env File\n\n**Development setup:**\n\nCreate a `.env` file in your project root:\n```\n# .env (local development only - NEVER COMMIT)\nDATABASE_URL=postgresql://localhost:5432/devdb\nAPI_KEY=dev_key_123\nSECRET_KEY=local_secret\n```\n\n**Add to .gitignore:**\n```\n# .gitignore\n.env\n.env.local\n.env.*.local\n```\n\n**In your code:**\n```javascript\n// Node.js\nconst dbUrl = process.env.DATABASE_URL;\nconst apiKey = process.env.API_KEY;\n\n// Vite/React\nconst apiUrl = import.meta.env.VITE_API_URL;\n\n// Next.js\nconst dbUrl = process.env.DATABASE_URL;  // Server only\nconst publicUrl = process.env.NEXT_PUBLIC_API_URL;  // Exposed to browser\n```\n\n## Security Best Practices\n\n### 1. Never Commit Secrets\n\n**WRONG:**\n```javascript\n// config.js - DON'T DO THIS\nconst apiKey = 'sk_live_1234567890';\n```\n\n**RIGHT:**\n```javascript\n// config.js\nconst apiKey = process.env.API_KEY;\n```\n\n### 2. Use Different Keys for Different Environments\n\n```\nDevelopment:  API_KEY=dev_key_123\nStaging:      API_KEY=staging_key_456\nProduction:   API_KEY=prod_key_789 (strictest permissions)\n```\n\n### 3. Principle of Least Privilege\n\nProduction API keys should have:\n- Minimum required permissions\n- IP restrictions when possible\n- Usage limits\n- Regular rotation\n\n### 4. Public vs Private Variables\n\n**Private (server only):**\n```\nDATABASE_PASSWORD\nSTRIPE_SECRET_KEY\nJWT_SECRET\n```\n\n**Public (can expose to browser):**\n```\nNEXT_PUBLIC_APP_NAME\nVITE_API_ENDPOINT\nPUBLIC_MAPS_API_KEY (restricted)\n```\n\n**Framework conventions:**\n- Next.js: `NEXT_PUBLIC_` prefix = exposed to browser\n- Vite: `VITE_` prefix = exposed to browser\n- Create React App: `REACT_APP_` prefix = exposed to browser\n\n## Setting Variables in Production\n\n### Vercel Dashboard\n```\nProject Settings → Environment Variables\n\nKey: DATABASE_URL\nValue: postgresql://...\nEnvironment: Production (check)\n```\n\n### Netlify Dashboard\n```\nSite Settings → Environment → Environment Variables\n\nAdd variable:\n- Key: API_KEY\n- Values: Production: prod_key_123\n```\n\n### Railway Dashboard\n```\nProject → Variables\n\nAdd new variable:\nDATABASE_URL=postgresql://...\n```\n\n### Docker\n```dockerfile\n# Dockerfile\nENV NODE_ENV=production\nENV PORT=3000\n\n# Or at runtime\n# docker run -e DATABASE_URL=postgres://... myapp\n```\n\n### Cloud Providers (AWS, GCP, Azure)\n\n**AWS (ECS/Fargate):**\n```json\n{\n  \"environment\": [\n    {\"name\": \"DATABASE_URL\", \"value\": \"postgres://...\"},\n    {\"name\": \"NODE_ENV\", \"value\": \"production\"}\n  ]\n}\n```\n\n## .env File Examples\n\n### Development (.env.development)\n```\n# Local development settings\nNODE_ENV=development\nDATABASE_URL=postgresql://localhost:5432/devdb\nAPI_URL=http://localhost:3001\nDEBUG=true\n\n# Development API keys (restricted)\nSTRIPE_KEY=sk_test_...\n```\n\n### Production (.env.production - template only!)\n```\n# Production settings - SET THESE IN HOSTING PLATFORM, NOT IN CODE\nNODE_ENV=production\nDATABASE_URL=postgresql://prod-host:5432/proddb\nAPI_URL=https://api.myapp.com\nDEBUG=false\n\n# Production API keys (set in Vercel/Netlify dashboard)\n# STRIPE_KEY=sk_live_... (set in platform)\n```\n\n### Example .env.example (safe to commit)\n```\n# Copy this to .env and fill in your values\nDATABASE_URL=postgresql://localhost:5432/dbname\nAPI_URL=http://localhost:3000\nSTRIPE_KEY=sk_test_your_key_here\nJWT_SECRET=your_secret_here\n```\n\n## Testing Environment Variables\n\n```javascript\n// Check required variables on startup\nconst requiredEnvVars = ['DATABASE_URL', 'JWT_SECRET', 'API_KEY'];\n\nrequiredEnvVars.forEach(varName => {\n  if (!process.env[varName]) {\n    console.error(`Missing required env var: ${varName}`);\n  process.exit(1);\n  }\n});\n\nconsole.log('✓ All environment variables set');\n```",
+      "codeExample": "// Complete environment variable setup\n\n// 1. Project structure\n/*\nmy-app/\n├── .env                 # Local dev (gitignored)\n├── .env.example         # Template (committed)\n├── .env.production      # Production template (committed, no secrets)\n├── .gitignore\n└── src/\n    └── config/\n        └── env.js       # Environment configuration\n*/\n\n// 2. .env.example (safe to commit)\n/*\n# Copy to .env and fill in\nNODE_ENV=development\nDATABASE_URL=postgresql://user:password@localhost:5432/dbname\nAPI_URL=http://localhost:3000\nSTRIPE_SECRET_KEY=sk_test_...\nJWT_SECRET=your-secret-key\n*/\n\n// 3. .gitignore\n/*\n.env\n.env.local\n.env.*.local\n*/\n\n// 4. src/config/env.js - Centralized configuration\nconst getEnvVar = (name, defaultValue = undefined) => {\n  const value = process.env[name];\n  if (!value && !defaultValue) {\n    throw new Error(`Missing required environment variable: ${name}`);\n  }\n  return value || defaultValue;\n};\n\nexport const env = {\n  // Application\n  NODE_ENV: getEnvVar('NODE_ENV', 'development'),\n  PORT: parseInt(getEnvVar('PORT', '3000'), 10),\n  \n  // Database\n  DATABASE_URL: getEnvVar('DATABASE_URL'),\n  \n  // API Keys\n  STRIPE_SECRET_KEY: getEnvVar('STRIPE_SECRET_KEY'),\n  JWT_SECRET: getEnvVar('JWT_SECRET'),\n  \n  // Public (client-side) variables\n  NEXT_PUBLIC_API_URL: getEnvVar('NEXT_PUBLIC_API_URL'),\n  NEXT_PUBLIC_APP_NAME: getEnvVar('NEXT_PUBLIC_APP_NAME', 'MyApp'),\n};\n\n// 5. Using in Next.js API route\nimport { env } from '@/config/env';\n\nexport default function handler(req, res) {\n  // Server-side only - can access all env vars\n  const stripe = new Stripe(env.STRIPE_SECRET_KEY);\n  \n  // Process payment...\n}\n\n// 6. Using in React component (client-side)\n// Only NEXT_PUBLIC_ vars are available\nexport default function Page() {\n  // This works - NEXT_PUBLIC_ prefix\n  const apiUrl = process.env.NEXT_PUBLIC_API_URL;\n  \n  // This doesn't work - server only\n  // const dbUrl = process.env.DATABASE_URL; // undefined!\n  \n  return <div>API: {apiUrl}</div>;\n}\n\n// 7. docker-compose.yml example\nversion: '3.8'\nservices:\n  app:\n    build: .\n    environment:\n      - NODE_ENV=production\n      - DATABASE_URL=postgresql://postgres:password@db:5432/myapp\n      - JWT_SECRET=${JWT_SECRET}  # From host env\n    env_file:\n      - .env.production  # Load from file\n  \n  db:\n    image: postgres:15\n    environment:\n      - POSTGRES_PASSWORD=${DB_PASSWORD}"
+    },
+    {
+      "id": "domain-dns-basics",
+      "moduleId": "deployment-fundamentals",
+      "title": "Domain & DNS Basics",
+      "order": 4,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- A domain is your website's address (example.com)\n- DNS translates domains to IP addresses\n- DNS records control routing (A, CNAME, MX records)\n- SSL certificates enable HTTPS (secure connections)\n- Subdomains create separate sections (blog.example.com)\n\n---\n\n# Domain & DNS Basics\n\n## What is a Domain?\n\nA **domain name** is your website's address that people type in their browser.\n\n```\n┌─────────────┬──────────┬───────────┐\n│   www.      │ example  │    .com   │\n│  subdomain  │   name   │    TLD    │\n└─────────────┴──────────┴───────────┘\n```\n\n**Parts of a domain:**\n- **Subdomain:** www, blog, api (optional)\n- **Domain name:** Your unique identifier (example)\n- **TLD (Top Level Domain):** .com, .org, .net, .io\n\n**Popular TLDs:**\n- `.com` - Commercial (most common)\n- `.org` - Organizations\n- `.net` - Network services\n- `.io` - Tech companies, input/output\n- `.dev` - Developers\n- `.app` - Applications\n- `.co` - Company\n\n## How DNS Works\n\n**DNS (Domain Name System)** translates human-friendly domain names to computer-friendly IP addresses.\n\n```\nUser types: example.com\n       ↓\nDNS lookup\n       ↓\nReturns IP: 192.168.1.1\n       ↓\nBrowser connects to server at that IP\n```\n\n**Analogy:** DNS is like a phone book for the internet.\n- You know the name (domain)\n- DNS gives you the number (IP address)\n\n### DNS Resolution Process\n\n```\n1. Browser cache (checked first)\n2. OS cache\n3. Router cache\n4. ISP DNS resolver\n5. Root nameserver\n6. TLD nameserver (.com)\n7. Authoritative nameserver\n8. Return IP address\n```\n\n## Types of DNS Records\n\n### A Record (Address)\nMaps a domain to an IPv4 address.\n\n```\nType: A\nName: example.com\nValue: 192.168.1.1\nTTL: 3600\n```\n\n**Use for:** Pointing domains to servers with static IPs\n\n### AAAA Record\nMaps a domain to an IPv6 address.\n\n```\nType: AAAA\nName: example.com\nValue: 2001:db8::1\n```\n\n### CNAME Record (Canonical Name)\nPoints a domain to another domain.\n\n```\nType: CNAME\nName: www.example.com\nValue: example.com\n```\n\n**Use for:** Subdomains pointing to main domain\n\n**Important:** Can't use CNAME on root domain (example.com), only subdomains\n\n### MX Record (Mail Exchange)\nSpecifies mail servers for email.\n\n```\nType: MX\nName: example.com\nValue: 10 mail.example.com\nPriority: 10 (lower = higher priority)\n```\n\n**Use for:** Setting up email (Gmail, Outlook, etc.)\n\n### TXT Record (Text)\nHolds text information, often for verification.\n\n```\nType: TXT\nName: example.com\nValue: \"v=spf1 include:_spf.google.com ~all\"\n```\n\n**Use for:**\n- Domain verification (Google, Facebook)\n- SPF records (email security)\n- DMARC policies\n\n### NS Record (Nameserver)\nSpecifies which DNS servers are authoritative.\n\n```\nType: NS\nName: example.com\nValue: ns1.cloudflare.com\n```\n\n## SSL/TLS Certificates (HTTPS)\n\n**What is SSL/TLS?**\nSSL (Secure Sockets Layer) and TLS (Transport Layer Security) encrypt data between browser and server.\n\n```\nWithout SSL:  http://example.com  (not secure) ❌\nWith SSL:     https://example.com (secure) ✅\n```\n\n**Why HTTPS matters:**\n- ✅ Encrypts data (passwords, credit cards)\n- ✅ Verifies site identity\n- ✅ Required for modern web features (geolocation, camera)\n- ✅ Better SEO ranking\n- ✅ Browser shows padlock icon\n\n### How SSL Works\n\n```\n1. Browser requests secure connection\n2. Server sends SSL certificate\n3. Browser verifies certificate\n4. Keys are exchanged\n5. Encrypted connection established\n```\n\n### Getting SSL Certificates\n\n**Free options:**\n- Let's Encrypt (most popular)\n- Cloudflare (automatic)\n- Vercel/Netlify (included)\n\n**Paid options:**\n- DigiCert\n- Sectigo\n- GoDaddy\n\n**Auto-renewal (Let's Encrypt):**\n```bash\n# Using Certbot\nsudo certbot --nginx -d example.com -d www.example.com\n# Auto-renews every 90 days\n```\n\n## Subdomains\n\n**What are subdomains?**\nExtensions of your main domain for organizing content.\n\n```\nMain:     example.com\nBlog:     blog.example.com\nShop:     shop.example.com\nAPI:      api.example.com\nAdmin:    admin.example.com\nStaging:  staging.example.com\n```\n\n**Benefits:**\n- Organize different parts of your site\n- Separate environments (staging, production)\n- Different servers/technologies per subdomain\n- Better analytics tracking\n\n**Setting up subdomains:**\n\n```\nType: CNAME\nName: blog\nValue: blog-hosting-provider.com\n```\n\n## Common DNS Setups\n\n### Basic Website\n```\nA     example.com     → 192.168.1.1\nCNAME www             → example.com\n```\n\n### With Email (Google Workspace)\n```\nA     example.com     → 192.168.1.1\nMX    example.com     → 1 aspmx.l.google.com\nMX    example.com     → 5 alt1.aspmx.l.google.com\nTXT   example.com     → \"v=spf1 include:_spf.google.com ~all\"\n```\n\n### With CDN (Cloudflare)\n```\nA     example.com     → 104.21.XX.XX (Cloudflare)\nCNAME www             → example.com\n```\n\n## DNS Propagation\n\nWhen you change DNS records, it takes time to update globally (usually minutes to 48 hours).\n\n**Factors affecting speed:**\n- TTL (Time To Live) setting\n- DNS cache at ISPs\n- Geographic location\n\n**Check propagation:**\n```bash\n# Check DNS records\ndig example.com\nnslookup example.com\n\n# Online tools\n# whatsmydns.net\n# dnschecker.org\n```\n\n## Buying and Managing Domains\n\n**Registrars:**\n- Namecheap (recommended)\n- Cloudflare Registrar\n- Google Domains\n- GoDaddy\n\n**Tips:**\n- Enable privacy protection (hide your contact info)\n- Enable auto-renewal\n- Use registrar's DNS or point to Cloudflare\n- Keep login credentials secure",
+      "codeExample": "// DNS and domain configuration examples\n\n// 1. Common DNS Records for a typical web app\n/*\n┌─────────┬─────────────────┬──────────────────────────────┬────────┐\n│ Type    │ Name            │ Value                        │ TTL    │\n├─────────┼─────────────────┼──────────────────────────────┼────────┤\n│ A       │ @ (root)        │ 76.76.21.21 (Vercel IP)      │ 3600   │\n│ CNAME   │ www             │ cname.vercel-dns.com         │ 3600   │\n│ CNAME   │ api             │ api-server.herokuapp.com     │ 3600   │\n│ MX      │ @               │ 1 aspmx.l.google.com         │ 3600   │\n│ TXT     │ @               │ \"v=spf1 include:_spf.google.com ~all\" │ 3600 │\n└─────────┴─────────────────┴──────────────────────────────┴────────┘\n*/\n\n// 2. Cloudflare Page Rules (examples)\n/*\nRule 1: Always Use HTTPS\nURL: http://*example.com/*\nSetting: Always Use HTTPS → ON\n\nRule 2: Cache Static Assets\nURL: *example.com/static/*\nSettings:\n  - Cache Level: Cache Everything\n  - Edge Cache TTL: 1 month\n*/\n\n// 3. Nginx server block with SSL\n// /etc/nginx/sites-available/example.com\n\nserver {\n    listen 80;\n    server_name example.com www.example.com;\n    \n    # Redirect HTTP to HTTPS\n    return 301 https://$server_name$request_uri;\n}\n\nserver {\n    listen 443 ssl http2;\n    server_name example.com www.example.com;\n    \n    # SSL certificates (from Let's Encrypt)\n    ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;\n    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;\n    \n    # SSL settings\n    ssl_protocols TLSv1.2 TLSv1.3;\n    ssl_ciphers HIGH:!aNULL:!MD5;\n    ssl_prefer_server_ciphers on;\n    \n    # Serve the app\n    root /var/www/example.com;\n    index index.html;\n    \n    location / {\n        try_files $uri $uri/ /index.html;\n    }\n}\n\n// 4. Checking DNS programmatically (Node.js)\nconst dns = require('dns').promises;\n\nasync function checkDNS(domain) {\n  try {\n    // Get A records\n    const addresses = await dns.resolve4(domain);\n    console.log(`A records for ${domain}:`, addresses);\n    \n    // Get MX records\n    const mxRecords = await dns.resolveMx(domain);\n    console.log(`MX records:`, mxRecords);\n    \n    // Get TXT records\n    const txtRecords = await dns.resolveTxt(domain);\n    console.log(`TXT records:`, txtRecords);\n  } catch (error) {\n    console.error('DNS lookup failed:', error.message);\n  }\n}\n\ncheckDNS('example.com');\n\n// 5. Environment-specific domain configuration\nconst config = {\n  development: {\n    domain: 'localhost:3000',\n    protocol: 'http',\n    ssl: false\n  },\n  staging: {\n    domain: 'staging.example.com',\n    protocol: 'https',\n    ssl: true\n  },\n  production: {\n    domain: 'example.com',\n    protocol: 'https',\n    ssl: true\n  }\n};\n\nconst env = process.env.NODE_ENV || 'development';\nexport const { domain, protocol, ssl } = config[env];"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "deployment-ex-1",
+      "lessonId": "how-deployment-works",
+      "moduleId": "deployment-fundamentals",
+      "title": "Deployment Pipeline Quiz",
+      "difficulty": "easy",
+      "description": "Test your understanding of deployment basics.",
+      "instructions": "Choose the correct answer for each question.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What does a CDN do?",
+          "options": [
+            "Compiles your code",
+            "Delivers content from servers near the user",
+            "Manages your database",
+            "Writes your code"
+          ],
+          "correctAnswer": 1,
+          "explanation": "A CDN (Content Delivery Network) distributes your content across multiple servers worldwide, delivering it from the location closest to each user."
+        },
+        {
+          "question": "What happens during the 'build' process?",
+          "options": [
+            "The code is deployed to production",
+            "Dependencies are installed and code is compiled/optimized",
+            "Users can start using the app",
+            "Tests are written"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The build process installs dependencies, compiles/transpiles code, bundles files, and optimizes assets for production."
+        },
+        {
+          "question": "What is the purpose of a staging environment?",
+          "options": [
+            "To write code faster",
+            "To test changes before they go to production",
+            "To store backups",
+            "To train new developers"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Staging is a pre-production environment where you can test changes safely before deploying to production where real users will see them."
+        },
+        {
+          "question": "Which is NOT typically part of a deployment pipeline?",
+          "options": [
+            "Running tests",
+            "Building the application",
+            "Writing code from scratch",
+            "Deploying to servers"
+          ],
+          "correctAnswer": 2,
+          "explanation": "The deployment pipeline automates testing, building, and deploying - but you write the code yourself before triggering the pipeline."
+        }
+      ]
+    },
+    {
+      "id": "deployment-ex-2",
+      "lessonId": "static-vs-server-hosting",
+      "moduleId": "deployment-fundamentals",
+      "title": "Hosting Strategy Selection",
+      "difficulty": "medium",
+      "description": "Choose the appropriate hosting and rendering strategy.",
+      "instructions": "Select the best approach for each scenario.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "You have a company blog that updates once per week. Which approach is best?",
+          "options": [
+            "Server-side rendering on every request",
+            "Static site generation (SSG)",
+            "Client-side rendering only",
+            "WebSocket-based rendering"
+          ],
+          "correctAnswer": 1,
+          "explanation": "A blog with infrequent updates is perfect for SSG - fast, cheap, and content is built at deploy time."
+        },
+        {
+          "question": "You're building a real-time dashboard showing live stock prices. Which approach?",
+          "options": [
+            "Static site generation",
+            "Client-side rendering with API calls",
+            "Server-side rendering only",
+            "Email-based updates"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Real-time data requires client-side rendering to fetch and display updates without page reloads."
+        },
+        {
+          "question": "Your e-commerce product pages need good SEO. Which rendering strategy?",
+          "options": [
+            "Client-side rendering only",
+            "Static site generation or SSR",
+            "PDF generation",
+            "Image-only pages"
+          ],
+          "correctAnswer": 1,
+          "explanation": "For SEO, search engines need to see your content. SSG or SSR ensures HTML is available immediately for crawlers."
+        },
+        {
+          "question": "What's a key advantage of static hosting over server hosting?",
+          "options": [
+            "Can handle user authentication better",
+            "Faster, cheaper, and more secure",
+            "Better for real-time applications",
+            "Easier to add dynamic content"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Static hosting is faster (just serve files), cheaper, and more secure (no server code to exploit)."
+        }
+      ]
+    },
+    {
+      "id": "deployment-ex-3",
+      "lessonId": "environment-variables-production",
+      "moduleId": "deployment-fundamentals",
+      "title": "Environment Variables Security",
+      "difficulty": "medium",
+      "description": "Best practices for handling environment variables.",
+      "instructions": "Identify the correct approach for managing configuration.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Where should you store production API keys?",
+          "options": [
+            "In your code repository",
+            "In environment variables on your hosting platform",
+            "In a README file",
+            "In comments in your code"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Production secrets should be set as environment variables in your hosting platform (Vercel, AWS, etc.), never in code."
+        },
+        {
+          "question": "What should you add to .gitignore to protect environment files?",
+          "options": [
+            "node_modules",
+            ".env",
+            "package.json",
+            "README.md"
+          ],
+          "correctAnswer": 1,
+          "explanation": ".env files contain sensitive configuration and should be gitignored to prevent committing secrets."
+        },
+        {
+          "question": "In Next.js, which variable prefix makes an env var available in the browser?",
+          "options": [
+            "SECRET_",
+            "NEXT_PUBLIC_",
+            "BROWSER_",
+            "CLIENT_"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Next.js requires the NEXT_PUBLIC_ prefix to expose environment variables to the browser. Without it, they're server-only."
+        },
+        {
+          "question": "Why use environment variables instead of hardcoding values?",
+          "options": [
+            "It makes code run faster",
+            "Same code can run in different environments with different configs",
+            "It reduces file size",
+            "It's required by JavaScript"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Environment variables let you use the same codebase across development, staging, and production with different configurations."
+        }
+      ]
+    },
+    {
+      "id": "deployment-ex-4",
+      "lessonId": "domain-dns-basics",
+      "moduleId": "deployment-fundamentals",
+      "title": "DNS and Domains Quiz",
+      "difficulty": "easy",
+      "description": "Understanding domains, DNS, and SSL.",
+      "instructions": "Choose the correct answer for each question.",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What does DNS do?",
+          "options": [
+            "Creates your website content",
+            "Translates domain names to IP addresses",
+            "Encrypts your data",
+            "Hosts your database"
+          ],
+          "correctAnswer": 1,
+          "explanation": "DNS (Domain Name System) translates human-readable domain names (example.com) to computer-readable IP addresses."
+        },
+        {
+          "question": "Which DNS record points a domain to an IP address?",
+          "options": [
+            "MX record",
+            "CNAME record",
+            "A record",
+            "TXT record"
+          ],
+          "correctAnswer": 2,
+          "explanation": "An A (Address) record maps a domain directly to an IPv4 address."
+        },
+        {
+          "question": "What does HTTPS provide that HTTP doesn't?",
+          "options": [
+            "Faster loading",
+            "Encrypted, secure connection",
+            "Better colors",
+            "More storage"
+          ],
+          "correctAnswer": 1,
+          "explanation": "HTTPS encrypts data between browser and server, protecting passwords, credit cards, and other sensitive information."
+        },
+        {
+          "question": "Which organization provides free SSL certificates?",
+          "options": [
+            "Google",
+            "Let's Encrypt",
+            "Microsoft",
+            "Amazon"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Let's Encrypt is a nonprofit Certificate Authority providing free SSL/TLS certificates to enable HTTPS."
+        },
+        {
+          "question": "What would blog.example.com be called?",
+          "options": [
+            "A TLD",
+            "A subdomain",
+            "An IP address",
+            "A DNS record"
+          ],
+          "correctAnswer": 1,
+          "explanation": "blog.example.com is a subdomain - 'blog' is the subdomain, 'example' is the domain, '.com' is the TLD."
+        }
+      ]
+    }
+  ]
+}

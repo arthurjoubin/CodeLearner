@@ -1,0 +1,9 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import LearningPathPage from '../../components/LearningPathPage';
+import frontendData from '../../data/learning-paths/frontend.json';
+---
+
+<MainLayout title="Frontend Learning Path - HTML → JavaScript → React">
+	<LearningPathPage client:load pathData={frontendData} />
+</MainLayout>

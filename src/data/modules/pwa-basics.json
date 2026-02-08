@@ -6,7 +6,7 @@
     "icon": "Smartphone",
     "requiredXp": 1500,
     "color": "from-indigo-500 to-purple-600",
-    "courseId": "web-stack"
+    "courseId": "html-css-tailwind"
   },
   "lessons": [
     {

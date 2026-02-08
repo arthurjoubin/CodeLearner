@@ -1,211 +1,175 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
 import PageTitle from '../../components/PageTitle.astro';
-import LearningPathCardLarge from '../../components/LearningPathCardLarge.astro';
-import LearningPathCardSoon from '../../components/LearningPathCardSoon.astro';
 import { modules } from '../../data/modules';
 
-// Helper function to get module count for a course
-function getModuleCount(courseId: string): number {
-  return modules.filter(m => m.courseId === courseId).length;
+// Helper function to get module count for courses in a learning path
+function getModuleCountForCourses(courseIds: string[]): number {
+  return modules.filter(m => courseIds.includes(m.courseId)).length;
 }
 
 const learningPaths = [
 	{
-		id: 'html-css',
-		title: 'HTML & CSS',
-		description: 'Learn the building blocks of every web page: structure, styling, and Tailwind CSS',
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/html/html.png',
-		difficulty: 'beginner' as const,
-		get modules() { return getModuleCount('html-css'); },
-		estimatedTime: '20 hours',
-		topics: ['HTML', 'CSS', 'Flexbox', 'Grid', 'Tailwind', 'Responsive']
+		id: 'frontend',
+		title: 'Frontend',
+		description: 'Master frontend development from HTML to React',
+		courses: ['html-css-tailwind', 'javascript-core', 'react'],
+		courseLogos: [
+			'https://raw.githubusercontent.com/github/explore/main/topics/html/html.png',
+			'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png',
+			'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png'
+		],
+		borderColor: 'border-primary-400',
+		bgGradient: 'from-orange-50 via-yellow-50 to-cyan-50',
+		accentColor: 'bg-primary-100 text-primary-700 border-primary-300',
+		hoverColor: 'group-hover:text-primary-700',
+		arrowColor: 'text-primary-600',
+		get moduleCount() { return getModuleCountForCourses(this.courses); },
 	},
 	{
-		id: 'javascript',
-		title: 'JavaScript',
-		description: 'Master the language of the web: variables, functions, async, and DOM',
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png',
-		difficulty: 'beginner' as const,
-		get modules() { return getModuleCount('javascript'); },
-		estimatedTime: '25 hours',
-		topics: ['Variables', 'Functions', 'Arrays', 'Async/Await', 'DOM', 'ES6+']
+		id: 'backend',
+		title: 'Backend',
+		description: 'Build APIs and servers: Node.js → Databases → Auth & Security',
+		courses: ['node-express', 'databases', 'auth-security'],
+		courseLogos: [
+			'https://raw.githubusercontent.com/github/explore/main/topics/nodejs/nodejs.png',
+			'https://raw.githubusercontent.com/github/explore/main/topics/postgresql/postgresql.png',
+			'https://raw.githubusercontent.com/github/explore/main/topics/security/security.png'
+		],
+		borderColor: 'border-green-500',
+		bgGradient: 'from-green-50 via-blue-50 to-red-50',
+		accentColor: 'bg-green-100 text-green-700 border-green-300',
+		hoverColor: 'group-hover:text-green-700',
+		arrowColor: 'text-green-600',
+		get moduleCount() { return getModuleCountForCourses(this.courses); },
 	},
 	{
-		id: 'web-stack',
+		id: 'web-fundamentals',
 		title: 'Web Fundamentals',
-		description: 'Understand the full web development ecosystem from HTTP to deployment',
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png',
-		difficulty: 'beginner' as const,
-		get modules() { return getModuleCount('web-stack'); },
-		estimatedTime: '40 hours',
-		topics: ['HTTP', 'Frontend', 'Backend', 'Databases', 'DevOps', 'Security']
+		description: 'Master the essentials: Terminal → HTTP & DevTools → Git',
+		courses: ['dev-environment', 'git-mastery', 'javascript-core'],
+		courseLogos: [
+			'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png',
+			'https://raw.githubusercontent.com/github/explore/main/topics/chrome/chrome.png',
+			'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png'
+		],
+		borderColor: 'border-gray-500',
+		bgGradient: 'from-gray-50 via-cyan-50 to-orange-50',
+		accentColor: 'bg-gray-200 text-gray-700 border-gray-400',
+		hoverColor: 'group-hover:text-gray-700',
+		arrowColor: 'text-gray-600',
+		get moduleCount() { return getModuleCountForCourses(this.courses); },
 	},
 	{
-		id: 'git',
-		title: 'Git',
-		description: 'Master version control with Git and GitHub workflows',
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png',
-		difficulty: 'beginner' as const,
-		get modules() { return getModuleCount('git'); },
-		estimatedTime: '20 hours',
-		topics: ['Commits', 'Branches', 'Merging', 'Rebase', 'GitHub']
-	},
-	{
-		id: 'react',
-		title: 'React',
-		description: 'Master React and TypeScript from JSX to advanced patterns',
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png',
-		difficulty: 'medium' as const,
-		get modules() { return getModuleCount('react'); },
-		estimatedTime: '35 hours',
-		topics: ['JSX', 'Hooks', 'Context', 'Router', 'TypeScript', 'Testing']
-	},
-	{ 
-		id: 'fastapi', 
-		title: 'FastAPI', 
-		description: 'Build modern, fast APIs with Python and FastAPI', 
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png',
-		difficulty: 'medium' as const,
-		modules: 0,
-		estimatedTime: 'Coming soon',
-		topics: ['Python', 'APIs', 'Async', 'Pydantic', 'SQLModel'],
-		comingSoon: true
-	},
-	{ 
-		id: 'go', 
-		title: 'Go', 
-		description: 'Learn Go programming language for modern backend development', 
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/go/go.png',
-		difficulty: 'medium' as const,
-		modules: 0,
-		estimatedTime: 'Coming soon',
-		topics: ['Basics', 'Concurrency', 'HTTP', 'Testing'],
-		comingSoon: true
-	},
-	{ 
-		id: 'python', 
-		title: 'Python', 
-		description: 'Learn Python programming language from basics to advanced', 
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png',
-		difficulty: 'beginner' as const,
-		modules: 0,
-		estimatedTime: 'Coming soon',
-		topics: ['Basics', 'OOP', 'Data Structures', 'Libraries'],
-		comingSoon: true
+		id: 'fullstack',
+		title: 'Fullstack',
+		description: 'Master fullstack development with Next.js: Frontend + Backend in one codebase',
+		courses: ['nextjs'],
+		courseLogos: [
+			'https://raw.githubusercontent.com/github/explore/main/topics/nextjs/nextjs.png',
+			'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png',
+			'https://raw.githubusercontent.com/github/explore/main/topics/nodejs/nodejs.png'
+		],
+		borderColor: 'border-gray-700',
+		bgGradient: 'from-gray-100 via-gray-50 to-zinc-50',
+		accentColor: 'bg-gray-700 text-white border-gray-800',
+		hoverColor: 'group-hover:text-gray-800',
+		arrowColor: 'text-gray-700',
+		get moduleCount() { return getModuleCountForCourses(this.courses); },
 	},
 ];
-
-const availablePaths = learningPaths.filter(p => !p.comingSoon);
-const comingSoonPaths = learningPaths.filter(p => p.comingSoon);
 ---
 
-<MainLayout title="Learning Paths - Choose Your Journey">
+<MainLayout title="Learning Paths - Guided Progressions">
 	<div class="page-enter">
 		<!-- Header -->
 		<div class="mb-8">
 			<PageTitle>
 				<h1 slot="title" class="text-2xl font-black text-gray-900 uppercase">Learning Paths</h1>
 			</PageTitle>
-			<p class="text-gray-600 mt-2">Choose your learning journey and master modern development</p>
+			<p class="text-gray-600 mt-2">Structured multi-course progressions to master complete skill sets</p>
 		</div>
 
-		<!-- Frontend Journey Banner -->
-		<a href="/learning-path/frontend-journey" class="block mb-8 p-5 border-2 border-primary-400 rounded-lg bg-gradient-to-r from-orange-50 via-yellow-50 to-cyan-50 hover:shadow-lg transition-all group relative overflow-hidden">
-			<div class="absolute top-0 right-0 w-32 h-32 bg-primary-100 rounded-full -mr-16 -mt-16 opacity-30 group-hover:scale-150 transition-transform duration-500"></div>
-			<div class="relative z-10 flex items-center gap-4">
-				<div class="flex items-center gap-1">
-					<img src="https://raw.githubusercontent.com/github/explore/main/topics/html/html.png" alt="HTML" class="w-8 h-8" />
-					<span class="text-gray-400 font-bold">&rarr;</span>
-					<img src="https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png" alt="JS" class="w-8 h-8" />
-					<span class="text-gray-400 font-bold">&rarr;</span>
-					<img src="https://raw.githubusercontent.com/github/explore/main/topics/react/react.png" alt="React" class="w-8 h-8" />
+		<!-- Link to Courses -->
+		<a href="/courses" class="block mb-8 p-4 border-2 border-gray-300 rounded-lg bg-white hover:border-primary-400 hover:shadow-lg transition-all group">
+			<div class="flex items-center gap-3">
+				<div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+					<span class="text-gray-600 font-bold">📚</span>
 				</div>
 				<div class="flex-1">
-					<div class="flex items-center gap-2 mb-0.5">
-						<h2 class="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">Frontend Journey</h2>
-						<span class="text-[10px] px-2 py-0.5 bg-primary-100 text-primary-700 rounded border border-primary-300 uppercase font-bold">Guided Path</span>
-					</div>
-					<p class="text-xs text-gray-600">A structured 3-phase progression: HTML & CSS &rarr; JavaScript &rarr; React</p>
+					<h2 class="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">Looking for individual courses?</h2>
+					<p class="text-xs text-gray-600">Browse all available courses to learn specific technologies</p>
 				</div>
-				<span class="text-primary-600 font-bold text-lg group-hover:translate-x-1 transition-transform">&rarr;</span>
+				<span class="text-gray-400 font-bold text-lg group-hover:translate-x-1 group-hover:text-primary-600 transition-all">&rarr;</span>
 			</div>
 		</a>
 
-		<!-- Available Paths -->
-		<div class="grid md:grid-cols-2 gap-6 mb-8">
-			{availablePaths.map((path) => (
-				<LearningPathCardLarge
-					id={path.id}
-					title={path.title}
-					description={path.description}
-					logo={path.logo}
-					difficulty={path.difficulty}
-					modules={path.modules}
-					estimatedTime={path.estimatedTime}
-					topics={path.topics}
-				/>
+		<!-- Learning Paths -->
+		<div class="space-y-4 mb-8">
+			{learningPaths.map((path) => (
+				<a href={`/learning-path/${path.id}`} class={`block p-5 border-2 ${path.borderColor} rounded-lg bg-gradient-to-r ${path.bgGradient} hover:shadow-lg transition-all group relative overflow-hidden`}>
+					<div class="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -mr-16 -mt-16 opacity-30 group-hover:scale-150 transition-transform duration-500"></div>
+					<div class="relative z-10 flex items-center gap-4">
+						<div class="flex items-center gap-1">
+							{path.courseLogos.map((logo, idx) => (
+								<>
+									<img src={logo} alt="" class="w-8 h-8" />
+									{idx < path.courseLogos.length - 1 && (
+										<span class="text-gray-400 font-bold">&rarr;</span>
+									)}
+								</>
+							))}
+						</div>
+						<div class="flex-1">
+							<div class="flex items-center gap-2 mb-0.5">
+								<h2 class={`font-bold text-gray-900 ${path.hoverColor} transition-colors`}>{path.title} Learning Path</h2>
+								<span class={`text-[10px] px-2 py-0.5 rounded border uppercase font-bold ${path.accentColor}`}>Guided Path</span>
+							</div>
+							<p class="text-xs text-gray-600">{path.description}</p>
+							<p class="text-[10px] text-gray-500 mt-1">{path.courses.length} courses &middot; {path.moduleCount} modules</p>
+						</div>
+						<span class={`${path.arrowColor} font-bold text-lg group-hover:translate-x-1 transition-transform`}>&rarr;</span>
+					</div>
+				</a>
 			))}
-		</div>
-
-		<!-- Coming Soon Section -->
-		<div class="mb-8">
-			<div class="relative inline-block group mb-4">
-				<h2 class="font-bold text-sm uppercase text-gray-700 flex items-center gap-2">
-					<span class="w-2 h-2 bg-gray-400 rounded-full" />
-					Coming Soon
-				</h2>
-				<span class="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-gray-400 transition-all group-hover:w-full duration-300" />
-			</div>
-			
-			<div class="grid md:grid-cols-2 gap-4">
-				{comingSoonPaths.map((path) => (
-					<LearningPathCardSoon
-						title={path.title}
-						description={path.description}
-						logo={path.logo}
-						topics={path.topics}
-					/>
-				))}
-			</div>
 		</div>
 
 		<!-- Method Section -->
 		<div class="border-2 border-gray-300 rounded-lg p-6 bg-white">
 			<div class="relative inline-block group mb-4">
-				<h2 class="font-bold text-sm uppercase text-gray-700">Our Learning Method</h2>
+				<h2 class="font-bold text-sm uppercase text-gray-700">Why Learning Paths?</h2>
 				<span class="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
 			</div>
-			
+
 			<div class="grid md:grid-cols-3 gap-6">
 				<div>
 					<div class="flex items-center gap-2 mb-2">
 						<div class="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
 							<span class="text-primary-600 font-bold text-sm">1</span>
 						</div>
-						<h3 class="font-bold text-gray-900 text-sm">Learn by Doing</h3>
+						<h3 class="font-bold text-gray-900 text-sm">Structured Progression</h3>
 					</div>
-					<p class="text-xs text-gray-600 ml-10">Theory meets practice. Every lesson combines concepts with hands-on exercises.</p>
+					<p class="text-xs text-gray-600 ml-10">Learn in the right order. Each course builds on the previous one.</p>
 				</div>
-				
+
 				<div>
 					<div class="flex items-center gap-2 mb-2">
 						<div class="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
 							<span class="text-primary-600 font-bold text-sm">2</span>
 						</div>
-						<h3 class="font-bold text-gray-900 text-sm">Progress Through Practice</h3>
+						<h3 class="font-bold text-gray-900 text-sm">Complete Skill Set</h3>
 					</div>
-					<p class="text-xs text-gray-600 ml-10">Build real skills step by step. Your experience grows as you complete lessons.</p>
+					<p class="text-xs text-gray-600 ml-10">Master everything you need for a specific role or domain.</p>
 				</div>
-				
+
 				<div>
 					<div class="flex items-center gap-2 mb-2">
 						<div class="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
 							<span class="text-primary-600 font-bold text-sm">3</span>
 						</div>
-						<h3 class="font-bold text-gray-900 text-sm">Stay Active</h3>
+						<h3 class="font-bold text-gray-900 text-sm">Track Progress</h3>
 					</div>
-					<p class="text-xs text-gray-600 ml-10">No passive watching. You code, you test, you learn by taking action.</p>
+					<p class="text-xs text-gray-600 ml-10">See your advancement across all courses in the path.</p>
 				</div>
 			</div>
 		</div>

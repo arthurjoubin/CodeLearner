@@ -6,7 +6,7 @@
     "icon": "Cloud",
     "requiredXp": 300,
     "color": "from-blue-400 to-cyan-600",
-    "courseId": "git"
+    "courseId": "git-mastery"
   },
   "lessons": [
     {

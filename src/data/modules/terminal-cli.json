@@ -1,0 +1,86 @@
+{
+  "module": {
+    "id": "terminal-cli",
+    "title": "Terminal & CLI",
+    "description": "Master the command line interface for efficient development",
+    "icon": "Terminal",
+    "requiredXp": 0,
+    "color": "from-gray-600 to-gray-800",
+    "courseId": "internet-tools"
+  },
+  "lessons": [
+    {
+      "id": "cli-intro",
+      "moduleId": "terminal-cli",
+      "title": "Why Use the Terminal?",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Terminal gives direct access to your computer\n- Faster than GUIs for many tasks\n- Essential for development workflows\n- Same commands work across projects\n\n---\n\n# TODO: Content about terminal vs GUI, shells (bash, zsh), terminal emulators, why developers use CLI"
+    },
+    {
+      "id": "cli-navigation",
+      "moduleId": "terminal-cli",
+      "title": "Navigating the File System",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- pwd shows current directory\n- ls lists files and folders\n- cd changes directory\n- Paths: absolute (/Users/...) vs relative (./folder)\n\n---\n\n# TODO: Content about pwd, ls (with flags -la, -h), cd, . and .., ~, tab completion, clear"
+    },
+    {
+      "id": "cli-files",
+      "moduleId": "terminal-cli",
+      "title": "Working with Files",
+      "order": 3,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- touch creates files, mkdir creates folders\n- cp copies, mv moves/renames\n- rm removes (careful! no trash)\n- cat, less, head, tail to view files\n\n---\n\n# TODO: Content about file operations, flags (-r for recursive), wildcards (*), viewing file contents"
+    },
+    {
+      "id": "cli-permissions",
+      "moduleId": "terminal-cli",
+      "title": "File Permissions",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Three permissions: read (r), write (w), execute (x)\n- Three groups: owner, group, others\n- chmod changes permissions\n- sudo runs as administrator\n\n---\n\n# TODO: Content about reading permissions (ls -l), chmod numeric and symbolic, chown, when to use sudo"
+    },
+    {
+      "id": "cli-searching",
+      "moduleId": "terminal-cli",
+      "title": "Searching & Finding",
+      "order": 5,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- find locates files by name/type\n- grep searches file contents\n- Combine with pipes for power\n- Modern alternatives: fd, ripgrep\n\n---\n\n# TODO: Content about find command, grep basics, piping (|), common search patterns, modern tools (fd, rg)"
+    },
+    {
+      "id": "cli-env-variables",
+      "moduleId": "terminal-cli",
+      "title": "Environment Variables",
+      "order": 6,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Variables store configuration values\n- export makes them available to child processes\n- PATH tells shell where to find commands\n- .bashrc/.zshrc run on shell start\n\n---\n\n# TODO: Content about echo $VAR, export, PATH variable, shell config files, persistent vs session variables"
+    },
+    {
+      "id": "cli-redirection",
+      "moduleId": "terminal-cli",
+      "title": "Input/Output & Pipes",
+      "order": 7,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- > redirects output to file (overwrites)\n- >> appends to file\n- | pipes output to another command\n- Chain commands for powerful workflows\n\n---\n\n# TODO: Content about stdout/stderr, redirection operators, piping, tee, practical examples"
+    },
+    {
+      "id": "cli-scripts",
+      "moduleId": "terminal-cli",
+      "title": "Shell Scripts Basics",
+      "order": 8,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Scripts are files with shell commands\n- Start with #!/bin/bash (shebang)\n- Make executable with chmod +x\n- Variables, conditionals, loops\n\n---\n\n# TODO: Content about creating scripts, variables, if/else, for loops, functions, practical automation scripts"
+    },
+    {
+      "id": "cli-productivity",
+      "moduleId": "terminal-cli",
+      "title": "Terminal Productivity",
+      "order": 9,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- history shows past commands\n- Ctrl+R for reverse search\n- aliases create shortcuts\n- Tab completion saves typing\n\n---\n\n# TODO: Content about history, search, aliases, keyboard shortcuts, customizing prompt, useful tools (htop, tree)"
+    }
+  ],
+  "exercises": []
+}

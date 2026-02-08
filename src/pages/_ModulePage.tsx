@@ -4,15 +4,26 @@ import { useState } from 'react';
 import { useUser, UserProvider } from '../context/UserContext';
 import { getModule, getLessonsForModule, getExercisesForLesson, getLesson, getModulesForCourse, lessons as allLessons } from '../data/modules';
 import { CheckCircle, Lock, BookOpen, X, ArrowRight } from 'lucide-react';
-import Breadcrumb from '../components/Breadcrumb';
+import ProgressPath from '../components/ProgressPath';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { PageHeader } from '../components/PageTitle';
 
-const learningPathTitles: Record<string, string> = {
-  react: 'React',
-  'web-stack': 'Web Fundamentals',
-  git: 'Git',
-  fastapi: 'FastAPI',
+const courseTitles: Record<string, string> = {
+  'html-css-tailwind': 'HTML & CSS',
+  'javascript-core': 'JavaScript',
+  'react': 'React',
+  'advanced-topics': 'Web Stack',
+  'fastapi': 'FastAPI',
+  'git-mastery': 'Git',
+  'dev-environment': 'Web Fundamentals',
+  'frontend-production': 'Engineering Practices',
+  'node-express': 'Node.js & Express',
+  'databases': 'Databases & SQL',
+  'auth-security': 'Backend Advanced',
+  'nextjs': 'Next.js',
+  'deployment': 'Deployment',
+  'architecture-patterns': 'Architecture Patterns',
+  'internet-tools': 'Internet Tools',
 };
 
 interface ModulePageProps {
@@ -34,10 +45,20 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
     return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
   };
 
-  // Course-level progress for breadcrumb
+  // Course-level data
   const courseModules = module ? getModulesForCourse(module.courseId) : [];
   const courseLessons = courseModules.flatMap(m => allLessons.filter(l => l.moduleId === m.id));
-  const courseLessonsDone = courseLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
+  
+  // Module position in course (0-based index, need to +1 for position)
+  const moduleIndex = module ? courseModules.findIndex(m => m.id === module.id) : -1;
+  
+  // Count lessons in previous modules to get course position
+  let lessonsBeforeCurrentModule = 0;
+  for (let i = 0; i < moduleIndex; i++) {
+    lessonsBeforeCurrentModule += allLessons.filter(l => l.moduleId === courseModules[i].id).length;
+  }
+  // Position at start of current module (first lesson of this module)
+  const currentCoursePosition = lessonsBeforeCurrentModule + 1;
 
   const handleShowEssential = (lessonId: string) => {
     const lesson = getLesson(lessonId);
@@ -75,9 +96,11 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
   return (
     <div className="page-enter">
       <div className="mb-6">
-        <Breadcrumb items={[
-          { label: `${learningPathTitles[module.courseId] || module.courseId} (${courseLessonsDone}/${courseLessons.length})`, href: `/learning-path/${module.courseId}` },
-        ]} />
+        <div className="mb-2">
+          <ProgressPath items={[
+            { name: module.title, current: currentCoursePosition, total: courseLessons.length, href: `/courses/${module.courseId}`, parent: { name: courseTitles[module.courseId] || module.courseId, href: `/courses/${module.courseId}` } },
+          ]} />
+        </div>
         <PageHeader
           title={module.title}
           subtitle={module.description}

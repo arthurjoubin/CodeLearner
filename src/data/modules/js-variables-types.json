@@ -1,7 +1,7 @@
 {
   "module": {
     "id": "js-variables-types",
-    "courseId": "javascript",
+    "courseId": "javascript-core",
     "title": "Variables & Data Types",
     "description": "Master JavaScript variables, data types, and operators",
     "icon": "Code",

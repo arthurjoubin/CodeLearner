@@ -1,7 +1,7 @@
 {
   "module": {
     "id": "html-fundamentals",
-    "courseId": "html-css",
+    "courseId": "html-css-tailwind",
     "title": "HTML Fundamentals",
     "description": "Learn the building blocks of every web page",
     "icon": "Code",

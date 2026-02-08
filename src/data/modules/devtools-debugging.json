@@ -1,0 +1,119 @@
+{
+  "module": {
+    "id": "devtools-debugging",
+    "title": "DevTools & Debugging",
+    "description": "Master browser DevTools and debugging techniques to understand how your code works",
+    "icon": "Bug",
+    "requiredXp": 400,
+    "color": "from-purple-500 to-indigo-600",
+    "courseId": "internet-tools"
+  },
+  "lessons": [
+    {
+      "id": "devtools-intro",
+      "moduleId": "devtools-debugging",
+      "title": "Browser DevTools Overview",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- DevTools are built into every modern browser\n- F12 or Cmd+Option+I to open\n- Elements tab shows live DOM\n- Console is for JavaScript and logging\n- Network tab shows all requests\n\n---\n\n# Browser DevTools: Your Debugging Superpower\n\n## Opening DevTools\n\n**Keyboard shortcuts:**\n- Chrome/Edge/Firefox: `F12` or `Cmd+Option+I` (Mac) / `Ctrl+Shift+I` (Windows)\n- Safari: First enable in Preferences → Advanced → Show Develop menu\n\n**Right-click menu:**\n- Right-click anywhere → Inspect\n- Right-click element → Inspect\n\n## The Main Panels\n\n### 1. Elements Panel\n\nSee and edit the live DOM:\n- View the HTML structure\n- Edit text and attributes directly\n- See computed styles\n- Test CSS changes in real-time\n\n```javascript\n// In Console, you can access selected element with $0\n$0.style.backgroundColor = 'red';\n```\n\n### 2. Console Panel\n\nYour JavaScript playground:\n- Run any JavaScript code\n- View console.log() output\n- See errors and warnings\n- Use $(), $$() as shortcuts for querySelector\n\n```javascript\n// Console shortcuts\n$('h1')           // First h1 element\n$$('.btn')        // All elements with class 'btn'\n$0                // Currently selected element in Elements panel\n```\n\n### 3. Network Panel\n\nMonitor all network activity:\n- See every HTTP request\n- Check response times\n- View request/response headers\n- Filter by type (XHR, JS, CSS, Img)\n\n**Key features:**\n- Disable cache checkbox (for testing)\n- Preserve log (keeps history)\n- Throttling (simulate slow connections)\n\n### 4. Sources Panel\n\nDebug JavaScript:\n- Set breakpoints\n- Step through code execution\n- View call stack\n- Inspect variables\n\n### 5. Application Panel\n\nInspect browser storage:\n- Local Storage\n- Session Storage\n- Cookies\n- Service Workers\n- IndexedDB\n\n### 6. Performance Panel\n\nProfile runtime performance:\n- Record and analyze CPU usage\n- Find performance bottlenecks\n- View flame charts\n\n## Tips for Productivity\n\n1. **Use Command Palette**: `Cmd+Shift+P` to quickly open any panel\n2. **Docking options**: Undock, dock to bottom, left, or right\n3. **Device Mode**: Toggle device toolbar to test responsive designs\n4. **Screenshot**: Capture full page screenshots from command palette"
+    },
+    {
+      "id": "console-mastery",
+      "moduleId": "devtools-debugging",
+      "title": "Console Mastery",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- console.log() has many variants: warn, error, info, table\n- console.table() for arrays/objects\n- Styled console output with %c\n- console.time() for performance timing\n- Assertions with console.assert()\n\n---\n\n# Console API Deep Dive\n\n## Basic Logging\n\n```javascript\nconsole.log('Hello World');\nconsole.warn('This is a warning');\nconsole.error('This is an error');\nconsole.info('Information message');\n```\n\n## Advanced Logging\n\n### String Substitution\n\n```javascript\n// %s - string\n// %d or %i - integer\n// %f - float\n// %o - object\n// %c - CSS styles\n\nconsole.log('User %s has %d points', 'Alice', 100);\nconsole.log('%cStyled text', 'color: red; font-size: 20px;');\n```\n\n### Grouping\n\n```javascript\nconsole.group('User Details');\nconsole.log('Name: Alice');\nconsole.log('Age: 30');\nconsole.groupEnd();\n\n// Collapsed by default\nconsole.groupCollapsed('API Response');\nconsole.log('Status: 200');\nconsole.log('Data: {...}');\nconsole.groupEnd();\n```\n\n### Tables\n\n```javascript\nconst users = [\n  { name: 'Alice', age: 30, city: 'NYC' },\n  { name: 'Bob', age: 25, city: 'LA' },\n  { name: 'Carol', age: 35, city: 'Chicago' }\n];\n\nconsole.table(users);\nconsole.table(users, ['name', 'age']); // Specific columns\n```\n\n### Timing\n\n```javascript\nconsole.time('operation');\n// ... code to measure\nconsole.timeEnd('operation');\n\n// Labeled timers\nconsole.time('api-call');\nfetch('/api/data')\n  .then(() => console.timeEnd('api-call'));\n```\n\n### Assertions\n\n```javascript\n// Only logs if condition is false\nconsole.assert(user.age >= 18, 'User must be 18 or older');\nconsole.assert(response.ok, 'API request failed', response);\n```\n\n### Tracing\n\n```javascript\n// Show stack trace without throwing error\nfunction processData() {\n  console.trace('Processing data');\n  // ...\n}\n\nprocessData();\n// Output shows the call stack\n```\n\n### Counting\n\n```javascript\nconsole.count('button-click');\nconsole.count('button-click');\nconsole.countReset('button-click');\n```\n\n## Console Shortcuts in DevTools\n\n```javascript\n// $_ returns the last evaluated expression\n2 + 2  // 4\n$_ * 2 // 8\n\n// $0 - $4 access last 5 selected elements\n$0  // Currently selected element\n$1  // Previously selected element\n\n// $(selector) - querySelector shorthand\n$('h1')  // First h1\n\n// $$(selector) - querySelectorAll shorthand\n$$('button')  // All buttons\n```"
+    },
+    {
+      "id": "debugging-js",
+      "moduleId": "devtools-debugging",
+      "title": "Debugging JavaScript",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- debugger; statement pauses execution\n- Breakpoints stop code at specific lines\n- Conditional breakpoints only pause when condition is met\n- Watch expressions monitor variable values\n- Call stack shows how you got to current line\n\n---\n\n# JavaScript Debugging Techniques\n\n## The debugger Statement\n\n```javascript\nfunction calculateTotal(items) {\n  let total = 0;\n  \n  for (const item of items) {\n    debugger;  // Execution pauses here in DevTools\n    total += item.price * item.quantity;\n  }\n  \n  return total;\n}\n```\n\n## Setting Breakpoints\n\n**In Sources panel:**\n1. Find your file in the file tree\n2. Click the line number where you want to pause\n3. A blue marker appears\n\n**Types of breakpoints:**\n\n### Regular Breakpoint\nStops execution every time that line runs.\n\n### Conditional Breakpoint\nOnly stops when a condition is true:\n\n```javascript\n// Right-click line number → Add conditional breakpoint\n// Enter condition: i > 5 && user === null\n```\n\n### DOM Breakpoint\nStops when DOM changes:\n- Right-click element in Elements panel\n- Break on: Subtree modifications / Attribute modifications / Node removal\n\n### XHR/Fetch Breakpoint\nStops when specific URL is requested:\n- Sources panel → XHR/fetch Breakpoints\n- Add URL pattern to break on\n\n## Debugging Controls\n\nOnce paused at a breakpoint:\n\n- **Resume** (F8): Continue until next breakpoint\n- **Step Over** (F10): Execute current line, move to next\n- **Step Into** (F11): Enter function call on current line\n- **Step Out** (Shift+F11): Complete current function, return to caller\n\n## Inspecting Variables\n\n**Scope panel** shows all accessible variables:\n- Local: Variables in current function\n- Closure: Variables from outer functions\n- Global: Global scope variables\n\n**Watch expressions:**\n- Add expressions to monitor\n- Updates as you step through code\n- Example: `user.name.toUpperCase()`\n\n**Hover to inspect:**\n- Hover over any variable in code to see its value\n- Works for properties and expressions\n\n## Call Stack\n\nShows the execution path:\n```\nmultiply (app.js:15)\ncalculateTotal (app.js:8)\nprocessOrder (app.js:25)\n```\n\nClick any function to jump to that context.\n\n## Debugging Async Code\n\n**Promises:**\n```javascript\n// Set breakpoints in .then() and .catch()\nfetch('/api/data')\n  .then(response => {\n    debugger;  // Inspect the response\n    return response.json();\n  })\n  .then(data => {\n    debugger;  // Inspect parsed data\n    updateUI(data);\n  });\n```\n\n**Async/Await:**\n```javascript\nasync function loadData() {\n  debugger;  // Check before fetch\n  const response = await fetch('/api/data');\n  debugger;  // Check response\n  const data = await response.json();\n  debugger;  // Check data\n  return data;\n}\n```\n\n## Source Maps\n\nWhen using transpiled code (TypeScript, Babel, Webpack):\n- Enable 'Enable JavaScript source maps' in settings\n- Debug original source code, not compiled bundle\n- Set breakpoints in original .ts/.jsx files"
+    },
+    {
+      "id": "network-debugging",
+      "moduleId": "devtools-debugging",
+      "title": "Network Debugging",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Network panel shows all HTTP requests\n- Check status codes, response times, payload sizes\n- Filter requests by type (XHR, JS, CSS, etc.)\n- View request/response headers and bodies\n- Replay requests by right-clicking\n\n---\n\n# Network Panel Mastery\n\n## Understanding the Waterfall\n\nEach row shows:\n- **Name**: Filename or endpoint\n- **Status**: HTTP status code (200, 404, 500, etc.)\n- **Type**: Resource type (xhr, script, stylesheet, img)\n- **Initiator**: What triggered the request\n- **Size**: Response size\n- **Time**: Total duration\n- **Waterfall**: Visual timeline of request phases\n\n## Common Status Codes\n\n**Success (2xx):**\n- 200 OK: Request successful\n- 201 Created: Resource created\n- 204 No Content: Success, no body\n\n**Redirects (3xx):**\n- 301 Moved Permanently\n- 302 Found (temporary redirect)\n- 304 Not Modified (cached)\n\n**Client Errors (4xx):**\n- 400 Bad Request: Invalid syntax\n- 401 Unauthorized: Need authentication\n- 403 Forbidden: No permission\n- 404 Not Found: Resource doesn't exist\n- 422 Unprocessable Entity: Validation failed\n\n**Server Errors (5xx):**\n- 500 Internal Server Error\n- 502 Bad Gateway\n- 503 Service Unavailable\n\n## Inspecting Requests\n\n**Click any request to see:**\n\n### Headers Tab\n- Request URL, method\n- Status code\n- Request headers (what browser sent)\n- Response headers (what server returned)\n\n### Payload Tab\n- Form data or JSON body sent with request\n- Query string parameters\n\n### Preview/Response Tabs\n- Formatted response data\n- Raw response text\n\n### Timing Tab\n- Queuing\n- DNS lookup\n- SSL handshake\n- Request sent\n- Waiting (TTFB - Time To First Byte)\n- Content download\n\n## Useful Features\n\n### Filtering\n- Type filter: All, XHR, JS, CSS, Img, Media, Font, Doc, WS, Wasm, Manifest, Other\n- Search box: Filter by URL or method\n- Regex search supported\n\n### Preserving Log\n- Check 'Preserve log' to keep requests between page loads\n- Useful for debugging redirects\n\n### Disabling Cache\n- Check 'Disable cache' while DevTools is open\n- Ensures fresh resources\n\n### Throttling\n- Simulate slow connections\n- Presets: Fast 3G, Slow 3G, Offline\n- Custom profiles available\n\n### Copying Requests\n\nRight-click any request:\n- Copy URL\n- Copy as cURL (test in terminal)\n- Copy as fetch (test in console)\n- Copy as PowerShell\n\n## HAR Files\n\nExport all network activity:\n- Right-click in Network panel → Save all as HAR\n- Can be imported later for analysis\n- Share with team members\n- Use online HAR analyzers"
+    },
+    {
+      "id": "performance-profiling",
+      "moduleId": "devtools-debugging",
+      "title": "Performance Profiling",
+      "order": 5,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- Performance panel records runtime activity\n- Flame charts show function execution time\n- Look for long tasks (>50ms) that block main thread\n- Memory panel detects memory leaks\n- Lighthouse runs automated audits\n\n---\n\n# Performance Analysis\n\n## Recording Performance\n\n1. Open Performance panel\n2. Click record button (circle)\n3. Perform the action to analyze\n4. Click stop\n\n## Reading the Timeline\n\n**Top section (Overview):**\n- CPU usage (yellow = JavaScript)\n- Network activity (green)\n- FPS (frames per second)\n\n**Main section (Flame Chart):**\n- Each bar = a function call\n- Width = duration\n- Color = type (yellow=JS, purple=render, green=paint)\n- Nested calls = function stack\n\n**Bottom-up view:**\n- Shows which functions consumed most time\n- Aggregate view of all calls\n\n## Identifying Issues\n\n### Long Tasks\n- Any task >50ms blocks the main thread\n- Shows red triangle warning\n- Causes jank/stuttering\n\n### Forced Synchronous Layout\n- Reading layout property after writing\n- Forces browser to recalculate layout synchronously\n- Expensive!\n\n```javascript\n// BAD: Forced synchronous layout\nconst height = element.offsetHeight;  // Read\nelement.style.width = '100px';         // Write\nconst newHeight = element.offsetHeight; // Read again (forced!)\n\n// GOOD: Batch reads and writes\nconst height = element.offsetHeight;  // Read\n// ... other reads ...\nelement.style.width = '100px';         // Write\n// ... other writes ...\n```\n\n### Memory Leaks\n\n**Common causes:**\n1. Global variables\n2. Forgotten timers/intervals\n3. DOM references kept after removal\n4. Event listeners not removed\n5. Closures holding large objects\n\n**Memory panel:**\n- Take heap snapshots\n- Compare snapshots to find leaks\n- Look for growing object counts\n\n## Lighthouse Audits\n\nBuilt-in performance auditing tool:\n\n**Categories:**\n- Performance (speed metrics)\n- Accessibility\n- Best Practices\n- SEO\n- PWA\n\n**Key metrics:**\n- First Contentful Paint (FCP)\n- Largest Contentful Paint (LCP)\n- Total Blocking Time (TBT)\n- Cumulative Layout Shift (CLS)\n- Speed Index\n\n**Opportunities:**\n- Specific suggestions for improvement\n- Estimated savings\n- Learn more links\n\n## Performance Best Practices\n\n1. **Minimize main thread work**\n2. **Reduce JavaScript execution time**\n3. **Eliminate render-blocking resources**\n4. **Properly size images**\n5. **Efficiently encode images**\n6. **Reduce server response times**\n7. **Avoid chaining critical requests**\n8. **Keep request counts low**\n9. **Minimize transfer sizes**"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "devtools-ex-1",
+      "type": "quiz",
+      "lessonId": "devtools-intro",
+      "moduleId": "devtools-debugging",
+      "title": "DevTools Basics",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "question": "Which keyboard shortcut opens DevTools in Chrome?",
+          "options": [
+            "Ctrl+Shift+D",
+            "F12 or Ctrl+Shift+I",
+            "Ctrl+Alt+Delete",
+            "Cmd+Option+S"
+          ],
+          "correctAnswer": 1,
+          "explanation": "F12 or Ctrl+Shift+I (Cmd+Option+I on Mac) opens DevTools in most browsers."
+        },
+        {
+          "question": "Which panel do you use to view and edit the live DOM?",
+          "options": [
+            "Console",
+            "Network",
+            "Elements",
+            "Sources"
+          ],
+          "correctAnswer": 2,
+          "explanation": "The Elements panel shows the live DOM structure and allows editing HTML and CSS in real-time."
+        }
+      ]
+    },
+    {
+      "id": "devtools-ex-2",
+      "type": "quiz",
+      "lessonId": "debugging-js",
+      "moduleId": "devtools-debugging",
+      "title": "Debugging Concepts",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "question": "What does the 'debugger;' statement do?",
+          "options": [
+            "Logs a debug message to console",
+            "Pauses JavaScript execution if DevTools is open",
+            "Enables debug mode for the application",
+            "Throws a debug error"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The debugger statement pauses JavaScript execution at that point when DevTools is open, allowing you to inspect variables and step through code."
+        },
+        {
+          "question": "What is the difference between 'Step Over' and 'Step Into'?",
+          "options": [
+            "They do the same thing",
+            "Step Over executes current line and moves to next, Step Into enters function calls",
+            "Step Over is faster than Step Into",
+            "Step Into only works with async functions"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Step Over (F10) executes the current line and moves to the next without entering function calls. Step Into (F11) enters function calls on the current line."
+        }
+      ]
+    }
+  ]
+}

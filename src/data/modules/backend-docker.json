@@ -1,0 +1,170 @@
+{
+  "module": {
+    "id": "backend-docker",
+    "title": "Backend: Docker and Deployment",
+    "description": "Containerize and deploy backend applications with Docker and cloud platforms",
+    "icon": "Container",
+    "requiredXp": 1600,
+    "color": "from-blue-600 to-indigo-700",
+    "courseId": "deployment"
+  },
+  "lessons": [
+    {
+      "id": "why-docker",
+      "moduleId": "backend-docker",
+      "title": "Why Docker?",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Containers are lightweight compared to VMs\n- Docker ensures consistency across development, staging, and production\n- Solves the \"works on my machine\" problem\n- Applications run in isolated environments with all dependencies\n\n---\n\n# Understanding Containers\n\n## Containers vs Virtual Machines\n\n### Virtual Machines (VMs)\n- Run a complete operating system on virtualized hardware\n- Heavy: include the OS kernel, system libraries, and applications\n- Slow to start (minutes)\n- Resource-intensive: each VM needs dedicated RAM and CPU\n\n### Containers\n- Share the host OS kernel\n- Lightweight: include only the application and its dependencies\n- Fast to start (seconds)\n- Efficient: use host resources dynamically\n\n```\nVMs: App + Bin/Libs + Guest OS + Hypervisor + Host OS + Hardware\nContainers: App + Bin/Libs + Container Engine + Host OS + Hardware\n```\n\n## The \"Works on My Machine\" Problem\n\nYou have probably experienced this:\n```bash\n# Developer A's machine\nnode --version  # v18.12.1\nnpm --version   # 8.19.2\n\n# Developer B's machine  \nnode --version  # v16.14.0\nnpm --version   # 8.3.1\n\n# Production server\nnode --version  # v14.19.0\n```\n\nDifferent versions lead to:\n- Incompatible dependencies\n- Different behavior\n- Bugs that only appear in production\n- Hours lost debugging environment issues\n\n## Docker to the Rescue\n\nDocker packages your application with everything it needs:\n- Code\n- Runtime (Node.js, Python, etc.)\n- System tools\n- System libraries\n- Configuration files\n\n### Key Benefits\n\n1. **Consistency**: Same environment everywhere\n   - Developer laptop\n   - CI/CD pipeline\n   - Staging server\n   - Production server\n\n2. **Isolation**: Each container runs independently\n   - No conflicts between dependencies\n   - Multiple versions of the same tool side-by-side\n\n3. **Portability**: Run anywhere Docker runs\n   - Cloud providers (AWS, GCP, Azure)\n   - On-premises servers\n   - Developer laptops\n\n4. **Efficiency**: Share the host OS kernel\n   - Smaller footprint than VMs\n   - Faster startup\n   - Better resource utilization\n\n## Docker Architecture\n\n```\n┌─────────────────────────────────────────┐\n│         Docker Client (CLI)             │\n└─────────────────┬───────────────────────┘\n                  │\n                  ▼\n┌─────────────────────────────────────────┐\n│         Docker Daemon (dockerd)         │\n│  ┌─────────────┐    ┌───────────────┐   │\n│  │   Images    │    │  Containers   │   │\n│  │  (templates)│    │  (running)    │   │\n│  └─────────────┘    └───────────────┘   │\n│  ┌─────────────┐    ┌───────────────┐   │\n│  │   Networks  │    │    Volumes    │   │\n│  └─────────────┘    └───────────────┘   │\n└─────────────────────────────────────────┘\n```\n\n## Key Concepts\n\n| Term | Description | Analogy |\n|------|-------------|---------|\n| **Image** | Read-only template with code + dependencies | Class blueprint |\n| **Container** | Running instance of an image | Object instance |\n| **Dockerfile** | Instructions to build an image | Recipe |\n| **Registry** | Repository for images (Docker Hub) | App Store |\n| **Volume** | Persistent data storage | External hard drive |",
+      "codeExample": "# Check Docker installation\ndocker --version\n\n# Run your first container\ndocker run hello-world\n\n# List running containers\ndocker ps\n\n# List all containers (including stopped)\ndocker ps -a\n\n# Pull an image from Docker Hub\ndocker pull node:20-alpine\n\n# Run an interactive container\ndocker run -it node:20-alpine sh\n\n# Inside the container:\nnode --version  # v20.x.x (same everywhere!)"
+    },
+    {
+      "id": "dockerfile-basics",
+      "moduleId": "backend-docker",
+      "title": "Dockerfile Basics",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Dockerfile defines how to build an image\n- FROM: base image to start from\n- COPY: copy files from host to image\n- RUN: execute commands during build\n- CMD: default command when container starts\n- Each instruction creates a new layer\n\n---\n\n# Writing Your First Dockerfile\n\nA Dockerfile is a text file with instructions to build a Docker image.\n\n## Basic Structure\n\n```dockerfile\n# Base image - official Node.js image\nFROM node:20-alpine\n\n# Set working directory inside container\nWORKDIR /app\n\n# Copy package files first (for layer caching)\nCOPY package*.json ./\n\n# Install dependencies\nRUN npm install\n\n# Copy the rest of the application\nCOPY . .\n\n# Expose the port your app uses\nEXPOSE 3000\n\n# Command to run when container starts\nCMD [\"node\", \"server.js\"]\n```\n\n## Key Instructions Explained\n\n### FROM\nSets the base image - every Dockerfile must start with this.\n\n```dockerfile\n# Official Node.js image\nFROM node:20-alpine\n\n# Specific version with Alpine Linux (smaller)\nFROM node:20.11.0-alpine3.19\n\n# Multi-stage build (advanced)\nFROM node:20-alpine AS builder\n```\n\n### WORKDIR\nSets the working directory for subsequent instructions.\n\n```dockerfile\n# Good - creates and changes to /app\nWORKDIR /app\n\n# Bad - multiple RUN cd commands\nRUN cd /app && npm install\n```\n\n### COPY vs ADD\n\n```dockerfile\n# COPY - simple file/directory copy (preferred)\nCOPY . .\nCOPY package.json package-lock.json ./\n\n# ADD - can extract archives and fetch URLs\nADD https://example.com/file.tar.gz /app/\nADD local-archive.tar.gz /app/\n```\n\n> Use COPY unless you need ADD's extra features.\n\n### RUN\nExecutes commands during the image build.\n\n```dockerfile\n# Install dependencies\nRUN npm install\n\n# Multiple commands - chain with &&\nRUN apt-get update && apt-get install -y \\ git \\ curl \\ && rm -rf /var/lib/apt/lists/*\n```\n\n### CMD vs ENTRYPOINT\n\n```dockerfile\n# CMD - can be overridden when running container\nCMD [\"node\", \"server.js\"]\n\n# ENTRYPOINT - fixed command, arguments can be passed\nENTRYPOINT [\"node\"]\nCMD [\"server.js\"]\n```\n\n## Layer Caching\n\nDocker builds images in layers. Each instruction creates a cached layer:\n\n```dockerfile\n# Layer 1: Base image\nFROM node:20-alpine\n\n# Layer 2: Set working directory\nWORKDIR /app\n\n# Layer 3: Copy package files (changes rarely)\nCOPY package*.json ./\n\n# Layer 4: Install dependencies (changes sometimes)\nRUN npm install\n\n# Layer 5: Copy source code (changes frequently)\nCOPY . .\n\n# Layer 6: Expose port\nEXPOSE 3000\n\n# Layer 7: Start command\nCMD [\"node\", \"server.js\"]\n```\n\n### Optimization Strategy\n\nOrder instructions from least changing to most changing:\n\n```dockerfile\nFROM node:20-alpine\nWORKDIR /app\n\n# 1. Copy dependency files\nCOPY package*.json ./\n\n# 2. Install dependencies (cached unless package.json changes)\nRUN npm ci --only=production\n\n# 3. Copy application code (changes frequently)\nCOPY . .\n\nCMD [\"node\", \"index.js\"]\n```\n\n## Building Images\n\n```bash\n# Build with default Dockerfile\ndocker build -t myapp .\n\n# Build with specific Dockerfile\ndocker build -f Dockerfile.prod -t myapp:prod .\n\n# Build with tag\ndocker build -t myapp:1.0.0 .\n\n# Build without cache\ndocker build --no-cache -t myapp .\n\n# View image layers\ndocker history myapp\n```\n\n## Running Containers\n\n```bash\n# Run in foreground\ndocker run myapp\n\n# Run in background (detached)\ndocker run -d myapp\n\n# Map ports (host:container)\ndocker run -p 3000:3000 myapp\n\n# With environment variables\ndocker run -e NODE_ENV=production -e PORT=3000 myapp\n\n# With env file\ndocker run --env-file .env myapp\n\n# Interactive with terminal\ndocker run -it myapp sh\n```\n\n## Multi-Stage Builds\n\nReduce final image size by separating build and runtime:\n\n```dockerfile\n# Stage 1: Build\nFROM node:20-alpine AS builder\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\n# Stage 2: Production\nFROM node:20-alpine\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci --only=production\nCOPY --from=builder /app/dist ./dist\nEXPOSE 3000\nCMD [\"node\", \"dist/index.js\"]\n```\n\nBenefits:\n- Smaller production images\n- No build tools in production\n- No source code in production\n- Better security",
+      "codeExample": "# Dockerfile for a Node.js Express app\nFROM node:20-alpine\n\n# Create app directory\nWORKDIR /usr/src/app\n\n# Copy dependency definitions\nCOPY package*.json ./\n\n# Install dependencies\nRUN npm ci --only=production\n\n# Copy app source\nCOPY . .\n\n# Create non-root user for security\nRUN addgroup -g 1001 -S nodejs\nRUN adduser -S nodejs -u 1001\nUSER nodejs\n\n# Expose port\nEXPOSE 3000\n\n# Health check\nHEALTHCHECK --interval=30s --timeout=3s \\\n  CMD node healthcheck.js || exit 1\n\n# Start app\nCMD [\"node\", \"index.js\"]"
+    },
+    {
+      "id": "docker-compose",
+      "moduleId": "backend-docker",
+      "title": "Docker Compose",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- docker-compose manages multi-container applications\n- Define services, networks, and volumes in YAML\n- Perfect for development environments\n- One command to start your entire stack\n\n---\n\n# Docker Compose Fundamentals\n\nModern applications often need multiple services: a web server, database, cache, etc. Docker Compose lets you define and run these multi-container applications.\n\n## Why Docker Compose?\n\nWithout Compose, you would run:\n```bash\n# Terminal 1 - Database\ndocker run -d \\\n  --name myapp-db \\\n  -e POSTGRES_PASSWORD=secret \\\n  -v postgres_data:/var/lib/postgresql/data \\\n  -p 5432:5432 \\\n  postgres:15\n\n# Terminal 2 - Redis\ndocker run -d \\\n  --name myapp-redis \\\n  -p 6379:6379 \\\n  redis:7\n\n# Terminal 3 - Your app\ndocker run -d \\\n  --name myapp \\\n  -p 3000:3000 \\\n  --link myapp-db \\\n  --link myapp-redis \\\n  -e DATABASE_URL=postgres://postgres:secret@myapp-db:5432/myapp \\\n  myapp:latest\n```\n\nWith Compose, it's just:\n```bash\ndocker-compose up -d\n```\n\n## docker-compose.yml Structure\n\n```yaml\nversion: '3.8'\n\nservices:\n  # Service definitions\n  \nnetworks:\n  # Network definitions\n  \nvolumes:\n  # Volume definitions\n```\n\n## Defining Services\n\n### Basic Web Service\n\n```yaml\nservices:\n  web:\n    build: .  # Build from Dockerfile in current directory\n    ports:\n      - \"3000:3000\"  # host:container\n    environment:\n      - NODE_ENV=production\n      - DATABASE_URL=postgresql://postgres:password@db:5432/myapp\n    depends_on:\n      - db\n      - redis\n```\n\n### Database Service\n\n```yaml\n  db:\n    image: postgres:15-alpine\n    environment:\n      POSTGRES_USER: postgres\n      POSTGRES_PASSWORD: password\n      POSTGRES_DB: myapp\n    volumes:\n      - postgres_data:/var/lib/postgresql/data\n    ports:\n      - \"5432:5432\"\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U postgres\"]\n      interval: 5s\n      timeout: 5s\n      retries: 5\n```\n\n### Redis Cache\n\n```yaml\n  redis:\n    image: redis:7-alpine\n    ports:\n      - \"6379:6379\"\n    volumes:\n      - redis_data:/data\n    command: redis-server --appendonly yes\n```\n\n### Using Pre-built Images\n\n```yaml\n  web:\n    image: myregistry.com/myapp:v1.0.0\n    # Instead of build: .\n```\n\n## Volumes for Persistence\n\n```yaml\nservices:\n  db:\n    image: postgres:15-alpine\n    volumes:\n      # Named volume (recommended)\n      - postgres_data:/var/lib/postgresql/data\n      \n      # Bind mount (development only)\n      - ./init.sql:/docker-entrypoint-initdb.d/init.sql\n      \n      # Anonymous volume\n      - /var/log/postgresql\n\nvolumes:\n  postgres_data:\n    driver: local\n```\n\n### Volume Types\n\n| Type | Use Case | Example |\n|------|----------|---------|\n| Named | Persistent data across container restarts | Database files |\n| Bind Mount | Development - sync host and container | Source code |\n| Anonymous | Temporary data, auto-removed | Cache directories |\n\n## Networks\n\n```yaml\nservices:\n  web:\n    build: .\n    networks:\n      - frontend\n      - backend\n  \n  db:\n    image: postgres:15-alpine\n    networks:\n      - backend  # Only accessible to web service\n\nnetworks:\n  frontend:\n    driver: bridge\n  backend:\n    driver: bridge\n    internal: true  # No external access\n```\n\n### Default Network\n\nDocker Compose creates a default network where all services can communicate using service names as hostnames:\n\n```yaml\nservices:\n  web:\n    # Can connect to db using hostname \"db\"\n    environment:\n      - DATABASE_URL=postgresql://postgres:password@db:5432/myapp\n  \n  db:\n    image: postgres:15-alpine\n```\n\n## Complete Development Example\n\n```yaml\nversion: '3.8'\n\nservices:\n  app:\n    build:\n      context: .\n      dockerfile: Dockerfile.dev\n    ports:\n      - \"3000:3000\"\n    volumes:\n      # Mount source code for hot reload\n      - .:/app\n      # Don't overwrite node_modules\n      - /app/node_modules\n    environment:\n      - NODE_ENV=development\n      - DATABASE_URL=postgresql://postgres:password@db:5432/myapp\n      - REDIS_URL=redis://redis:6379\n    depends_on:\n      - db\n      - redis\n    command: npm run dev\n\n  db:\n    image: postgres:15-alpine\n    environment:\n      POSTGRES_USER: postgres\n      POSTGRES_PASSWORD: password\n      POSTGRES_DB: myapp\n    volumes:\n      - postgres_data:/var/lib/postgresql/data\n    ports:\n      - \"5432:5432\"\n\n  redis:\n    image: redis:7-alpine\n    ports:\n      - \"6379:6379\"\n    volumes:\n      - redis_data:/data\n\n  # Admin tools\n  pgadmin:\n    image: dpage/pgadmin4\n    environment:\n      PGADMIN_DEFAULT_EMAIL: admin@example.com\n      PGADMIN_DEFAULT_PASSWORD: admin\n    ports:\n      - \"5050:80\"\n    depends_on:\n      - db\n\nvolumes:\n  postgres_data:\n  redis_data:\n```\n\n## Essential Commands\n\n```bash\n# Start all services\ndocker-compose up\n\n# Start in background\ndocker-compose up -d\n\n# Build/rebuild images\ndocker-compose build\n\n# Stop services\ndocker-compose down\n\n# Stop and remove volumes (data loss!)\ndocker-compose down -v\n\n# View logs\ndocker-compose logs\ndocker-compose logs -f app  # Follow specific service\n\n# Execute command in service\ndocker-compose exec db psql -U postgres\ndocker-compose exec app sh\n\n# Scale a service\ndocker-compose up -d --scale web=3\n\n# Restart service\ndocker-compose restart app\n\n# Check status\ndocker-compose ps\n```\n\n## Environment-Specific Configurations\n\n### docker-compose.yml (base)\n```yaml\nversion: '3.8'\nservices:\n  web:\n    build: .\n    ports:\n      - \"3000:3000\"\n  db:\n    image: postgres:15-alpine\n```\n\n### docker-compose.override.yml (development - auto-loaded)\n```yaml\nversion: '3.8'\nservices:\n  web:\n    volumes:\n      - .:/app\n    environment:\n      - NODE_ENV=development\n```\n\n### docker-compose.prod.yml (production)\n```yaml\nversion: '3.8'\nservices:\n  web:\n    image: myapp:${VERSION:-latest}\n    restart: always\n    environment:\n      - NODE_ENV=production\n    deploy:\n      replicas: 3\n```\n\n```bash\n# Production deployment\ndocker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d\n```",
+      "codeExample": "version: '3.8'\n\nservices:\n  api:\n    build: .\n    container_name: myapp-api\n    ports:\n      - \"3000:3000\"\n    environment:\n      - NODE_ENV=development\n      - DB_HOST=postgres\n      - DB_PORT=5432\n      - DB_NAME=myapp\n      - DB_USER=postgres\n      - DB_PASSWORD=secret\n      - REDIS_HOST=redis\n      - REDIS_PORT=6379\n    volumes:\n      - .:/app\n      - /app/node_modules\n    depends_on:\n      postgres:\n        condition: service_healthy\n      redis:\n        condition: service_started\n    command: npm run dev\n\n  postgres:\n    image: postgres:15-alpine\n    container_name: myapp-db\n    environment:\n      POSTGRES_USER: postgres\n      POSTGRES_PASSWORD: secret\n      POSTGRES_DB: myapp\n    volumes:\n      - postgres_data:/var/lib/postgresql/data\n    ports:\n      - \"5432:5432\"\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U postgres\"]\n      interval: 5s\n      timeout: 5s\n      retries: 5\n\n  redis:\n    image: redis:7-alpine\n    container_name: myapp-redis\n    ports:\n      - \"6379:6379\"\n    volumes:\n      - redis_data:/data\n    command: redis-server --appendonly yes\n\nvolumes:\n  postgres_data:\n  redis_data:"
+    },
+    {
+      "id": "docker-development",
+      "moduleId": "backend-docker",
+      "title": "Docker for Development",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Use volumes for hot reload during development\n- Separate development and production Dockerfiles\n- Debug containers with proper tooling\n- Common patterns: one service per container\n\n---\n\n# Optimizing Docker for Development\n\nDevelopment containers need different optimizations than production: fast feedback loops, debugging capabilities, and access to source code.\n\n## Development vs Production\n\n| Aspect | Development | Production |\n|--------|-------------|------------|\n| **Goal** | Fast iteration | Stability & performance |\n| **Code** | Mounted volume (live reload) | Copied into image |\n| **Dependencies** | All (including devDependencies) | Only production |\n| **Tools** | Debuggers, test runners | Minimal |\n| **Size** | Larger OK | As small as possible |\n| **Security** | Relaxed | Strict |\n\n## Hot Reload with Volumes\n\n### The Problem\n\nDefault Dockerfile copies code at build time:\n```dockerfile\nCOPY . .  # Code is frozen at build time\n```\n\nChanges on your host are not reflected in the container!\n\n### The Solution: Bind Mounts\n\n```yaml\nservices:\n  app:\n    build:\n      context: .\n      dockerfile: Dockerfile.dev\n    volumes:\n      # Mount current directory into container\n      - .:/app\n      # Don't overwrite container's node_modules\n      - /app/node_modules\n    command: npm run dev\n```\n\n### Dockerfile for Development\n\n```dockerfile\n# Dockerfile.dev\nFROM node:20-alpine\n\nWORKDIR /app\n\n# Install dependencies (cached layer)\nCOPY package*.json ./\nRUN npm install  # Install ALL dependencies\n\n# Don't copy source code - mounted via volume\n# COPY . .  <-- Skip this!\n\nEXPOSE 3000\n\nCMD [\"npm\", \"run\", \"dev\"]\n```\n\n### Package.json Scripts\n\n```json\n{\n  \"scripts\": {\n    \"dev\": \"nodemon --legacy-watch index.js\",\n    \"start\": \"node index.js\"\n  }\n}\n```\n\n> Use `--legacy-watch` with Nodemon in Docker for better file watching.\n\n## Node.js Specific Patterns\n\n### Optimized .dockerignore\n\n```dockerignore\n# Dependencies\nnode_modules\nnpm-debug.log\nyarn-error.log\n\n# Build outputs\ndist\nbuild\n\n# Environment\n.env\n.env.local\n.env.*.local\n\n# IDE\n.vscode\n.idea\n*.swp\n*.swo\n\n# OS\n.DS_Store\nThumbs.db\n\n# Git\n.git\n.gitignore\n\n# Testing\ncoverage\n.nyc_output\n\n# Documentation\nREADME.md\nCHANGELOG.md\ndocs/\n\n# Docker files (optional)\nDockerfile*\ndocker-compose*.yml\n.dockerignore\n```\n\n## Debugging in Containers\n\n### Node.js Inspector\n\n```yaml\nservices:\n  app:\n    build: .\n    ports:\n      - \"3000:3000\"\n      - \"9229:9229\"  # Debug port\n    command: node --inspect=0.0.0.0:9229 index.js\n    volumes:\n      - .:/app\n```\n\nThen attach debugger in VS Code:\n```json\n{\n  \"version\": \"0.2.0\",\n  \"configurations\": [\n    {\n      \"type\": \"node\",\n      \"request\": \"attach\",\n      \"name\": \"Attach to Docker\",\n      \"port\": 9229,\n      \"address\": \"localhost\",\n      \"localRoot\": \"${workspaceFolder}\",\n      \"remoteRoot\": \"/app\"\n    }\n  ]\n}\n```\n\n### Debugging with Console\n\n```bash\n# Follow logs\ndocker-compose logs -f app\n\n# Execute shell in container\ndocker-compose exec app sh\n\n# Run one-off command\ndocker-compose exec app node -e \"console.log(process.env)\"\n\n# Check environment variables\ndocker-compose exec app env\n```\n\n## Common Development Patterns\n\n### Pattern 1: Database Initialization\n\n```yaml\nservices:\n  db:\n    image: postgres:15-alpine\n    volumes:\n      - postgres_data:/var/lib/postgresql/data\n      - ./init.sql:/docker-entrypoint-initdb.d/init.sql\n      - ./seed.sql:/docker-entrypoint-initdb.d/seed.sql\n```\n\n### Pattern 2: Service Dependencies\n\n```yaml\nservices:\n  app:\n    build: .\n    depends_on:\n      db:\n        condition: service_healthy\n      redis:\n        condition: service_started\n```\n\n### Pattern 3: Run Migrations\n\n```yaml\nservices:\n  app:\n    build: .\n    command: sh -c \"npm run migrate && npm run dev\"\n```\n\n### Pattern 4: Testing Service\n\n```yaml\nservices:\n  app:\n    build: .\n    command: npm run dev\n\n  test:\n    build: .\n    volumes:\n      - .:/app\n      - /app/node_modules\n    command: npm test\n    depends_on:\n      - db\n      - redis\n    profiles:\n      - testing  # Only started with: docker-compose --profile testing up\n```\n\n```bash\n# Run tests\ndocker-compose --profile testing up test\n```\n\n## Environment Management\n\n### Using .env Files\n\n```bash\n# .env\nNODE_ENV=development\nDATABASE_URL=postgresql://postgres:password@db:5432/myapp\nREDIS_URL=redis://redis:6379\n```\n\n```yaml\nservices:\n  app:\n    build: .\n    env_file:\n      - .env\n    environment:\n      # Override specific values\n      - DEBUG=myapp:*\n```\n\n### Environment-Specific Compose Files\n\n```bash\n# Development\ndocker-compose up\n\n# Testing\ndocker-compose -f docker-compose.yml -f docker-compose.test.yml up\n\n# Staging\ndocker-compose -f docker-compose.yml -f docker-compose.staging.yml up -d\n```\n\n## Troubleshooting Common Issues\n\n### Issue 1: node_modules Not Found\n\n```bash\n# Problem: Host node_modules overrides container's\n# Solution: Anonymous volume for node_modules\n```\n\n```yaml\nvolumes:\n  - .:/app\n  - /app/node_modules  # This prevents override\n```\n\n### Issue 2: Permission Denied\n\n```dockerfile\n# Run as non-root but handle volume permissions\nFROM node:20-alpine\nWORKDIR /app\n\n# Install dependencies as root\nCOPY package*.json ./\nRUN npm install\n\n# Change ownership\nRUN chown -R node:node /app\nUSER node\n\nCMD [\"npm\", \"run\", \"dev\"]\n```\n\n### Issue 3: Port Already in Use\n\n```yaml\nservices:\n  app:\n    ports:\n      - \"3000\"  # Let Docker assign random host port\n      # Or: - \"127.0.0.1:3000:3000\"  # Bind to localhost only\n```\n\n### Issue 4: File Watching Not Working\n\n```yaml\nservices:\n  app:\n    environment:\n      - CHOKIDAR_USEPOLLING=true  # For Create React App\n      - WATCHPACK_POLLING=true    # For Webpack 5\n    volumes:\n      - .:/app:delegated  # Performance optimization on macOS\n```\n\n## VS Code Dev Containers\n\nDevelop inside containers with full IDE support:\n\n```json\n// .devcontainer/devcontainer.json\n{\n  \"name\": \"Node.js & PostgreSQL\",\n  \"dockerComposeFile\": \"../docker-compose.yml\",\n  \"service\": \"app\",\n  \"workspaceFolder\": \"/app\",\n  \"settings\": {\n    \"terminal.integrated.shell.linux\": \"/bin/sh\"\n  },\n  \"extensions\": [\n    \"dbaeumer.vscode-eslint\",\n    \"esbenp.prettier-vscode\"\n  ],\n  \"postCreateCommand\": \"npm install\"\n}\n```\n\nThen press `F1` → \"Remote-Containers: Reopen in Container\"\n\n## Best Practices Summary\n\n1. **Use multi-stage builds** for production images\n2. **Leverage build cache** - copy dependency files first\n3. **Never commit secrets** in images or compose files\n4. **Use .dockerignore** to reduce build context\n5. **Pin base image versions** for reproducibility\n6. **Run as non-root** for security\n7. **Use health checks** for production services\n8. **One process per container** (generally)\n9. **Use volumes for data** that needs to persist\n10. **Test your builds** in CI/CD before deploying",
+      "codeExample": "# .dockerignore\nnode_modules\nnpm-debug.log\n.env\n.env.local\n.git\n.gitignore\n.vscode\n.idea\n*.md\nREADME.md\nDockerfile*\ndocker-compose*.yml\n.dockerignore\ndist\nbuild\ncoverage\n.nyc_output\n\n# Dockerfile.dev - for development\nFROM node:20-alpine\n\nWORKDIR /app\n\nCOPY package*.json ./\nRUN npm install\n\nEXPOSE 3000\n\nCMD [\"npm\", \"run\", \"dev\"]\n\n# Run commands:\n# docker-compose up -d  # Start all services\n# docker-compose logs -f app  # Watch logs\n# docker-compose exec app sh  # Enter container\n# docker-compose down -v  # Stop and remove volumes"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "docker-basics-quiz",
+      "moduleId": "backend-docker",
+      "lessonId": "why-docker",
+      "type": "quiz",
+      "title": "Docker Concepts Quiz",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "Test your understanding of Docker fundamentals.",
+      "questions": [
+        {
+          "text": "What is the main difference between containers and VMs?",
+          "options": [
+            "Containers are slower than VMs",
+            "Containers share the host OS kernel while VMs run complete OS instances",
+            "Containers use more memory than VMs",
+            "Containers cannot run on macOS"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Containers are lightweight because they share the host OS kernel, unlike VMs which each run a complete guest operating system."
+        },
+        {
+          "text": "What problem does Docker solve?",
+          "options": [
+            "Slow internet connections",
+            "Works on my machine - environment inconsistency",
+            "Lack of programming languages",
+            "Expensive cloud storage"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Docker ensures consistency across development, staging, and production environments, solving the \"works on my machine\" problem."
+        }
+      ]
+    },
+    {
+      "id": "dockerfile-exercise",
+      "moduleId": "backend-docker",
+      "lessonId": "dockerfile-basics",
+      "type": "code",
+      "title": "Write a Dockerfile",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "Create a Dockerfile for a simple Node.js Express application that listens on port 3000.\n\nRequirements:\n- Use node:20-alpine as base image\n- Set working directory to /app\n- Copy package.json first for better caching\n- Install production dependencies only\n- Copy the rest of the application\n- Expose port 3000\n- Start the app with 'node server.js'",
+      "starterCode": "# Write your Dockerfile here\n\n",
+      "solution": "FROM node:20-alpine\n\nWORKDIR /app\n\nCOPY package*.json ./\nRUN npm ci --only=production\n\nCOPY . .\n\nEXPOSE 3000\n\nCMD [\"node\", \"server.js\"]",
+      "hints": [
+        "Start with FROM node:20-alpine",
+        "Use WORKDIR to set the working directory",
+        "COPY package*.json before running npm install for better caching",
+        "Use --only=production to skip dev dependencies",
+        "CMD should use JSON array format"
+      ],
+      "validationPrompt": "Validate this Dockerfile for a Node.js Express app. Check that it:\n1. Uses node:20-alpine or similar Node.js base image\n2. Sets a working directory (WORKDIR)\n3. Copies package files before installing dependencies\n4. Installs dependencies with npm install or npm ci\n5. Copies application code\n6. Exposes port 3000\n7. Has a CMD instruction to start the app"
+    },
+    {
+      "id": "docker-compose-exercise",
+      "moduleId": "backend-docker",
+      "lessonId": "docker-compose",
+      "type": "code",
+      "title": "Create docker-compose.yml",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "Create a docker-compose.yml file that sets up a Node.js app with PostgreSQL database.\n\nRequirements:\n- Create a service named 'web' that builds from current directory and exposes port 3000\n- Create a service named 'db' using postgres:15-alpine image\n- Database should have environment variables for POSTGRES_USER, POSTGRES_PASSWORD, and POSTGRES_DB\n- Use a named volume 'postgres_data' for database persistence\n- Web service should depend on db service",
+      "starterCode": "version: '3.8'\n\nservices:\n  # Add your services here\n\nvolumes:\n  # Add your volumes here\n",
+      "solution": "version: '3.8'\n\nservices:\n  web:\n    build: .\n    ports:\n      - \"3000:3000\"\n    environment:\n      - DATABASE_URL=postgresql://postgres:password@db:5432/myapp\n    depends_on:\n      - db\n\n  db:\n    image: postgres:15-alpine\n    environment:\n      POSTGRES_USER: postgres\n      POSTGRES_PASSWORD: password\n      POSTGRES_DB: myapp\n    volumes:\n      - postgres_data:/var/lib/postgresql/data\n\nvolumes:\n  postgres_data:",
+      "hints": [
+        "Define the web service with build: .",
+        "Map ports using the ports array with 'host:container' format",
+        "Use the postgres:15-alpine image for the database",
+        "Database environment variables go under environment:",
+        "Create a named volume and reference it in the db service"
+      ],
+      "validationPrompt": "Validate this docker-compose.yml file. Check that it:\n1. Has a version specified (e.g., '3.8')\n2. Has a 'web' or 'app' service that builds from the current directory\n3. Has a 'db' service using a PostgreSQL image\n4. Maps port 3000 for the web service\n5. Has environment variables for the database\n6. Uses a named volume for database persistence\n7. Has proper service dependencies"
+    },
+    {
+      "id": "docker-dev-exercise",
+      "moduleId": "backend-docker",
+      "lessonId": "docker-development",
+      "type": "quiz",
+      "title": "Development Best Practices",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "Test your knowledge of Docker development patterns.",
+      "questions": [
+        {
+          "text": "Why use volumes in development?",
+          "options": [
+            "To make containers larger",
+            "To enable hot reload by syncing host and container files",
+            "To store container images",
+            "To improve security"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Volumes (especially bind mounts) allow you to sync files between your host machine and the container, enabling hot reload during development."
+        },
+        {
+          "text": "What is the purpose of the line '- /app/node_modules' in docker-compose volumes?",
+          "options": [
+            "To install node_modules on the host",
+            "To prevent the host's node_modules from overriding the container's",
+            "To delete node_modules",
+            "To share node_modules between containers"
+          ],
+          "correctAnswer": 1,
+          "explanation": "This creates an anonymous volume that preserves the container's node_modules directory, preventing it from being overwritten by the host's node_modules (or lack thereof)."
+        },
+        {
+          "text": "When should you use docker-compose.override.yml?",
+          "options": [
+            "Never, it's deprecated",
+            "For production deployments only",
+            "For development-specific overrides that apply automatically",
+            "Only for CI/CD pipelines"
+          ],
+          "correctAnswer": 2,
+          "explanation": "docker-compose.override.yml is automatically loaded with docker-compose.yml and is perfect for development-specific settings like volume mounts and debug ports."
+        }
+      ]
+    }
+  ]
+}

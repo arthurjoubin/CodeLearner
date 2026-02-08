@@ -1,7 +1,7 @@
 {
   "module": {
     "id": "tailwind-components",
-    "courseId": "html-css",
+    "courseId": "html-css-tailwind",
     "title": "Building with Tailwind",
     "description": "Build real UI components: cards, navbars, forms, and more",
     "icon": "Boxes",

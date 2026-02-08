@@ -1,7 +1,7 @@
 {
   "module": {
     "id": "js-arrays-objects",
-    "courseId": "javascript",
+    "courseId": "javascript-core",
     "title": "Arrays & Objects",
     "description": "Work with collections of data using arrays and objects",
     "icon": "Boxes",

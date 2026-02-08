@@ -1,0 +1,21 @@
+{
+  "id": "fullstack",
+  "title": "Fullstack Learning Path",
+  "description": "Master fullstack development with Next.js: Frontend + Backend in one codebase",
+  "icon": "🚀",
+  "prerequisites": ["frontend", "backend"],
+  "courses": [
+    {
+      "id": "nextjs",
+      "title": "Next.js",
+      "subtitle": "Fullstack React Framework",
+      "logo": "https://raw.githubusercontent.com/github/explore/main/topics/nextjs/nextjs.png",
+      "color": "from-gray-700 to-black",
+      "borderColor": "border-gray-700",
+      "bgColor": "bg-gray-50",
+      "textColor": "text-gray-800",
+      "accentColor": "bg-gray-700",
+      "phase": 1
+    }
+  ]
+}

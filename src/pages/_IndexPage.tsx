@@ -57,15 +57,15 @@ function LandingContent() {
 
             {/* Course Tags */}
             <div className="flex flex-wrap gap-2 mb-6">
-              <a href="/learning-path/web-stack" className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
+              <a href="/learning-path/web-fundamentals" className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
                 <img src="https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png" alt="Vibecoder Basis" className="w-5 h-5 object-contain" />
                 <span className="text-sm font-medium text-gray-700">Vibecoder Basis</span>
               </a>
-              <a href="/learning-path/react" className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
+              <a href="/learning-path/frontend" className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
                 <img src="https://raw.githubusercontent.com/github/explore/main/topics/react/react.png" alt="React" className="w-5 h-5 object-contain" />
-                <span className="text-sm font-medium text-gray-700">React</span>
+                <span className="text-sm font-medium text-gray-700">Frontend</span>
               </a>
-              <a href="/learning-path/git" className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
+              <a href="/learning-path/web-fundamentals" className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full hover:border-primary-500 hover:shadow-sm transition-all">
                 <img src="https://raw.githubusercontent.com/github/explore/main/topics/git/git.png" alt="Git" className="w-5 h-5 object-contain" />
                 <span className="text-sm font-medium text-gray-700">Git</span>
               </a>
@@ -111,7 +111,7 @@ function LandingContent() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <LearningPathCard
-              id="web-stack"
+              id="web-fundamentals"
               title="Vibecoder Basis"
               description="Understand the full web development ecosystem."
               logo="https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png"
@@ -120,7 +120,7 @@ function LandingContent() {
               hours="40 hours"
             />
             <LearningPathCard
-              id="git"
+              id="web-fundamentals"
               title="Git"
               description="Master version control with Git."
               logo="https://raw.githubusercontent.com/github/explore/main/topics/git/git.png"

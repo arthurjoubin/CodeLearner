@@ -9,16 +9,44 @@ import {
   Code2,
 } from 'lucide-react';
 import ReactMarkdown from './_ReactMarkdown';
-import Breadcrumb from '../components/Breadcrumb';
+import ProgressPath from '../components/ProgressPath';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { PageHeader } from '../components/PageTitle';
 import { LessonCompletionModal } from '../components/completion-modals';
 
 const learningPathTitles: Record<string, string> = {
   react: 'React',
-  'web-stack': 'Web Fundamentals',
-  git: 'Git',
+  'advanced-topics': 'Web Stack',
+  'git-mastery': 'Git',
+  'javascript-core': 'JavaScript',
+  'html-css-tailwind': 'HTML & CSS',
   fastapi: 'FastAPI',
+  'node-express': 'Backend',
+  'databases': 'Backend',
+  'auth-security': 'Backend',
+  'dev-environment': 'Web Fundamentals',
+  'frontend-production': 'Frontend Production',
+  'nextjs': 'Next.js',
+  'deployment': 'Deployment',
+  'internet-tools': 'Internet Tools',
+};
+
+const courseTitles: Record<string, string> = {
+  'html-css-tailwind': 'HTML & CSS',
+  'javascript-core': 'JavaScript',
+  'react': 'React',
+  'advanced-topics': 'Web Stack',
+  'fastapi': 'FastAPI',
+  'git-mastery': 'Git',
+  'dev-environment': 'Web Fundamentals',
+  'frontend-production': 'Engineering Practices',
+  'node-express': 'Node.js & Express',
+  'databases': 'Databases & SQL',
+  'auth-security': 'Backend Advanced',
+  'nextjs': 'Next.js',
+  'deployment': 'Deployment',
+  'architecture-patterns': 'Architecture Patterns',
+  'internet-tools': 'Internet Tools',
 };
 
 interface LessonPageProps {
@@ -55,11 +83,14 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
     return exs.length > 0 && exs.every(e => isExerciseCompleted(e.id));
   }, [isLessonCompleted, isExerciseCompleted]);
 
-  // Course & module level progress for breadcrumb
+  // Course & module level data
   const courseModules = module ? getModulesForCourse(module.courseId) : [];
   const courseLessons = courseModules.flatMap(m => allLessons.filter(l => l.moduleId === m.id));
-  const courseLessonsDone = courseLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
-  const moduleLessonsDone = moduleLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
+  
+  // Position of current lesson in the entire course and module
+  const courseLessonIndex = courseLessons.findIndex(l => l.id === lessonId);
+  const currentCoursePosition = courseLessonIndex >= 0 ? courseLessonIndex + 1 : 0;
+  const currentModulePosition = currentIndex >= 0 ? currentIndex + 1 : 0;
 
   // Auto-complete lesson when all exercises are done
   useEffect(() => {
@@ -93,10 +124,11 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
   return (
     <div className="page-enter max-w-6xl mx-auto px-3">
       <div className="mb-6">
-        <Breadcrumb items={[
-          { label: `${learningPathTitles[module.courseId] || module.courseId} (${courseLessonsDone}/${courseLessons.length})`, href: `/learning-path/${module.courseId}` },
-          { label: `${module.title} (${moduleLessonsDone}/${moduleLessons.length})`, href: `/module/${module.id}` },
-        ]} />
+        <div className="mb-2">
+          <ProgressPath items={[
+            { name: module.title, current: currentModulePosition, total: moduleLessons.length, href: `/module/${module.id}`, parent: { name: courseTitles[module.courseId] || module.courseId, href: `/courses/${module.courseId}` } },
+          ]} />
+        </div>
         <PageHeader title={lesson.title} />
 
         {/* Lesson and exercise navigation */}

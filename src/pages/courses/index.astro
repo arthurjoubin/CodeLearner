@@ -1,0 +1,225 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import PageTitle from '../../components/PageTitle.astro';
+import CourseCardLarge from '../../components/CourseCardLarge.astro';
+import CourseCardSoon from '../../components/CourseCardSoon.astro';
+import { modules } from '../../data/modules';
+
+// Helper function to get module count for a course
+function getModuleCount(courseId: string): number {
+  return modules.filter(m => m.courseId === courseId).length;
+}
+
+const courses = [
+	{
+		id: 'html-css-tailwind',
+		title: 'HTML & CSS',
+		description: 'Learn the building blocks of every web page: structure, styling, and Tailwind CSS',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/html/html.png',
+		difficulty: 'beginner' as const,
+		get modules() { return getModuleCount('html-css-tailwind'); },
+		estimatedTime: '20 hours',
+		topics: ['HTML', 'CSS', 'Flexbox', 'Grid', 'Tailwind', 'Responsive']
+	},
+	{
+		id: 'javascript-core',
+		title: 'JavaScript',
+		description: 'Master the language of the web: variables, functions, async, and DOM',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png',
+		difficulty: 'beginner' as const,
+		get modules() { return getModuleCount('javascript-core'); },
+		estimatedTime: '25 hours',
+		topics: ['Variables', 'Functions', 'Arrays', 'Async/Await', 'DOM', 'ES6+']
+	},
+	{
+		id: 'react',
+		title: 'React',
+		description: 'Master React and TypeScript from JSX to advanced patterns',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png',
+		difficulty: 'medium' as const,
+		get modules() { return getModuleCount('react'); },
+		estimatedTime: '35 hours',
+		topics: ['JSX', 'Hooks', 'Context', 'Router', 'TypeScript', 'Testing']
+	},
+	{
+		id: 'node-express',
+		title: 'Node.js & Express',
+		description: 'Build scalable APIs and servers with JavaScript runtime and Express framework',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nodejs/nodejs.png',
+		difficulty: 'medium' as const,
+		get modules() { return getModuleCount('node-express'); },
+		estimatedTime: '12 hours',
+		topics: ['Node.js', 'Express', 'REST APIs', 'Middleware', 'Routing']
+	},
+	{
+		id: 'databases',
+		title: 'Databases & SQL',
+		description: 'Master data persistence with SQL, PostgreSQL, MongoDB and ORMs',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/postgresql/postgresql.png',
+		difficulty: 'medium' as const,
+		get modules() { return getModuleCount('databases'); },
+		estimatedTime: '10 hours',
+		topics: ['SQL', 'PostgreSQL', 'MongoDB', 'ORMs', 'Data Modeling']
+	},
+	{
+		id: 'auth-security',
+		title: 'Backend Advanced',
+		description: 'Authentication, security patterns, architecture and real-time communication',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/security/security.png',
+		difficulty: 'advanced' as const,
+		get modules() { return getModuleCount('auth-security'); },
+		estimatedTime: '15 hours',
+		topics: ['Auth', 'Security', 'Architecture', 'WebSockets', 'Microservices']
+	},
+	{
+		id: 'git-mastery',
+		title: 'Git',
+		description: 'Master version control with Git and GitHub workflows',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/git/git.png',
+		difficulty: 'beginner' as const,
+		get modules() { return getModuleCount('git-mastery'); },
+		estimatedTime: '20 hours',
+		topics: ['Commits', 'Branches', 'Merging', 'Rebase', 'GitHub']
+	},
+	{
+		id: 'dev-environment',
+		title: 'Web Fundamentals',
+		description: 'Master essential developer skills: terminal, HTTP, and debugging',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png',
+		difficulty: 'beginner' as const,
+		get modules() { return getModuleCount('dev-environment'); },
+		estimatedTime: '15 hours',
+		topics: ['Terminal', 'HTTP', 'DevTools', 'Debugging']
+	},
+	{
+		id: 'frontend-production',
+		title: 'Frontend Production',
+		description: 'Level up with testing, performance, security and best practices',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/devops/devops.png',
+		difficulty: 'medium' as const,
+		get modules() { return getModuleCount('frontend-production'); },
+		estimatedTime: '25 hours',
+		topics: ['Testing', 'Performance', 'Security', 'PWA']
+	},
+	{
+		id: 'nextjs',
+		title: 'Next.js',
+		description: 'Full-stack React framework with App Router, Server Components and more',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nextjs/nextjs.png',
+		difficulty: 'advanced' as const,
+		get modules() { return getModuleCount('nextjs'); },
+		estimatedTime: '30 hours',
+		topics: ['App Router', 'Server Components', 'API Routes', 'Auth']
+	},
+	{
+		id: 'internet-tools',
+		title: 'Internet & Tools',
+		description: 'Package managers, build tools, and how the web works',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/web/web.png',
+		difficulty: 'beginner' as const,
+		get modules() { return getModuleCount('internet-tools'); },
+		estimatedTime: '15 hours',
+		topics: ['HTTP', 'NPM', 'Webpack', 'DevTools']
+	},
+	{
+		id: 'fastapi',
+		title: 'FastAPI',
+		description: 'Build modern, fast APIs with Python and FastAPI',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png',
+		difficulty: 'medium' as const,
+		modules: 0,
+		estimatedTime: 'Coming soon',
+		topics: ['Python', 'APIs', 'Async', 'Pydantic', 'SQLModel'],
+		comingSoon: true
+	},
+	{
+		id: 'go',
+		title: 'Go',
+		description: 'Learn Go programming language for modern backend development',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/go/go.png',
+		difficulty: 'medium' as const,
+		modules: 0,
+		estimatedTime: 'Coming soon',
+		topics: ['Basics', 'Concurrency', 'HTTP', 'Testing'],
+		comingSoon: true
+	},
+	{
+		id: 'python',
+		title: 'Python',
+		description: 'Learn Python programming language from basics to advanced',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png',
+		difficulty: 'beginner' as const,
+		modules: 0,
+		estimatedTime: 'Coming soon',
+		topics: ['Basics', 'OOP', 'Data Structures', 'Libraries'],
+		comingSoon: true
+	},
+];
+
+const availableCourses = courses.filter(c => !c.comingSoon);
+const comingSoonCourses = courses.filter(c => c.comingSoon);
+---
+
+<MainLayout title="Courses - All Available Courses">
+	<div class="page-enter">
+		<!-- Header -->
+		<div class="mb-8">
+			<PageTitle>
+				<h1 slot="title" class="text-2xl font-black text-gray-900 uppercase">Courses</h1>
+			</PageTitle>
+			<p class="text-gray-600 mt-2">Individual courses to master specific technologies</p>
+		</div>
+
+		<!-- Link to Learning Paths -->
+		<a href="/learning-path" class="block mb-8 p-4 border-2 border-primary-400 rounded-lg bg-primary-50 hover:shadow-lg transition-all group">
+			<div class="flex items-center gap-3">
+				<div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+					<span class="text-primary-600 font-bold">🎯</span>
+				</div>
+				<div class="flex-1">
+					<h2 class="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">Looking for a guided path?</h2>
+					<p class="text-xs text-gray-600">Check out our Learning Paths for structured, multi-course progressions</p>
+				</div>
+				<span class="text-primary-600 font-bold text-lg group-hover:translate-x-1 transition-transform">&rarr;</span>
+			</div>
+		</a>
+
+		<!-- Available Courses -->
+		<div class="grid md:grid-cols-2 gap-6 mb-8">
+			{availableCourses.map((course) => (
+				<CourseCardLarge
+					id={course.id}
+					title={course.title}
+					description={course.description}
+					logo={course.logo}
+					difficulty={course.difficulty}
+					modules={course.modules}
+					estimatedTime={course.estimatedTime}
+					topics={course.topics}
+				/>
+			))}
+		</div>
+
+		<!-- Coming Soon Section -->
+		<div class="mb-8">
+			<div class="relative inline-block group mb-4">
+				<h2 class="font-bold text-sm uppercase text-gray-700 flex items-center gap-2">
+					<span class="w-2 h-2 bg-gray-400 rounded-full" />
+					Coming Soon
+				</h2>
+				<span class="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-gray-400 transition-all group-hover:w-full duration-300" />
+			</div>
+
+			<div class="grid md:grid-cols-2 gap-4">
+				{comingSoonCourses.map((course) => (
+					<CourseCardSoon
+						title={course.title}
+						description={course.description}
+						logo={course.logo}
+						topics={course.topics}
+					/>
+				))}
+			</div>
+		</div>
+	</div>
+</MainLayout>

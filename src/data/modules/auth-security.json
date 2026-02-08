@@ -1,0 +1,86 @@
+{
+  "module": {
+    "id": "auth-security",
+    "title": "Authentication & Security",
+    "description": "Secure your applications with proper authentication and security practices",
+    "icon": "Shield",
+    "requiredXp": 600,
+    "color": "from-red-500 to-pink-600",
+    "courseId": "auth-security"
+  },
+  "lessons": [
+    {
+      "id": "auth-intro",
+      "moduleId": "auth-security",
+      "title": "Authentication vs Authorization",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Authentication: Who are you? (identity)\n- Authorization: What can you do? (permissions)\n- Both are essential for secure applications\n- Different strategies for different use cases\n\n---\n\n# TODO: Content about auth concepts, common patterns, when to use what, overview of strategies"
+    },
+    {
+      "id": "auth-passwords",
+      "moduleId": "auth-security",
+      "title": "Password Hashing with bcrypt",
+      "order": 2,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- NEVER store plain text passwords\n- bcrypt hashes with salt automatically\n- Salt prevents rainbow table attacks\n- Use high cost factor (10-12)\n\n---\n\n# TODO: Content about why hashing, bcrypt usage, salt rounds, comparing passwords, argon2 as alternative"
+    },
+    {
+      "id": "auth-sessions",
+      "moduleId": "auth-security",
+      "title": "Session-Based Authentication",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Server stores session data, client gets session ID\n- Session ID sent via cookie\n- Stateful: server must track all sessions\n- Good for traditional web apps\n\n---\n\n# TODO: Content about session flow, express-session setup, session stores (Redis, DB), cookie settings, logout"
+    },
+    {
+      "id": "auth-jwt",
+      "moduleId": "auth-security",
+      "title": "JWT (JSON Web Tokens)",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- JWT is self-contained (stateless)\n- Three parts: header.payload.signature\n- Signed, not encrypted (don't store secrets)\n- Good for APIs and microservices\n\n---\n\n# TODO: Content about JWT structure, signing/verifying, access vs refresh tokens, storage (httpOnly cookies), expiration"
+    },
+    {
+      "id": "auth-oauth",
+      "moduleId": "auth-security",
+      "title": "OAuth 2.0 & Social Login",
+      "order": 5,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- OAuth lets users login via Google, GitHub, etc.\n- Authorization code flow is most secure\n- You get tokens to access user data\n- Libraries: passport.js, arctic, lucia\n\n---\n\n# TODO: Content about OAuth flow, setting up providers, handling callbacks, linking accounts, common pitfalls"
+    },
+    {
+      "id": "auth-middleware",
+      "moduleId": "auth-security",
+      "title": "Auth Middleware & Protected Routes",
+      "order": 6,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Middleware checks auth before route handlers\n- Extract and verify token/session\n- Attach user to request object\n- Return 401 Unauthorized if invalid\n\n---\n\n# TODO: Content about auth middleware pattern, protecting routes, role-based access, combining with Zod validation"
+    },
+    {
+      "id": "auth-security-headers",
+      "moduleId": "auth-security",
+      "title": "Security Best Practices",
+      "order": 7,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- HTTPS everywhere in production\n- HttpOnly, Secure, SameSite cookie flags\n- CSRF protection for cookie-based auth\n- Rate limiting on auth endpoints\n\n---\n\n# TODO: Content about cookie security, CSRF tokens, brute force protection, account lockout, security headers"
+    },
+    {
+      "id": "auth-common-vulnerabilities",
+      "moduleId": "auth-security",
+      "title": "Common Vulnerabilities",
+      "order": 8,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- SQL injection: use parameterized queries\n- XSS: sanitize output, use CSP\n- CSRF: use tokens or SameSite cookies\n- Always validate and sanitize input\n\n---\n\n# TODO: Content about OWASP top 10, injection attacks, XSS types, CSRF attacks, how to prevent each"
+    },
+    {
+      "id": "auth-advanced-security",
+      "moduleId": "auth-security",
+      "title": "Advanced Security: 2FA",
+      "order": 9,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- 2FA = Something you know (password) + Something you have (phone/app)\n- TOTP (Time-based OTP) with apps like Google Authenticator\n- SMS 2FA: less secure (SIM swapping) but more accessible\n- Backup codes for recovery\n\n---\n\n# Implementing 2FA\n\n## TOTP with speakeasy\n\n```bash\nnpm install speakeasy qrcode\n```\n\n```javascript\nimport speakeasy from 'speakeasy';\nimport QRCode from 'qrcode';\n\n// 1. Enable 2FA (generate secret)\napp.post('/auth/2fa/setup', requireAuth, async (req, res) => {\n  const secret = speakeasy.generateSecret({\n    name: 'MyApp',\n    length: 32\n  });\n  \n  // Save temporarily (not yet activated)\n  await db.setUserTemp2FASecret(req.userId, secret.base32);\n  \n  // Generate QR Code\n  const qrCodeUrl = await QRCode.toDataURL(secret.otpauth_url);\n  \n  res.json({\n    secret: secret.base32,  // Also display for manual entry\n    qrCode: qrCodeUrl\n  });\n});\n\n// 2. Verify and activate\napp.post('/auth/2fa/verify', requireAuth, async (req, res) => {\n  const { token } = req.body;\n  const secret = await db.getUserTemp2FASecret(req.userId);\n  \n  const verified = speakeasy.totp.verify({\n    secret: secret,\n    encoding: 'base32',\n    token: token,\n    window: 1  // Tolerance 1 period (30s)\n  });\n  \n  if (verified) {\n    // Activate permanently\n    await db.enable2FA(req.userId, secret);\n    \n    // Generate backup codes\n    const backupCodes = generateBackupCodes();\n    await db.saveBackupCodes(req.userId, backupCodes);\n    ..."
+    }
+  ],
+  "exercises": []
+}

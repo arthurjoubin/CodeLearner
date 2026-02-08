@@ -161,9 +161,12 @@ Defined in `src/types/index.ts`:
 - Components use TailwindCSS classes directly (no CSS modules/styled-components)
 
 ### Styling
-- TailwindCSS with a "brutalist" design system: thick borders, box shadows (`shadow-brutal`), monospace fonts (JetBrains Mono)
-- Custom color palette: `primary` (green), `accent` (magenta/purple), `brutal` (bold colors)
-- Custom breakpoint `xs: 400px` added
+- TailwindCSS with a "clean tech" design system: minimal, functional, monospace-first aesthetic
+- Monospace typography everywhere (JetBrains Mono) for a developer-centric feel
+- Subtle design elements: thin borders (`border-2`, `border-3`), soft shadows (`shadow-brutal` offset 4px, black only), smooth transitions
+- Custom color palette: `primary` green (`#22c55e`) for highlights, `accent` magenta/purple (`#d946ef`), muted grays for neutral surfaces
+- Intentional use of `shadow-brutal` for minimal visual lift (not truly brutalist, just technical accent)
+- Custom breakpoint `xs: 400px` for mobile-first design
 - Typography plugin for rendered markdown content
 
 ### API Pattern

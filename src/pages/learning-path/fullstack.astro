@@ -1,0 +1,9 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import LearningPathPage from '../../components/LearningPathPage';
+import fullstackData from '../../data/learning-paths/fullstack.json';
+---
+
+<MainLayout title="Fullstack Learning Path - Next.js">
+	<LearningPathPage client:load pathData={fullstackData} />
+</MainLayout>

@@ -6,7 +6,7 @@
     "icon": "GitCommit",
     "requiredXp": 400,
     "color": "from-purple-400 to-indigo-600",
-    "courseId": "git"
+    "courseId": "git-mastery"
   },
   "lessons": [
     {

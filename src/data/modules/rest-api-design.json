@@ -1,0 +1,119 @@
+{
+  "module": {
+    "id": "rest-api-design",
+    "title": "RESTful API Design",
+    "description": "Learn to design clean, scalable REST APIs following industry best practices",
+    "icon": "Network",
+    "requiredXp": 3500,
+    "color": "from-green-500 to-teal-600",
+    "courseId": "node-express"
+  },
+  "lessons": [
+    {
+      "id": "rest-principles",
+      "moduleId": "rest-api-design",
+      "title": "REST Principles",
+      "order": 1,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- REST = Representational State Transfer\n- Stateless: each request contains all information needed\n- Client-Server: separation of concerns\n- Uniform Interface: consistent resource naming\n- HTTP methods have specific meanings\n\n---\n\n# Understanding REST Architecture\n\n## What is REST?\n\nREST (Representational State Transfer) is an architectural style for designing networked applications. It relies on a stateless, client-server, cacheable communications protocol -- almost always HTTP.\n\n## Core Principles\n\n### 1. Statelessness\n\nEach request from client to server must contain all the information needed to understand and complete the request. The server cannot store any client context between requests.\n\n```http\n// Good: Request contains auth token\nGET /api/users/123\nAuthorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\n\n// Bad: Server remembers previous authentication\nGET /api/users/123\n// (Server assumes you're authenticated from previous request)\n```\n\n**Benefits:**\n- Scalability: Any server can handle any request\n- Reliability: No lost state if server crashes\n- Visibility: Easy to monitor and debug\n\n### 2. Client-Server Architecture\n\nSeparation of concerns between client and server:\n- **Client**: User interface, user experience\n- **Server**: Data storage, business logic\n\nThey communicate through a uniform interface (HTTP).\n\n### 3. Cacheability\n\nResponses must define themselves as cacheable or not:\n\n```http\nHTTP/1.1 200 OK\nCache-Control: max-age=3600\nContent-Type: application/json\n\n{\n  \"id\": 123,\n  \"name\": \"Product A\"\n}\n```\n\n### 4. Uniform Interface\n\nFour constraints:\n\n**a) Resource Identification**\nResources are identified by URIs:\n```\n/users/123\n/products/456\n/orders/789/items\n```\n\n**b) Resource Manipulation through Representations**\nClients manipulate resources through representations (JSON, XML, etc.):\n\n```http\nPUT /users/123\nContent-Type: application/json\n\n{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\"\n}\n```\n\n**c) Self-descriptive Messages**\nEach message includes enough information to describe how to process it:\n\n```http\nHTTP/1.1 200 OK\nContent-Type: application/json\nAllow: GET, POST, PUT, DELETE\n```\n\n**d) Hypermedia as the Engine of Application State (HATEOAS)**\nResponses include links to related resources:\n\n```json\n{\n  \"id\": 123,\n  \"name\": \"John Doe\",\n  \"links\": [\n    { \"rel\": \"self\", \"href\": \"/users/123\" },\n    { \"rel\": \"orders\", \"href\": \"/users/123/orders\" },\n    { \"rel\": \"edit\", \"href\": \"/users/123/edit\" }\n  ]\n}\n```\n\n## REST vs RPC vs GraphQL\n\n**REST:**\n- Resource-oriented\n- Uses HTTP methods semantically\n- Multiple endpoints\n- Good for CRUD operations\n\n**RPC (Remote Procedure Call):**\n- Action-oriented\n- Usually POST-only\n- Example: `/getUser`, `/createOrder`\n\n**GraphQL:**\n- Query language\n- Single endpoint\n- Client specifies exact data needed\n\n## When to Use REST\n\n✅ Good for:\n- Standard CRUD operations\n- Simple, well-defined resources\n- When caching is important\n- When you need scalability\n\n❌ Not ideal for:\n- Complex queries with many joins\n- Real-time data (use WebSockets)\n- When clients need flexible data shapes"
+    },
+    {
+      "id": "http-methods",
+      "moduleId": "rest-api-design",
+      "title": "HTTP Methods & Status Codes",
+      "order": 2,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- GET: Read resources (safe, idempotent)\n- POST: Create new resources\n- PUT: Update/replace entire resource (idempotent)\n- PATCH: Partial update (not necessarily idempotent)\n- DELETE: Remove resource (idempotent)\n- Status codes: 2xx success, 4xx client error, 5xx server error\n\n---\n\n# HTTP Methods in REST\n\n## GET - Read\n\nRetrieves a resource or collection:\n\n```http\n// Get single user\nGET /api/users/123\n\n// Get all users\nGET /api/users\n\n// Get users with query parameters\nGET /api/users?role=admin&active=true\n```\n\n**Characteristics:**\n- Safe: Does not modify server state\n- Idempotent: Multiple identical requests = same result\n- Cacheable: Responses can be cached\n\n## POST - Create\n\nCreates a new resource:\n\n```http\nPOST /api/users\nContent-Type: application/json\n\n{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\"\n}\n```\n\n**Response:**\n```http\nHTTP/1.1 201 Created\nLocation: /api/users/124\n\n{\n  \"id\": 124,\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\"\n}\n```\n\n**Characteristics:**\n- Not safe: Modifies server state\n- Not idempotent: Multiple requests create multiple resources\n- Returns 201 Created with Location header\n\n## PUT - Update/Replace\n\nUpdates an entire resource (replace):\n\n```http\nPUT /api/users/123\nContent-Type: application/json\n\n{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"age\": 30\n}\n```\n\n**Characteristics:**\n- Not safe: Modifies server state\n- Idempotent: Multiple identical requests = same result\n- Must include complete resource\n- Returns 200 OK or 204 No Content\n\n## PATCH - Partial Update\n\nPartially updates a resource:\n\n```http\nPATCH /api/users/123\nContent-Type: application/json\n\n{\n  \"email\": \"newemail@example.com\"\n}\n```\n\n**Characteristics:**\n- Not safe: Modifies server state\n- Not necessarily idempotent\n- Only sends fields to change\n- Returns 200 OK\n\n## DELETE - Remove\n\nDeletes a resource:\n\n```http\nDELETE /api/users/123\n```\n\n**Characteristics:**\n- Not safe: Modifies server state\n- Idempotent: Deleting twice = same result (resource already gone)\n- Returns 204 No Content or 200 OK\n\n## HTTP Status Codes\n\n### Success (2xx)\n\n- **200 OK**: Request succeeded\n- **201 Created**: Resource created successfully\n- **204 No Content**: Success, no body (common for DELETE)\n- **206 Partial Content**: Partial response (pagination)\n\n### Client Errors (4xx)\n\n- **400 Bad Request**: Invalid syntax or validation failed\n- **401 Unauthorized**: Authentication required\n- **403 Forbidden**: Authenticated but not authorized\n- **404 Not Found**: Resource doesn't exist\n- **409 Conflict**: Resource conflict (e.g., duplicate email)\n- **422 Unprocessable Entity**: Validation error\n\n### Server Errors (5xx)\n\n- **500 Internal Server Error**: Generic server error\n- **502 Bad Gateway**: Upstream server error\n- **503 Service Unavailable**: Server temporarily unavailable\n- **504 Gateway Timeout**: Upstream timeout\n\n## Method Comparison Table\n\n| Method | Safe | Idempotent | Purpose |\n|--------|------|------------|---------|\n| GET | ✓ | ✓ | Read |\n| POST | ✗ | ✗ | Create |\n| PUT | ✗ | ✓ | Replace |\n| PATCH | ✗ | Maybe | Partial update |\n| DELETE | ✗ | ✓ | Remove |\n\n## Common Mistakes\n\n❌ Using POST for everything\n❌ Using GET to modify data\n❌ Wrong status codes (200 OK for errors)\n❌ Not handling idempotency properly\n❌ Inconsistent response formats"
+    },
+    {
+      "id": "resource-naming",
+      "moduleId": "rest-api-design",
+      "title": "Resource Naming Conventions",
+      "order": 3,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Use nouns, not verbs in URLs\n- Use plural nouns for collections\n- Use kebab-case (hyphens) for multi-word names\n- Use nesting for relationships\n- Keep URLs simple and predictable\n\n---\n\n# REST URL Design Best Practices\n\n## Use Nouns, Not Verbs\n\n❌ **Bad (RPC-style):**\n```\n/getUser?id=123\n/createUser\n/updateUser\n/deleteUser?id=123\n```\n\n✅ **Good (RESTful):**\n```\nGET /users/123\nPOST /users\nPUT /users/123\nDELETE /users/123\n```\n\n## Use Plural Nouns\n\n❌ **Bad:**\n```\nGET /user/123\nGET /car/456\n```\n\n✅ **Good:**\n```\nGET /users/123\nGET /cars/456\n```\n\n## Use Kebab-Case for Multi-Word\n\n❌ **Bad:**\n```\nGET /userProfiles\nGET /order_items\n```\n\n✅ **Good:**\n```\nGET /user-profiles\nGET /order-items\n```\n\n## Resource Hierarchy (Nesting)\n\nUse nesting to show relationships:\n\n```\n/users/123/orders          // All orders for user 123\n/users/123/orders/456      // Specific order 456 for user 123\n/orders/456/items          // Items in order 456\n/users/123/posts/789/comments  // Comments on post 789 by user 123\n```\n\n**Guidelines for nesting:**\n- Limit to 2-3 levels deep\n- Use when the child cannot exist without the parent\n- Orders belong to users ✓\n- Comments belong to posts ✓\n\n## Filtering, Sorting, Pagination\n\nUse query parameters:\n\n```\n# Filtering\nGET /users?role=admin&active=true\nGET /products?category=electronics&price_min=100\n\n# Sorting\nGET /users?sort=name&order=asc\nGET /users?sort=-created_at  # Descending (minus prefix)\n\n# Pagination\nGET /users?page=2&limit=25\nGET /users?offset=50&limit=25\n\n# Searching\nGET /users?search=john\nGET /products?q=laptop\n\n# Field selection\nGET /users?fields=id,name,email\n\n# Combined\nGET /products?category=electronics&sort=-price&page=2&limit=20\n```\n\n## Versioning Your API\n\n```\n# URL versioning\n/api/v1/users\n/api/v2/users\n\n# Header versioning\nGET /users\nAccept: application/vnd.api+json;version=1\n\n# Query parameter versioning\nGET /users?api-version=2\n```\n\n**Recommendation:** URL versioning is most explicit and cache-friendly.\n\n## Consistent Naming Examples\n\n**Users and Authentication:**\n```\nPOST /auth/register          # Register new user\nPOST /auth/login             # Login\nPOST /auth/logout            # Logout\nPOST /auth/refresh           # Refresh token\nPOST /auth/forgot-password   # Request password reset\nPOST /auth/reset-password    # Reset password\nGET /auth/me                 # Get current user\n```\n\n**CRUD Operations:**\n```\nGET /resources               # List all (with pagination)\nGET /resources/:id           # Get one\nPOST /resources              # Create\nPUT /resources/:id           # Full update\nPATCH /resources/:id         # Partial update\nDELETE /resources/:id        # Delete\n```\n\n## Advanced Patterns\n\n**Bulk Operations:**\n```\nPOST /users/bulk             # Create multiple users\nDELETE /users/bulk           # Delete multiple users\nPATCH /users/bulk            # Update multiple users\n```\n\n**Actions on Resources:**\nWhen you need actions beyond CRUD:\n\n```\nPOST /orders/123/cancel      # Cancel an order\nPOST /users/123/activate     # Activate user\nPOST /posts/456/publish      # Publish a post\nPOST /invoices/789/send      # Send invoice\n```\n\n**Alternative: Sub-resources**\n```\nPOST /order-cancellations    { orderId: 123 }\n```\n\n## URL Design Checklist\n\n✅ Use nouns, not verbs\n✅ Use plural forms\n✅ Use kebab-case\n✅ Keep it lowercase\n✅ No trailing slashes\n✅ No file extensions (.json)\n✅ Logical hierarchy (2-3 levels max)\n✅ Version your API\n✅ Consistent across all endpoints"
+    },
+    {
+      "id": "api-responses",
+      "moduleId": "rest-api-design",
+      "title": "API Response Design",
+      "order": 4,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Use consistent response formats\n- Include metadata for collections (pagination, count)\n- Return appropriate status codes\n- Provide clear error messages\n- Use JSON as default format\n\n---\n\n# Designing Good API Responses\n\n## Response Format Consistency\n\nAlways use consistent structure:\n\n### Single Resource Response\n\n```json\n{\n  \"id\": 123,\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"created_at\": \"2024-01-15T10:30:00Z\",\n  \"updated_at\": \"2024-01-15T10:30:00Z\"\n}\n```\n\n### Collection Response\n\n```json\n{\n  \"data\": [\n    {\n      \"id\": 123,\n      \"name\": \"John Doe\",\n      \"email\": \"john@example.com\"\n    },\n    {\n      \"id\": 124,\n      \"name\": \"Jane Smith\",\n      \"email\": \"jane@example.com\"\n    }\n  ],\n  \"meta\": {\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 20,\n      \"total_pages\": 5,\n      \"total_count\": 100\n    }\n  }\n}\n```\n\n## Pagination Strategies\n\n### Offset-Based (Page/Limit)\n\n```json\n{\n  \"data\": [...],\n  \"meta\": {\n    \"pagination\": {\n      \"page\": 2,\n      \"limit\": 25,\n      \"total_pages\": 10,\n      \"total_count\": 250\n    },\n    \"links\": {\n      \"first\": \"/users?page=1&limit=25\",\n      \"prev\": \"/users?page=1&limit=25\",\n      \"next\": \"/users?page=3&limit=25\",\n      \"last\": \"/users?page=10&limit=25\"\n    }\n  }\n}\n```\n\n**Pros:** Simple, easy to jump to any page\n**Cons:** Performance degrades with large offsets\n\n### Cursor-Based\n\n```json\n{\n  \"data\": [...],\n  \"meta\": {\n    \"pagination\": {\n      \"has_more\": true,\n      \"next_cursor\": \"eyJpZCI6MTIzfQ==\"\n    }\n  }\n}\n```\n\n**Pros:** Consistent performance, good for real-time data\n**Cons:** Cannot jump to arbitrary page\n\n## Error Response Format\n\nConsistent error structure:\n\n```json\n{\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"The request validation failed\",\n    \"details\": [\n      {\n        \"field\": \"email\",\n        \"message\": \"Email is required\"\n      },\n      {\n        \"field\": \"password\",\n        \"message\": \"Password must be at least 8 characters\"\n      }\n    ],\n    \"request_id\": \"req-123456789\"\n  }\n}\n```\n\n## Field Naming Conventions\n\n**Consistently use snake_case or camelCase:**\n\n```json\n// snake_case (recommended for JSON APIs)\n{\n  \"first_name\": \"John\",\n  \"created_at\": \"2024-01-15\"\n}\n\n// camelCase (if your stack prefers it)\n{\n  \"firstName\": \"John\",\n  \"createdAt\": \"2024-01-15\"\n}\n```\n\n## Timestamps\n\nAlways use ISO 8601 format in UTC:\n\n```json\n{\n  \"created_at\": \"2024-01-15T10:30:00Z\",\n  \"updated_at\": \"2024-01-15T14:45:30Z\"\n}\n```\n\n## Null vs Omitting Fields\n\nBe consistent:\n\n```json\n// Option 1: Include null fields\n{\n  \"id\": 123,\n  \"middle_name\": null,\n  \"phone\": null\n}\n\n// Option 2: Omit null fields\n{\n  \"id\": 123\n}\n```\n\n**Recommendation:** Include null for fields that might have values, omit fields that don't apply to this resource type.\n\n## Relationships\n\n```json\n// Embedded (when data is always needed)\n{\n  \"id\": 123,\n  \"user\": {\n    \"id\": 456,\n    \"name\": \"John Doe\"\n  }\n}\n\n// Referenced (when data is sometimes needed)\n{\n  \"id\": 123,\n  \"user_id\": 456,\n  \"user\": {\n    \"id\": 456,\n    \"name\": \"John Doe\",\n    \"link\": \"/users/456\"\n  }\n}\n\n// Sparse fieldsets (API consumer chooses)\nGET /orders/123?include=user,items\n```\n\n## Response Headers\n\nUseful headers to include:\n\n```http\nX-Request-ID: req-123456789\nX-RateLimit-Limit: 100\nX-RateLimit-Remaining: 95\nX-RateLimit-Reset: 1640995200\nCache-Control: max-age=3600\nETag: \"abc123\"\n```\n\n## Common Response Examples\n\n### Create (201 Created)\n\n```http\nHTTP/1.1 201 Created\nLocation: /users/123\nContent-Type: application/json\n\n{\n  \"id\": 123,\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\"\n}\n```\n\n### Update (200 OK)\n\n```http\nHTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"id\": 123,\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\"\n}\n```\n\n### Delete (204 No Content)\n\n```http\nHTTP/1.1 204 No Content\n```\n\n### Not Found (404)\n\n```http\nHTTP/1.1 404 Not Found\nContent-Type: application/json\n\n{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"User with id 123 not found\"\n  }\n}\n```\n\n### Validation Error (422)\n\n```http\nHTTP/1.1 422 Unprocessable Entity\nContent-Type: application/json\n\n{\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Validation failed\",\n    \"details\": [\n      {\n        \"field\": \"email\",\n        \"message\": \"Email format is invalid\"\n      }\n    ]\n  }\n}\n```"
+    },
+    {
+      "id": "api-security",
+      "moduleId": "rest-api-design",
+      "title": "API Security Best Practices",
+      "order": 5,
+      "difficulty": "advanced",
+      "content": "# Essential to know\n- Always use HTTPS in production\n- Implement authentication and authorization\n- Validate and sanitize all inputs\n- Rate limit your APIs\n- Use proper CORS configuration\n- Never expose sensitive data in URLs\n\n---\n\n# Securing Your REST API\n\n## Transport Security\n\n### Always Use HTTPS\n\n```http\n# Bad - Never do this in production\nhttp://api.example.com/users\n\n# Good\nhttps://api.example.com/users\n```\n\n**Enforce HTTPS:**\n- Redirect HTTP to HTTPS\n- Use HSTS headers\n- Secure cookies only\n\n### Security Headers\n\n```http\nStrict-Transport-Security: max-age=31536000; includeSubDomains\nX-Content-Type-Options: nosniff\nX-Frame-Options: DENY\nX-XSS-Protection: 1; mode=block\nContent-Security-Policy: default-src 'self'\n```\n\n## Authentication\n\n### API Keys\n\nSimple but limited:\n\n```http\nGET /api/users\nX-API-Key: your-api-key-here\n```\n\n**Best for:** Server-to-server, internal APIs\n\n### JWT (JSON Web Tokens)\n\nIndustry standard:\n\n```http\nGET /api/users\nAuthorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\n```\n\n**Token structure:**\n- Header: Algorithm and token type\n- Payload: Claims (user id, roles, expiration)\n- Signature: Verification\n\n### OAuth 2.0\n\nFor third-party access:\n\n```http\nGET /api/users\nAuthorization: Bearer {access_token}\n```\n\n**Flows:**\n- Authorization Code (web apps)\n- PKCE (mobile/SPA)\n- Client Credentials (machine-to-machine)\n\n## Authorization\n\n### Role-Based Access Control (RBAC)\n\n```javascript\n// Middleware example\nfunction requireRole(role) {\n  return (req, res, next) => {\n    if (!req.user.roles.includes(role)) {\n      return res.status(403).json({\n        error: 'Forbidden: Insufficient permissions'\n      });\n    }\n    next();\n  };\n}\n\n// Usage\napp.delete('/users/:id', requireRole('admin'), deleteUser);\n```\n\n### Resource-Level Permissions\n\n```javascript\n// User can only access their own data\napp.get('/users/:id', async (req, res) => {\n  if (req.user.id !== req.params.id && !req.user.isAdmin) {\n    return res.status(403).json({\n      error: 'Cannot access other user data'\n    });\n  }\n  // ... fetch user\n});\n```\n\n## Input Validation\n\n### Validate Everything\n\n```javascript\nconst Joi = require('joi');\n\nconst userSchema = Joi.object({\n  name: Joi.string().min(2).max(100).required(),\n  email: Joi.string().email().required(),\n  age: Joi.number().integer().min(0).max(150),\n  role: Joi.string().valid('user', 'admin').default('user')\n});\n\napp.post('/users', (req, res) => {\n  const { error, value } = userSchema.validate(req.body);\n  if (error) {\n    return res.status(422).json({\n      error: 'Validation failed',\n      details: error.details\n    });\n  }\n  // ... create user with value\n});\n```\n\n### Sanitize Input\n\n```javascript\n// Prevent NoSQL injection\nconst sanitizedId = mongoose.Types.ObjectId(req.params.id);\n\n// Prevent XSS\nconst sanitized = DOMPurify.sanitize(userInput);\n\n// SQL injection prevention (use parameterized queries)\nconst query = 'SELECT * FROM users WHERE id = ?';\ndb.query(query, [req.params.id]);\n```\n\n## Rate Limiting\n\n```javascript\nconst rateLimit = require('express-rate-limit');\n\n// General API limit\nconst apiLimiter = rateLimit({\n  windowMs: 15 * 60 * 1000, // 15 minutes\n  max: 100, // limit each IP to 100 requests per windowMs\n  message: 'Too many requests from this IP'\n});\n\n// Stricter limit for auth endpoints\nconst authLimiter = rateLimit({\n  windowMs: 15 * 60 * 1000,\n  max: 5, // 5 login attempts per 15 minutes\n  skipSuccessfulRequests: true\n});\n\napp.use('/api/', apiLimiter);\napp.use('/auth/login', authLimiter);\n```\n\n## CORS Configuration\n\n```javascript\nconst cors = require('cors');\n\n// Allow specific origins\nconst corsOptions = {\n  origin: [\n    'https://app.example.com',\n    'https://admin.example.com'\n  ],\n  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],\n  allowedHeaders: ['Content-Type', 'Authorization'],\n  credentials: true,\n  maxAge: 86400\n};\n\napp.use(cors(corsOptions));\n```\n\n## Security Checklist\n\n✅ Use HTTPS everywhere\n✅ Implement authentication (JWT recommended)\n✅ Implement authorization (RBAC)\n✅ Validate all inputs\n✅ Sanitize data (prevent XSS, SQL injection)\n✅ Rate limit APIs\n✅ Configure CORS properly\n✅ Set security headers\n✅ Don't expose sensitive data in URLs\n✅ Use parameterized queries\n✅ Implement request size limits\n✅ Log security events\n✅ Regular security audits"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "rest-ex-1",
+      "type": "quiz",
+      "lessonId": "rest-principles",
+      "moduleId": "rest-api-design",
+      "title": "REST Principles",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "question": "What does 'stateless' mean in REST?",
+          "options": [
+            "The server doesn't store any data",
+            "Each request contains all information needed to complete it",
+            "The API returns no data",
+            "The client cannot maintain state"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Stateless means each request from client to server must contain all the information needed to understand and complete the request. The server doesn't store client context between requests."
+        },
+        {
+          "question": "Which HTTP method is both safe and idempotent?",
+          "options": [
+            "POST",
+            "PUT",
+            "GET",
+            "PATCH"
+          ],
+          "correctAnswer": 2,
+          "explanation": "GET is safe (doesn't modify server state) and idempotent (multiple identical requests produce the same result). POST is neither, PUT is idempotent but not safe, PATCH is not necessarily either."
+        }
+      ]
+    },
+    {
+      "id": "rest-ex-2",
+      "type": "quiz",
+      "lessonId": "http-methods",
+      "moduleId": "rest-api-design",
+      "title": "HTTP Methods",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "question": "Which HTTP status code indicates a resource was created successfully?",
+          "options": [
+            "200 OK",
+            "201 Created",
+            "204 No Content",
+            "202 Accepted"
+          ],
+          "correctAnswer": 1,
+          "explanation": "201 Created is the appropriate status code when a new resource is successfully created. 200 OK is for general success, 204 for success with no content to return."
+        },
+        {
+          "question": "What's the difference between PUT and PATCH?",
+          "options": [
+            "They are identical",
+            "PUT replaces the entire resource, PATCH does partial updates",
+            "PUT creates resources, PATCH updates them",
+            "PUT is for files, PATCH is for JSON"
+          ],
+          "correctAnswer": 1,
+          "explanation": "PUT replaces the entire resource with the request body, while PATCH applies partial modifications to a resource. PUT is idempotent, PATCH is not necessarily."
+        }
+      ]
+    }
+  ]
+}

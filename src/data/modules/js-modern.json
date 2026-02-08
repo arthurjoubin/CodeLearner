@@ -1,7 +1,7 @@
 {
   "module": {
     "id": "js-modern",
-    "courseId": "javascript",
+    "courseId": "javascript-core",
     "title": "Modern JavaScript (ES6+)",
     "description": "Template literals, modules, optional chaining, and more",
     "icon": "Zap",

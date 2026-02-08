@@ -6,7 +6,7 @@
     "icon": "Layers",
     "requiredXp": 400,
     "color": "from-cyan-400 to-cyan-600",
-    "courseId": "web-stack"
+    "courseId": "advanced-topics"
   },
   "lessons": [
     {
