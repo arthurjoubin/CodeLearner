@@ -2,7 +2,6 @@
 import MainLayout from '../../layouts/MainLayout.astro';
 import PageTitle from '../../components/PageTitle.astro';
 import CourseCardLarge from '../../components/CourseCardLarge.astro';
-import CourseCardSoon from '../../components/CourseCardSoon.astro';
 import { modules } from '../../data/modules';
 
 // Helper function to get module count for a course
@@ -19,7 +18,8 @@ const courses = [
 		difficulty: 'beginner' as const,
 		get modules() { return getModuleCount('html-css-tailwind'); },
 		estimatedTime: '20 hours',
-		topics: ['HTML', 'CSS', 'Flexbox', 'Grid', 'Tailwind', 'Responsive']
+		topics: ['HTML', 'CSS', 'Flexbox', 'Grid', 'Tailwind', 'Responsive'],
+		learningPath: 'Frontend'
 	},
 	{
 		id: 'javascript-core',
@@ -29,7 +29,8 @@ const courses = [
 		difficulty: 'beginner' as const,
 		get modules() { return getModuleCount('javascript-core'); },
 		estimatedTime: '25 hours',
-		topics: ['Variables', 'Functions', 'Arrays', 'Async/Await', 'DOM', 'ES6+']
+		topics: ['Variables', 'Functions', 'Arrays', 'Async/Await', 'DOM', 'ES6+'],
+		learningPath: 'Frontend'
 	},
 	{
 		id: 'react',
@@ -39,7 +40,8 @@ const courses = [
 		difficulty: 'medium' as const,
 		get modules() { return getModuleCount('react'); },
 		estimatedTime: '35 hours',
-		topics: ['JSX', 'Hooks', 'Context', 'Router', 'TypeScript', 'Testing']
+		topics: ['JSX', 'Hooks', 'Context', 'Router', 'TypeScript', 'Testing'],
+		learningPath: 'Frontend'
 	},
 	{
 		id: 'node-express',
@@ -49,7 +51,8 @@ const courses = [
 		difficulty: 'medium' as const,
 		get modules() { return getModuleCount('node-express'); },
 		estimatedTime: '12 hours',
-		topics: ['Node.js', 'Express', 'REST APIs', 'Middleware', 'Routing']
+		topics: ['Node.js', 'Express', 'REST APIs', 'Middleware', 'Routing'],
+		learningPath: 'Backend'
 	},
 	{
 		id: 'databases',
@@ -59,17 +62,19 @@ const courses = [
 		difficulty: 'medium' as const,
 		get modules() { return getModuleCount('databases'); },
 		estimatedTime: '10 hours',
-		topics: ['SQL', 'PostgreSQL', 'MongoDB', 'ORMs', 'Data Modeling']
+		topics: ['SQL', 'PostgreSQL', 'MongoDB', 'ORMs', 'Data Modeling'],
+		learningPath: 'Backend'
 	},
 	{
 		id: 'auth-security',
 		title: 'Backend Advanced',
 		description: 'Authentication, security patterns, architecture and real-time communication',
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/security/security.png',
+		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/docker/docker.png',
 		difficulty: 'advanced' as const,
 		get modules() { return getModuleCount('auth-security'); },
 		estimatedTime: '15 hours',
-		topics: ['Auth', 'Security', 'Architecture', 'WebSockets', 'Microservices']
+		topics: ['Auth', 'Security', 'Architecture', 'WebSockets', 'Microservices'],
+		learningPath: 'Backend'
 	},
 	{
 		id: 'git-mastery',
@@ -79,7 +84,8 @@ const courses = [
 		difficulty: 'beginner' as const,
 		get modules() { return getModuleCount('git-mastery'); },
 		estimatedTime: '20 hours',
-		topics: ['Commits', 'Branches', 'Merging', 'Rebase', 'GitHub']
+		topics: ['Commits', 'Branches', 'Merging', 'Rebase', 'GitHub'],
+		learningPath: 'Web Fundamentals'
 	},
 	{
 		id: 'dev-environment',
@@ -89,7 +95,8 @@ const courses = [
 		difficulty: 'beginner' as const,
 		get modules() { return getModuleCount('dev-environment'); },
 		estimatedTime: '15 hours',
-		topics: ['Terminal', 'HTTP', 'DevTools', 'Debugging']
+		topics: ['Terminal', 'HTTP', 'DevTools', 'Debugging'],
+		learningPath: 'Web Fundamentals'
 	},
 	{
 		id: 'frontend-production',
@@ -99,7 +106,8 @@ const courses = [
 		difficulty: 'medium' as const,
 		get modules() { return getModuleCount('frontend-production'); },
 		estimatedTime: '25 hours',
-		topics: ['Testing', 'Performance', 'Security', 'PWA']
+		topics: ['Testing', 'Performance', 'Security', 'PWA'],
+		learningPath: 'Frontend'
 	},
 	{
 		id: 'nextjs',
@@ -109,7 +117,8 @@ const courses = [
 		difficulty: 'advanced' as const,
 		get modules() { return getModuleCount('nextjs'); },
 		estimatedTime: '30 hours',
-		topics: ['App Router', 'Server Components', 'API Routes', 'Auth']
+		topics: ['App Router', 'Server Components', 'API Routes', 'Auth'],
+		learningPath: 'Fullstack'
 	},
 	{
 		id: 'internet-tools',
@@ -119,45 +128,10 @@ const courses = [
 		difficulty: 'beginner' as const,
 		get modules() { return getModuleCount('internet-tools'); },
 		estimatedTime: '15 hours',
-		topics: ['HTTP', 'NPM', 'Webpack', 'DevTools']
-	},
-	{
-		id: 'fastapi',
-		title: 'FastAPI',
-		description: 'Build modern, fast APIs with Python and FastAPI',
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/fastapi/fastapi.png',
-		difficulty: 'medium' as const,
-		modules: 0,
-		estimatedTime: 'Coming soon',
-		topics: ['Python', 'APIs', 'Async', 'Pydantic', 'SQLModel'],
-		comingSoon: true
-	},
-	{
-		id: 'go',
-		title: 'Go',
-		description: 'Learn Go programming language for modern backend development',
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/go/go.png',
-		difficulty: 'medium' as const,
-		modules: 0,
-		estimatedTime: 'Coming soon',
-		topics: ['Basics', 'Concurrency', 'HTTP', 'Testing'],
-		comingSoon: true
-	},
-	{
-		id: 'python',
-		title: 'Python',
-		description: 'Learn Python programming language from basics to advanced',
-		logo: 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png',
-		difficulty: 'beginner' as const,
-		modules: 0,
-		estimatedTime: 'Coming soon',
-		topics: ['Basics', 'OOP', 'Data Structures', 'Libraries'],
-		comingSoon: true
+		topics: ['HTTP', 'NPM', 'Webpack', 'DevTools'],
+		learningPath: 'Web Fundamentals'
 	},
 ];
-
-const availableCourses = courses.filter(c => !c.comingSoon);
-const comingSoonCourses = courses.filter(c => c.comingSoon);
 ---
 
 <MainLayout title="Courses - All Available Courses">
@@ -171,22 +145,26 @@ const comingSoonCourses = courses.filter(c => c.comingSoon);
 		</div>
 
 		<!-- Link to Learning Paths -->
-		<a href="/learning-path" class="block mb-8 p-4 border-2 border-primary-400 rounded-lg bg-primary-50 hover:shadow-lg transition-all group">
-			<div class="flex items-center gap-3">
-				<div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-					<span class="text-primary-600 font-bold">🎯</span>
+		<a href="/learning-path" class="group mb-8 flex items-center gap-3 p-3 rounded-lg border border-gray-200 bg-white hover:border-primary-300 hover:shadow-sm transition-all">
+			<div class="w-8 h-8 rounded-md bg-gradient-to-br from-primary-100 to-primary-50 flex items-center justify-center flex-shrink-0">
+				<svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-.806-.983A1 1 0 0118.553 5.724L15 7m0 13V7m0 0L9 4"/>
+				</svg>
+			</div>
+			<div class="flex-1 min-w-0">
+				<div class="flex items-center gap-2">
+					<h2 class="text-sm font-medium text-gray-800 group-hover:text-primary-700 transition-colors">Guided learning paths</h2>
+					<svg class="w-3 h-3 text-gray-400 group-hover:text-primary-500 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+					</svg>
 				</div>
-				<div class="flex-1">
-					<h2 class="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">Looking for a guided path?</h2>
-					<p class="text-xs text-gray-600">Check out our Learning Paths for structured, multi-course progressions</p>
-				</div>
-				<span class="text-primary-600 font-bold text-lg group-hover:translate-x-1 transition-transform">&rarr;</span>
+				<p class="text-[11px] text-gray-500 truncate">Structured, multi-course progressions for your goals</p>
 			</div>
 		</a>
 
 		<!-- Available Courses -->
-		<div class="grid md:grid-cols-2 gap-6 mb-8">
-			{availableCourses.map((course) => (
+		<div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
+			{courses.map((course) => (
 				<CourseCardLarge
 					id={course.id}
 					title={course.title}
@@ -196,30 +174,9 @@ const comingSoonCourses = courses.filter(c => c.comingSoon);
 					modules={course.modules}
 					estimatedTime={course.estimatedTime}
 					topics={course.topics}
+					learningPath={course.learningPath}
 				/>
 			))}
-		</div>
-
-		<!-- Coming Soon Section -->
-		<div class="mb-8">
-			<div class="relative inline-block group mb-4">
-				<h2 class="font-bold text-sm uppercase text-gray-700 flex items-center gap-2">
-					<span class="w-2 h-2 bg-gray-400 rounded-full" />
-					Coming Soon
-				</h2>
-				<span class="absolute -bottom-0.5 left-0 w-8 h-0.5 bg-gray-400 transition-all group-hover:w-full duration-300" />
-			</div>
-
-			<div class="grid md:grid-cols-2 gap-4">
-				{comingSoonCourses.map((course) => (
-					<CourseCardSoon
-						title={course.title}
-						description={course.description}
-						logo={course.logo}
-						topics={course.topics}
-					/>
-				))}
-			</div>
 		</div>
 	</div>
 </MainLayout>
