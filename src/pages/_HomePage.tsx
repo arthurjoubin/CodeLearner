@@ -11,7 +11,7 @@ import { getCourseTitles } from '../data/course-metadata';
 const courseTitles = getCourseTitles();
 
 const learningPaths = [
-  { id: 'web-fundamentals', title: 'Web Fundamentals', description: 'Master the fundamentals of web development', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const, courses: ['dev-environment', 'git-mastery', 'javascript-core'] },
+  { id: 'web-fundamentals', title: 'Web Fundamentals', description: 'Master the fundamentals of web development', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const, courses: ['internet-tools', 'git-mastery', 'javascript-core'] },
   { id: 'frontend', title: 'Frontend', description: 'Learn React and build modern web applications', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/react/react.png', difficulty: 'medium' as const, courses: ['html-css-tailwind', 'react', 'frontend-production'] },
   { id: 'backend', title: 'Backend', description: 'Master server-side development with Node.js', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nodejs/nodejs.png', difficulty: 'medium' as const, courses: ['node-express', 'databases', 'auth-security'] },
   { id: 'fullstack', title: 'Fullstack', description: 'Learn full-stack development with Next.js', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/nextjs/nextjs.png', difficulty: 'advanced' as const, courses: ['nextjs', 'architecture-patterns', 'advanced-topics'] },

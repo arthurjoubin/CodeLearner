@@ -12,7 +12,6 @@ const COURSE_TITLES: Record<string, string> = {
   'react': 'React',
   'advanced-topics': 'Web Stack',
   'git-mastery': 'Git',
-  'dev-environment': 'Terminal & CLI',
   'frontend-production': 'Engineering Practices',
   'node-express': 'Node.js & Express',
   'databases': 'Databases & SQL',
@@ -20,7 +19,7 @@ const COURSE_TITLES: Record<string, string> = {
   'nextjs': 'Next.js',
   'deployment': 'Deployment',
   'architecture-patterns': 'Architecture Patterns',
-  'internet-tools': 'Internet Tools',
+  'internet-tools': 'Internet & Tools',
 };
 
 // Learning path titles - for breadcrumbs and navigation
@@ -33,11 +32,10 @@ const LEARNING_PATH_TITLES: Record<string, string> = {
   'node-express': 'Backend',
   'databases': 'Backend',
   'auth-security': 'Backend',
-  'dev-environment': 'Terminal & CLI',
   'frontend-production': 'Frontend Production',
   'nextjs': 'Next.js',
   'deployment': 'Deployment',
-  'internet-tools': 'Internet Tools',
+  'internet-tools': 'Internet & Tools',
 };
 
 // Course difficulty levels
@@ -47,7 +45,6 @@ const COURSE_DIFFICULTY: Record<string, string> = {
   'advanced-topics': 'beginner',
   'git-mastery': 'beginner',
   'react': 'medium',
-  'dev-environment': 'beginner',
   'frontend-production': 'medium',
   'node-express': 'medium',
   'databases': 'medium',

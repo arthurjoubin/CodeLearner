@@ -6,7 +6,7 @@
     "icon": "Settings",
     "requiredXp": 500,
     "color": "from-emerald-500 to-emerald-700",
-    "courseId": "dev-environment"
+    "courseId": "internet-tools"
   },
   "lessons": [
     {
