@@ -153,9 +153,9 @@ export function HomePageContent() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{resume.pathTitle}</span>
-                          {courseName && (
+                          {resume.nextLesson.moduleTitle && (
                             <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded">
-                              {courseName}
+                              {resume.nextLesson.moduleTitle}
                             </span>
                           )}
                           <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded">

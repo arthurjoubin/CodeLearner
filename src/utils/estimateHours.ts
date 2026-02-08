@@ -67,15 +67,8 @@ export function getTotalContentHours(): number {
  * Format hours for display
  */
 export function formatHours(hours: number): string {
-  if (hours < 1) {
-    return `${Math.ceil(hours * 60)}m`;
-  }
-  const wholeHours = Math.floor(hours);
-  const minutes = Math.round((hours - wholeHours) * 60);
-  if (minutes === 0) {
-    return `${wholeHours}h`;
-  }
-  return `${wholeHours}h ${minutes}m`;
+  const wholeHours = Math.round(hours);
+  return `${wholeHours}h`;
 }
 
 /**
