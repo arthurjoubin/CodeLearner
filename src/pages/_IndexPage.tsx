@@ -6,8 +6,10 @@ import { ExerciseDemo2 } from '../components/ExerciseDemo2';
 import { ExerciseDemo3 } from '../components/ExerciseDemo3';
 import { LearningPathCard } from '../components/LearningPathCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { Clock } from 'lucide-react';
 
 import { SectionTitle } from '../components/PageTitle';
+import { getTotalContentHours, formatHours } from '../utils/estimateHours';
 
 const demoComponents = [ExerciseDemo1, ExerciseDemo2, ExerciseDemo3];
 
@@ -107,7 +109,13 @@ function LandingContent() {
       {/* Learning Paths */}
       <section className="py-8 md:py-12 lg:py-16">
         <div className="max-w-6xl mx-auto px-4">
-          <SectionTitle>Learning Paths</SectionTitle>
+          <div className="flex items-end justify-between mb-4">
+            <SectionTitle>Learning Paths</SectionTitle>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 border border-primary-200 rounded-lg">
+              <Clock className="w-5 h-5 text-primary-600" />
+              <span className="font-semibold text-primary-700">{formatHours(getTotalContentHours())} of learning</span>
+            </div>
+          </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <LearningPathCard

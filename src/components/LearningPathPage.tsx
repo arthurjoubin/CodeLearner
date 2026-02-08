@@ -1,8 +1,9 @@
 import { useUser, UserProvider } from '../context/UserContext';
 import { getModulesForCourse, getLessonsForModule, getExercisesForLesson } from '../data/modules';
-import { Lock, CheckCircle, ArrowLeft, ChevronRight, Code } from 'lucide-react';
+import { Lock, CheckCircle, ArrowLeft, ChevronRight, Code, Clock } from 'lucide-react';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { PageTitle } from '../components/PageTitle';
+import { estimateModuleHours, estimateCourseHours, formatHours } from '../utils/estimateHours';
 
 export interface LearningPathCourse {
   id: string;
@@ -103,7 +104,7 @@ function LearningPathContent({ pathData }: LearningPathPageProps) {
               )}
 
               {/* Course Card - Compact Header */}
-              <a 
+              <a
                 href={`/courses/${course.id}`}
                 className={`block border-2 rounded-xl p-4 mb-3 transition-all hover:shadow-md ${isUnlocked ? `${course.borderColor} bg-white` : 'border-gray-300 bg-gray-50 cursor-not-allowed opacity-75'}`}
               >
@@ -112,7 +113,7 @@ function LearningPathContent({ pathData }: LearningPathPageProps) {
                     <img src={course.logo} alt={course.title} className={`w-7 h-7 object-contain ${!isUnlocked ? 'opacity-40 grayscale' : ''}`} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${isUnlocked ? `${course.bgColor} ${course.textColor}` : 'bg-gray-200 text-gray-500'}`}>
                         Phase {course.phase}
                       </span>
@@ -122,6 +123,10 @@ function LearningPathContent({ pathData }: LearningPathPageProps) {
                       {!isUnlocked && (
                         <Lock className="w-3 h-3 text-gray-400" />
                       )}
+                      <span className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${isUnlocked ? 'bg-gray-100 text-gray-600' : 'bg-gray-200 text-gray-500'}`}>
+                        <Clock className="w-3 h-3" />
+                        {formatHours(estimateCourseHours(course.id))}
+                      </span>
                     </div>
                     <h2 className={`font-bold text-base uppercase truncate ${isUnlocked ? 'text-gray-900' : 'text-gray-400'}`}>{course.title}</h2>
                     <div className="flex items-center gap-2 mt-0.5">
@@ -150,6 +155,7 @@ function LearningPathContent({ pathData }: LearningPathPageProps) {
 
                   // Locked preview state (course locked or module locked)
                   if (!isModuleUnlocked) {
+                    const moduleHours = estimateModuleHours(module);
                     return (
                       <div key={module.id} className={`flex items-center gap-2 p-2 rounded-lg border ${isUnlocked ? 'bg-gray-100/50 border-gray-200 opacity-60' : 'bg-gray-50/80 border-gray-200 opacity-50'}`}>
                         <div className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold ${isUnlocked ? 'bg-gray-200 text-gray-400' : 'bg-gray-200 text-gray-300'}`}>
@@ -160,6 +166,10 @@ function LearningPathContent({ pathData }: LearningPathPageProps) {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className={`text-xs font-medium truncate ${isUnlocked ? 'text-gray-400' : 'text-gray-400'}`}>{module.title}</p>
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <Clock className={`w-3 h-3 ${isUnlocked ? 'text-gray-300' : 'text-gray-300'}`} />
+                            <span className={`text-[8px] ${isUnlocked ? 'text-gray-400' : 'text-gray-400'}`}>{formatHours(moduleHours)}</span>
+                          </div>
                         </div>
                         <Lock className={`w-3 h-3 ${isUnlocked ? 'text-gray-300' : 'text-gray-300'}`} />
                       </div>
@@ -167,9 +177,10 @@ function LearningPathContent({ pathData }: LearningPathPageProps) {
                   }
 
                   // Unlocked and accessible
+                  const moduleHours = estimateModuleHours(module);
                   return (
-                    <a 
-                      key={module.id} 
+                    <a
+                      key={module.id}
                       href={`/module/${module.id}`}
                       className="group flex items-center gap-2 p-2.5 rounded-lg bg-white border border-gray-200 hover:border-primary-400 hover:shadow-sm transition-all"
                     >
@@ -181,6 +192,10 @@ function LearningPathContent({ pathData }: LearningPathPageProps) {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold text-gray-700 truncate group-hover:text-gray-900">{module.title}</p>
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <Clock className="w-3 h-3 text-gray-400" />
+                          <span className="text-[8px] text-gray-500">{formatHours(moduleHours)}</span>
+                        </div>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <div className="w-10 bg-gray-100 rounded-full h-1">
