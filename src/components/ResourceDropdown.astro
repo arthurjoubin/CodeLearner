@@ -23,7 +23,7 @@ const currentItem = items.find(item => item.slug === currentSlug);
 ---
 
 <div class="relative resource-dd" id={dropdownId}>
-  <div class="dd-overlay fixed inset-0 z-40" onclick="this.closest('.resource-dd').classList.remove('dd-open')"></div>
+  <div class="dd-overlay fixed inset-0 z-40 bg-black/30 sm:bg-transparent" onclick="this.closest('.resource-dd').classList.remove('dd-open')"></div>
   <button
     type="button"
     onclick="event.stopPropagation(); document.querySelectorAll('.resource-dd.dd-open, .category-dd.dd-open').forEach(el => el !== this.parentElement && el.classList.remove('dd-open')); this.parentElement.classList.toggle('dd-open')"

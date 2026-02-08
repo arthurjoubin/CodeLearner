@@ -20,7 +20,7 @@ const CurrentIcon = currentInfo?.Icon || Newspaper;
 ---
 
 <div class="relative category-dd">
-  <div class="dd-overlay fixed inset-0 z-40" onclick="this.closest('.category-dd').classList.remove('dd-open')"></div>
+  <div class="dd-overlay fixed inset-0 z-40 bg-black/30 sm:bg-transparent" onclick="this.closest('.category-dd').classList.remove('dd-open')"></div>
   <button
     type="button"
     onclick="event.stopPropagation(); document.querySelectorAll('.resource-dd.dd-open, .category-dd.dd-open').forEach(el => el !== this.parentElement && el.classList.remove('dd-open')); this.parentElement.classList.toggle('dd-open')"
