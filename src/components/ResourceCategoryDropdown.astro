@@ -26,8 +26,8 @@ const CurrentIcon = currentInfo?.Icon || Newspaper;
     onclick="event.stopPropagation(); document.querySelectorAll('.resource-dd.dd-open, .category-dd.dd-open').forEach(el => el !== this.parentElement && el.classList.remove('dd-open')); this.parentElement.classList.toggle('dd-open')"
     class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 bg-gray-900 text-white border border-gray-900 rounded-lg hover:bg-gray-800 transition-colors text-xs sm:text-sm font-bold cursor-pointer"
   >
-    <CurrentIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-    <span class="hidden xs:inline">{currentInfo?.name}</span>
+    <CurrentIcon className="hidden sm:block w-4 h-4" />
+    <span>{currentInfo?.name}</span>
     <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform dd-chevron" />
   </button>
 
