@@ -6,24 +6,9 @@ import { ArrowRight, Clock } from 'lucide-react';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SectionTitle } from '../components/PageTitle';
 import { estimateLessonHours, estimatePathHours, formatHours } from '../utils/estimateHours';
+import { getCourseTitles } from '../data/course-metadata';
 
-const courseTitles: Record<string, string> = {
-  'html-css-tailwind': 'HTML & CSS',
-  'javascript-core': 'JavaScript',
-  'react': 'React',
-  'advanced-topics': 'Web Stack',
-  'fastapi': 'FastAPI',
-  'git-mastery': 'Git',
-  'dev-environment': 'Terminal & CLI',
-  'frontend-production': 'Engineering Practices',
-  'node-express': 'Node.js & Express',
-  'databases': 'Databases & SQL',
-  'auth-security': 'Backend Advanced',
-  'nextjs': 'Next.js',
-  'deployment': 'Deployment',
-  'architecture-patterns': 'Architecture Patterns',
-  'internet-tools': 'Internet Tools',
-};
+const courseTitles = getCourseTitles();
 
 const learningPaths = [
   { id: 'web-fundamentals', title: 'Web Fundamentals', description: 'Master the fundamentals of web development', logo: 'https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png', difficulty: 'beginner' as const, courses: ['dev-environment', 'git-mastery', 'javascript-core'] },

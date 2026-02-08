@@ -3,28 +3,13 @@ import { useState } from 'react';
 
 import { useUser, UserProvider } from '../context/UserContext';
 import { getModule, getLessonsForModule, getExercisesForLesson, getLesson, getModulesForCourse, lessons as allLessons } from '../data/modules';
+import { getCourseTitles } from '../data/course-metadata';
 import { CheckCircle, Lock, BookOpen, X, ArrowRight } from 'lucide-react';
 import ProgressPath from '../components/ProgressPath';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { PageHeader } from '../components/PageTitle';
 
-const courseTitles: Record<string, string> = {
-  'html-css-tailwind': 'HTML & CSS',
-  'javascript-core': 'JavaScript',
-  'react': 'React',
-  'advanced-topics': 'Web Stack',
-  'fastapi': 'FastAPI',
-  'git-mastery': 'Git',
-  'dev-environment': 'Web Fundamentals',
-  'frontend-production': 'Engineering Practices',
-  'node-express': 'Node.js & Express',
-  'databases': 'Databases & SQL',
-  'auth-security': 'Backend Advanced',
-  'nextjs': 'Next.js',
-  'deployment': 'Deployment',
-  'architecture-patterns': 'Architecture Patterns',
-  'internet-tools': 'Internet Tools',
-};
+const courseTitles = getCourseTitles();
 
 interface ModulePageProps {
   moduleId?: string;

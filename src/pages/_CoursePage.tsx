@@ -2,6 +2,7 @@
 
 import { useUser, UserProvider } from '../context/UserContext';
 import { getModulesForCourse, getLessonsForModule, getExercisesForLesson } from '../data/modules';
+import { getCourseTitles, getCourseDifficulty } from '../data/course-metadata';
 import { Lock, CheckCircle, Code, Code2, Boxes, Database, MousePointer, Zap, Shield, List, FileInput, FileText, Layers, Settings, Gauge, Navigation, Network, Palette, Server, Target, TestTube, GitBranch, ArrowLeft, Route, Globe, Terminal } from 'lucide-react';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { PageTitle } from '../components/PageTitle';
@@ -25,40 +26,8 @@ function CoursePageContent({ courseId }: CoursePageProps) {
 
   if (!user) return null;
 
-  const courseTitles: Record<string, string> = {
-    'html-css-tailwind': 'HTML & CSS',
-    'javascript-core': 'JavaScript',
-    'react': 'React',
-    'advanced-topics': 'Web Stack',
-    'fastapi': 'FastAPI',
-    'git-mastery': 'Git',
-    'dev-environment': 'Terminal & CLI',
-    'frontend-production': 'Engineering Practices',
-    'node-express': 'Node.js & Express',
-    'databases': 'Databases & SQL',
-    'auth-security': 'Backend Advanced',
-    'nextjs': 'Next.js',
-    'deployment': 'Deployment',
-    'architecture-patterns': 'Architecture Patterns',
-    'internet-tools': 'Internet Tools',
-  };
-
-  const courseDifficulty: Record<string, string> = {
-    'html-css-tailwind': 'beginner',
-    'javascript-core': 'beginner',
-    'advanced-topics': 'beginner',
-    'git-mastery': 'beginner',
-    'react': 'medium',
-    'dev-environment': 'beginner',
-    'frontend-production': 'medium',
-    'node-express': 'medium',
-    'databases': 'medium',
-    'auth-security': 'advanced',
-    'nextjs': 'advanced',
-    'deployment': 'advanced',
-    'architecture-patterns': 'advanced',
-    'internet-tools': 'beginner',
-  };
+  const courseTitles = getCourseTitles();
+  const courseDifficulty = getCourseDifficulty();
 
   const courseTitle = courseTitles[courseId || ''] || 'Course';
   const difficulty = courseDifficulty[courseId || ''];

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useUser, UserProvider } from '../context/UserContext';
 import { getLesson, getModule, getExercisesForLesson, getLessonsForModule, getModulesForCourse, lessons as allLessons } from '../data/modules';
 import { getXpReward } from '../types';
+import { getLearningPathTitles, getCourseTitles } from '../data/course-metadata';
 import {
   CheckCircle,
   Code2,
@@ -14,40 +15,8 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { PageHeader } from '../components/PageTitle';
 import { LessonCompletionModal } from '../components/completion-modals';
 
-const learningPathTitles: Record<string, string> = {
-  react: 'React',
-  'advanced-topics': 'Web Stack',
-  'git-mastery': 'Git',
-  'javascript-core': 'JavaScript',
-  'html-css-tailwind': 'HTML & CSS',
-  fastapi: 'FastAPI',
-  'node-express': 'Backend',
-  'databases': 'Backend',
-  'auth-security': 'Backend',
-  'dev-environment': 'Terminal & CLI',
-  'frontend-production': 'Frontend Production',
-  'nextjs': 'Next.js',
-  'deployment': 'Deployment',
-  'internet-tools': 'Internet Tools',
-};
-
-const courseTitles: Record<string, string> = {
-  'html-css-tailwind': 'HTML & CSS',
-  'javascript-core': 'JavaScript',
-  'react': 'React',
-  'advanced-topics': 'Web Stack',
-  'fastapi': 'FastAPI',
-  'git-mastery': 'Git',
-  'dev-environment': 'Terminal & CLI',
-  'frontend-production': 'Engineering Practices',
-  'node-express': 'Node.js & Express',
-  'databases': 'Databases & SQL',
-  'auth-security': 'Backend Advanced',
-  'nextjs': 'Next.js',
-  'deployment': 'Deployment',
-  'architecture-patterns': 'Architecture Patterns',
-  'internet-tools': 'Internet Tools',
-};
+const learningPathTitles = getLearningPathTitles();
+const courseTitles = getCourseTitles();
 
 interface LessonPageProps {
   lessonId?: string;

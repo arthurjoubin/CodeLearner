@@ -4,6 +4,7 @@ import type { GitScenarioExercise, Lesson, Exercise } from '../types';
 import { useGitState } from '../hooks/useGitState';
 import { checkAllObjectives } from '../utils/gitValidation';
 import { getModulesForCourse, getLessonsForModule, getExercisesForLesson, lessons as allLessons } from '../data/modules';
+import { getLearningPathTitles } from '../data/course-metadata';
 import GitTerminal from '../components/GitTerminal';
 import GitSimulator from '../components/GitSimulator';
 import GitObjectives from '../components/GitObjectives';
@@ -19,22 +20,7 @@ import {
 } from 'lucide-react';
 import { ExerciseCompletionModal } from '../components/completion-modals';
 
-const learningPathTitles: Record<string, string> = {
-  react: 'React',
-  'advanced-topics': 'Web Stack',
-  'git-mastery': 'Git',
-  'javascript-core': 'JavaScript',
-  'html-css-tailwind': 'HTML & CSS',
-  fastapi: 'FastAPI',
-  'node-express': 'Backend',
-  'databases': 'Backend',
-  'auth-security': 'Backend',
-  'dev-environment': 'Terminal & CLI',
-  'frontend-production': 'Frontend Production',
-  'nextjs': 'Next.js',
-  'deployment': 'Deployment',
-  'internet-tools': 'Internet Tools',
-};
+const learningPathTitles = getLearningPathTitles();
 
 interface GitScenarioPageProps {
   exercise: GitScenarioExercise;
