@@ -137,7 +137,7 @@
       "id": "a11y-ex-3",
       "lessonId": "screen-readers",
       "moduleId": "accessibility-basics",
-      "title": "Screen Reader Support",
+      "title": "Accessible Alt Text and ARIA",
       "difficulty": "medium",
       "type": "quiz",
       "questions": [

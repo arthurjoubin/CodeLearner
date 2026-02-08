@@ -212,7 +212,7 @@
       "id": "arch-ex-5",
       "lessonId": "jamstack",
       "moduleId": "architecture-patterns",
-      "title": "JAMstack Architecture",
+      "title": "Static Site Generation with JAMstack",
       "difficulty": "medium",
       "description": "Understanding JAMstack benefits and use cases.",
       "type": "quiz",

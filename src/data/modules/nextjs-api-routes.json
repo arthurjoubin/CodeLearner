@@ -32,7 +32,7 @@
       "type": "quiz",
       "lessonId": "route-handlers-intro",
       "moduleId": "nextjs-api-routes",
-      "title": "Route Handlers",
+      "title": "Route Handler Implementation",
       "difficulty": "easy",
       "questions": [
         {
