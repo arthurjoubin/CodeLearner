@@ -97,9 +97,15 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
     <div className="page-enter">
       <div className="mb-6">
         <div className="mb-2">
-          <ProgressPath items={[
-            { name: module.title, current: currentCoursePosition, total: courseLessons.length, href: `/courses/${module.courseId}`, parent: { name: courseTitles[module.courseId] || module.courseId, href: `/courses/${module.courseId}` } },
-          ]} />
+          {(() => {
+            const parentName = courseTitles[module.courseId] || module.courseId;
+            const showParent = parentName !== module.title;
+            return (
+              <ProgressPath items={[
+                { name: module.title, current: currentCoursePosition, total: courseLessons.length, href: `/courses/${module.courseId}`, ...(showParent ? { parent: { name: parentName, href: `/courses/${module.courseId}` } } : {}) },
+              ]} />
+            );
+          })()}
         </div>
         <PageHeader
           title={module.title}
@@ -110,11 +116,8 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
       <div className="space-y-3">
         {lessons.map((lesson, index) => {
           const exercises = getExercisesForLesson(lesson.id);
-          const lessonDone = isLessonCompleted(lesson.id);
           const exercisesDone = exercises.filter(e => isExerciseCompleted(e.id)).length;
-          const allExercisesDone = exercises.length === 0 || exercisesDone === exercises.length;
-          const isAnythingDone = lessonDone || allExercisesDone;
-          const isComplete = isAnythingDone;
+          const isComplete = isLessonEffectivelyDone(lesson.id);
 
           const prevLesson = index > 0 ? lessons[index - 1] : null;
           const isUnlocked = index === 0 || (prevLesson && isLessonEffectivelyDone(prevLesson.id));
