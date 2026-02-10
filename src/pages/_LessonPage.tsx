@@ -103,7 +103,7 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
         {/* Lesson and exercise navigation */}
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <div className="inline-flex items-center gap-2 border-2 border-gray-300 bg-white rounded-lg px-3 py-2">
-            <span className="text-xs font-bold text-gray-500 uppercase">Courses</span>
+            <span className="text-xs font-bold text-gray-500 uppercase">Lessons</span>
             <div className="flex items-center gap-1.5">
               {moduleLessons.map((mLesson, idx) => {
                 const isDone = isLessonEffectivelyDone(mLesson.id);
@@ -154,6 +154,15 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
                 })}
               </div>
             </div>
+          )}
+
+          {nextLesson && (
+            <a
+              href={`/lesson/${nextLesson.id}`}
+              className="inline-flex items-center gap-2 border-2 border-primary-300 bg-primary-50 text-primary-700 hover:bg-primary-100 hover:border-primary-400 rounded-lg px-3 py-2 transition-colors font-bold text-sm"
+            >
+              Next Lesson →
+            </a>
           )}
         </div>
       </div>

@@ -296,6 +296,13 @@ function LayoutContent({ children }: LayoutProps) {
                           <Lightbulb className="w-5 h-5 sm:w-4 sm:h-4" /> Learning Paths
                         </a>
                         <a
+                          href="/courses"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-4 sm:py-2.5 rounded-xl sm:rounded-none text-base sm:text-sm font-bold sm:font-normal text-gray-800 sm:text-gray-700 hover:bg-gray-50 sm:hover:bg-gray-100 transition-colors"
+                        >
+                          <BookOpen className="w-5 h-5 sm:w-4 sm:h-4" /> Courses
+                        </a>
+                        <a
                           href="/resources"
                           onClick={() => setMenuOpen(false)}
                           className="flex items-center gap-3 px-4 py-4 sm:py-2.5 rounded-xl sm:rounded-none text-base sm:text-sm font-bold sm:font-normal text-gray-800 sm:text-gray-700 hover:bg-gray-50 sm:hover:bg-gray-100 transition-colors"
