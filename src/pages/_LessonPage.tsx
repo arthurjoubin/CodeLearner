@@ -8,11 +8,13 @@ import { getLearningPathTitles, getCourseTitles } from '../data/course-metadata'
 import {
   CheckCircle,
   Code2,
+  AlertCircle,
 } from 'lucide-react';
 import ReactMarkdown from './_ReactMarkdown';
 import ProgressPath from '../components/ProgressPath';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { PageHeader } from '../components/PageTitle';
+import { NavButton } from '../components/NavButton';
 import { LessonCompletionModal } from '../components/completion-modals';
 
 const learningPathTitles = getLearningPathTitles();
@@ -31,12 +33,14 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
   const moduleLessons = module ? getLessonsForModule(module.id) : [];
 
   const [completed, setCompleted] = useState(false);
+  const [showExerciseWarning, setShowExerciseWarning] = useState(false);
 
   const alreadyCompleted = lesson ? isLessonCompleted(lesson.id) : false;
   const currentIndex = module && lesson ? moduleLessons.findIndex(l => l.id === lesson.id) : -1;
   const nextLesson = currentIndex >= 0 ? moduleLessons[currentIndex + 1] : undefined;
 
   const completedExercisesCount = exercises.filter(ex => isExerciseCompleted(ex.id)).length;
+  const allExercisesDone = exercises.length === 0 || completedExercisesCount === exercises.length;
 
   const handleComplete = useCallback(() => {
     if (lesson) {
@@ -45,6 +49,15 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
       setCompleted(true);
     }
   }, [lesson, addXp, completeLesson]);
+
+  const handleCompleteClick = useCallback(() => {
+    if (!allExercisesDone) {
+      setShowExerciseWarning(true);
+      setTimeout(() => setShowExerciseWarning(false), 3000);
+      return;
+    }
+    handleComplete();
+  }, [allExercisesDone, handleComplete]);
 
   const isLessonEffectivelyDone = useCallback((lid: string) => {
     if (isLessonCompleted(lid)) return true;
@@ -188,35 +201,61 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
         )}
       </div>
 
-      {/* Persistent next step banner for already-completed lessons */}
-      {alreadyCompleted && !completed && (
-        <div className="mt-4 border-2 border-primary-300 bg-primary-50 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-primary-600 flex-shrink-0" />
-            <span className="text-sm font-bold text-primary-800">
-              {nextLesson
-                ? `Next up: ${nextLesson.title}`
-                : 'All lessons in this module done!'
-              }
-            </span>
+      {/* Lesson action bar */}
+      <div className="mt-4">
+        {alreadyCompleted ? (
+          <div className="border-2 border-primary-300 bg-primary-50 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-primary-600 flex-shrink-0" />
+              <span className="text-sm font-bold text-primary-800">
+                {nextLesson
+                  ? `Next up: ${nextLesson.title}`
+                  : 'All lessons in this module done!'
+                }
+              </span>
+            </div>
+            {nextLesson ? (
+              <NavButton href={`/lesson/${nextLesson.id}`} label="Next Lesson" variant="dark" className="flex-shrink-0" />
+            ) : (
+              <NavButton href={`/module/${module.id}`} label="Back to Module" variant="primary" icon="book" className="flex-shrink-0" />
+            )}
           </div>
-          {nextLesson ? (
-            <a
-              href={`/lesson/${nextLesson.id}`}
-              className="inline-flex items-center gap-2 bg-gray-900 text-white font-bold py-2.5 px-5 rounded-lg hover:bg-gray-800 transition-colors text-sm uppercase flex-shrink-0"
-            >
-              Next Lesson <span className="ml-1">&rarr;</span>
-            </a>
-          ) : (
-            <a
-              href={`/module/${module.id}`}
-              className="inline-flex items-center gap-2 bg-primary-600 text-white font-bold py-2.5 px-5 rounded-lg hover:bg-primary-700 transition-colors text-sm uppercase flex-shrink-0"
-            >
-              Back to Module
-            </a>
-          )}
-        </div>
-      )}
+        ) : (
+          <div className="border-2 border-gray-300 bg-white rounded-lg p-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                {exercises.length > 0 && (
+                  <p className="text-xs text-gray-500 mb-1">
+                    Exercises: {completedExercisesCount}/{exercises.length} completed
+                  </p>
+                )}
+                {nextLesson && (
+                  <p className="text-sm font-bold text-gray-700">
+                    Next up: {nextLesson.title}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={handleCompleteClick}
+                className={`inline-flex items-center justify-center gap-2 font-bold py-2.5 px-5 rounded-lg border-2 transition-all text-sm uppercase flex-shrink-0 w-full sm:w-auto ${
+                  allExercisesDone
+                    ? 'bg-primary-600 text-white border-primary-600 hover:bg-primary-700 cursor-pointer'
+                    : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                }`}
+              >
+                Complete lesson
+                {allExercisesDone && <CheckCircle className="w-4 h-4" />}
+              </button>
+            </div>
+            {showExerciseWarning && (
+              <div className="mt-3 flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                Finish the exercises to complete the lesson
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {completed && !alreadyCompleted && (
         <LessonCompletionModal

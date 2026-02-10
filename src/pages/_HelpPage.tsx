@@ -3,9 +3,9 @@ import { BookOpen, Code2, CheckCircle2, Star, Flame } from 'lucide-react';
 export default function HelpPage() {
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="relative inline-block group mb-8">
-        <h1 className="text-3xl font-black uppercase tracking-tight">How it works</h1>
-        <span className="absolute -bottom-1 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+      <div className="mb-8">
+        <h1 className="text-3xl font-black uppercase tracking-tight inline">How it works</h1>
+        <span className="inline-block w-12 h-0.5 bg-primary-500 ml-2 align-middle" />
       </div>
 
       <div className="space-y-6">

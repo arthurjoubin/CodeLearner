@@ -7,15 +7,31 @@ interface Props {
 const { className = "", showBullet = true } = Astro.props;
 ---
 
-<div class={`flex items-baseline gap-3 ${className}`}>
-  {showBullet && <div class="w-3 h-3 bg-primary-500 rounded-full flex-shrink-0 self-center" />}
-  <slot name="title" />
-  <slot name="tag" />
-  <span class="block h-1 w-12 bg-primary-500"></span>
+<div class={`flex items-start gap-3 ${className}`}>
+  {showBullet && <div class="w-3 h-3 bg-primary-500 rounded-full flex-shrink-0 mt-1.5" />}
+  <div class="title-content min-w-0">
+    <slot name="title" />
+    <slot name="tag" />
+    <span class="green-bar"></span>
+  </div>
 </div>
 
 <style>
   .bg-primary-500 {
     background-color: #22c55e;
+  }
+  .title-content :global(h1),
+  .title-content :global(h2),
+  .title-content :global(h3),
+  .title-content :global(div) {
+    display: inline;
+  }
+  .green-bar {
+    display: inline-block;
+    height: 4px;
+    width: 48px;
+    background-color: #22c55e;
+    margin-left: 8px;
+    vertical-align: middle;
   }
 </style>

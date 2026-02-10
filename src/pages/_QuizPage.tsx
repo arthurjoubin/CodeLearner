@@ -97,9 +97,9 @@ function QuizPageContent({
   return (
     <div className="max-w-2xl mx-auto page-enter pb-20 lg:pb-0">
       <div className="flex items-center justify-between gap-4 mb-3">
-        <div className="relative inline-block group min-w-0 flex-1">
-          <h1 className="text-lg font-bold text-gray-900 truncate">{exercise.title}</h1>
-          <span className="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+        <div className="min-w-0 flex-1">
+          <h1 className="text-lg font-bold text-gray-900 inline">{exercise.title}</h1>
+          <span className="inline-block w-12 h-0.5 bg-primary-500 ml-2 align-middle" />
         </div>
 
         <a

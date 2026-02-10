@@ -1,5 +1,6 @@
-import { ArrowRight, BookOpen } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { CompletionModalBase } from './CompletionModalBase';
+import { NavButton } from '../NavButton';
 
 interface ExerciseCompletionModalProps {
   isOpen: boolean;
@@ -26,19 +27,9 @@ export function ExerciseCompletionModal({
 
       <div className="flex flex-col gap-2">
         {hasNextExercise && nextExerciseId ? (
-          <a
-            href={`/exercise/${nextExerciseId}`}
-            className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-bold py-2.5 px-4 rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors text-sm"
-          >
-            Next Exercise <ArrowRight className="w-4 h-4" />
-          </a>
+          <NavButton href={`/exercise/${nextExerciseId}`} label="Next Exercise" variant="primary" className="w-full" />
         ) : (
-          <a
-            href={`/lesson/${lessonId}`}
-            className="inline-flex items-center justify-center gap-2 bg-gray-900 text-white font-bold py-2.5 px-4 rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors text-sm"
-          >
-            <BookOpen className="w-4 h-4" /> Continue
-          </a>
+          <NavButton href={`/lesson/${lessonId}`} label="Continue" variant="dark" icon="book" className="w-full" />
         )}
         <button
           onClick={onStay}

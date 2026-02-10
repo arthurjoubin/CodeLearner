@@ -1,5 +1,6 @@
-import { ArrowRight, BookOpen, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { CompletionModalBase } from './CompletionModalBase';
+import { NavButton } from '../NavButton';
 
 interface LessonCompletionModalProps {
   isOpen: boolean;
@@ -24,26 +25,16 @@ export function LessonCompletionModal({
         <Star className="w-5 h-5" />
         +{xpReward} XP
       </div>
-      
+
       <div className="flex flex-col gap-2">
         {hasNextLesson && nextLessonId ? (
-          <a 
-            href={`/lesson/${nextLessonId}`} 
-            className="w-full py-3 bg-gray-900 text-white font-bold uppercase rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors"
-          >
-            Next Lesson <ArrowRight className="w-4 h-4 inline ml-1" />
-          </a>
+          <NavButton href={`/lesson/${nextLessonId}`} label="Next Lesson" variant="dark" className="w-full" />
         ) : (
-          <a 
-            href={`/module/${moduleId}`} 
-            className="w-full py-3 bg-primary-600 text-white font-bold uppercase rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors"
-          >
-            <BookOpen className="w-4 h-4 inline mr-1" /> Back to Module
-          </a>
+          <NavButton href={`/module/${moduleId}`} label="Back to Module" variant="primary" icon="book" className="w-full" />
         )}
-        <button 
-          onClick={onReview} 
-          className="w-full py-3 font-bold uppercase border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+        <button
+          onClick={onReview}
+          className="w-full py-3 font-bold uppercase border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm"
         >
           Review
         </button>
