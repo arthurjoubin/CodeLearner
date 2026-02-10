@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Check, Zap, Star } from 'lucide-react';
+import { PageTitle } from '../components/PageTitle';
 
 type BillingCycle = 'monthly' | 'yearly';
 
@@ -20,9 +21,11 @@ export default function PricingPage() {
   return (
     <div className="page-enter max-w-2xl mx-auto py-6 sm:py-12 px-4">
       <div className="text-center mb-8">
-        <h1 className="text-3xl sm:text-4xl font-black text-gray-900 uppercase mb-3">
-          Simple Pricing
-        </h1>
+        <PageTitle className="justify-center mb-3">
+          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 uppercase">
+            Simple Pricing
+          </h1>
+        </PageTitle>
         <p className="text-gray-600 text-sm sm:text-base max-w-md mx-auto">
           One plan. Full access. No hidden fees.
         </p>

@@ -3,6 +3,7 @@ import { api } from '../services/api';
 import { Trophy } from 'lucide-react';
 import { useUser, UserProvider } from '../context/UserContext';
 import { getLevelFromXp } from '../types';
+import { PageTitle } from '../components/PageTitle';
 
 interface LeaderboardUser {
   id: string;
@@ -34,8 +35,9 @@ function LeaderboardPageContent() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-black uppercase tracking-tight text-gray-900 inline">Leaderboard</h1>
-        <span className="inline-block w-12 h-0.5 bg-primary-500 ml-2 align-middle" />
+        <PageTitle>
+          <h1 className="text-3xl font-black uppercase tracking-tight text-gray-900">Leaderboard</h1>
+        </PageTitle>
       </div>
 
       <div className="border border-gray-200 rounded-lg overflow-hidden bg-gradient-to-b from-gray-50 to-white">

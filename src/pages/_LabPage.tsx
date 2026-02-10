@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import LivePreview from '../components/LivePreview';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { PageTitle } from '../components/PageTitle';
 
 interface LabPageProps {
     labId?: string;
@@ -140,12 +141,14 @@ function LabPageContent({ labId }: LabPageProps) {
                     <a href="/labs" className="p-1.5 hover:bg-gray-100 rounded transition-colors">
                         <ArrowLeft className="w-4 h-4 text-gray-600" />
                     </a>
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <PageTitle>
                         <h1 className="text-lg font-black text-gray-900 uppercase truncate">{lab.title}</h1>
-                        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-primary-100 text-primary-700 rounded text-xs font-bold">
-                            +{lab.xpReward} XP
-                        </div>
+                    </PageTitle>
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 bg-primary-100 text-primary-700 rounded text-xs font-bold">
+                        +{lab.xpReward} XP
                     </div>
+                </div>
                 </div>
 
                 <div className="flex items-center gap-2">

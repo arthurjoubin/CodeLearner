@@ -19,11 +19,13 @@ export function PageTitle({
   showBullet = true
 }: PageTitleProps) {
   return (
-    <div className={`flex items-start gap-3 ${className}`}>
-      {showBullet && <GreenBullet className="mt-1.5" />}
-      <div className="min-w-0 [&>*]:inline [&>*>*]:inline">
-        {children}
-        <span className="inline-block h-1 w-12 bg-primary-500 ml-2 align-middle" />
+    <div className={`flex items-center gap-3 ${className}`}>
+      {showBullet && <GreenBullet />}
+      <div className="min-w-0">
+        <div className="inline-flex items-baseline flex-wrap">
+          {children}
+          <span className="hidden sm:inline-block h-0.5 w-12 bg-primary-500 ml-2" />
+        </div>
       </div>
     </div>
   );

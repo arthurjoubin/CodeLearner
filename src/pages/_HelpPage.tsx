@@ -1,11 +1,13 @@
 import { BookOpen, Code2, CheckCircle2, Star, Flame } from 'lucide-react';
+import { PageTitle } from '../components/PageTitle';
 
 export default function HelpPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-black uppercase tracking-tight inline">How it works</h1>
-        <span className="inline-block w-12 h-0.5 bg-primary-500 ml-2 align-middle" />
+        <PageTitle>
+          <h1 className="text-3xl font-black uppercase tracking-tight">How it works</h1>
+        </PageTitle>
       </div>
 
       <div className="space-y-6">

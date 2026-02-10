@@ -24,6 +24,7 @@ import LivePreview from '../components/LivePreview';
 import Breadcrumb from '../components/Breadcrumb';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ExerciseCompletionModal } from '../components/completion-modals';
+import { PageTitle } from '../components/PageTitle';
 
 const learningPathTitles = getLearningPathTitles();
 
@@ -223,10 +224,9 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
           { label: lesson.title, href: `/lesson/${lesson.id}` },
         ]} />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
-          <div className="min-w-0 flex-1">
-            <h1 className="text-lg sm:text-xl font-bold text-gray-900 inline">{exercise.title}</h1>
-            <span className="inline-block w-12 h-0.5 bg-primary-500 ml-2 align-middle" />
-          </div>
+          <PageTitle>
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900">{exercise.title}</h1>
+          </PageTitle>
 
           <a
             href={`/lesson/${lesson.id}`}

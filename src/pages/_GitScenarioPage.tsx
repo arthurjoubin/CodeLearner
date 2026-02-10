@@ -9,6 +9,7 @@ import GitTerminal from '../components/GitTerminal';
 import GitSimulator from '../components/GitSimulator';
 import GitObjectives from '../components/GitObjectives';
 import Breadcrumb from '../components/Breadcrumb';
+import { PageTitle } from '../components/PageTitle';
 import type { Module } from '../types';
 import {
   ArrowLeft,
@@ -110,10 +111,9 @@ export default function GitScenarioPage({
           { label: lesson.title, href: `/lesson/${lesson.id}` },
         ]} />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
-          <div className="min-w-0 flex-1">
-            <h1 className="text-lg sm:text-xl font-bold text-gray-900 inline">{exercise.title}</h1>
-            <span className="inline-block w-12 h-0.5 bg-primary-500 ml-2 align-middle" />
-          </div>
+          <PageTitle>
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900">{exercise.title}</h1>
+          </PageTitle>
           <a
             href={`/lesson/${lesson.id}`}
             className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs sm:text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors self-start sm:self-auto"

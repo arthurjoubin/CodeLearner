@@ -8,6 +8,7 @@ import {
   Code2, GraduationCap, Clock, Check
 } from 'lucide-react';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { PageTitle } from '../components/PageTitle';
 
 const learningPaths = getLearningPaths();
 
@@ -72,12 +73,11 @@ function DesignVariationsPageContent() {
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-widest inline">
+          <PageTitle>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-widest">
               HACK<span className="text-primary-500">UP</span>
             </h1>
-            <span className="inline-block w-16 h-1 bg-primary-500 ml-2 align-middle" />
-          </div>
+          </PageTitle>
           <p className="text-gray-500 mt-2">Choose your home page design</p>
         </div>
 
