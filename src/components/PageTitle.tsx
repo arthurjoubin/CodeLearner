@@ -13,16 +13,18 @@ function GreenBullet({ className = "" }: { className?: string }) {
   );
 }
 
-export function PageTitle({ 
-  children, 
+export function PageTitle({
+  children,
   className = "",
   showBullet = true
 }: PageTitleProps) {
   return (
-    <div className={`flex items-baseline gap-3 ${className}`}>
-      {showBullet && <GreenBullet className="self-center" />}
-      {children}
-      <span className="block h-1 w-12 bg-primary-500" />
+    <div className={`flex flex-col gap-0 ${className}`}>
+      <div className="flex items-baseline gap-3">
+        {showBullet && <GreenBullet className="self-center" />}
+        {children}
+      </div>
+      <span className="block h-1 w-12 bg-primary-500 mt-3" />
     </div>
   );
 }
@@ -34,10 +36,12 @@ interface SectionTitleProps {
 
 export function SectionTitle({ children, className = "" }: SectionTitleProps) {
   return (
-    <div className={`flex items-baseline gap-3 mb-6 ${className}`}>
-      <GreenBullet className="self-center" />
-      <h2 className="text-xl md:text-3xl font-bold text-gray-900">{children}</h2>
-      <span className="block h-1 w-12 bg-primary-500" />
+    <div className={`flex flex-col gap-0 mb-6 ${className}`}>
+      <div className="flex items-baseline gap-3">
+        <GreenBullet className="self-center" />
+        <h2 className="text-xl md:text-3xl font-bold text-gray-900">{children}</h2>
+      </div>
+      <span className="block h-1 w-12 bg-primary-500 mt-3" />
     </div>
   );
 }
