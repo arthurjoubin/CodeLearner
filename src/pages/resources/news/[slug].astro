@@ -103,9 +103,9 @@ function getToolLogo(toolName: string): string | null {
 
 		{post.data.mentionedTools && post.data.mentionedTools.length > 0 && (
 			<div class="mb-6">
-				<div class="relative inline-block group mb-3">
-					<h2 class="font-bold text-gray-900 uppercase text-sm">Mentioned Tools</h2>
-					<span class="absolute -bottom-0.5 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+				<div class="mb-3">
+					<h2 class="font-bold text-gray-900 uppercase text-sm inline">Mentioned Tools</h2>
+					<span class="inline-block w-12 h-0.5 bg-primary-500 ml-2 align-middle" />
 				</div>
 				<div class="flex flex-wrap gap-2">
 					{post.data.mentionedTools.map((toolName: string) => {

@@ -33,9 +33,9 @@ function LeaderboardPageContent() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="relative inline-block group mb-8">
-        <h1 className="text-3xl font-black uppercase tracking-tight text-gray-900">Leaderboard</h1>
-        <span className="absolute -bottom-1 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+      <div className="mb-8">
+        <h1 className="text-3xl font-black uppercase tracking-tight text-gray-900 inline">Leaderboard</h1>
+        <span className="inline-block w-12 h-0.5 bg-primary-500 ml-2 align-middle" />
       </div>
 
       <div className="border border-gray-200 rounded-lg overflow-hidden bg-gradient-to-b from-gray-50 to-white">

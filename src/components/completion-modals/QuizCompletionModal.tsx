@@ -1,4 +1,5 @@
 import { CompletionModalBase } from './CompletionModalBase';
+import { NavButton } from '../NavButton';
 
 interface QuizCompletionModalProps {
   isOpen: boolean;
@@ -22,7 +23,7 @@ export function QuizCompletionModal({
   onRestart
 }: QuizCompletionModalProps) {
   const percentage = (correctCount / totalQuestions) * 100;
-  
+
   let barColor = 'bg-red-500';
   if (correctCount === totalQuestions) barColor = 'bg-green-500';
   else if (correctCount >= totalQuestions / 2) barColor = 'bg-yellow-500';
@@ -43,19 +44,9 @@ export function QuizCompletionModal({
 
       <div className="flex flex-col gap-3">
         {hasNextExercise && nextExerciseId ? (
-          <a
-            href={`/exercise/${nextExerciseId}`}
-            className="bg-gray-900 text-white font-bold py-3 px-6 rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors"
-          >
-            Next Exercise →
-          </a>
+          <NavButton href={`/exercise/${nextExerciseId}`} label="Next Exercise" variant="dark" className="w-full" />
         ) : (
-          <a
-            href={`/lesson/${lessonId}`}
-            className="bg-gray-900 text-white font-bold py-3 px-6 rounded-lg border-2 border-gray-900 hover:bg-gray-800 transition-colors"
-          >
-            Continue →
-          </a>
+          <NavButton href={`/lesson/${lessonId}`} label="Continue" variant="dark" className="w-full" />
         )}
         <button
           onClick={onRestart}

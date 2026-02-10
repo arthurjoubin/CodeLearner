@@ -3,9 +3,9 @@ import { Lightbulb } from 'lucide-react';
 export default function FeedbackPage() {
   return (
     <div className="max-w-xl mx-auto">
-      <div className="relative inline-block group mb-8">
-        <h1 className="text-3xl font-black uppercase tracking-tight">Feedback</h1>
-        <span className="absolute -bottom-1 left-0 w-12 h-0.5 bg-primary-500 transition-all group-hover:w-full duration-300" />
+      <div className="mb-8">
+        <h1 className="text-3xl font-black uppercase tracking-tight inline">Feedback</h1>
+        <span className="inline-block w-12 h-0.5 bg-primary-500 ml-2 align-middle" />
       </div>
 
       <div className="border border-gray-300 mb-6 bg-white rounded-lg transition-all hover:shadow-md">

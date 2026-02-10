@@ -72,11 +72,11 @@ function DesignVariationsPageContent() {
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <div className="relative inline-block">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-widest">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-widest inline">
               HACK<span className="text-primary-500">UP</span>
             </h1>
-            <div className="absolute -bottom-1 left-0 w-16 h-1 bg-primary-500" />
+            <span className="inline-block w-16 h-1 bg-primary-500 ml-2 align-middle" />
           </div>
           <p className="text-gray-500 mt-2">Choose your home page design</p>
         </div>
