@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useUser, UserProvider } from '../context/UserContext';
 import { getLab } from '../data/labs';
 import { api } from '../services/api';
-import Editor from '@monaco-editor/react';
+import { CodeEditor } from '../components/CodeEditor';
 import {
     ArrowLeft,
     Play,
@@ -203,21 +203,11 @@ function LabPageContent({ labId }: LabPageProps) {
                             </div>
                         </div>
                         <div className="flex-1 min-h-0">
-                            <Editor
-                                height="100%"
-                                defaultLanguage="typescript"
-                                theme="vs-dark"
+                            <CodeEditor
                                 value={code}
-                                onChange={(v) => setCode(v || '')}
-                                options={{
-                                    minimap: { enabled: false },
-                                    fontSize: 13,
-                                    padding: { top: 15 },
-                                    scrollBeyondLastLine: false,
-                                    automaticLayout: true,
-                                    tabSize: 2,
-                                    lineNumbers: 'on',
-                                }}
+                                onChange={(value) => setCode(value)}
+                                language="tsx"
+                                height="100%"
                             />
                         </div>
                         <div className="p-4 bg-gray-800 border-t-2 border-gray-700 flex gap-2">

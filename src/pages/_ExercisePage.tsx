@@ -6,7 +6,7 @@ import { getExercise, getModule, getLesson, getExercisesForLesson, getModulesFor
 import { api } from '../services/api';
 import { isQuizExercise, isCodeExercise, isGitScenarioExercise } from '../types';
 import { getLearningPathTitles } from '../data/course-metadata';
-import Editor from '@monaco-editor/react';
+import { CodeEditor } from '../components/CodeEditor';
 import QuizPage from './_QuizPage';
 import GitScenarioPage from './_GitScenarioPage';
 import {
@@ -285,21 +285,11 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
               </div>
             </div>
             <div className="flex-1 min-h-0">
-              <Editor
-                height="100%"
-                defaultLanguage="typescript"
-                theme="vs-dark"
+              <CodeEditor
                 value={code}
-                onChange={(value) => setCode(value || '')}
-                options={{
-                  minimap: { enabled: false },
-                  fontSize: 13,
-                  lineNumbers: 'on',
-                  scrollBeyondLastLine: false,
-                  automaticLayout: true,
-                  tabSize: 2,
-                  padding: { top: 8 },
-                }}
+                onChange={(value) => setCode(value)}
+                language="tsx"
+                height="100%"
               />
             </div>
           </div>
