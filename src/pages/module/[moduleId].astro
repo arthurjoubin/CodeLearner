@@ -6,10 +6,6 @@ import { getLearningPathTitles } from '../../data/course-metadata';
 
 const learningPathTitles = getLearningPathTitles();
 
-export function getStaticPaths() {
-  return [];
-}
-
 const { moduleId } = Astro.params;
 const module = moduleId ? getModule(moduleId) : undefined;
 const pathTitle = module ? learningPathTitles[module.courseId] || module.courseId : '';

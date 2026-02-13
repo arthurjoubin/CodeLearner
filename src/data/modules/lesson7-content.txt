@@ -1,0 +1,487 @@
+# Essential to know
+- HTTPS everywhere in production
+- HttpOnly, Secure, SameSite cookie flags
+- CSRF protection for cookie-based auth
+- Rate limiting on auth endpoints
+
+---
+
+# Security Best Practices
+
+## HTTPS Everywhere
+
+### Why HTTPS is Mandatory
+
+Without HTTPS:
+- Passwords sent in plain text
+- Session cookies can be stolen
+- Man-in-the-middle attacks
+- Content injection
+- SEO penalties from Google
+
+### Enforcing HTTPS
+
+```javascript
+// Express HTTPS redirect
+app.use((req, res, next) => {
+  if (req.headers['x-forwarded-proto'] !== 'https' && process.env.NODE_ENV === 'production') {
+    return res.redirect(301, 'https://' + req.headers.host + req.url);
+  }
+  next();
+});
+
+// Or use a library
+import helmet from 'helmet';
+app.use(helmet());
+```
+
+### HSTS (HTTP Strict Transport Security)
+
+```javascript
+// Force HTTPS for 1 year
+app.use(helmet.hsts({
+  maxAge: 31536000,  // 1 year in seconds
+  includeSubDomains: true,
+  preload: true
+}));
+```
+
+## Cookie Security
+
+### Essential Cookie Flags
+
+```javascript
+res.cookie('sessionId', token, {
+  httpOnly: true,     // Prevent XSS access
+  secure: true,       // HTTPS only
+  sameSite: 'strict', // CSRF protection
+  maxAge: 3600000,    // 1 hour
+  domain: 'example.com',  // Limit scope
+  path: '/'           // Available on all paths
+});
+```
+
+### Cookie Flag Reference
+
+| Flag | Purpose | Attack Prevented |
+|------|---------|------------------|
+| `httpOnly` | JavaScript can't read cookie | XSS attacks |
+| `secure` | HTTPS only | Network sniffing, MITM |
+| `sameSite` | Control cross-site requests | CSRF attacks |
+| `domain` | Limit to specific domain | Cookie tossing |
+| `path` | Limit to specific paths | Unauthorized access |
+| `maxAge/expires` | Auto-delete after time | Session hijacking |
+
+### SameSite Deep Dive
+
+```javascript
+// Strict: Never sent in cross-site requests
+sameSite: 'strict'
+// Use for: Banking, high-security apps
+// Limitation: User must navigate to site directly
+
+// Lax: Sent for top-level GET requests only
+sameSite: 'lax'
+// Use for: Most web applications
+// Allows: User clicks link from email → user is logged in
+
+// None: Always sent (requires secure: true)
+sameSite: 'none'
+// Use for: Embedded widgets, third-party APIs
+```
+
+## CSRF Protection
+
+### What is CSRF?
+
+Cross-Site Request Forgery: Tricking a user's browser into making unauthorized requests.
+
+```
+1. User logs into bank.com (has valid session cookie)
+2. User visits malicious-site.com
+3. malicious-site.com has: <img src="https://bank.com/transfer?to=attacker&amount=1000" />
+4. Browser sends request with bank.com cookies!
+5. Bank processes unauthorized transfer
+```
+
+### CSRF Token Implementation
+
+```javascript
+import csrf from 'csurf';
+
+// Setup CSRF protection
+const csrfProtection = csrf({
+  cookie: {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict'
+  }
+});
+
+// Apply to all state-changing routes
+app.use(csrfProtection);
+
+// Send CSRF token to client
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
+
+// Client must include token in requests
+// POST /api/transfer
+// Headers: X-CSRF-Token: <token>
+```
+
+### Double Submit Cookie Pattern
+
+```javascript
+// Alternative to CSRF tokens
+function doubleSubmitCookie(req, res, next) {
+  const csrfCookie = req.cookies['csrf-token'];
+  const csrfHeader = req.headers['x-csrf-token'];
+  
+  if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
+    return res.status(403).json({ error: 'Invalid CSRF token' });
+  }
+  
+  next();
+}
+
+// Set cookie on page load
+app.get('/', (req, res) => {
+  const csrfToken = generateRandomToken();
+  res.cookie('csrf-token', csrfToken, { httpOnly: false, sameSite: 'strict' });
+  res.render('index', { csrfToken });
+});
+```
+
+### SameSite as CSRF Defense
+
+```javascript
+// Modern approach: SameSite cookies
+res.cookie('sessionId', token, {
+  sameSite: 'strict',  // Blocks cross-site requests entirely
+  secure: true,
+  httpOnly: true
+});
+
+// Or for more compatibility
+sameSite: 'lax'  // Allows safe cross-site GET requests
+```
+
+## Rate Limiting
+
+### Why Rate Limiting?
+
+Prevents:
+- Brute force password attacks
+- Credential stuffing
+- DDoS attacks
+- Resource exhaustion
+
+### Implementation
+
+```javascript
+import rateLimit from 'express-rate-limit';
+
+// General rate limiting
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,  // 15 minutes
+  max: 100,  // Limit each IP to 100 requests per windowMs
+  message: 'Too many requests, please try again later'
+});
+
+app.use(generalLimiter);
+
+// Stricter limit for auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,  // 5 attempts per 15 minutes
+  skipSuccessfulRequests: true,  // Don't count successful logins
+  message: 'Too many login attempts, please try again later'
+});
+
+app.use('/auth/', authLimiter);
+
+// Even stricter for password reset
+const passwordResetLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,  // 1 hour
+  max: 3,  // 3 attempts per hour
+  message: 'Too many password reset attempts'
+});
+
+app.use('/auth/forgot-password', passwordResetLimiter);
+```
+
+### Redis-Based Rate Limiting
+
+```javascript
+import Redis from 'ioredis';
+import { RateLimiterRedis } from 'rate-limiter-flexible';
+
+const redisClient = new Redis(process.env.REDIS_URL);
+
+const rateLimiter = new RateLimiterRedis({
+  storeClient: redisClient,
+  keyPrefix: 'login_attempt',
+  points: 5,  // 5 attempts
+  duration: 300,  // per 5 minutes
+});
+
+async function rateLimitMiddleware(req, res, next) {
+  try {
+    const key = req.ip;
+    await rateLimiter.consume(key);
+    next();
+  } catch (rejRes) {
+    const secs = Math.round(rejRes.msBeforeNext / 1000) || 1;
+    res.set('Retry-After', String(secs));
+    res.status(429).json({
+      error: 'Too many requests',
+      retryAfter: secs
+    });
+  }
+}
+```
+
+## Account Lockout
+
+### Progressive Delays
+
+```javascript
+async function handleFailedLogin(email) {
+  const user = await db.findUserByEmail(email);
+  if (!user) return;  // Don't reveal if user exists
+  
+  const attempts = await db.incrementFailedAttempts(user.id);
+  
+  if (attempts >= 5) {
+    // Lock account for 30 minutes
+    await db.lockAccount(user.id, 30 * 60 * 1000);
+    await sendAccountLockedEmail(user.email);
+  } else if (attempts >= 3) {
+    // Add delay
+    await sleep(attempts * 1000);  // 3s, 4s, 5s...
+  }
+}
+
+async function handleSuccessfulLogin(userId) {
+  await db.resetFailedAttempts(userId);
+  await db.updateLastLogin(userId, new Date());
+}
+```
+
+### CAPTCHA After Failed Attempts
+
+```javascript
+app.post('/auth/login', async (req, res) => {
+  const { email, password, captchaToken } = req.body;
+  
+  const failedAttempts = await db.getFailedAttempts(email);
+  
+  // Require CAPTCHA after 3 failed attempts
+  if (failedAttempts >= 3) {
+    const captchaValid = await verifyRecaptcha(captchaToken);
+    if (!captchaValid) {
+      return res.status(400).json({ error: 'Invalid CAPTCHA' });
+    }
+  }
+  
+  // Continue with login...
+});
+```
+
+## Security Headers
+
+### Using Helmet
+
+```javascript
+import helmet from 'helmet';
+
+app.use(helmet());
+
+// Custom configuration
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", 'data:', 'https:'],
+      connectSrc: ["'self'", 'https://api.example.com']
+    }
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  },
+  referrerPolicy: { policy: 'same-origin' }
+}));
+```
+
+### Important Security Headers
+
+| Header | Purpose | Example |
+|--------|---------|---------|
+| `X-Content-Type-Options` | Prevent MIME sniffing | `nosniff` |
+| `X-Frame-Options` | Prevent clickjacking | `DENY` or `SAMEORIGIN` |
+| `X-XSS-Protection` | Enable browser XSS filter | `1; mode=block` |
+| `Content-Security-Policy` | Prevent XSS/injection | See below |
+| `Referrer-Policy` | Control referrer info | `same-origin` |
+| `Permissions-Policy` | Limit browser features | `camera=(), microphone=()` |
+
+### Content Security Policy (CSP)
+
+```javascript
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    // Default: only same origin
+    defaultSrc: ["'self'"],
+    
+    // Scripts: self + inline (unsafe, avoid in prod)
+    scriptSrc: [
+      "'self'",
+      "'unsafe-inline'",  // Remove if possible
+      'https://cdn.example.com'
+    ],
+    
+    // Styles
+    styleSrc: ["'self'", "'unsafe-inline'"],
+    
+    // Images
+    imgSrc: ["'self'", 'data:', 'https:'],
+    
+    // Fonts
+    fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+    
+    // API calls
+    connectSrc: ["'self'", 'https://api.example.com'],
+    
+    // No frames/embeds
+    frameSrc: ["'none'"],
+    
+    // Form submissions
+    formAction: ["'self'"],
+    
+    // Upgrade HTTP to HTTPS
+    upgradeInsecureRequests: []
+  }
+}));
+```
+
+## Input Validation & Sanitization
+
+### Validate Everything
+
+```javascript
+import { z } from 'zod';
+
+const loginSchema = z.object({
+  email: z.string().email('Invalid email format'),
+  password: z.string().min(8, 'Password must be at least 8 characters')
+});
+
+app.post('/auth/login', async (req, res) => {
+  const result = loginSchema.safeParse(req.body);
+  
+  if (!result.success) {
+    return res.status(400).json({
+      error: 'Validation failed',
+      details: result.error.errors
+    });
+  }
+  
+  const { email, password } = result.data;
+  // Continue with authentication...
+});
+```
+
+### Sanitize Output
+
+```javascript
+import DOMPurify from 'isomorphic-dompurify';
+
+function sanitizeOutput(data) {
+  if (typeof data === 'string') {
+    return DOMPurify.sanitize(data);
+  }
+  
+  if (Array.isArray(data)) {
+    return data.map(sanitizeOutput);
+  }
+  
+  if (typeof data === 'object' && data !== null) {
+    return Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [
+        key,
+        sanitizeOutput(value)
+      ])
+    );
+  }
+  
+  return data;
+}
+
+// Use before sending response
+app.get('/api/posts', async (req, res) => {
+  const posts = await db.getPosts();
+  res.json(sanitizeOutput(posts));
+});
+```
+
+## Logging & Monitoring
+
+### Security Event Logging
+
+```javascript
+function logSecurityEvent(event, details) {
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    event,
+    ip: details.ip,
+    userAgent: details.userAgent,
+    userId: details.userId,
+    metadata: details.metadata
+  };
+  
+  // Log to file/monitoring service
+  securityLogger.warn(logEntry);
+  
+  // Alert on critical events
+  if (event === 'brute_force_detected' || event === 'suspicious_activity') {
+    sendSecurityAlert(logEntry);
+  }
+}
+
+// Usage
+app.post('/auth/login', async (req, res) => {
+  const success = await authenticateUser(req.body);
+  
+  if (!success) {
+    logSecurityEvent('failed_login', {
+      ip: req.ip,
+      userAgent: req.headers['user-agent'],
+      metadata: { email: req.body.email }
+    });
+  }
+});
+```
+
+### Failed Login Monitoring
+
+```javascript
+// Alert when same IP has many failed attempts
+async function checkBruteForce(ip, email) {
+  const recentAttempts = await db.countFailedAttempts(ip, 15);  // Last 15 min
+  
+  if (recentAttempts > 10) {
+    logSecurityEvent('brute_force_detected', {
+      ip,
+      metadata: { attempts: recentAttempts }
+    });
+    
+    // Optionally block IP temporarily
+    await blockIP(ip, '1h');
+  }
+}
+```

@@ -1,0 +1,468 @@
+# Essential to know
+- OAuth lets users login via Google, GitHub, etc.
+- Authorization code flow is most secure
+- You get tokens to access user data
+- Libraries: passport.js, arctic, lucia
+
+---
+
+# OAuth 2.0 & Social Login
+
+## What is OAuth 2.0?
+
+OAuth 2.0 is an authorization framework that allows third-party applications to obtain limited access to a user's resources without exposing their credentials.
+
+### Common Use Cases
+
+- **Social Login:** Sign in with Google, GitHub, Twitter, etc.
+- **API Access:** Access user's Google Calendar, GitHub repos, etc.
+- **Authorization:** Grant apps permission to act on your behalf
+
+### Key Players
+
+```
+┌─────────────┐         ┌─────────────┐         ┌─────────────┐
+│   Client    │         │    User     │         │  Resource   │
+│  (Your App) │ ←─────→ │   (Browser) │ ←─────→ │   Server    │
+│             │         │             │         │ (Google,    │
+└──────┬──────┘         └─────────────┘         │  GitHub)    │
+       │                                        └──────┬──────┘
+       │                                               │
+       └───────────────────────────────────────────────┘
+              Authorization Server (Identity Provider)
+```
+
+**Roles:**
+- **Resource Owner** - The user (you)
+- **Client** - Your application
+- **Authorization Server** - OAuth provider (Google, GitHub)
+- **Resource Server** - API that holds user data
+
+## OAuth 2.0 Authorization Code Flow
+
+This is the most secure and commonly used flow for web applications.
+
+### Step-by-Step Flow
+
+```
+Step 1: User clicks "Sign in with Google"
+┌─────────┐                              ┌─────────┐
+│  User   │ ────────→ Your App ────────→ │ Browser │
+└─────────┘                              └────┬────┘
+                                              │
+Step 2: Redirect to Google with client_id     │
+                                              ▼
+                                       ┌─────────────┐
+                                       │   Google    │
+                                       │ Auth Server │
+                                       └──────┬──────┘
+                                              │
+Step 3: User authenticates & consents         │
+                                              │
+Step 4: Google redirects back with code       │
+                                              ▼
+                                       ┌─────────┐
+                                       │ Browser │
+                                       └────┬────┘
+                                            │
+Step 5: Your app exchanges code for tokens  │
+                                            ▼
+                                       ┌─────────┐
+                                       │Your App │
+                                       └────┬────┘
+                                            │
+Step 6: App fetches user profile            │
+                                            ▼
+                                       ┌─────────┐
+                                       │  Google │
+                                       │   API   │
+                                       └─────────┘
+```
+
+### Detailed Implementation
+
+#### Step 1: Register Your Application
+
+**Google Cloud Console:**
+1. Go to Google Cloud Console → APIs & Services → Credentials
+2. Create OAuth 2.0 Client ID
+3. Add authorized redirect URIs
+4. Note down Client ID and Client Secret
+
+**GitHub Settings:**
+1. Settings → Developer settings → OAuth Apps
+2. New OAuth App
+3. Set Authorization callback URL
+
+#### Step 2: Initiate OAuth Flow
+
+```javascript
+// Client-side: Redirect to OAuth provider
+app.get('/auth/google', (req, res) => {
+  const params = new URLSearchParams({
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    redirect_uri: 'http://localhost:3000/auth/google/callback',
+    response_type: 'code',
+    scope: 'openid email profile',
+    state: generateRandomState(),  // CSRF protection
+    prompt: 'select_account'  // Force account selection
+  });
+  
+  // Store state in session for validation
+  req.session.oauthState = params.get('state');
+  
+  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
+});
+```
+
+#### Step 3: Handle Callback
+
+```javascript
+app.get('/auth/google/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+  
+  // Check for errors
+  if (error) {
+    return res.status(400).json({ error: 'OAuth error: ' + error });
+  }
+  
+  // Validate state parameter (CSRF protection)
+  if (state !== req.session.oauthState) {
+    return res.status(400).json({ error: 'Invalid state parameter' });
+  }
+  
+  // Clear state from session
+  delete req.session.oauthState;
+  
+  try {
+    // Step 4: Exchange code for tokens
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: 'http://localhost:3000/auth/google/callback',
+        grant_type: 'authorization_code'
+      })
+    });
+    
+    const tokens = await tokenResponse.json();
+    
+    if (!tokenResponse.ok) {
+      throw new Error(tokens.error_description || 'Token exchange failed');
+    }
+    
+    // Step 5: Get user info
+    const userResponse = await fetch(
+      'https://www.googleapis.com/oauth2/v2/userinfo',
+      {
+        headers: { Authorization: `Bearer ${tokens.access_token}` }
+      }
+    );
+    
+    const userData = await userResponse.json();
+    
+    // Step 6: Create or update user in your database
+    let user = await db.findUserByEmail(userData.email);
+    
+    if (!user) {
+      // Create new user
+      user = await db.createUser({
+        email: userData.email,
+        name: userData.name,
+        provider: 'google',
+        providerId: userData.id,
+        avatar: userData.picture
+      });
+    } else {
+      // Update existing user
+      await db.updateUser(user.id, {
+        lastLogin: new Date(),
+        avatar: userData.picture
+      });
+    }
+    
+    // Step 7: Create session
+    req.session.userId = user.id;
+    
+    res.redirect('/dashboard');
+    
+  } catch (error) {
+    console.error('OAuth error:', error);
+    res.redirect('/login?error=auth_failed');
+  }
+});
+```
+
+## Using OAuth Libraries
+
+### Option 1: Passport.js (Most Popular)
+
+```bash
+npm install passport passport-google-oauth20
+```
+
+```javascript
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+
+// Configure Google strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: '/auth/google/callback'
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        // Find or create user
+        let user = await db.findUserByEmail(profile.emails[0].value);
+        
+        if (!user) {
+          user = await db.createUser({
+            email: profile.emails[0].value,
+            name: profile.displayName,
+            provider: 'google',
+            providerId: profile.id,
+            avatar: profile.photos[0]?.value
+          });
+        }
+        
+        done(null, user);
+      } catch (error) {
+        done(error, null);
+      }
+    }
+  )
+);
+
+// Serialize user for session
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await db.findUserById(id);
+    done(null, user);
+  } catch (error) {
+    done(error, null);
+  }
+});
+
+// Routes
+app.get('/auth/google',
+  passport.authenticate('google', {
+    scope: ['openid', 'email', 'profile']
+  })
+);
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', {
+    failureRedirect: '/login',
+    successRedirect: '/dashboard'
+  })
+);
+```
+
+### Option 2: Simple OAuth2 Client
+
+```bash
+npm install simple-oauth2
+```
+
+```javascript
+import { AuthorizationCode } from 'simple-oauth2';
+
+const config = {
+  client: {
+    id: process.env.GOOGLE_CLIENT_ID,
+    secret: process.env.GOOGLE_CLIENT_SECRET
+  },
+  auth: {
+    tokenHost: 'https://oauth2.googleapis.com',
+    authorizeHost: 'https://accounts.google.com',
+    authorizePath: '/o/oauth2/v2/auth',
+    tokenPath: '/token'
+  }
+};
+
+const client = new AuthorizationCode(config);
+
+// Generate authorization URL
+const authorizationUri = client.authorizeURL({
+  redirect_uri: 'http://localhost:3000/auth/google/callback',
+  scope: 'openid email profile',
+  state: generateRandomState()
+});
+```
+
+## Multiple OAuth Providers
+
+```javascript
+// Database schema for multiple providers
+const userSchema = {
+  id: 'uuid',
+  email: 'string',
+  name: 'string',
+  providers: [{
+    provider: 'google|github|twitter',
+    providerId: 'string',
+    accessToken: 'string',
+    refreshToken: 'string',
+    expiresAt: 'timestamp'
+  }],
+  createdAt: 'timestamp'
+};
+
+// Link new provider to existing account
+app.get('/auth/link/:provider', requireAuth, async (req, res) => {
+  const { provider } = req.params;
+  
+  // Store intent to link in session
+  req.session.linkingAccount = true;
+  req.session.linkingUserId = req.user.id;
+  
+  // Redirect to OAuth provider
+  res.redirect(getOAuthUrl(provider));
+});
+
+// Handle callback for linking
+app.get('/auth/:provider/callback', async (req, res) => {
+  const { provider } = req.params;
+  const userData = await exchangeCodeForUser(req.query.code);
+  
+  if (req.session.linkingAccount) {
+    // Link to existing account
+    await db.linkProvider(req.session.linkingUserId, {
+      provider,
+      providerId: userData.id,
+      ...
+    });
+    
+    delete req.session.linkingAccount;
+    res.redirect('/settings/connected-accounts');
+  } else {
+    // Regular login flow
+    // ...
+  }
+});
+```
+
+## Security Considerations
+
+### 1. Always Use State Parameter
+```javascript
+function generateRandomState() {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+// Include in auth URL
+const authUrl = `https://provider.com/auth?...&state=${state}`;
+
+// Validate on callback
+if (req.query.state !== req.session.oauthState) {
+  throw new Error('CSRF attempt detected');
+}
+```
+
+### 2. Use PKCE for Mobile/SPA
+```javascript
+// PKCE (Proof Key for Code Exchange) prevents code interception
+const codeVerifier = generateCodeVerifier();
+const codeChallenge = generateCodeChallenge(codeVerifier);
+
+// Send code_challenge with auth request
+// Send code_verifier with token request
+```
+
+### 3. Validate Redirect URIs
+```javascript
+// Whitelist allowed redirect URIs
+const ALLOWED_REDIRECTS = [
+  'http://localhost:3000/auth/callback',
+  'https://myapp.com/auth/callback'
+];
+
+if (!ALLOWED_REDIRECTS.includes(redirectUri)) {
+  throw new Error('Invalid redirect URI');
+}
+```
+
+### 4. Secure Client Secret
+```javascript
+// ❌ Never expose in client-side code
+// ❌ Never commit to git
+// ✅ Use environment variables
+// ✅ Rotate periodically
+```
+
+## Common OAuth Pitfalls
+
+### 1. Trusting Email Verification
+```javascript
+// ❌ BAD
+const user = await db.findUserByEmail(profile.email);
+
+// ✅ GOOD
+if (!profile.email_verified) {
+  throw new Error('Email not verified');
+}
+const user = await db.findUserByEmail(profile.email);
+```
+
+### 2. Storing Access Tokens Unnecessarily
+```javascript
+// Only store if you need to make API calls on user's behalf
+// For login only, you don't need to store tokens
+```
+
+### 3. Not Handling Token Expiration
+```javascript
+// Store refresh tokens if you need long-term access
+if (refreshToken) {
+  await db.saveRefreshToken(user.id, provider, refreshToken);
+}
+```
+
+### 4. Confusing OAuth with Authentication
+```javascript
+// OAuth is for authorization, not authentication
+// Use OpenID Connect (OIDC) for authentication
+// Google supports OIDC via 'openid' scope
+```
+
+## Testing OAuth Locally
+
+### Using LocalTunnel or Ngrok
+
+```bash
+# Install ngrok
+npm install -g ngrok
+
+# Expose local server
+ngrok http 3000
+
+# Use https://xxxxx.ngrok.io/auth/google/callback
+# as redirect URI in Google Console
+```
+
+### Mock OAuth for Testing
+
+```javascript
+// Test helper
+export async function mockOAuthLogin(email) {
+  const mockUser = {
+    id: 'mock-google-id',
+    email,
+    name: 'Test User'
+  };
+  
+  // Bypass OAuth flow in test environment
+  const user = await db.findOrCreateUser(mockUser);
+  return createTestSession(user);
+}
+```

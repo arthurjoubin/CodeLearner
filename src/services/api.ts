@@ -1,6 +1,7 @@
 import { User, ChatMessage, ValidationResult } from '../types';
 
 const WORKER_URL = 'https://codelearner-api.arthurjoubin.workers.dev';
+const LOCAL_URL = 'http://localhost:3001';
 
 export const api = {
   async login(email: string, password: string): Promise<User> {
@@ -72,6 +73,21 @@ export const api = {
     });
   },
 
+  // Synchronous save for unmount (uses keepalive to survive page navigation)
+  saveUserSync(user: User): void {
+    try {
+      fetch(`${WORKER_URL}/api/user`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(user),
+        keepalive: true,
+      }).catch(() => {});
+    } catch {
+      // ignore
+    }
+  },
+
   // AI endpoints
   async validateCode(
     code: string,
@@ -128,5 +144,20 @@ export const api = {
     if (!res.ok) throw new Error('Failed to fetch leaderboard');
     const data = await res.json();
     return data.users;
+  },
+
+  async executeCode(code: string, language: string): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+    const baseUrl = import.meta.env.DEV ? LOCAL_URL : WORKER_URL;
+    const res = await fetch(`${baseUrl}/api/execute`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ code, language }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Code execution failed');
+    }
+    return res.json();
   },
 };

@@ -1,0 +1,59 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import PageTitle from '../../components/PageTitle.astro';
+import { supportedLanguages, getExercisesByLanguage } from '../../data/language-exercises';
+import CodeCraftExerciseList from '../../components/CodeCraftExerciseList';
+
+const { language: languageId } = Astro.params;
+const language = supportedLanguages.find(lang => lang.id === languageId);
+const exercises = language ? getExercisesByLanguage(language.id).sort((a, b) => a.order - b.order) : [];
+
+if (!language) {
+  return Astro.redirect('/codecraft');
+}
+---
+
+<MainLayout title={`${language.name} - CodeCraft Exercises`}>
+  <div class="page-enter">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-1 text-xs font-bold mb-2">
+      <a href="/codecraft" class="text-gray-700 hover:text-primary-600 transition-colors uppercase">CodeCraft</a>
+      <svg class="w-3 h-3 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+      <span class="text-gray-800 uppercase">{language.name}</span>
+    </nav>
+
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center gap-4 mb-3">
+        <div 
+          class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
+          style={`background-color: ${language.color}15`}
+        >
+          {language.icon}
+        </div>
+        <div>
+          <PageTitle>
+            <h1 slot="title" class="text-2xl font-black text-gray-900 uppercase">{language.name}</h1>
+          </PageTitle>
+          <p class="text-gray-600">{exercises.length} exercises to master {language.name}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise List (React Island with progress) -->
+    <CodeCraftExerciseList client:load exercises={exercises} language={language} />
+
+    <!-- Back to languages -->
+    <a 
+      href="/codecraft" 
+      class="mt-8 inline-flex items-center gap-2 text-xs font-bold uppercase text-gray-700 hover:text-gray-900 transition-colors"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Back to languages
+    </a>
+  </div>
+</MainLayout>

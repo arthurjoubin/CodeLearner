@@ -58,7 +58,7 @@
       "content": "Test your understanding of Docker fundamentals.",
       "questions": [
         {
-          "text": "What is the main difference between containers and VMs?",
+          "question": "What is the main difference between containers and VMs?",
           "options": [
             "Containers are slower than VMs",
             "Containers share the host OS kernel while VMs run complete OS instances",
@@ -69,7 +69,7 @@
           "explanation": "Containers are lightweight because they share the host OS kernel, unlike VMs which each run a complete guest operating system."
         },
         {
-          "text": "What problem does Docker solve?",
+          "question": "What problem does Docker solve?",
           "options": [
             "Slow internet connections",
             "Works on my machine - environment inconsistency",
@@ -132,7 +132,7 @@
       "content": "Test your knowledge of Docker development patterns.",
       "questions": [
         {
-          "text": "Why use volumes in development?",
+          "question": "Why use volumes in development?",
           "options": [
             "To make containers larger",
             "To enable hot reload by syncing host and container files",
@@ -143,7 +143,7 @@
           "explanation": "Volumes (especially bind mounts) allow you to sync files between your host machine and the container, enabling hot reload during development."
         },
         {
-          "text": "What is the purpose of the line '- /app/node_modules' in docker-compose volumes?",
+          "question": "What is the purpose of the line '- /app/node_modules' in docker-compose volumes?",
           "options": [
             "To install node_modules on the host",
             "To prevent the host's node_modules from overriding the container's",
@@ -154,7 +154,7 @@
           "explanation": "This creates an anonymous volume that preserves the container's node_modules directory, preventing it from being overwritten by the host's node_modules (or lack thereof)."
         },
         {
-          "text": "When should you use docker-compose.override.yml?",
+          "question": "When should you use docker-compose.override.yml?",
           "options": [
             "Never, it's deprecated",
             "For production deployments only",

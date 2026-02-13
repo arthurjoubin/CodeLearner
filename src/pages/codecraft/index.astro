@@ -1,0 +1,62 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import PageTitle from '../../components/PageTitle.astro';
+import { supportedLanguages, getExercisesByLanguage } from '../../data/language-exercises';
+import CodeCraftLanguageGrid from '../../components/CodeCraftLanguageGrid';
+
+const languagesWithStats = supportedLanguages.map(lang => {
+  const exercises = getExercisesByLanguage(lang.id);
+  return {
+    ...lang,
+    exerciseCount: exercises.length,
+    difficultyBreakdown: {
+      easy: exercises.filter(e => e.difficulty === 'easy').length,
+      medium: exercises.filter(e => e.difficulty === 'medium').length,
+      hard: exercises.filter(e => e.difficulty === 'hard').length,
+    }
+  };
+});
+---
+
+<MainLayout title="CodeCraft - Practice Programming">
+  <div class="page-enter">
+    <!-- Header -->
+    <div class="mb-8">
+      <PageTitle>
+        <h1 slot="title" class="text-2xl font-black text-gray-900 uppercase">CodeCraft</h1>
+      </PageTitle>
+      <p class="text-gray-600 mt-2">Master programming languages through hands-on exercises</p>
+    </div>
+
+    <!-- Languages Grid (React Island with progress) -->
+    <CodeCraftLanguageGrid client:load languagesWithStats={languagesWithStats} />
+
+    <!-- Info section -->
+    <div class="border-2 border-gray-300 rounded-lg p-6 bg-gray-50">
+      <h2 class="text-lg font-bold text-gray-900 mb-3">How CodeCraft Works</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 text-primary-600 font-bold text-sm border-2 border-primary-200">1</div>
+          <div>
+            <h3 class="font-bold text-gray-900 mb-1">Choose a Language</h3>
+            <p class="text-sm text-gray-600">Select from Python, JavaScript, TypeScript, Rust, or Go</p>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 text-primary-600 font-bold text-sm border-2 border-primary-200">2</div>
+          <div>
+            <h3 class="font-bold text-gray-900 mb-1">Solve Exercises</h3>
+            <p class="text-sm text-gray-600">Complete coding challenges from easy to hard</p>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 text-primary-600 font-bold text-sm border-2 border-primary-200">3</div>
+          <div>
+            <h3 class="font-bold text-gray-900 mb-1">Earn XP</h3>
+            <p class="text-sm text-gray-600">Get instant feedback and level up your skills</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</MainLayout>

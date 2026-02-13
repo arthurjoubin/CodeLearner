@@ -59,19 +59,19 @@
       "xpReward": 100,
       "questions": [
         {
-          "text": "In Node.js, how do you access an environment variable named API_KEY?",
+          "question": "In Node.js, how do you access an environment variable named API_KEY?",
           "options": ["env.API_KEY", "process.env.API_KEY", "environment.API_KEY", "getEnv('API_KEY')"],
           "correctAnswer": 1,
           "explanation": "Node.js uses process.env to access environment variables. This is a global object containing the user environment."
         },
         {
-          "text": "Why should you use environment variables for API keys instead of hardcoding them?",
+          "question": "Why should you use environment variables for API keys instead of hardcoding them?",
           "options": ["They make the code faster", "They keep secrets out of version control", "They reduce bundle size", "They enable autocomplete"],
           "correctAnswer": 1,
           "explanation": "Environment variables keep sensitive information like API keys out of your source code and version control, which is a security best practice."
         },
         {
-          "text": "What happens to environment variables in a frontend (browser) app?",
+          "question": "What happens to environment variables in a frontend (browser) app?",
           "options": ["They're hidden from users", "They're bundled at build time", "They update in real-time", "They're encrypted automatically"],
           "correctAnswer": 1,
           "explanation": "In frontend apps, environment variables are baked into the code at build time. They must be prefixed (e.g., VITE_, REACT_APP_) and are visible to anyone who inspects the page."
@@ -90,19 +90,19 @@
       "xpReward": 100,
       "questions": [
         {
-          "text": "Should you commit your .env file to Git?",
+          "question": "Should you commit your .env file to Git?",
           "options": ["Yes, always", "Only in development", "No, never", "Only if it's encrypted"],
           "correctAnswer": 2,
           "explanation": "Never commit .env files to Git as they typically contain secrets. Always add .env to your .gitignore file."
         },
         {
-          "text": "What is the purpose of .env.example?",
+          "question": "What is the purpose of .env.example?",
           "options": ["To store real secrets", "To document required variables", "To override .env.local", "It's a backup file"],
           "correctAnswer": 1,
           "explanation": ".env.example shows what environment variables are needed without exposing real values. It should be committed to help teammates set up their environment."
         },
         {
-          "text": "Where should you load dotenv in your application?",
+          "question": "Where should you load dotenv in your application?",
           "options": ["At the end of the file", "In the middle of the file", "At the very top", "In a separate config file only"],
           "correctAnswer": 2,
           "explanation": "dotenv should be loaded at the very top of your main entry file (e.g., index.js or server.js) so environment variables are available throughout your app."

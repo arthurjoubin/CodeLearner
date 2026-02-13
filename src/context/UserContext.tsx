@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { User, getLevelFromXp } from '../types';
 import { api } from '../services/api';
 
@@ -36,74 +36,237 @@ const GUEST_USER: User = {
   labProgress: {},
 };
 
-export function UserProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isGuest, setIsGuest] = useState(true);
-  const [loading, setLoading] = useState(true);
-  const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+// ── Shared singleton store ──────────────────────────────────────────────
+// Astro islands are separate React trees, so React context doesn't flow
+// between Layout and page components. This store on `window` ensures every
+// UserProvider instance shares the same state, fetches once, and saves once.
+//
+// Additionally, state is cached in localStorage so that navigating between
+// pages (full reloads) sees the latest progress instantly, even before the
+// API save round-trips.
 
-  useEffect(() => {
-    loadUser();
-  }, []);
+interface SharedStore {
+  user: User | null;
+  isGuest: boolean;
+  loading: boolean;
+  fetchPromise: Promise<void> | null;
+  saveTimeout: ReturnType<typeof setTimeout> | null;
+  listeners: Set<() => void>;
+}
 
-  // Debounced save - only for authenticated users
-  useEffect(() => {
-    if (!user || isGuest || loading) return;
+const STORE_KEY = '__hackupUserStore';
+const CACHE_KEY = 'hackup_user_cache';
 
-    if (saveTimeout.current) {
-      clearTimeout(saveTimeout.current);
-    }
+// ── localStorage cache ──────────────────────────────────────────────────
 
-    saveTimeout.current = setTimeout(() => {
-      api.saveUser(user).catch(console.error);
-    }, 1000);
+function cacheUser(user: User | null) {
+  if (!user || user.id === 'guest') return;
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(user));
+  } catch { /* quota exceeded – ignore */ }
+}
 
-    return () => {
-      if (saveTimeout.current) {
-        clearTimeout(saveTimeout.current);
-      }
-    };
-  }, [user, isGuest, loading]);
+function getCachedUser(): User | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
 
-  const loadUser = async () => {
+function clearCachedUser() {
+  try { localStorage.removeItem(CACHE_KEY); } catch { /* ignore */ }
+}
+
+/** Merge local cache and remote API data so no progress is ever lost. */
+function mergeUsers(local: User, remote: User): User {
+  const completedLessons = [...new Set([
+    ...(local.completedLessons || []),
+    ...(remote.completedLessons || []),
+  ])];
+  const completedExercises = [...new Set([
+    ...(local.completedExercises || []),
+    ...(remote.completedExercises || []),
+  ])];
+  return {
+    ...remote,
+    xp: Math.max(local.xp || 0, remote.xp || 0),
+    level: getLevelFromXp(Math.max(local.xp || 0, remote.xp || 0)).level,
+    streak: Math.max(local.streak || 0, remote.streak || 0),
+    lastActiveDate: local.lastActiveDate > remote.lastActiveDate ? local.lastActiveDate : remote.lastActiveDate,
+    completedLessons,
+    completedExercises,
+    labProgress: { ...(remote.labProgress || {}), ...(local.labProgress || {}) },
+  };
+}
+
+// ── Shared window store ─────────────────────────────────────────────────
+
+function getStore(): SharedStore {
+  if (typeof window === 'undefined') {
+    return { user: null, isGuest: true, loading: true, fetchPromise: null, saveTimeout: null, listeners: new Set() };
+  }
+  if (!(window as any)[STORE_KEY]) {
+    (window as any)[STORE_KEY] = {
+      user: null,
+      isGuest: true,
+      loading: true,
+      fetchPromise: null,
+      saveTimeout: null,
+      listeners: new Set(),
+    } satisfies SharedStore;
+  }
+  return (window as any)[STORE_KEY] as SharedStore;
+}
+
+function notifyListeners() {
+  const store = getStore();
+  store.listeners.forEach(fn => fn());
+}
+
+/** Fetch user from API – only the first call actually fetches; others await the same promise. */
+function initStore(): Promise<void> {
+  const store = getStore();
+  if (store.fetchPromise) return store.fetchPromise;
+
+  // 1. Load from localStorage cache instantly (no loading flash, no stale data)
+  const cached = getCachedUser();
+  if (cached) {
+    store.user = cached;
+    store.isGuest = false;
+    store.loading = false;
+    notifyListeners();
+  }
+
+  // 2. Then fetch from API and merge so server-side data is never lost
+  store.fetchPromise = (async () => {
     try {
-      const userData = await api.getMe();
-      if (userData) {
-        setUser(userData);
-        setIsGuest(false);
-      } else {
-        setUser({ ...GUEST_USER });
-        setIsGuest(true);
+      const remote = await api.getMe();
+      if (remote) {
+        const merged = cached ? mergeUsers(cached, remote) : remote;
+        store.user = merged;
+        store.isGuest = false;
+        cacheUser(merged);
+        // If merge added progress the server didn't know about, push it back
+        if (cached && (
+          merged.completedLessons.length > remote.completedLessons.length ||
+          merged.completedExercises.length > remote.completedExercises.length ||
+          merged.xp > remote.xp
+        )) {
+          scheduleSave();
+        }
+      } else if (!cached) {
+        store.user = { ...GUEST_USER };
+        store.isGuest = true;
       }
     } catch {
-      setUser({ ...GUEST_USER });
-      setIsGuest(true);
+      if (!cached) {
+        store.user = { ...GUEST_USER };
+        store.isGuest = true;
+      }
     } finally {
-      setLoading(false);
+      store.loading = false;
+      notifyListeners();
     }
-  };
+  })();
 
-  const loginWithPassword = async (email: string, password: string) => {
+  return store.fetchPromise;
+}
+
+/** Update user in the shared store, cache to localStorage, and schedule a debounced save. */
+function updateStoreUser(updater: (prev: User | null) => User | null) {
+  const store = getStore();
+  const next = updater(store.user);
+  if (next === store.user) return;
+  store.user = next;
+  cacheUser(next);
+  notifyListeners();
+  scheduleSave();
+}
+
+function scheduleSave() {
+  const store = getStore();
+  if (store.isGuest || !store.user) return;
+  if (store.saveTimeout) clearTimeout(store.saveTimeout);
+  store.saveTimeout = setTimeout(() => {
+    store.saveTimeout = null;
+    if (store.user && !store.isGuest) {
+      api.saveUser(store.user).catch(console.error);
+    }
+  }, 1000);
+}
+
+/** Flush any pending save immediately (used on page unload). */
+function flushSave() {
+  const store = getStore();
+  if (store.saveTimeout) {
+    clearTimeout(store.saveTimeout);
+    store.saveTimeout = null;
+  }
+  if (store.user && !store.isGuest) {
+    api.saveUserSync(store.user);
+  }
+}
+
+// Save on page unload – registered once globally
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', flushSave);
+}
+
+// ── React provider ──────────────────────────────────────────────────────
+
+export function UserProvider({ children }: { children: React.ReactNode }) {
+  // Start with `hydrated = false` so the first client render matches the
+  // server render (loading state, no user).  After mount we flip it on and
+  // read from the shared store, avoiding any hydration mismatch.
+  const [hydrated, setHydrated] = useState(false);
+  const [, bump] = useState(0);
+
+  useEffect(() => {
+    setHydrated(true);
+    const store = getStore();
+    const listener = () => bump(n => n + 1);
+    store.listeners.add(listener);
+    initStore();
+    return () => { store.listeners.delete(listener); };
+  }, []);
+
+  const store = hydrated ? getStore() : null;
+  const user = store?.user ?? null;
+  const isGuest = store?.isGuest ?? true;
+  const loading = store ? store.loading : true;
+
+  const loginWithPassword = useCallback(async (email: string, password: string) => {
     const userData = await api.login(email, password);
-    setUser(userData);
-    setIsGuest(false);
-  };
+    const s = getStore();
+    s.user = userData;
+    s.isGuest = false;
+    cacheUser(userData);
+    notifyListeners();
+  }, []);
 
-  const register = async (email: string, password: string, name: string) => {
+  const register = useCallback(async (email: string, password: string, name: string) => {
     const userData = await api.register(email, password, name);
-    setUser(userData);
-    setIsGuest(false);
-  };
+    const s = getStore();
+    s.user = userData;
+    s.isGuest = false;
+    cacheUser(userData);
+    notifyListeners();
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await api.logout();
-    setUser({ ...GUEST_USER });
-    setIsGuest(true);
+    const s = getStore();
+    s.user = { ...GUEST_USER };
+    s.isGuest = true;
+    clearCachedUser();
+    notifyListeners();
     window.location.href = '/';
-  };
+  }, []);
 
   const addXp = useCallback((amount: number) => {
-    setUser(prev => {
+    updateStoreUser(prev => {
       if (!prev) return prev;
       const newXp = prev.xp + amount;
       const newLevel = getLevelFromXp(newXp).level;
@@ -112,7 +275,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const completeLesson = useCallback((lessonId: string) => {
-    setUser(prev => {
+    updateStoreUser(prev => {
       if (!prev || prev.completedLessons.includes(lessonId)) return prev;
       return {
         ...prev,
@@ -122,7 +285,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const completeExercise = useCallback((exerciseId: string) => {
-    setUser(prev => {
+    updateStoreUser(prev => {
       if (!prev || prev.completedExercises.includes(exerciseId)) return prev;
       return {
         ...prev,
@@ -132,7 +295,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const updateStreak = useCallback(() => {
-    setUser(prev => {
+    updateStoreUser(prev => {
       if (!prev) return prev;
       const today = new Date().toISOString().split('T')[0];
       const lastActive = prev.lastActiveDate;
@@ -158,7 +321,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, [user?.completedExercises]);
 
   const unlockLab = useCallback((labId: string) => {
-    setUser(prev => {
+    updateStoreUser(prev => {
       if (!prev) return prev;
       const currentLabProgress = prev.labProgress?.[labId] || { unlocked: true, completed: false, currentStep: 0 };
       return {
@@ -172,7 +335,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const updateLabProgress = useCallback((labId: string, step: number, completed: boolean = false) => {
-    setUser(prev => {
+    updateStoreUser(prev => {
       if (!prev) return prev;
       const currentLabProgress = prev.labProgress?.[labId] || { unlocked: true, completed: false, currentStep: 0 };
       return {

@@ -5,10 +5,6 @@ import { getCourseTitles } from '../../data/course-metadata';
 
 const courseTitles = getCourseTitles();
 
-export function getStaticPaths() {
-  return [];
-}
-
 const { courseId } = Astro.params;
 const pageTitle = courseId ? courseTitles[courseId] || courseId : 'Course';
 ---

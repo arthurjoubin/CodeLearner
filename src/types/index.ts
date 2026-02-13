@@ -237,3 +237,26 @@ export interface LearningPathInfo {
   isPrerequisite?: boolean;
   color: string;
 }
+
+// ============================================
+// Language Exercise Types (CodeCraft)
+// ============================================
+
+export interface LanguageExercise {
+  id: string;
+  type: 'language';
+  language: string;
+  title: string;
+  description: string;
+  instructions: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  order: number;
+  starterCode: string;
+  solution: string;
+  expectedOutput?: string;
+  validationPrompt: string;
+  hints: string[];
+  xpReward: number;
+  lessonId: string;
+  moduleId: string;
+}

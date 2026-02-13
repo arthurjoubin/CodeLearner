@@ -59,19 +59,19 @@
       "xpReward": 100,
       "questions": [
         {
-          "text": "Which extension automatically formats your code on save?",
+          "question": "Which extension automatically formats your code on save?",
           "options": ["ESLint", "Prettier", "GitLens", "Path Intellisense"],
           "correctAnswer": 1,
           "explanation": "Prettier is a code formatter that automatically formats your code according to a consistent style. ESLint finds errors, GitLens adds Git features, and Path Intellisense helps with file paths."
         },
         {
-          "text": "What does ESLint do?",
+          "question": "What does ESLint do?",
           "options": ["Formats code", "Checks for code errors and style issues", "Manages Git", "Deploys applications"],
           "correctAnswer": 1,
           "explanation": "ESLint statically analyzes your JavaScript/TypeScript code to find problems. It catches syntax errors, unused variables, and style violations."
         },
         {
-          "text": "Which extension helps you see who last modified a line of code?",
+          "question": "Which extension helps you see who last modified a line of code?",
           "options": ["Prettier", "ESLint", "GitLens", "Error Lens"],
           "correctAnswer": 2,
           "explanation": "GitLens adds extensive Git integration to VS Code, including blame annotations that show who last modified each line and when."
@@ -90,19 +90,19 @@
       "xpReward": 100,
       "questions": [
         {
-          "text": "What's the keyboard shortcut to open the Command Palette?",
+          "question": "What's the keyboard shortcut to open the Command Palette?",
           "options": ["Cmd/Ctrl + P", "Cmd/Ctrl + Shift + P", "Cmd/Ctrl + B", "Cmd/Ctrl + J"],
           "correctAnswer": 1,
           "explanation": "Cmd/Ctrl + Shift + P opens the Command Palette, which gives you access to all VS Code commands. Cmd/Ctrl + P opens the quick file navigator."
         },
         {
-          "text": "Where are workspace-specific settings stored?",
+          "question": "Where are workspace-specific settings stored?",
           "options": ["User settings.json", ".vscode/settings.json", "package.json", "The cloud"],
           "correctAnswer": 1,
           "explanation": "Workspace settings are stored in `.vscode/settings.json` within your project folder. User settings are global and stored in your VS Code configuration directory."
         },
         {
-          "text": "What does the keyboard shortcut Cmd/Ctrl + D do?",
+          "question": "What does the keyboard shortcut Cmd/Ctrl + D do?",
           "options": ["Delete line", "Duplicate line", "Select next occurrence", "Open definition"],
           "correctAnswer": 2,
           "explanation": "Cmd/Ctrl + D selects the next occurrence of the currently selected text, allowing you to edit multiple instances at once."

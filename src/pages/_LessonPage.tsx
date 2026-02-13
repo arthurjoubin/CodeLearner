@@ -74,12 +74,18 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
   const currentCoursePosition = courseLessonIndex >= 0 ? courseLessonIndex + 1 : 0;
   const currentModulePosition = currentIndex >= 0 ? currentIndex + 1 : 0;
 
-  // Auto-complete lesson when all exercises are done
+  // Auto-complete lesson when all exercises are done, or on visit for content-only lessons
   useEffect(() => {
-    if (exercises.length > 0 && completedExercisesCount === exercises.length && !alreadyCompleted) {
+    if (alreadyCompleted || !lesson) return;
+
+    if (exercises.length === 0) {
+      // Silent auto-complete for content-only lessons (no modal)
+      addXp(getXpReward(lesson.xpReward));
+      completeLesson(lesson.id);
+    } else if (completedExercisesCount === exercises.length) {
       handleComplete();
     }
-  }, [completedExercisesCount, exercises.length, alreadyCompleted, handleComplete]);
+  }, [exercises.length, completedExercisesCount, alreadyCompleted, lesson, addXp, completeLesson, handleComplete]);
 
   if (loading) {
     return <LoadingSpinner />;
@@ -170,12 +176,21 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
           )}
 
           {nextLesson && (
-            <a
-              href={`/lesson/${nextLesson.id}`}
-              className="inline-flex items-center gap-2 border-2 border-primary-300 bg-primary-50 text-primary-700 hover:bg-primary-100 hover:border-primary-400 rounded-lg px-3 py-2 transition-colors font-bold text-sm"
-            >
-              Next Lesson →
-            </a>
+            (alreadyCompleted || allExercisesDone) ? (
+              <a
+                href={`/lesson/${nextLesson.id}`}
+                className="inline-flex items-center gap-2 border-2 border-primary-300 bg-primary-50 text-primary-700 hover:bg-primary-100 hover:border-primary-400 rounded-lg px-3 py-2 transition-colors font-bold text-sm"
+              >
+                Next Lesson →
+              </a>
+            ) : (
+              <span
+                className="inline-flex items-center gap-2 border-2 border-gray-200 bg-gray-50 text-gray-400 rounded-lg px-3 py-2 font-bold text-sm cursor-not-allowed"
+                title="Complete all exercises first"
+              >
+                Next Lesson →
+              </span>
+            )
           )}
         </div>
       </div>
@@ -257,7 +272,7 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
         )}
       </div>
 
-      {completed && !alreadyCompleted && (
+      {completed && (
         <LessonCompletionModal
           isOpen={true}
           xpReward={getXpReward(lesson.xpReward)}

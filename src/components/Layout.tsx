@@ -21,7 +21,8 @@ import {
   CreditCard,
   ChevronDown,
   Play,
-  GraduationCap
+  GraduationCap,
+  Code
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -43,6 +44,9 @@ interface PathLesson {
   lessonIndex: number;
   totalLessons: number;
   isComplete: boolean;
+  currentLessonNumber: number;
+  totalLessonsCount: number;
+  progress: number;
 }
 
 // Get course logo based on courseId
@@ -92,6 +96,11 @@ function LayoutContent({ children }: LayoutProps) {
       return exs.length > 0 && exs.every(e => completedExercises.includes(e.id));
     };
 
+    // Check if user is currently viewing a specific lesson
+    const currentPath = window.location.pathname;
+    const lessonMatch = currentPath.match(/\/lesson\/([^\/]+)/);
+    const currentLessonId = lessonMatch ? lessonMatch[1] : null;
+
     const pathsList: PathLesson[] = [];
 
     learningPaths.forEach(path => {
@@ -114,36 +123,36 @@ function LayoutContent({ children }: LayoutProps) {
 
       // Calculate completed lessons
       const completedCount = sortedLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
-      
-      // Skip if no lessons completed
-      if (completedCount === 0) return;
-      
-      const totalLessons = sortedLessons.length;
-      const isComplete = completedCount === totalLessons;
+      const totalLessonsCount = sortedLessons.length;
+      const progress = Math.round((completedCount / totalLessonsCount) * 100);
 
-      // Find current module
-      let currentModuleIndex = 0;
-      
-      for (let i = 0; i < pathModules.length; i++) {
-        const mod = pathModules[i];
-        const modLessons = sortedLessons.filter(l => l.moduleId === mod.id);
-        const modCompleted = modLessons.filter(l => isLessonEffectivelyDone(l.id)).length;
-        
-        if (modCompleted < modLessons.length) {
-          currentModuleIndex = i;
-          break;
-        }
-      }
+      // Skip if no lessons completed or if complete
+      if (completedCount === 0 || progress === 100) return;
 
-      // Find current lesson or use first if complete
+      // Determine current lesson: if on a lesson page, use that lesson; otherwise find first incomplete
       let currentLesson = sortedLessons[0];
-      if (!isComplete) {
-        currentLesson = sortedLessons.find(l => !isLessonEffectivelyDone(l.id)) || sortedLessons[0];
+      if (currentLessonId) {
+        // Check if current lesson is in this path
+        const foundLesson = sortedLessons.find(l => l.id === currentLessonId);
+        if (foundLesson) {
+          currentLesson = foundLesson;
+        } else {
+          currentLesson = sortedLessons.find(l => !isLessonEffectivelyDone(l.id)) || sortedLessons[0];
+        }
       } else {
-        currentLesson = sortedLessons[sortedLessons.length - 1];
+        currentLesson = sortedLessons.find(l => !isLessonEffectivelyDone(l.id)) || sortedLessons[0];
       }
 
+      // Find the module that contains the current lesson
       const mod = pathModules.find(m => m.id === currentLesson.moduleId);
+      const currentModuleIndex = mod ? pathModules.indexOf(mod) : 0;
+
+      // Calculate lesson position within the module
+      const moduleLessons = sortedLessons.filter(l => l.moduleId === currentLesson.moduleId);
+      const lessonPositionInModule = moduleLessons.findIndex(l => l.id === currentLesson.id) + 1;
+
+      // Calculate overall lesson position across entire path
+      const currentLessonNumber = sortedLessons.findIndex(l => l.id === currentLesson.id) + 1;
 
       if (mod) {
         pathsList.push({
@@ -158,22 +167,18 @@ function LayoutContent({ children }: LayoutProps) {
           pathTitle: path.title,
           moduleIndex: currentModuleIndex + 1,
           totalModules: pathModules.length,
-          lessonIndex: isComplete ? totalLessons : completedCount + 1,
-          totalLessons: totalLessons,
-          isComplete: isComplete,
+          lessonIndex: lessonPositionInModule,
+          totalLessons: moduleLessons.length,
+          isComplete: false,
+          currentLessonNumber,
+          totalLessonsCount,
+          progress,
         });
       }
     });
 
-    // Sort: incomplete first (by progress), then complete
-    return pathsList.sort((a, b) => {
-      if (a.isComplete && !b.isComplete) return 1;
-      if (!a.isComplete && b.isComplete) return -1;
-      // Both complete or both incomplete - sort by progress
-      const progressA = a.lessonIndex / a.totalLessons;
-      const progressB = b.lessonIndex / b.totalLessons;
-      return progressB - progressA;
-    });
+    // Sort by progress descending
+    return pathsList.sort((a, b) => b.progress - a.progress);
   }, [user, isGuest]);
 
   if (loading) {
@@ -241,6 +246,17 @@ function LayoutContent({ children }: LayoutProps) {
                   <span>Resources</span>
                 </a>
                 <a
+                  href="/codecraft"
+                  className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                    currentPath.startsWith('/codecraft')
+                      ? 'text-primary-600 bg-primary-50'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  <Code className="w-4 h-4" />
+                  <span>CodeCraft</span>
+                </a>
+                <a
                   href="/pricing"
                   className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
                     currentPath === '/pricing'
@@ -303,6 +319,15 @@ function LayoutContent({ children }: LayoutProps) {
                           <BookOpen className="w-4 h-4" /> Resources
                         </a>
                         <a
+                          href="/codecraft"
+                          onClick={() => setMenuOpen(false)}
+                          className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                            currentPath.startsWith('/codecraft') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          <Code className="w-4 h-4" /> CodeCraft
+                        </a>
+                        <a
                           href="/pricing"
                           onClick={() => setMenuOpen(false)}
                           className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
@@ -341,36 +366,55 @@ function LayoutContent({ children }: LayoutProps) {
                   {lessonDropdownOpen && (
                     <>
                       <div className="fixed inset-0 z-40" onClick={() => setLessonDropdownOpen(false)} />
-                      <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl shadow-gray-200/50 z-50 overflow-hidden ring-1 ring-gray-100">
-                        <div className="px-4 py-3 border-b border-gray-100">
+                      <div className="absolute right-0 mt-2 w-96 bg-white rounded-2xl shadow-xl shadow-gray-200/50 z-50 overflow-hidden border border-gray-200">
+                        <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50">
                           <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Continue Learning</span>
                         </div>
-                        <div className="p-1.5">
+                        <div className="p-2 space-y-1">
                           {pathLessons.map((pathLesson) => (
                             <a
                               key={pathLesson.pathId}
                               href={`/lesson/${pathLesson.id}`}
                               onClick={() => setLessonDropdownOpen(false)}
-                              className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 rounded-xl transition-all group"
+                              className="group block p-3 rounded-xl bg-white border border-gray-100 hover:border-primary-200 hover:shadow-md hover:shadow-primary-500/5 transition-all duration-200"
                             >
-                              <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 group-hover:bg-white group-hover:shadow-sm transition-all">
-                                <img 
-                                  src={pathLesson.logo} 
-                                  alt={pathLesson.courseTitle}
-                                  className="w-6 h-6 object-contain"
-                                />
+                              {/* Header: Course Icon + Module + Progress Badge */}
+                              <div className="flex items-start gap-3">
+                                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center flex-shrink-0 group-hover:from-primary-50 group-hover:to-primary-100 transition-all duration-200 border border-gray-100">
+                                  <img
+                                    src={pathLesson.logo}
+                                    alt={pathLesson.courseTitle}
+                                    className="w-6 h-6 object-contain"
+                                  />
+                                </div>
+                                <div className="flex-1 min-w-0 pt-0.5">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <p className="text-sm font-bold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
+                                      {pathLesson.moduleTitle}
+                                    </p>
+                                    <span className="flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 text-xs font-bold tabular-nums border border-primary-100">
+                                      {pathLesson.currentLessonNumber}/{pathLesson.totalLessonsCount}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-gray-500 mt-1 flex items-center gap-1.5">
+                                    <span className="text-gray-300">›</span>
+                                    <span className="truncate font-medium">{pathLesson.title}</span>
+                                  </p>
+                                </div>
                               </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
-                                  {pathLesson.title}
-                                </p>
-                                <p className="text-[11px] text-gray-400 truncate mt-0.5">
-                                  {pathLesson.pathTitle} • {pathLesson.courseTitle}
-                                </p>
+                              {/* Progress Bar */}
+                              <div className="mt-3 ml-14">
+                                <div className="flex items-center justify-between text-[10px] text-gray-400 mb-1.5">
+                                  <span className="font-medium">{pathLesson.courseTitle}</span>
+                                  <span className="tabular-nums">{pathLesson.progress}%</span>
+                                </div>
+                                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full rounded-full bg-gradient-to-r from-primary-400 to-primary-600 transition-all duration-500 ease-out"
+                                    style={{ width: `${pathLesson.progress}%` }}
+                                  />
+                                </div>
                               </div>
-                              <span className="text-xs font-medium text-gray-400 tabular-nums">
-                                {pathLesson.moduleIndex}/{pathLesson.totalModules}
-                              </span>
                             </a>
                           ))}
                         </div>
@@ -405,6 +449,20 @@ function LayoutContent({ children }: LayoutProps) {
               >
                 <GraduationCap className="w-4 h-4" />
                 <span>Courses</span>
+              </a>
+
+              {/* CodeCraft Button */}
+              <a 
+                href="/codecraft" 
+                className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                  currentPath.startsWith('/codecraft')
+                    ? 'text-primary-600 bg-primary-50'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+                title="CodeCraft"
+              >
+                <Code className="w-4 h-4" />
+                <span>CodeCraft</span>
               </a>
 
               {/* Streak Button */}
@@ -541,28 +599,49 @@ function LayoutContent({ children }: LayoutProps) {
                       
                       {/* Learning Paths Section in Mobile Menu */}
                       {pathLessons.length > 0 && (
-                        <div className="px-3 py-2 border-b border-gray-100 sm:hidden">
-                          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3">Learning Paths</span>
-                          <div className="mt-1 space-y-1">
+                        <div className="px-3 py-3 border-b border-gray-100 sm:hidden">
+                          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider px-3">Continue Learning</span>
+                          <div className="mt-2 space-y-2">
                             {pathLessons.slice(0, 4).map((pathLesson) => (
                               <a
                                 key={pathLesson.pathId}
                                 href={`/lesson/${pathLesson.id}`}
                                 onClick={() => setMenuOpen(false)}
-                                className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors"
+                                className="group block px-3 py-2.5 rounded-xl bg-gray-50/50 border border-gray-100 hover:bg-white hover:border-primary-200 hover:shadow-sm transition-all"
                               >
-                                <img 
-                                  src={pathLesson.logo} 
-                                  alt={pathLesson.courseTitle}
-                                  className="w-5 h-5 object-contain rounded"
-                                />
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-gray-900 truncate">
-                                    {pathLesson.isComplete ? '✓ ' : ''}{pathLesson.pathTitle}
-                                  </p>
-                                  <p className="text-xs text-gray-500">
-                                    M{pathLesson.moduleIndex}/{pathLesson.totalModules} • L{pathLesson.lessonIndex}/{pathLesson.totalLessons}
-                                  </p>
+                                <div className="flex items-center gap-3">
+                                  <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-gray-100">
+                                    <img
+                                      src={pathLesson.logo}
+                                      alt={pathLesson.courseTitle}
+                                      className="w-5 h-5 object-contain"
+                                    />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-2">
+                                      <p className="text-sm font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
+                                        {pathLesson.moduleTitle}
+                                      </p>
+                                      <span className="flex-shrink-0 text-xs font-bold text-primary-600 tabular-nums">
+                                        {pathLesson.currentLessonNumber}/{pathLesson.totalLessonsCount}
+                                      </span>
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-0.5 truncate">
+                                      › {pathLesson.title}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="ml-12 mt-2">
+                                  <div className="flex items-center justify-between text-[10px] text-gray-400 mb-1">
+                                    <span>{pathLesson.courseTitle}</span>
+                                    <span className="tabular-nums">{pathLesson.progress}%</span>
+                                  </div>
+                                  <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+                                    <div
+                                      className="h-full rounded-full bg-gradient-to-r from-primary-400 to-primary-600"
+                                      style={{ width: `${pathLesson.progress}%` }}
+                                    />
+                                  </div>
                                 </div>
                               </a>
                             ))}
@@ -598,6 +677,13 @@ function LayoutContent({ children }: LayoutProps) {
                           className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                         >
                           <BookOpen className="w-4 h-4" /> Resources
+                        </a>
+                        <a
+                          href="/codecraft"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <Code className="w-4 h-4" /> CodeCraft
                         </a>
                         <a
                           href="/resources/devfinds"
@@ -642,6 +728,7 @@ function LayoutContent({ children }: LayoutProps) {
               <a href="/resources/devfinds" className="text-xs font-medium text-yellow-600 hover:text-yellow-700 transition-colors uppercase tracking-wider">Dev Finds</a>
               <a href="/leaderboard" className="text-xs font-medium text-gray-600 hover:text-primary-600 transition-colors uppercase tracking-wider">Leaderboard</a>
               <a href="/labs" className="text-xs font-medium text-gray-600 hover:text-primary-600 transition-colors uppercase tracking-wider">Labs</a>
+              <a href="/codecraft" className="text-xs font-medium text-gray-600 hover:text-primary-600 transition-colors uppercase tracking-wider">CodeCraft</a>
             </div>
             <div className="flex items-center gap-3">
               <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900 transition-colors">

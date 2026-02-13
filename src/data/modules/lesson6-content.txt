@@ -1,0 +1,493 @@
+# Essential to know
+- Middleware checks auth before route handlers
+- Extract and verify token/session
+- Attach user to request object
+- Return 401 Unauthorized if invalid
+
+---
+
+# Auth Middleware & Protected Routes
+
+## What is Middleware?
+
+Middleware functions are functions that have access to the request object, response object, and the next middleware function in the application's request-response cycle.
+
+```
+Request → Middleware 1 → Middleware 2 → Route Handler → Response
+              ↓              ↓
+         Check Auth      Validate Input
+```
+
+### Why Use Auth Middleware?
+
+- **DRY Principle** - Write auth logic once, reuse everywhere
+- **Consistency** - Same error handling across all routes
+- **Security** - Can't forget to protect a route
+- **Clean Code** - Route handlers focus on business logic
+
+## Basic Auth Middleware
+
+### Session-Based Middleware
+
+```javascript
+function requireAuth(req, res, next) {
+  if (!req.session || !req.session.userId) {
+    return res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Please log in to access this resource'
+    });
+  }
+  
+  // User is authenticated, proceed
+  next();
+}
+
+// Usage
+app.get('/api/protected', requireAuth, (req, res) => {
+  res.json({ message: 'Secret data' });
+});
+```
+
+### JWT Middleware
+
+```javascript
+import jwt from 'jsonwebtoken';
+
+function authenticateToken(req, res, next) {
+  // Get token from header
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];  // Bearer TOKEN
+  
+  if (!token) {
+    return res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Access token required'
+    });
+  }
+  
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Attach user info to request
+    req.user = {
+      id: decoded.sub,
+      email: decoded.email,
+      role: decoded.role
+    };
+    
+    next();
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({
+        error: 'TokenExpired',
+        message: 'Token has expired, please refresh'
+      });
+    }
+    
+    return res.status(403).json({
+      error: 'Forbidden',
+      message: 'Invalid token'
+    });
+  }
+}
+
+// Usage
+app.get('/api/protected', authenticateToken, (req, res) => {
+  res.json({ user: req.user });
+});
+```
+
+## Advanced Auth Middleware
+
+### Fetching Full User Data
+
+```javascript
+async function requireAuthWithUser(req, res, next) {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    // Fetch fresh user data from database
+    const user = await db.findUserById(req.session.userId);
+    
+    if (!user) {
+      // User deleted but session exists
+      req.session.destroy();
+      return res.status(401).json({ error: 'User not found' });
+    }
+    
+    if (user.isBanned) {
+      return res.status(403).json({ error: 'Account suspended' });
+    }
+    
+    // Attach full user object
+    req.user = user;
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+```
+
+### Multiple Auth Strategies
+
+```javascript
+async function authenticate(req, res, next) {
+  // Try session auth first
+  if (req.session?.userId) {
+    req.user = await db.findUserById(req.session.userId);
+    if (req.user) return next();
+  }
+  
+  // Try JWT auth
+  const authHeader = req.headers['authorization'];
+  const token = authHeader?.split(' ')[1];
+  
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = await db.findUserById(decoded.sub);
+      if (req.user) return next();
+    } catch (error) {
+      // Invalid token, continue to error
+    }
+  }
+  
+  // Try API key auth
+  const apiKey = req.headers['x-api-key'];
+  if (apiKey) {
+    const keyData = await db.validateApiKey(apiKey);
+    if (keyData) {
+      req.user = keyData.user;
+      req.apiKey = keyData;
+      return next();
+    }
+  }
+  
+  return res.status(401).json({ error: 'Authentication required' });
+}
+```
+
+## Role-Based Access Control (RBAC)
+
+### Basic Role Middleware
+
+```javascript
+function requireRole(allowedRoles) {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: `Required role: ${allowedRoles.join(' or ')}`
+      });
+    }
+    
+    next();
+  };
+}
+
+// Usage
+app.get('/api/admin/users',
+  requireAuth,
+  requireRole(['admin', 'moderator']),
+  getAllUsers
+);
+
+app.delete('/api/users/:id',
+  requireAuth,
+  requireRole(['admin']),
+  deleteUser
+);
+```
+
+### Permission-Based Access
+
+```javascript
+// More granular than roles
+const PERMISSIONS = {
+  USER_READ: 'user:read',
+  USER_WRITE: 'user:write',
+  USER_DELETE: 'user:delete',
+  POST_READ: 'post:read',
+  POST_WRITE: 'post:write',
+  POST_DELETE: 'post:delete',
+  ADMIN_ACCESS: 'admin:access'
+};
+
+function requirePermission(...requiredPermissions) {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    const userPermissions = req.user.permissions || [];
+    
+    const hasPermission = requiredPermissions.every(permission =>
+      userPermissions.includes(permission) ||
+      userPermissions.includes('admin:access')  // Admin has all permissions
+    );
+    
+    if (!hasPermission) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Insufficient permissions'
+      });
+    }
+    
+    next();
+  };
+}
+
+// Usage
+app.post('/api/posts',
+  requireAuth,
+  requirePermission(PERMISSIONS.POST_WRITE),
+  createPost
+);
+```
+
+### Resource Ownership Check
+
+```javascript
+function requireOwnership(getResourceOwnerId) {
+  return async (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    // Admins can access everything
+    if (req.user.role === 'admin') {
+      return next();
+    }
+    
+    try {
+      const ownerId = await getResourceOwnerId(req);
+      
+      if (ownerId !== req.user.id) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'You can only access your own resources'
+        });
+      }
+      
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+}
+
+// Usage
+app.put('/api/posts/:id',
+  requireAuth,
+  requireOwnership(async (req) => {
+    const post = await db.findPostById(req.params.id);
+    return post?.authorId;
+  }),
+  updatePost
+);
+```
+
+## Combining with Validation
+
+### Zod + Auth Middleware
+
+```javascript
+import { z } from 'zod';
+
+// Validation schemas
+const createPostSchema = z.object({
+  title: z.string().min(1).max(200),
+  content: z.string().min(1),
+  published: z.boolean().optional()
+});
+
+const validateBody = (schema) => {
+  return (req, res, next) => {
+    try {
+      req.body = schema.parse(req.body);
+      next();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          error: 'Validation failed',
+          details: error.errors
+        });
+      }
+      next(error);
+    }
+  };
+};
+
+// Complete route with auth + validation
+app.post('/api/posts',
+  authenticateToken,           // 1. Check authentication
+  requireRole(['user', 'admin']), // 2. Check authorization
+  validateBody(createPostSchema), // 3. Validate input
+  async (req, res) => {        // 4. Handle request
+    const post = await db.createPost({
+      ...req.body,
+      authorId: req.user.id
+    });
+    res.status(201).json(post);
+  }
+);
+```
+
+## Organizing Middleware
+
+### Middleware Composition
+
+```javascript
+// middleware/auth.js
+export const auth = {
+  // Basic auth
+  required: requireAuth,
+  
+  // With user data
+  withUser: requireAuthWithUser,
+  
+  // Role-based
+  role: requireRole,
+  
+  // Permission-based
+  permission: requirePermission,
+  
+  // Ownership
+  owner: requireOwnership,
+  
+  // Optional auth (attaches user if available, doesn't require)
+  optional: optionalAuth
+};
+
+// Usage
+import { auth } from './middleware/auth.js';
+
+app.get('/api/public', optionalAuth, (req, res) => {
+  // Works with or without auth
+  if (req.user) {
+    res.json({ message: 'Hello ' + req.user.name });
+  } else {
+    res.json({ message: 'Hello guest' });
+  }
+});
+```
+
+### Route-Level Protection
+
+```javascript
+// routes/users.js
+import { Router } from 'express';
+import { auth } from '../middleware/auth.js';
+
+const router = Router();
+
+// All routes in this router require authentication
+router.use(auth.required);
+
+// All routes require admin role
+router.use(auth.role(['admin']));
+
+router.get('/', getAllUsers);
+router.get('/:id', getUserById);
+router.delete('/:id', deleteUser);
+
+export default router;
+
+// In main app
+import userRoutes from './routes/users.js';
+app.use('/api/users', userRoutes);
+```
+
+## Error Handling
+
+### Centralized Auth Errors
+
+```javascript
+// middleware/errorHandler.js
+export function errorHandler(err, req, res, next) {
+  console.error('Error:', err);
+  
+  // Auth errors
+  if (err.name === 'UnauthorizedError') {
+    return res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Invalid or missing authentication'
+    });
+  }
+  
+  if (err.name === 'ForbiddenError') {
+    return res.status(403).json({
+      error: 'Forbidden',
+      message: 'Insufficient permissions'
+    });
+  }
+  
+  // JWT errors
+  if (err.name === 'TokenExpiredError') {
+    return res.status(401).json({
+      error: 'TokenExpired',
+      message: 'Your session has expired. Please log in again.'
+    });
+  }
+  
+  // Default error
+  res.status(err.status || 500).json({
+    error: 'Internal Server Error',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+  });
+}
+
+// Usage
+app.use(errorHandler);
+```
+
+## Testing Auth Middleware
+
+```javascript
+// tests/auth.middleware.test.js
+import request from 'supertest';
+import { app } from '../app.js';
+
+describe('Auth Middleware', () => {
+  it('should reject requests without token', async () => {
+    const res = await request(app)
+      .get('/api/protected')
+      .expect(401);
+    
+    expect(res.body.error).toBe('Unauthorized');
+  });
+  
+  it('should reject invalid tokens', async () => {
+    const res = await request(app)
+      .get('/api/protected')
+      .set('Authorization', 'Bearer invalid-token')
+      .expect(403);
+    
+    expect(res.body.error).toBe('Forbidden');
+  });
+  
+  it('should allow valid tokens', async () => {
+    const token = await createTestToken({ id: '123', role: 'user' });
+    
+    const res = await request(app)
+      .get('/api/protected')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+  });
+  
+  it('should reject insufficient permissions', async () => {
+    const token = await createTestToken({ id: '123', role: 'user' });
+    
+    await request(app)
+      .delete('/api/admin/users/456')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(403);
+  });
+});
+```

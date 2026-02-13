@@ -4,6 +4,7 @@ import { handleAuth } from './routes/auth';
 import { handleApi } from './routes/api';
 import { handleAi } from './routes/ai';
 import { handleAdmin } from './routes/admin';
+import { handleExecute } from './routes/execute';
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -24,6 +25,7 @@ export default {
       const response =
         await handleAuth(path, method, request, origin, env) ??
         await handleAdmin(path, method, request, origin, env) ??
+        await handleExecute(path, method, request, origin, env) ??
         await handleAi(path, method, request, origin, env) ??
         await handleApi(path, method, request, url, origin, env);
 

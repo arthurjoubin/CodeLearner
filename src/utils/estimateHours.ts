@@ -1,5 +1,5 @@
-import { lessons, modules, getModulesForCourse, getExercisesForLesson, getExercisesForModule } from '../data/modules';
-import type { Lesson, Module, Exercise } from '../types';
+import { lessons, modules, getModulesForCourse, getExercisesForLesson } from '../data/modules';
+import type { Lesson, Module } from '../types';
 
 /**
  * Estimate hours for a single lesson
@@ -16,8 +16,8 @@ export function estimateLessonHours(lesson: Lesson): number {
   const contentLength = lesson.content?.length || 0;
   const exercises = getExercisesForLesson(lesson.id);
 
-  // Base estimation: ~200 words per 10 minutes of reading
-  const contentMinutes = Math.max(10, Math.ceil(contentLength / 20 / 10) * 10);
+  // Base estimation: ~10 words per minute (600 words/hour)
+  const contentMinutes = Math.max(5, Math.ceil(contentLength / 20 / 10));
 
   // Exercise time: 5-15 minutes each depending on difficulty
   const exerciseMinutes = exercises.reduce((total, ex) => {

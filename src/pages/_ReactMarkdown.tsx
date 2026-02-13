@@ -26,7 +26,11 @@ export default function ReactMarkdown({ content }: ReactMarkdownProps) {
         .map((line: string) => {
           const cleanLine = line.replace(/^- /, '').trim();
           if (!cleanLine) return '';
-          const withBold = cleanLine.replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold">$1</strong>');
+          // Handle inline code in Essential to know section
+          const withCode = cleanLine.replace(/`([^`]+)`/g, (_, code) => {
+            return `<code class="bg-gray-100 text-primary-700 px-1 rounded font-mono text-xs">${escapeHtml(code)}</code>`;
+          });
+          const withBold = withCode.replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold">$1</strong>');
           return `<li class="flex items-start gap-2 text-sm text-gray-700">
             <span class="text-primary-600 font-bold mt-0.5">•</span>
             <span>${withBold}</span>

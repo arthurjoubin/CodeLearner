@@ -65,7 +65,8 @@ function parseBody(req) {
 function sendJSON(res, data, status = 200) {
   res.writeHead(status, {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': 'http://localhost:4321',
+    'Access-Control-Allow-Credentials': 'true',
   });
   res.end(JSON.stringify(data));
 }
@@ -78,9 +79,10 @@ const server = http.createServer(async (req, res) => {
   // CORS preflight
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': 'http://localhost:4321',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Credentials': 'true',
     });
     return res.end();
   }
@@ -193,6 +195,68 @@ Be more specific with each attempt. Don't give the answer directly.`;
       ], 150);
 
       return sendJSON(res, { hint: response });
+    }
+
+    // POST /api/execute - Execute code via Piston API
+    if (pathname === '/api/execute' && req.method === 'POST') {
+      const { code, language } = await parseBody(req);
+
+      // Language mapping from our IDs to Piston runtime names
+      const languageMapping = {
+        python: { language: 'python', version: '3.10.0' },
+        javascript: { language: 'javascript', version: '18.15.0' },
+        typescript: { language: 'typescript', version: '5.0.3' },
+        rust: { language: 'rust', version: '1.68.2' },
+        go: { language: 'go', version: '1.20.2' },
+      };
+
+      const runtime = languageMapping[language];
+      if (!runtime) {
+        return sendError(res, `Language "${language}" is not supported`, 400);
+      }
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+        const response = await fetch('https://emkc.org/api/v2/piston/execute', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            language: runtime.language,
+            version: runtime.version,
+            files: [
+              {
+                content: code,
+              },
+            ],
+          }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          const err = await response.text();
+          throw new Error(`Piston API error: ${err}`);
+        }
+
+        const data = await response.json();
+
+        return sendJSON(res, {
+          stdout: data.run.stdout,
+          stderr: data.run.stderr,
+          exitCode: data.run.code,
+        });
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          return sendError(res, 'Code execution timed out (10s limit)', 504);
+        }
+        console.error('Execute error:', err);
+        return sendError(res, err.message || 'Failed to execute code', 500);
+      }
     }
 
     // 404 for unknown routes
