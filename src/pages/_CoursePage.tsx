@@ -17,7 +17,7 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 function CoursePageContent({ courseId }: CoursePageProps) {
-  const { user, updateStreak, isLessonCompleted, isExerciseCompleted, loading } = useUser();
+  const { user, updateStreak, isLessonCompleted, isExerciseCompleted, loading, debugShowAll } = useUser();
   updateStreak();
 
   if (loading) {
@@ -126,7 +126,7 @@ function CoursePageContent({ courseId }: CoursePageProps) {
           // Find original index for unlock logic
           const originalIndex = courseModules.findIndex(m => m.id === module.id);
           const prevModule = originalIndex > 0 ? courseModules[originalIndex - 1] : null;
-          const isUnlocked = originalIndex === 0 || (prevModule && isModuleComplete(prevModule.id));
+          const isUnlocked = debugShowAll || originalIndex === 0 || (prevModule && isModuleComplete(prevModule.id));
 
           const lessons = getLessonsForModule(module.id);
           const completedLessons = lessons.filter(l => isLessonEffectivelyDone(l.id)).length;

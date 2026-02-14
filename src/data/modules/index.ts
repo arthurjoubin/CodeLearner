@@ -112,6 +112,7 @@ import dbSqliteData from './db-sqlite.json';
 import dbPostgresqlData from './db-postgresql.json';
 import dbOrmsData from './db-orms.json';
 import dbMigrationsData from './db-migrations.json';
+import dbRedisData from './db-redis.json';
 
 // Course: auth-security (Authentication & Security)
 import authFundamentalsData from './auth-fundamentals.json';
@@ -151,7 +152,7 @@ import fullstackFrameworksData from './fullstack-frameworks.json';
 import deploymentFundamentalsData from './deployment-fundamentals.json';
 import expressProductionData from './express-production.json';
 import backendDockerData from './backend-docker.json';
-// import frontendDeploymentData from './frontend-deployment.json'; // File temporarily disabled due to corruption
+import frontendDeploymentData from './frontend-deployment.json';
 
 // Type for the JSON file structure
 interface ModuleData {
@@ -255,6 +256,7 @@ const moduleFiles: ModuleData[] = [
   dbPostgresqlData as ModuleData,
   dbOrmsData as ModuleData,
   dbMigrationsData as ModuleData,
+  dbRedisData as ModuleData,
   
   // Course: auth-security
   authFundamentalsData as ModuleData,
@@ -293,7 +295,7 @@ const moduleFiles: ModuleData[] = [
   deploymentFundamentalsData as ModuleData,
   expressProductionData as ModuleData,
   backendDockerData as ModuleData,
-  // frontendDeploymentData as ModuleData, // File temporarily disabled
+  frontendDeploymentData as ModuleData,
 ];
 
 // Type for module metadata in JSON (includes courseId)

@@ -9,6 +9,7 @@ import { getLearningPathTitles } from '../data/course-metadata';
 import { CodeEditor } from '../components/CodeEditor';
 import QuizPage from './_QuizPage';
 import GitScenarioPage from './_GitScenarioPage';
+import ReactMarkdown from './_ReactMarkdown';
 import {
   ArrowRight,
   CheckCircle,
@@ -241,7 +242,7 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
         <div className="flex flex-col gap-3 lg:gap-4">
           <div className="border-2 border-gray-300 bg-white rounded-lg p-3 lg:p-4">
             <p className="text-xs font-bold text-gray-500 uppercase mb-1.5 lg:mb-2">Instructions</p>
-            <p className="text-sm leading-relaxed text-gray-700">{exercise.instructions}</p>
+            <ReactMarkdown content={exercise.instructions} />
           </div>
 
           {isExpanded && (

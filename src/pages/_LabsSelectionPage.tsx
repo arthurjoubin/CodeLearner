@@ -7,7 +7,7 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { PageTitle } from '../components/PageTitle';
 
 function LabsSelectionPageContent() {
-  const { user, loading } = useUser();
+  const { user, loading, debugShowAll } = useUser();
   const [activeTech, setActiveTech] = useState<string>('All');
 
   // Extract unique technologies
@@ -62,7 +62,7 @@ function LabsSelectionPageContent() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {filteredLabs.map((lab, index) => {
           const globalIndex = labs.indexOf(lab);
-          const isLocked = user.level < lab.requiredLevel;
+          const isLocked = !debugShowAll && user.level < lab.requiredLevel;
           const status = user.labProgress?.[lab.id];
           const isCompleted = status?.completed;
           const currentStep = status?.currentStep || 0;

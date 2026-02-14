@@ -55,7 +55,142 @@ const COURSE_DIFFICULTY: Record<string, string> = {
   'internet-tools': 'beginner',
 };
 
+// Detailed course information
+export const COURSE_DETAILS: Record<string, { description: string; objectives: string[] }> = {
+  'internet-tools': {
+    description: 'Master the essential tools of the modern developer. From the terminal to AI-assisted coding, learn to navigate the digital world with professional speed and efficiency.',
+    objectives: [
+      'Master the Terminal and CLI commands',
+      'Advanced debugging with Browser DevTools',
+      'Managing projects with NPM and package managers',
+      'Vibe Coding: Working effectively with AI (Cursor, v0, etc.)',
+      'Mastering error messages and technical problem solving'
+    ]
+  },
+  'git-mastery': {
+    description: 'Version control is the backbone of collaboration. Move from basic commits to professional workflows and advanced history management.',
+    objectives: [
+      'Git fundamentals (Init, Add, Commit, Push)',
+      'Branching strategies for team collaboration',
+      'Resolving complex merge conflicts',
+      'Advanced history management (Rebase, Cherry-pick, Squash)',
+      'Professional workflows like Git Flow and Trunk-based development'
+    ]
+  },
+  'javascript-core': {
+    description: 'The foundation of all modern web development. Learn the core logic of JavaScript before moving to advanced frameworks.',
+    objectives: [
+      'Modern JS logic (ES6+, Async/Await)',
+      'Manipulating the DOM and Browser APIs',
+      'Working with complex data structures (Arrays & Objects)',
+      'Introduction to TypeScript and type safety',
+      'Consuming REST APIs and handling external data'
+    ]
+  },
+  'html-css-tailwind': {
+    description: 'Build beautiful, responsive, and accessible user interfaces using the industry-standard styling tools.',
+    objectives: [
+      'Semantic HTML5 and modern layout structures',
+      'Mastering CSS Layouts (Flexbox & Grid)',
+      'Responsive design and mobile-first approach',
+      'Utility-first styling with Tailwind CSS',
+      'Web accessibility (A11y) and SEO best practices'
+    ]
+  },
+  'react': {
+    description: 'Build powerful, component-based applications with the world\'s most popular frontend library.',
+    objectives: [
+      'Thinking in Components and Props',
+      'Mastering Hooks (useState, useEffect, useMemo)',
+      'Global state management with Context and Zustand',
+      'Advanced patterns and performance optimization',
+      'Building type-safe React apps with TypeScript'
+    ]
+  },
+  'node-express': {
+    description: 'Go from frontend to backend. Learn to build scalable APIs and handle server-side logic with Node.js.',
+    objectives: [
+      'Node.js architecture and asynchronous patterns',
+      'Building RESTful APIs with Express',
+      'Middleware design and request-response lifecycle',
+      'File systems, streams, and system integration',
+      'Testing backend logic with Vitest'
+    ]
+  },
+  'databases': {
+    description: 'Master data persistence. Learn how to design, query, and optimize relational and in-memory databases.',
+    objectives: [
+      'Relational database design and SQL fundamentals',
+      'Advanced PostgreSQL and SQLite operations',
+      'Working with ORMs like Prisma and Drizzle',
+      'Database migrations and version control',
+      'High-performance caching with Redis'
+    ]
+  },
+  'auth-security': {
+    description: 'Protect your applications and your users. Master modern authentication patterns and security best practices.',
+    objectives: [
+      'JWT and Session-based authentication',
+      'Implementing OAuth 2.0 and Social Logins',
+      'Implementing Two-Factor Authentication (2FA)',
+      'Defending against XSS, CSRF, and SQL Injection',
+      'Security headers and production-grade safety'
+    ]
+  },
+  'nextjs': {
+    description: 'The fullstack React framework for production. Master the cutting edge of web development with Server Components.',
+    objectives: [
+      'App Router architecture and Nested Layouts',
+      'Server Components vs Client Components',
+      'Advanced data fetching and caching strategies',
+      'Server Actions and form handling',
+      'Middleware, SEO optimization, and Edge rendering'
+    ]
+  },
+  'deployment': {
+    description: 'Stop building and start shipping. Learn how to deploy frontend and backend apps to the global cloud.',
+    objectives: [
+      'Frontend hosting with Vercel, Netlify, and Cloudflare',
+      'Containerization with Docker',
+      'Automated CI/CD pipelines (GitHub Actions)',
+      'Production monitoring and environment management',
+      'Domain management, DNS, and SSL security'
+    ]
+  },
+  'frontend-production': {
+    description: 'Take your frontend skills to professional levels by mastering engineering practices used at top companies.',
+    objectives: [
+      'Advanced Web Performance optimization',
+      'Unit, Integration, and E2E testing',
+      'Internationalization (i18n) for global apps',
+      'Advanced PWA and offline-first capabilities',
+      'Frontend security and browser storage patterns'
+    ]
+  },
+  'architecture-patterns': {
+    description: 'Think like a Senior Developer. Learn the architectural patterns that allow systems to scale to millions of users.',
+    objectives: [
+      'System design and Scalability principles',
+      'Software Design Patterns (SOLID, Clean Architecture)',
+      'Real-time communication with WebSockets',
+      'Microservices vs Monolith architectures',
+      'DevOps fundamentals for developers'
+    ]
+  }
+};
+
 // Helper functions
+
+/**
+ * Get the details for a specific course
+ */
+export function getCourseDetails(courseId: string) {
+  return COURSE_DETAILS[courseId] || { 
+    description: 'Learn professional web development with hands-on exercises.', 
+    objectives: ['Master core concepts', 'Build real projects', 'Practice with exercises'] 
+  };
+}
+
 
 /**
  * Get the display name for a course

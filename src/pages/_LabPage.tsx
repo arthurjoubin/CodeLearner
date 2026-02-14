@@ -28,7 +28,7 @@ interface LabPageProps {
 
 function LabPageContent({ labId }: LabPageProps) {
     const navigate = (path: string) => { window.location.href = path; };
-    const { user, isGuest, addXp, updateLabProgress, loading } = useUser();
+    const { user, isGuest, addXp, updateLabProgress, loading, debugShowAll } = useUser();
     const lab = labId ? getLab(labId) : undefined;
 
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -41,6 +41,13 @@ function LabPageContent({ labId }: LabPageProps) {
 
     useEffect(() => {
         if (!lab || !user) return;
+        if (debugShowAll) {
+            const progress = user.labProgress?.[lab.id];
+            if (progress) {
+                setCurrentStepIndex(progress.currentStep);
+            }
+            return;
+        }
         if (isGuest && lab.requiredLevel > 1) {
             navigate('/');
             return;
@@ -53,7 +60,7 @@ function LabPageContent({ labId }: LabPageProps) {
         if (progress) {
             setCurrentStepIndex(progress.currentStep);
         }
-    }, [lab, user, isGuest, navigate]);
+    }, [lab, user, isGuest, navigate, debugShowAll]);
 
     useEffect(() => {
         if (lab?.steps[currentStepIndex]) {

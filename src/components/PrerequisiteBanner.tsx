@@ -1,6 +1,7 @@
 import React from 'react';
 import { CheckCircle, AlertCircle, Lock } from 'lucide-react';
 import { getLearningPathInfo, type LearningPathId } from '../data/modules';
+import { useUser } from '../context/UserContext';
 
 interface PrerequisiteBannerProps {
   pathId: LearningPathId;
@@ -13,6 +14,7 @@ export const PrerequisiteBanner: React.FC<PrerequisiteBannerProps> = ({
   completedPaths,
   compact = false,
 }) => {
+  const { debugShowAll } = useUser();
   const pathInfo = getLearningPathInfo(pathId);
   const prerequisites = pathInfo?.prerequisites || [];
 
@@ -20,7 +22,7 @@ export const PrerequisiteBanner: React.FC<PrerequisiteBannerProps> = ({
     return null;
   }
 
-  const allCompleted = prerequisites.every(p => completedPaths.includes(p));
+  const allCompleted = debugShowAll || prerequisites.every(p => completedPaths.includes(p));
 
   if (compact) {
     return (

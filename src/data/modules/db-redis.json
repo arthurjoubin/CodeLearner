@@ -1,0 +1,55 @@
+{
+  "module": {
+    "id": "db-redis",
+    "courseId": "databases",
+    "title": "Redis & Caching",
+    "description": "Boost application performance with in-memory data structures and caching strategies",
+    "icon": "Zap",
+    "requiredXp": 1200,
+    "color": "from-red-400 to-red-600"
+  },
+  "lessons": [
+    {
+      "id": "redis-intro",
+      "moduleId": "db-redis",
+      "title": "What is Redis?",
+      "order": 1,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Redis is an in-memory data store (extremely fast)\n- Used for caching, sessions, and real-time data\n- Data is stored as Key-Value pairs\n- Volatile by default (data can be lost if server restarts unless configured)\n\n---\n\n# Introduction to Redis\n\n## Why Redis?\n\nRelational databases (like Postgres) store data on disk. Reading from disk is slow. **Redis stores data in RAM**, making it 10-100x faster for specific tasks.\n\n### Common Use Cases\n1. **Caching**: Store results of expensive database queries.\n2. **Session Management**: Store user login sessions.\n3. **Rate Limiting**: Track how many requests a user made in the last minute.\n4. **Pub/Sub**: Real-time messaging between services.\n\n## Key-Value Structure\n\nUnlike tables, Redis uses a simple Key-Value system:\n\n```bash\nSET user:1 \"Alice\"\nGET user:1  # Returns \"Alice\"\n```\n\n## Basic Commands (CLI)\n\n- `SET key value`: Store data\n- `GET key`: Retrieve data\n- `DEL key`: Delete data\n- `EXISTS key`: Check if key exists\n- `EXPIRE key seconds`: Set a time-to-live (automatic deletion)\n\n```bash\nSET temp_code \"1234\" \nEXPIRE temp_code 60  # Code expires in 1 minute\n```",
+      "codeExample": "// Redis CLI Examples\nSET session:id:abc12345 '{\"user_id\": 1, \"role\": \"admin\"}'\nGET session:id:abc12345\n\n// Setting with expiration (Seconds)\nSETEX temp_token 3600 \"secret_value\"\n\n// Increments (Perfect for counters/rate limiting)\nSET page_views 10\nINCR page_views # Now 11"
+    },
+    {
+      "id": "redis-node-integration",
+      "moduleId": "db-redis",
+      "title": "Using Redis with Node.js",
+      "order": 2,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Use the `redis` or `ioredis` library\n- Connect via a URL: `redis://localhost:6379`\n- All operations are asynchronous\n- Always handle connection errors\n\n---\n\n# Redis + Node.js\n\n## Installation\n\n```bash\nnpm install redis\n```\n\n## Basic Connection\n\n```javascript\nimport { createClient } from 'redis';\n\nconst client = createClient({\n  url: 'redis://localhost:6379'\n});\n\nclient.on('error', err => console.log('Redis Client Error', err));\n\nawait client.connect();\n```\n\n## Caching Pattern (The most common use case)\n\n1. Check if data exists in Redis.\n2. If YES: Return it immediately (Cache Hit).\n3. If NO: Fetch from Database (Cache Miss).\n4. Save result in Redis for next time.\n\n```javascript\nasync function getCachedUser(id) {\n  const cacheKey = `user:${id}`;\n  \n  // 1. Try Cache\n  const cachedUser = await client.get(cacheKey);\n  if (cachedUser) return JSON.parse(cachedUser);\n  \n  // 2. Cache Miss - Get from DB\n  const user = await db.users.findById(id);\n  \n  // 3. Store in Cache (with expiration)\n  await client.set(cacheKey, JSON.stringify(user), {\n    EX: 3600 // Expire in 1 hour\n  });\n  \n  return user;\n}\n```",
+      "codeExample": "import { createClient } from 'redis';\n\nasync function redisDemo() {\n  const client = createClient();\n  await client.connect();\n\n  // Simple string\n  await client.set('framework', 'Express');\n  const value = await client.get('framework');\n  console.log(value); // 'Express'\n\n  // Using Hashes (Objects)\n  await client.hSet('user:42', {\n    name: 'John',\n    surname: 'Doe'\n  });\n  \n  const user = await client.hGetAll('user:42');\n  console.log(user); // { name: 'John', surname: 'Doe' }\n\n  await client.disconnect();\n}\n"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "redis-ex-1",
+      "lessonId": "redis-intro",
+      "moduleId": "db-redis",
+      "title": "Redis Basics Quiz",
+      "difficulty": "easy",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Where does Redis store its data by default?",
+          "options": ["On the Hard Drive", "In the Cloud", "In the RAM (Memory)", "In a JSON file"],
+          "correctAnswer": 2,
+          "explanation": "Redis is an in-memory database, which is why it is so fast."
+        },
+        {
+          "question": "What happens to a key after its EXPIRE time is reached?",
+          "options": ["It is moved to a backup", "It is automatically deleted", "It becomes read-only", "Nothing"],
+          "correctAnswer": 1,
+          "explanation": "Redis automatically removes keys once their TTL (Time To Live) expires."
+        }
+      ]
+    }
+  ]
+}

@@ -18,6 +18,7 @@ import { PageTitle } from '../components/PageTitle';
 import { NavButton } from '../components/NavButton';
 import CodeCraftChat from '../components/CodeCraftChat';
 import { api } from '../services/api';
+import ReactMarkdown from './_ReactMarkdown';
 
 interface DailyChallengeData {
   date: string;
@@ -210,7 +211,7 @@ function CodeCraftDailyPageContent() {
           {/* Instructions */}
           <div className="border-2 border-gray-300 bg-white rounded-xl p-5 shadow-sm">
             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Instructions</p>
-            <p className="text-sm leading-relaxed text-gray-700 font-medium">{exercise.instructions}</p>
+            <ReactMarkdown content={exercise.instructions} />
           </div>
 
           {/* Expected Output */}
@@ -240,7 +241,9 @@ function CodeCraftDailyPageContent() {
               <Lightbulb className="w-6 h-6 text-yellow-600 flex-shrink-0" />
               <div className="flex-1">
                 <p className="text-xs font-black text-yellow-700 uppercase tracking-tight mb-1">Hint</p>
-                <p className="text-sm text-yellow-700 font-medium leading-relaxed">{hint}</p>
+                <div className="text-sm text-yellow-700 font-medium leading-relaxed">
+                  <ReactMarkdown content={hint} />
+                </div>
               </div>
               <button onClick={clearHint} className="p-1.5 hover:bg-yellow-200/50 rounded-lg transition-colors flex-shrink-0">
                 <XCircle className="w-5 h-5 text-yellow-600" />

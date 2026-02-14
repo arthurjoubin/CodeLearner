@@ -17,6 +17,14 @@ import { PageHeader } from '../components/PageTitle';
 import { NavButton } from '../components/NavButton';
 import { LessonCompletionModal } from '../components/completion-modals';
 import { LessonChat } from '../components/LessonChat';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-css';
+import 'prismjs/themes/prism-tomorrow.css';
 
 const learningPathTitles = getLearningPathTitles();
 const courseTitles = getCourseTitles();
@@ -26,7 +34,7 @@ interface LessonPageProps {
 }
 
 function LessonPageContent({ lessonId }: LessonPageProps) {
-  const { user, addXp, completeLesson, isLessonCompleted, isExerciseCompleted, loading } = useUser();
+  const { user, addXp, completeLesson, isLessonCompleted, isExerciseCompleted, loading, debugShowAll } = useUser();
 
   const lesson = lessonId ? getLesson(lessonId) : undefined;
   const module = lesson ? getModule(lesson.moduleId) : undefined;
@@ -128,7 +136,7 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
               {moduleLessons.map((mLesson, idx) => {
                 const isDone = isLessonEffectivelyDone(mLesson.id);
                 const isCurrent = mLesson.id === lesson.id;
-                const isUnlocked = idx === 0 || isLessonEffectivelyDone(moduleLessons[idx - 1].id);
+                const isUnlocked = debugShowAll || idx === 0 || isLessonEffectivelyDone(moduleLessons[idx - 1].id);
                 return (
                   <a
                     key={mLesson.id}
@@ -177,7 +185,7 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
           )}
 
           {nextLesson ? (
-            (alreadyCompleted || lessonCompletedThisSession || allExercisesDone) ? (
+            (debugShowAll || alreadyCompleted || lessonCompletedThisSession || allExercisesDone) ? (
               <a
                 href={`/lesson/${nextLesson.id}`}
                 onClick={() => { if (!alreadyCompleted && !lessonCompletedThisSession) handleComplete(); }}
@@ -231,8 +239,17 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
             <p className="font-bold text-sm uppercase mb-3 flex items-center gap-2 text-gray-900">
               <Code2 className="w-4 h-4 text-primary-600" /> Example
             </p>
-            <pre className="bg-gray-900 text-gray-100 p-4 overflow-x-auto text-sm rounded-lg border-2 border-gray-700">
-              <code>{lesson.codeExample}</code>
+            <pre className={`bg-gray-900 text-gray-100 p-4 overflow-x-auto text-sm rounded-lg border-2 border-gray-700 font-mono language-${lesson.codeLanguage || 'javascript'}`}>
+              <code
+                className={`language-${lesson.codeLanguage || 'javascript'}`}
+                dangerouslySetInnerHTML={{
+                  __html: Prism.highlight(
+                    lesson.codeExample.trim(),
+                    Prism.languages[lesson.codeLanguage || 'javascript'] || Prism.languages.javascript,
+                    lesson.codeLanguage || 'javascript'
+                  )
+                }}
+              />
             </pre>
           </div>
         )}
@@ -279,13 +296,13 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
               <button
                 onClick={handleCompleteClick}
                 className={`inline-flex items-center justify-center gap-2 font-bold py-2.5 px-5 rounded-lg border-2 transition-all text-sm uppercase flex-shrink-0 w-full sm:w-auto ${
-                  allExercisesDone
+                  (debugShowAll || allExercisesDone)
                     ? 'bg-primary-600 text-white border-primary-600 hover:bg-primary-700 cursor-pointer'
                     : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                 }`}
               >
                 Complete lesson
-                {allExercisesDone && <CheckCircle className="w-4 h-4" />}
+                {(alreadyCompleted || lessonCompletedThisSession || allExercisesDone) && <CheckCircle className="w-4 h-4" />}
               </button>
             </div>
             {showExerciseWarning && (

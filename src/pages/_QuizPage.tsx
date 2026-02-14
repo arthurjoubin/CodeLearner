@@ -12,6 +12,7 @@ import {
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { QuizCompletionModal } from '../components/completion-modals';
 import { PageTitle } from '../components/PageTitle';
+import ReactMarkdown from './_ReactMarkdown';
 
 interface QuizPageProps {
   exercise: QuizExercise;
@@ -133,16 +134,16 @@ function QuizPageContent({
 
       {exercise.instructions && (
         <div className="bg-primary-50 border border-primary-100 px-4 py-2 mb-4 rounded-lg">
-          <p className="text-sm text-primary-800">{exercise.instructions}</p>
+          <ReactMarkdown content={exercise.instructions} />
         </div>
       )}
 
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
         <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <div className="text-lg font-semibold text-gray-900 flex flex-col gap-2">
             <span className="text-primary-600 mr-1">Question:</span>
-            {currentQuestion.question}
-          </h2>
+            <ReactMarkdown content={currentQuestion.question} />
+          </div>
         </div>
 
         <div className="px-6 py-4 space-y-2">
@@ -201,10 +202,10 @@ function QuizPageContent({
                   }`}>
                   {selectedAnswer === currentQuestion.correctAnswer ? 'Correct!' : 'Incorrect'}
                 </p>
-                <p className={`text-sm mt-1 ${selectedAnswer === currentQuestion.correctAnswer ? 'text-green-600' : 'text-red-600'
+                <div className={`text-sm mt-1 ${selectedAnswer === currentQuestion.correctAnswer ? 'text-green-600' : 'text-red-600'
                   }`}>
-                  {currentQuestion.explanation}
-                </p>
+                  <ReactMarkdown content={currentQuestion.explanation} />
+                </div>
               </div>
             </div>
           </div>

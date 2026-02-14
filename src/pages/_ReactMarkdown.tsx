@@ -1,3 +1,12 @@
+import Prism from 'prismjs';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-css';
+import 'prismjs/themes/prism-tomorrow.css';
+
 interface ReactMarkdownProps {
   content: string;
 }
@@ -54,9 +63,20 @@ export default function ReactMarkdown({ content }: ReactMarkdownProps) {
     });
 
     // 1. Code blocks
-    processedText = processedText.replace(/```(\w+)?\s*\n?([\s\S]*?)```/g, (_, _lang, code) => {
+    processedText = processedText.replace(/```(\w+)?\s*\n?([\s\S]*?)```/g, (_, lang, code) => {
       const placeholder = `__CODE_BLOCK_${placeholders.length}__`;
-      const html = `<pre class="bg-gray-900 text-gray-100 p-3 overflow-x-auto text-sm rounded-lg border-2 border-gray-700 font-mono my-3"><code>${escapeHtml(code.trim())}</code></pre>`;
+      const language = lang || 'javascript';
+      let highlightedCode = escapeHtml(code.trim());
+      
+      try {
+        if (Prism.languages[language]) {
+          highlightedCode = Prism.highlight(code.trim(), Prism.languages[language], language);
+        }
+      } catch (e) {
+        console.error('Prism highlighting error:', e);
+      }
+
+      const html = `<pre class="bg-gray-900 text-gray-100 p-3 overflow-x-auto text-sm rounded-lg border-2 border-gray-700 font-mono my-3 language-${language}"><code class="language-${language}">${highlightedCode}</code></pre>`;
       placeholders.push(html);
       return placeholder;
     });

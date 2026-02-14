@@ -10,6 +10,7 @@ import GitSimulator from '../components/GitSimulator';
 import GitObjectives from '../components/GitObjectives';
 import Breadcrumb from '../components/Breadcrumb';
 import { PageTitle } from '../components/PageTitle';
+import ReactMarkdown from './_ReactMarkdown';
 import type { Module } from '../types';
 import {
   ArrowLeft,
@@ -138,7 +139,7 @@ export default function GitScenarioPage({
           {/* Story */}
           <div className="border-2 border-gray-300 bg-white rounded-lg p-2.5">
             <p className="text-xs font-bold text-gray-500 uppercase mb-1">Scenario</p>
-            <p className="text-xs sm:text-sm leading-snug text-gray-700">{exercise.story}</p>
+            <ReactMarkdown content={exercise.story} />
           </div>
 
           {/* Objectives */}
@@ -149,7 +150,9 @@ export default function GitScenarioPage({
             <div className="p-2 border-2 border-yellow-400 bg-yellow-50 rounded-lg flex items-start gap-2">
               <Lightbulb className="w-3.5 h-3.5 text-yellow-600 shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-xs text-yellow-700">{exercise.hints[currentHintIndex]}</p>
+                <div className="text-xs text-yellow-700">
+                  <ReactMarkdown content={exercise.hints[currentHintIndex]} />
+                </div>
                 {exercise.hints.length > 1 && (
                   <p className="text-[10px] text-yellow-500 mt-0.5">
                     Hint {currentHintIndex + 1} of {exercise.hints.length}

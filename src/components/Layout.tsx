@@ -71,15 +71,17 @@ function getCourseLogo(courseId: string): string {
 
 // Wrapped in internal component to allow usage of useUser in the parent
 function LayoutContent({ children }: LayoutProps) {
-  const { user, isGuest, logout, loading } = useUser();
+  const { user, isGuest, logout, loading, debugShowAll, setDebugShowAll } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const [levelPopupOpen, setLevelPopupOpen] = useState(false);
   const [streakPopupOpen, setStreakPopupOpen] = useState(false);
   const [lessonDropdownOpen, setLessonDropdownOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState('');
+  const [isLocalhost, setIsLocalhost] = useState(false);
 
   useEffect(() => {
     setCurrentPath(window.location.pathname);
+    setIsLocalhost(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
   }, []);
 
   // Get all paths with their current lesson status
@@ -704,6 +706,19 @@ function LayoutContent({ children }: LayoutProps) {
               <a href="/codecraft" className="text-xs font-medium text-gray-600 hover:text-primary-600 transition-colors uppercase tracking-wider">Daily</a>
             </div>
             <div className="flex items-center gap-3">
+              {isLocalhost && (
+                <button
+                  onClick={() => setDebugShowAll(!debugShowAll)}
+                  className={`text-[10px] font-bold px-2 py-1 rounded border transition-all ${
+                    debugShowAll 
+                      ? 'bg-purple-100 text-purple-700 border-purple-300 hover:bg-purple-200' 
+                      : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200'
+                  }`}
+                  title="Toggle See All Lessons (Localhost only)"
+                >
+                  DEBUG: {debugShowAll ? 'ALL UNLOCKED' : 'NORMAL'}
+                </button>
+              )}
               <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900 transition-colors">
                 <Github className="w-4 h-4" />
               </a>

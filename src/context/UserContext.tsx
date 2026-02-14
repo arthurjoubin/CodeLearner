@@ -6,6 +6,7 @@ interface UserContextType {
   user: User | null;
   isGuest: boolean;
   loading: boolean;
+  debugShowAll: boolean;
   loginWithPassword: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -17,6 +18,7 @@ interface UserContextType {
   isLessonCompleted: (lessonId: string) => boolean;
   unlockLab: (labId: string) => void;
   updateLabProgress: (labId: string, step: number, completed?: boolean) => void;
+  setDebugShowAll: (value: boolean) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -222,6 +224,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   // read from the shared store, avoiding any hydration mismatch.
   const [hydrated, setHydrated] = useState(false);
   const [, bump] = useState(0);
+  const [debugShowAll, setDebugShowAllState] = useState(false);
 
   useEffect(() => {
     setHydrated(true);
@@ -229,7 +232,17 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     const listener = () => bump(n => n + 1);
     store.listeners.add(listener);
     initStore();
+
+    // Initialize debug mode from localStorage
+    const savedDebug = localStorage.getItem('debug_show_all') === 'true';
+    setDebugShowAllState(savedDebug);
+
     return () => { store.listeners.delete(listener); };
+  }, []);
+
+  const setDebugShowAll = useCallback((value: boolean) => {
+    localStorage.setItem('debug_show_all', String(value));
+    setDebugShowAllState(value);
   }, []);
 
   const store = hydrated ? getStore() : null;
@@ -354,6 +367,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         user,
         isGuest,
         loading,
+        debugShowAll,
         loginWithPassword,
         register,
         logout,
@@ -365,6 +379,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         isExerciseCompleted,
         unlockLab,
         updateLabProgress,
+        setDebugShowAll,
       }}
     >
       {children}

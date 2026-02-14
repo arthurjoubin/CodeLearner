@@ -36,7 +36,7 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 function LearningPathContent({ pathData }: LearningPathPageProps) {
-  const { user, updateStreak, isLessonCompleted, isExerciseCompleted, loading } = useUser();
+  const { user, updateStreak, isLessonCompleted, isExerciseCompleted, loading, debugShowAll } = useUser();
   updateStreak();
 
   if (loading) return <LoadingSpinner />;
@@ -88,7 +88,7 @@ function LearningPathContent({ pathData }: LearningPathPageProps) {
           const courseModules = getModulesForCourse(course.id);
           const prevCourse = courseIndex > 0 ? pathData.courses[courseIndex - 1] : null;
           const prevCourseComplete = prevCourse ? getCourseProgress(prevCourse.id) === 100 : true;
-          const isUnlocked = courseIndex === 0 || prevCourseComplete;
+          const isUnlocked = debugShowAll || courseIndex === 0 || prevCourseComplete;
           const courseProgress = getCourseProgress(course.id);
 
           return (
@@ -146,7 +146,7 @@ function LearningPathContent({ pathData }: LearningPathPageProps) {
                   // When course is unlocked, check individual module unlock status
                   // When course is locked, all modules are shown as locked preview
                   const prevMod = idx > 0 ? courseModules[idx - 1] : null;
-                  const isModuleUnlocked = isUnlocked && (idx === 0 || (prevMod && isModuleComplete(prevMod.id)));
+                  const isModuleUnlocked = debugShowAll || (isUnlocked && (idx === 0 || (prevMod && isModuleComplete(prevMod.id))));
                   const progress = getModuleProgress(module.id);
                   const isComplete = progress === 100;
                   const lessons = getLessonsForModule(module.id);

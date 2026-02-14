@@ -16,7 +16,7 @@ interface ModulePageProps {
 }
 
 function ModulePageContent({ moduleId }: ModulePageProps) {
-  const { user, isLessonCompleted, isExerciseCompleted, loading } = useUser();
+  const { user, isLessonCompleted, isExerciseCompleted, loading, debugShowAll } = useUser();
   const [showEssentialPopup, setShowEssentialPopup] = useState(false);
   const [essentialContent, setEssentialContent] = useState('');
   const [essentialTitle, setEssentialTitle] = useState('');
@@ -105,7 +105,7 @@ function ModulePageContent({ moduleId }: ModulePageProps) {
           const isComplete = isLessonEffectivelyDone(lesson.id);
 
           const prevLesson = index > 0 ? lessons[index - 1] : null;
-          const isUnlocked = index === 0 || (prevLesson && isLessonEffectivelyDone(prevLesson.id));
+          const isUnlocked = debugShowAll || index === 0 || (prevLesson && isLessonEffectivelyDone(prevLesson.id));
 
           // Is this the next lesson to do? (first unlocked + not complete)
           const isNextUp = isUnlocked && !isComplete && !lessons.slice(0, index).some((l, i) => {

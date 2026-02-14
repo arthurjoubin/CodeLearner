@@ -1,0 +1,49 @@
+{
+  "module": {
+    "id": "frontend-deployment",
+    "courseId": "deployment",
+    "title": "Frontend Deployment",
+    "description": "Deploy modern frontend applications to Vercel, Netlify, and Cloudflare Pages",
+    "icon": "Globe",
+    "requiredXp": 2500,
+    "color": "from-blue-400 to-indigo-600"
+  },
+  "lessons": [
+    {
+      "id": "deployment-platforms",
+      "moduleId": "frontend-deployment",
+      "title": "Modern Hosting Platforms",
+      "order": 1,
+      "difficulty": "beginner",
+      "content": "# Essential to know\n- Vercel, Netlify, and Cloudflare are the leaders\n- They use \"Git-based\" deployment (push to deploy)\n- They provide automatic SSL, CDN, and Preview URLs\n- Most have a generous free tier for developers\n\n---\n\n# Frontend Hosting Strategy\n\nUnlike traditional servers, modern frontend apps (React, Next.js, Vue) are usually deployed to specialized platforms that handle the heavy lifting for you.\n\n## 1. Vercel (The creators of Next.js)\nBest choice for Next.js apps, but works with any framework.\n- **Features**: Edge functions, Image optimization, Analytics.\n- **Workflow**: Connect GitHub \u2192 Pick repository \u2192 Deploy.\n\n## 2. Netlify\nFamous for its excellent Developer Experience (DX).\n- **Features**: Forms handling, Auth, Edge functions.\n- **Workflow**: Very similar to Vercel.\n\n## 3. Cloudflare Pages\nIncredibly fast and integrated with Cloudflare's massive network.\n- **Features**: Unlimited bandwidth, Edge computing (Workers).\n\n## The \"Push to Deploy\" Workflow\n\n1. You write code locally.\n2. You `git commit` and `git push` to GitHub.\n3. The platform detects the change.\n4. It runs `npm run build` on their servers.\n5. It deploys the new version globally in seconds.",
+      "codeExample": "# Typical deployment config (vercel.json)\n{\n  \"rewrites\": [\n    { \"source\": \"/(.*)\", \"destination\": \"/index.html\" }\n  ]\n}"
+    },
+    {
+      "id": "spa-routing-fix",
+      "moduleId": "frontend-deployment",
+      "title": "Fixing SPA 404 Errors",
+      "order": 2,
+      "difficulty": "intermediate",
+      "content": "# Essential to know\n- Single Page Apps (SPA) handle routing in the browser\n- Servers don't know about `/about` or `/dashboard` routes\n- You must redirect all 404s back to `index.html`\n\n---\n\n# The SPA Routing Problem\n\nWhen you use `react-router-dom`, your routes like `/profile` only exist in JavaScript. \n\nIf a user refreshes the page on `/profile`, the server looks for a file called `profile.html`. Since it doesn't exist, the server returns a **404 Not Found**.\n\n## The Solution: Redirects\n\nYou need to tell your host: \"If you don't find the file, just serve index.html and let React handle the rest.\"\n\n### For Vercel (`vercel.json`)\n```json\n{\n  \"rewrites\": [{ \"source\": \"/(.*)\", \"destination\": \"/index.html\" }]\n}\n```\n\n### For Netlify (`_redirects` file)\n```text\n/*    /index.html   200\n```",
+      "codeExample": "// No code changes needed in JS, just configuration files\n// placed in the root or public folder of your project."
+    }
+  ],
+  "exercises": [
+    {
+      "id": "deploy-quiz-1",
+      "lessonId": "deployment-platforms",
+      "moduleId": "frontend-deployment",
+      "title": "Hosting Quiz",
+      "difficulty": "easy",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Which platform is the primary choice for Next.js?",
+          "options": ["AWS", "Vercel", "DigitalOcean", "Heroku"],
+          "correctAnswer": 1,
+          "explanation": "Vercel created Next.js and provides the best optimization for it."
+        }
+      ]
+    }
+  ]
+}

@@ -56,6 +56,7 @@ export interface Lesson {
   title: string;
   content: string;
   codeExample?: string;
+  codeLanguage?: string;
   xpReward?: number;
   order: number;
   difficulty: 'beginner' | 'intermediate' | 'advanced';

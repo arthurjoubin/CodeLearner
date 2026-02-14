@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader } from 'lucide-react';
 import { api } from '../services/api';
 import { LanguageExercise, ChatMessage } from '../types';
+import ReactMarkdown from '../pages/_ReactMarkdown';
 
 interface CodeCraftChatProps {
   language: { id: string; name: string };
@@ -134,7 +135,7 @@ export default function CodeCraftChat({ language, exercise, code }: CodeCraftCha
                     : 'bg-gray-100 text-gray-800'
                 }`}
               >
-                {msg.content}
+                {msg.role === 'user' ? msg.content : <ReactMarkdown content={msg.content} />}
               </div>
             </div>
           ))}

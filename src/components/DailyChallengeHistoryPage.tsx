@@ -34,7 +34,7 @@ const languageLabels: Record<string, string> = {
 };
 
 function DailyChallengeHistoryContent() {
-  const { isExerciseCompleted, loading: userLoading } = useUser();
+  const { isExerciseCompleted, loading: userLoading, debugShowAll } = useUser();
   const [history, setHistory] = useState<ChallengeHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -114,7 +114,7 @@ function DailyChallengeHistoryContent() {
       <div className="space-y-4">
         {history.map((challenge) => {
           const status = getChallengeStatus(challenge.date);
-          const isClickable = status === 'today' || status === 'missed';
+          const isClickable = debugShowAll || status === 'today' || status === 'missed';
           const dateObj = new Date(challenge.date);
 
           return (
@@ -163,13 +163,13 @@ function DailyChallengeHistoryContent() {
                       <span className="text-xs font-black uppercase tracking-tight">Done</span>
                     </div>
                   )}
-                  {status === 'future' && (
+                  {status === 'future' && !debugShowAll && (
                     <div className="flex items-center gap-2 text-gray-400 bg-gray-100 px-3 py-1.5 rounded-lg border-2 border-gray-200">
                       <Lock className="w-4 h-4" />
                       <span className="text-xs font-black uppercase tracking-tight">Locked</span>
                     </div>
                   )}
-                  {(status === 'today' || status === 'missed') && (
+                  {(status === 'today' || status === 'missed' || (status === 'future' && debugShowAll)) && (
                     <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 group-hover:bg-primary-100 transition-colors">
                       <ChevronRight className="w-6 h-6 text-gray-400 group-hover:text-primary-600" />
                     </div>
