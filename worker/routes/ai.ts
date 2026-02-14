@@ -83,7 +83,18 @@ Guidelines:
 - Use simple language, avoid jargon
 - Give practical examples when helpful
 - Be encouraging and supportive
-- If asked something off-topic, gently redirect to React/TypeScript`;
+- If asked something off-topic, gently redirect to React/TypeScript
+
+Formatting instructions (IMPORTANT):
+- Use markdown syntax for formatting
+- For inline code (variables, functions, props), use backticks: \`variableName\`, \`functionName()\`
+- For code blocks (examples, complete code), use triple backticks with language:
+  \`\`\`jsx
+  const Component = () => { return <div>Hello</div> };
+  \`\`\`
+- Use **bold** for emphasis on important concepts
+- Use bullet points (- item) for lists when needed
+- Always format code properly so it renders nicely in a chat interface`;
 
     const apiMessages = [
       { role: 'system', content: systemPrompt },

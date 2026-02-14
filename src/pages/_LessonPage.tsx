@@ -16,6 +16,7 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { PageHeader } from '../components/PageTitle';
 import { NavButton } from '../components/NavButton';
 import { LessonCompletionModal } from '../components/completion-modals';
+import { LessonChat } from '../components/LessonChat';
 
 const learningPathTitles = getLearningPathTitles();
 const courseTitles = getCourseTitles();
@@ -32,8 +33,9 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
   const exercises = lessonId ? getExercisesForLesson(lessonId) : [];
   const moduleLessons = module ? getLessonsForModule(module.id) : [];
 
-  const [completed, setCompleted] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showExerciseWarning, setShowExerciseWarning] = useState(false);
+  const [lessonCompletedThisSession, setLessonCompletedThisSession] = useState(false);
 
   const alreadyCompleted = lesson ? isLessonCompleted(lesson.id) : false;
   const currentIndex = module && lesson ? moduleLessons.findIndex(l => l.id === lesson.id) : -1;
@@ -46,7 +48,8 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
     if (lesson) {
       addXp(getXpReward(lesson.xpReward));
       completeLesson(lesson.id);
-      setCompleted(true);
+      setShowCompletionModal(true);
+      setLessonCompletedThisSession(true);
     }
   }, [lesson, addXp, completeLesson]);
 
@@ -68,24 +71,22 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
   // Course & module level data
   const courseModules = module ? getModulesForCourse(module.courseId) : [];
   const courseLessons = courseModules.flatMap(m => allLessons.filter(l => l.moduleId === m.id));
-  
+  const currentModuleIndex = module ? courseModules.findIndex(m => m.id === module.id) : -1;
+  const nextModule = currentModuleIndex >= 0 ? courseModules[currentModuleIndex + 1] : undefined;
+
   // Position of current lesson in the entire course and module
   const courseLessonIndex = courseLessons.findIndex(l => l.id === lessonId);
   const currentCoursePosition = courseLessonIndex >= 0 ? courseLessonIndex + 1 : 0;
   const currentModulePosition = currentIndex >= 0 ? currentIndex + 1 : 0;
 
-  // Auto-complete lesson when all exercises are done, or on visit for content-only lessons
+  // Auto-complete lesson only when all exercises are done
   useEffect(() => {
     if (alreadyCompleted || !lesson) return;
 
-    if (exercises.length === 0) {
-      // Silent auto-complete for content-only lessons (no modal)
-      addXp(getXpReward(lesson.xpReward));
-      completeLesson(lesson.id);
-    } else if (completedExercisesCount === exercises.length) {
+    if (exercises.length > 0 && completedExercisesCount === exercises.length) {
       handleComplete();
     }
-  }, [exercises.length, completedExercisesCount, alreadyCompleted, lesson, addXp, completeLesson, handleComplete]);
+  }, [exercises.length, completedExercisesCount, alreadyCompleted, lesson, handleComplete]);
 
   if (loading) {
     return <LoadingSpinner />;
@@ -175,28 +176,49 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
             </div>
           )}
 
-          {nextLesson && (
-            (alreadyCompleted || allExercisesDone) ? (
+          {nextLesson ? (
+            (alreadyCompleted || lessonCompletedThisSession || allExercisesDone) ? (
               <a
                 href={`/lesson/${nextLesson.id}`}
+                onClick={() => { if (!alreadyCompleted && !lessonCompletedThisSession) handleComplete(); }}
                 className="inline-flex items-center gap-2 border-2 border-primary-300 bg-primary-50 text-primary-700 hover:bg-primary-100 hover:border-primary-400 rounded-lg px-3 py-2 transition-colors font-bold text-sm"
               >
                 Next Lesson →
               </a>
             ) : (
-              <span
-                className="inline-flex items-center gap-2 border-2 border-gray-200 bg-gray-50 text-gray-400 rounded-lg px-3 py-2 font-bold text-sm cursor-not-allowed"
-                title="Complete all exercises first"
-              >
+              <span className="inline-flex items-center gap-2 border-2 border-gray-200 bg-gray-50 text-gray-400 rounded-lg px-3 py-2 font-bold text-sm cursor-not-allowed" title="Complete the lesson first">
                 Next Lesson →
               </span>
             )
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-accent-500 font-bold uppercase hidden sm:inline">Last lesson!</span>
+              {(alreadyCompleted || lessonCompletedThisSession) ? (
+                <a
+                  href={nextModule ? `/module/${nextModule.id}` : `/courses/${module.courseId}`}
+                  className="inline-flex items-center gap-2 border-2 border-accent-300 bg-accent-50 text-accent-700 hover:bg-accent-100 hover:border-accent-400 rounded-lg px-3 py-2 transition-colors font-bold text-sm"
+                >
+                  {nextModule ? 'Next Module →' : 'Finish Course →'}
+                </a>
+              ) : (
+                <button
+                  onClick={handleCompleteClick}
+                  className={`inline-flex items-center gap-2 border-2 rounded-lg px-3 py-2 transition-colors font-bold text-sm ${
+                    allExercisesDone
+                      ? 'border-accent-300 bg-accent-50 text-accent-700 hover:bg-accent-100 hover:border-accent-400 cursor-pointer'
+                      : 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  {nextModule ? 'Finish Module ✓' : 'Finish Course ✓'}
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>
 
-      <div className={`border-2 rounded-lg p-5 ${alreadyCompleted ? 'border-primary-300 bg-primary-50/30' : 'border-gray-300 bg-white'}`}>
-        {alreadyCompleted && (
+      <div className={`border-2 rounded-lg p-5 ${(alreadyCompleted || lessonCompletedThisSession) ? 'border-primary-300 bg-primary-50/30' : 'border-gray-300 bg-white'}`}>
+        {(alreadyCompleted || lessonCompletedThisSession) && (
           <div className="flex items-center gap-2 mb-4 pb-3 border-b border-primary-200">
             <CheckCircle className="w-4 h-4 text-primary-600" />
             <span className="text-sm font-bold text-primary-700">Lesson completed</span>
@@ -218,21 +240,25 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
 
       {/* Lesson action bar */}
       <div className="mt-4">
-        {alreadyCompleted ? (
+        {(alreadyCompleted || lessonCompletedThisSession) ? (
           <div className="border-2 border-primary-300 bg-primary-50 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-primary-600 flex-shrink-0" />
               <span className="text-sm font-bold text-primary-800">
                 {nextLesson
                   ? `Next up: ${nextLesson.title}`
-                  : 'All lessons in this module done!'
+                  : nextModule
+                    ? `Next module: ${nextModule.title}`
+                    : 'Course complete!'
                 }
               </span>
             </div>
             {nextLesson ? (
               <NavButton href={`/lesson/${nextLesson.id}`} label="Next Lesson" variant="dark" className="flex-shrink-0" />
+            ) : nextModule ? (
+              <NavButton href={`/module/${nextModule.id}`} label="Next Module" variant="dark" className="flex-shrink-0" />
             ) : (
-              <NavButton href={`/module/${module.id}`} label="Back to Module" variant="primary" icon="book" className="flex-shrink-0" />
+              <NavButton href={`/courses/${module.courseId}`} label="Back to Course" variant="primary" icon="book" className="flex-shrink-0" />
             )}
           </div>
         ) : (
@@ -272,16 +298,21 @@ function LessonPageContent({ lessonId }: LessonPageProps) {
         )}
       </div>
 
-      {completed && (
-        <LessonCompletionModal
-          isOpen={true}
-          xpReward={getXpReward(lesson.xpReward)}
-          hasNextLesson={!!nextLesson}
-          nextLessonId={nextLesson?.id}
-          moduleId={module.id}
-          onReview={() => setCompleted(false)}
-        />
-      )}
+      <LessonCompletionModal
+        isOpen={showCompletionModal}
+        xpReward={getXpReward(lesson.xpReward)}
+        hasNextLesson={!!nextLesson}
+        nextLessonId={nextLesson?.id}
+        nextModuleId={nextModule?.id}
+        courseId={module.courseId}
+        onReview={() => setShowCompletionModal(false)}
+      />
+
+      <LessonChat
+        courseName={courseTitles[module.courseId] || module.courseId}
+        moduleName={module.title}
+        lessonName={lesson.title}
+      />
     </div>
   );
 }

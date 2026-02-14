@@ -11,12 +11,10 @@ import QuizPage from './_QuizPage';
 import GitScenarioPage from './_GitScenarioPage';
 import {
   ArrowRight,
-  ArrowLeft,
   CheckCircle,
   XCircle,
   Lightbulb,
   Loader,
-  RotateCcw,
   Maximize,
   X,
 } from 'lucide-react';
@@ -228,14 +226,6 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
             <h1 className="text-lg sm:text-xl font-bold text-gray-900">{exercise.title}</h1>
           </PageTitle>
 
-          <a
-            href={`/lesson/${lesson.id}`}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs sm:text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors self-start sm:self-auto"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">Go back to lesson</span>
-            <span className="sm:hidden">Back</span>
-          </a>
         </div>
 
         {alreadyCompleted && (
@@ -261,15 +251,12 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
             />
           )}
 
-          <div className={`${isExpanded ? 'fixed inset-2 sm:inset-4 lg:inset-8 z-50 bg-gray-900 shadow-2xl border-2 border-gray-300 flex flex-col' : 'lg:flex-1 border-2 border-gray-300 bg-gray-900 flex flex-col h-[250px] sm:h-[300px] lg:h-auto lg:min-h-[250px]'}`}>
+          <div className={`${isExpanded ? 'fixed inset-2 sm:inset-4 lg:inset-8 z-50 bg-gray-900 shadow-2xl border-2 border-gray-300 flex flex-col' : 'lg:flex-1 border-2 border-gray-300 bg-gray-900 flex flex-col h-[180px] sm:h-[220px] lg:h-auto lg:min-h-[180px]'}`}>
             <div className={`flex items-center justify-between px-3 sm:px-4 py-2 bg-gray-800 text-white text-sm ${isExpanded ? '' : ''}`}>
               <span className="font-bold uppercase flex items-center gap-2">
                 Editor {isExpanded && <span className="text-gray-400 font-normal normal-case ml-2">- Full Screen Mode</span>}
               </span>
               <div className="flex items-center gap-2">
-                <button onClick={() => { setCode(exercise.starterCode); setFeedback(null); }} className="p-1.5 hover:bg-gray-700 rounded transition-colors" title="Reset">
-                  <RotateCcw className="w-4 h-4" />
-                </button>
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
                   className={`p-1.5 hover:bg-gray-700 flex items-center gap-1.5 ${isExpanded ? 'bg-red-600 hover:bg-red-700 px-2 rounded' : ''}`}
@@ -294,11 +281,11 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
+          <div className="hidden lg:flex items-center justify-center gap-3 py-3">
             <button
               onClick={handleValidate}
               disabled={isValidating}
-              className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors shadow-sm"
             >
               {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
               Validate Code
@@ -306,20 +293,13 @@ function ExercisePageContent({ exerciseId }: ExercisePageProps) {
             <button
               onClick={handleGetHint}
               disabled={isLoadingHint}
-              className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors shadow-sm"
             >
               {isLoadingHint ? <Loader className="w-4 h-4 animate-spin" /> : <Lightbulb className="w-4 h-4" />}
               Hint
             </button>
-            <button
-              onClick={() => { setCode(exercise.starterCode); setFeedback(null); }}
-              className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
-              title="Reset code to original"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Reset
-            </button>
           </div>
+
         </div>
 
         <div className="flex flex-col gap-4 lg:min-h-0">

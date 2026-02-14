@@ -687,11 +687,11 @@ function LayoutContent({ children }: LayoutProps) {
         </div>
       </header>
 
-      <main className="flex-1 max-w-6xl mx-auto px-3 pt-4 w-full">
+      <main className="flex-1 max-w-6xl mx-auto px-3 pt-4 pb-8 w-full">
         {children}
       </main>
 
-      <footer className="border-t border-gray-200 mt-auto bg-white">
+      <footer className="border-t border-gray-200 mt-auto bg-white mt-8">
         <div className="max-w-6xl mx-auto px-3 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">

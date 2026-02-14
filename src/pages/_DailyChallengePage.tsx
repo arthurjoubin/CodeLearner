@@ -5,7 +5,6 @@ import {
   Lightbulb,
   Loader,
   Play,
-  RotateCcw,
   Calendar,
   History,
 } from 'lucide-react';
@@ -183,51 +182,49 @@ function CodeCraftDailyPageContent() {
 
       {/* Header */}
       <div className="mb-4 lg:mb-6">
-        <div className="flex items-start justify-between gap-4">
-          <PageTitle className="flex-1">
-            <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center justify-between gap-3">
+          {/* Left - Title */}
+          <PageTitle className="flex-shrink-0">
+            <div className="flex items-center gap-3">
               <Calendar className="w-6 h-6 text-primary-600" />
               <h1 className="text-xl font-black text-gray-900 uppercase">Daily Challenge</h1>
-              <span className="text-sm text-gray-500">{challenge.date}</span>
             </div>
           </PageTitle>
-          <a
-            href="/codecraft/daily-history"
-            className="hidden sm:flex items-center gap-2 px-3 py-2 bg-accent-50 border-2 border-accent-200 rounded-lg hover:bg-accent-100 hover:border-accent-300 transition-all group flex-shrink-0"
-          >
-            <History className="w-4 h-4 text-accent-600" />
-            <span className="text-xs font-bold text-accent-700">History</span>
-          </a>
-        </div>
-
-        <div className="flex items-center gap-2 mt-2 flex-wrap">
-          {language && (
+          
+          {/* Center - Tags */}
+          <div className="flex items-center justify-center gap-2 flex-wrap flex-1">
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 bg-gray-100 text-gray-700 border-gray-300">
-              {language.name}
+              {challenge.date}
             </span>
-          )}
-          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 ${difficultyColors[exercise.difficulty]}`}>
-            {exercise.difficulty}
-          </span>
-          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 border-primary-200 bg-primary-50 text-primary-600">
-            +75 XP
-          </span>
-          {alreadyCompleted && (
-            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 text-green-600 bg-green-50 border-green-500">
-              Completed Today
+            {language && (
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 bg-gray-100 text-gray-700 border-gray-300">
+                {language.name}
+              </span>
+            )}
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 ${difficultyColors[exercise.difficulty]}`}>
+              {exercise.difficulty}
             </span>
-          )}
-          <a
-            href="/codecraft/daily-history"
-            className="sm:hidden inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 border-accent-200 bg-accent-50 text-accent-700 hover:bg-accent-100 transition-colors ml-auto"
-          >
-            <History className="w-3 h-3" />
-            History
-          </a>
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 border-primary-200 bg-primary-50 text-primary-600">
+              +75 XP
+            </span>
+            {alreadyCompleted && (
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 text-green-600 bg-green-50 border-green-500">
+                Completed
+              </span>
+            )}
+          </div>
+          
+          {/* Right side - History button */}
+          <div className="flex-shrink-0">
+            <a
+              href="/codecraft/daily-history"
+              className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 border-accent-200 bg-accent-50 text-accent-700 hover:bg-accent-100 transition-colors"
+            >
+              <History className="w-3 h-3" />
+              See all previous days challenges
+            </a>
+          </div>
         </div>
-
-        <h2 className="text-lg font-bold text-gray-900 mt-3">{exercise.title}</h2>
-        <p className="text-gray-600">{exercise.description}</p>
       </div>
 
       {/* Main Layout - Side by side on desktop */}
@@ -275,16 +272,41 @@ function CodeCraftDailyPageContent() {
 
         {/* Right Panel - Editor & Output */}
         <div className="flex flex-col gap-4 pb-20 lg:pb-0">
-          {/* Editor - Fixed height */}
-          <div className="h-[400px] lg:h-[500px]">
-            <CodeCraftEditor
-              code={code}
-              languageId={exercise.language}
-              isCodeDirty={isCodeDirty}
-              onChange={handleCodeChange}
-              onReset={handleResetCode}
-              className="h-full"
-            />
+          {/* Editor */}
+          <CodeCraftEditor
+            code={code}
+            languageId={exercise.language}
+            isCodeDirty={isCodeDirty}
+            onChange={handleCodeChange}
+            onReset={handleResetCode}
+          />
+
+          {/* Action Buttons - Between Editor and Output */}
+          <div className="hidden lg:flex items-center justify-center gap-3 py-2">
+            <button
+              onClick={handleRun}
+              disabled={isRunning}
+              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
+            >
+              {isRunning ? <Loader className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+              Run
+            </button>
+            <button
+              onClick={handleValidate}
+              disabled={isValidating || alreadyCompleted}
+              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors disabled:opacity-50"
+            >
+              {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+              {alreadyCompleted ? 'Already Completed' : 'Validate'}
+            </button>
+            <button
+              onClick={handleGetHint}
+              disabled={isLoadingHint}
+              className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
+            >
+              {isLoadingHint ? <Loader className="w-4 h-4 animate-spin" /> : <Lightbulb className="w-4 h-4" />}
+              Hint
+            </button>
           </div>
 
           {/* Output Panel - Auto height based on content */}
@@ -309,47 +331,7 @@ function CodeCraftDailyPageContent() {
             </div>
           </div>
 
-          {/* Desktop Action Buttons */}
-          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
-            <button
-              onClick={handleRun}
-              disabled={isRunning}
-              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
-            >
-              {isRunning ? <Loader className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
-              Run
-            </button>
-            <button
-              onClick={handleValidate}
-              disabled={isValidating || alreadyCompleted}
-              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors disabled:opacity-50"
-            >
-              {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-              {alreadyCompleted ? 'Already Completed' : 'Validate'}
-            </button>
-            <button
-              onClick={handleGetHint}
-              disabled={isLoadingHint}
-              className="inline-flex items-center gap-2 px-4 py-3 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
-            >
-              {isLoadingHint ? <Loader className="w-4 h-4 animate-spin" /> : <Lightbulb className="w-4 h-4" />}
-              Hint
-            </button>
-            <button
-              onClick={handleResetCode}
-              className="inline-flex items-center gap-2 px-4 py-3 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Reset
-            </button>
-            <div className="flex-1"></div>
-            <NavButton
-              href="/codecraft"
-              label="Back"
-              variant="outline"
-              icon="arrow"
-            />
-          </div>
+
         </div>
       </div>
 

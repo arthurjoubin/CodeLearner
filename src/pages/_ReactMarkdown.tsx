@@ -31,7 +31,7 @@ export default function ReactMarkdown({ content }: ReactMarkdownProps) {
             return `<code class="bg-gray-100 text-primary-700 px-1 rounded font-mono text-xs">${escapeHtml(code)}</code>`;
           });
           const withBold = withCode.replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold">$1</strong>');
-          return `<li class="flex items-start gap-2 text-sm text-gray-700">
+          return `<li class="flex items-start gap-2 text-base text-gray-700">
             <span class="text-primary-600 font-bold mt-0.5">•</span>
             <span>${withBold}</span>
           </li>`;
@@ -71,9 +71,9 @@ export default function ReactMarkdown({ content }: ReactMarkdownProps) {
 
     // 3. Headers
     processedText = processedText
-      .replace(/^### (.+)$/gm, '<h3 class="text-sm font-bold text-gray-900 mt-4 mb-1">$1</h3>')
-      .replace(/^## (.+)$/gm, '<h2 class="text-base font-bold text-gray-900 mt-4 mb-1">$1</h2>')
-      .replace(/^# (.+)$/gm, '<h1 class="text-lg font-bold text-gray-900 mt-3 mb-2">$1</h1>');
+      .replace(/^### (.+)$/gm, '<h3 class="text-base font-bold text-gray-900 mt-4 mb-1">$1</h3>')
+      .replace(/^## (.+)$/gm, '<h2 class="text-lg font-bold text-gray-900 mt-4 mb-1">$1</h2>')
+      .replace(/^# (.+)$/gm, '<h1 class="text-xl font-bold text-gray-900 mt-3 mb-2">$1</h1>');
 
     // 4. Bold and italic
     processedText = processedText
@@ -105,7 +105,7 @@ export default function ReactMarkdown({ content }: ReactMarkdownProps) {
           listType = 'ul';
           inList = true;
         }
-        listItems.push(`<li class="flex items-start gap-2 text-sm text-gray-700">
+        listItems.push(`<li class="flex items-start gap-2 text-base text-gray-700">
           <span class="text-primary-600 font-bold mt-0.5">•</span>
           <span>${unorderedMatch[2]}</span>
         </li>`);
@@ -118,7 +118,7 @@ export default function ReactMarkdown({ content }: ReactMarkdownProps) {
           listType = 'ol';
           inList = true;
         }
-        listItems.push(`<li class="flex items-start gap-2 text-sm text-gray-700">
+        listItems.push(`<li class="flex items-start gap-2 text-base text-gray-700">
           <span class="text-primary-600 font-bold mt-0.5">${orderedMatch[2]}.</span>
           <span>${orderedMatch[3]}</span>
         </li>`);
@@ -148,7 +148,7 @@ export default function ReactMarkdown({ content }: ReactMarkdownProps) {
         if (trimmed.startsWith('__CODE_BLOCK_') || trimmed.startsWith('__ESSENTIAL_BLOCK_') || trimmed.startsWith('<h') || trimmed.startsWith('<ul')) {
           return trimmed;
         }
-        return `<p class="text-sm leading-relaxed text-gray-700">${trimmed.replace(/\n/g, '<br/>')}</p>`;
+        return `<p class="text-base leading-relaxed text-gray-700">${trimmed.replace(/\n/g, '<br/>')}</p>`;
       })
       .join('');
 

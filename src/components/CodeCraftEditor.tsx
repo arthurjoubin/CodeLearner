@@ -45,7 +45,9 @@ export function CodeCraftEditor({
         className={`${
           isExpanded
             ? 'fixed inset-2 sm:inset-4 lg:inset-8 z-50 bg-gray-900 shadow-2xl border-2 border-gray-300 flex flex-col'
-            : `border-2 border-gray-300 bg-gray-900 flex flex-col h-[300px] sm:h-[350px] lg:h-[400px] ${className}`
+            : className.includes('h-') 
+              ? `border-2 border-gray-300 bg-gray-900 flex flex-col ${className}`
+              : `border-2 border-gray-300 bg-gray-900 flex flex-col h-[180px] sm:h-[220px] lg:h-[280px]`
         }`}
       >
         {/* Toolbar */}
