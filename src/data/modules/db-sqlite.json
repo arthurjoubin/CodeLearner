@@ -34,5 +34,89 @@
       "content": "# Essential to know\n- WAL mode (Write-Ahead Logging) for better concurrency\n- Backups: copy .db file (after .backup or vacuum)\n- Foreign keys must be enabled (PRAGMA foreign_keys = ON)\n- Journal mode for durability\n- Security at file level (permissions)\n\n---\n\n# Optimizing SQLite in Production\n\n## Write-Ahead Logging (WAL)\n\nWAL significantly improves concurrent performance:\n\n```javascript\nawait db.exec('PRAGMA journal_mode = WAL');\n```\n\nWAL mode benefits:\n- **Readers and writer simultaneous**: Multiple reads during writes\n- **Better performance**: 10-100x faster writes\n- **Durability**: No corruption on crash\n\nFiles created:\n- `database.db`: Main database\n- `database.db-wal`: Transaction journal\n- `database.db-shm`: Shared memory\n\n## Essential PRAGMAs\n\n```javascript\n// Enable foreign keys (disabled by default!)\nawait db.exec('PRAGMA foreign_keys = ON');\n\n// Performance optimizations\nawait db.exec('PRAGMA synchronous = NORMAL');  // or FULL for more safety\nawait db.exec('PRAGMA cache_size = -64000');   // 64MB cache\nawait db.exec('PRAGMA temp_store = MEMORY');   // Temp in RAM\n\n// WAL mode\nawait db.exec('PRAGMA journal_mode = WAL');\nawait db.exec('PRAGMA wal_autocheckpoint = 1000');  // Auto checkpoint\n```\n\n## Backup and Restore\n\n```javascript\n// Backup with SQLite API\nasync function backup(sourceDb, destPath) {\n  const backup = await sourceDb.backup(destPath);\n  console.log(`Backup: ${backup.totalPages} pages`);\n}\n\n// Backup command line\nsqlite3 database.db '.backup backup.db'\n\n// Vacuum (optimize and compact)\nawait db.exec('VACUUM');\n\n// Export SQL\nsqlite3 database.db '.dump' > backup.sql\n\n// Import SQL\nsqlite3 new.db < backup.sql\n```\n\n## Security\n\n```bash\n# Restrictive permissions (Unix)\nchmod 600 database.db      # Owner read/write only\nchmod 600 database.db-wal\nchmod 600 database.db-shm\n```\n\n```javascript\n// Never expose DB\n// ❌ Bad: app.get('/database.db', ...)\n\n// ✅ Good: DB outside public folder\nconst db = await open({\n  filename: './data/database.db',  // Not in ./public!\n  driver: sqlite3.Database\n});\n```\n\n## When to Migrate to PostgreSQL?\n\nConsider PostgreSQL when:\n\n1. **High traffic**: Many simultaneous writes\n2. **Multi-server**: Need replication, clustering\n3. **Advanced features**: Full-text search, JSONB, arrays\n4. **Security**: Need user/privilege granularity\n5. **Remote access**: Multiple servers accessing DB\n\n## SQLite → PostgreSQL Migration\n\n```javascript\n// 1. Export SQLite to SQL\n// sqlite3 database.db '.dump' > dump.sql\n\n// 2. Adapt dump for PostgreSQL\n// - Replace AUTOINCREMENT with SERIAL\n// - Replace INTEGER PRIMARY KEY with SERIAL PRIMARY KEY\n// - Adapt types (TEXT → VARCHAR, etc.)\n\n// 3. Import into PostgreSQL\n// psql -d mydb -f dump.sql\n\n// 4. Adapt Node.js code\n// Replace sqlite3 with pg\n// Adapt SQLite-specific queries\n```\n\n## Recommended Hybrid Architecture\n\n```\nLocal Development: SQLite (fast, simple)\n         ↓\nAutomated Tests: SQLite (in-memory or file)\n         ↓\nProduction: PostgreSQL (robustness, scaling)\n```\n\nWith Prisma ORM, the switch is transparent:\n```prisma\n// schema.prisma\ndatasource db {\n  provider = env(\"DB_PROVIDER\")  // \"sqlite\" or \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n```"
     }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "sqlite-ex-1",
+      "lessonId": "sqlite-intro",
+      "moduleId": "db-sqlite",
+      "title": "Setting Up SQLite with Node.js",
+      "difficulty": "easy",
+      "type": "code",
+      "description": "Complete the basic SQLite setup code to create a users table and insert your first record.",
+      "instructions": "You're setting up SQLite in a Node.js project for the first time. The starter code has the database connection, but you need to:\n\n1. Create a `users` table with columns: `id` (INTEGER PRIMARY KEY AUTOINCREMENT), `name` (TEXT NOT NULL), and `email` (TEXT UNIQUE)\n2. Insert a user with name 'Alice' and email 'alice@example.com'\n\n**Requirements:**\n- Use `db.exec()` to create the table\n- Use `db.run()` with prepared statement (?) for the insert\n- Remember: SQLite uses single quotes for strings\n\n**Tip:** The CREATE TABLE statement should use IF NOT EXISTS to avoid errors on re-run.",
+      "starterCode": "import sqlite3 from 'sqlite3';\nimport { open } from 'sqlite';\n\nconst db = await open({\n  filename: './mydata.db',\n  driver: sqlite3.Database\n});\n\n// TODO: Create users table\n\n// TODO: Insert a user named 'Alice' with email 'alice@example.com'\n\nawait db.close();",
+      "solution": "import sqlite3 from 'sqlite3';\nimport { open } from 'sqlite';\n\nconst db = await open({\n  filename: './mydata.db',\n  driver: sqlite3.Database\n});\n\n// Create users table\nawait db.exec(`\n  CREATE TABLE IF NOT EXISTS users (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT NOT NULL,\n    email TEXT UNIQUE\n  )\n`);\n\n// Insert a user\nawait db.run(\n  'INSERT INTO users (name, email) VALUES (?, ?)',\n  ['Alice', 'alice@example.com']\n);\n\nawait db.close();",
+      "hints": [
+        "Use db.exec() for DDL statements (CREATE TABLE)",
+        "Use db.run() for DML statements (INSERT, UPDATE, DELETE)",
+        "INTEGER PRIMARY KEY AUTOINCREMENT creates an auto-incrementing ID",
+        "Use prepared statements with ? placeholders for values: db.run('INSERT ... VALUES (?, ?)', [val1, val2])",
+        "Remember to add IF NOT EXISTS to avoid errors if the table already exists"
+      ],
+      "validationPrompt": "Check if the student's code:\n1. Creates a users table with columns: id (INTEGER PRIMARY KEY AUTOINCREMENT), name (TEXT NOT NULL), email (TEXT UNIQUE)\n2. Uses db.exec() for creating the table\n3. Uses db.run() to insert a user with name 'Alice' and email 'alice@example.com'\n4. Uses prepared statement placeholders (?) for the insert values\n5. Has IF NOT EXISTS in the CREATE TABLE statement (good practice)\n\nAccept variations in spacing, line breaks, or order of columns, but the core structure must be correct."
+    },
+    {
+      "id": "sqlite-ex-2",
+      "lessonId": "sqlite-node",
+      "moduleId": "db-sqlite",
+      "title": "Fix the Broken SQLite Query",
+      "difficulty": "easy",
+      "type": "code",
+      "description": "Claude generated this SQLite code but it has multiple common mistakes. Debug and fix it!",
+      "instructions": "Your AI assistant generated this code to find users by email, but it's throwing errors:\n\n```javascript\nconst user = await db.run(\n  \"SELECT * FROM users WHERE email = \" + userEmail\n);\n```\n\nThis code has THREE critical problems:\n1. **SQL injection vulnerability**: String concatenation instead of prepared statements\n2. **Wrong method**: Using `db.run()` instead of the correct method for SELECT\n3. **Wrong quote type**: Double quotes instead of single quotes for SQL strings\n\nFix all three issues!\n\n**Expected behavior:** Safely query for a user by email and return a single row.\n\n**Security tip:** NEVER concatenate user input into SQL queries - always use prepared statements!",
+      "starterCode": "const user = await db.run(\n  \"SELECT * FROM users WHERE email = \" + userEmail\n);",
+      "solution": "const user = await db.get(\n  'SELECT * FROM users WHERE email = ?',\n  [userEmail]\n);",
+      "hints": [
+        "For SELECT queries that return ONE row, use db.get(), not db.run()",
+        "db.run() is for INSERT, UPDATE, DELETE - it doesn't return rows",
+        "Never concatenate values into SQL - use prepared statements with ? placeholders",
+        "Pass values as an array: db.get('SELECT ... WHERE email = ?', [userEmail])",
+        "Use single quotes for SQL strings, not double quotes"
+      ],
+      "validationPrompt": "Check if the student's code:\n1. Uses db.get() instead of db.run() (correct method for SELECT single row)\n2. Uses prepared statement with ? placeholder instead of string concatenation\n3. Passes userEmail as parameter in array: [userEmail]\n4. Uses single quotes for the SQL string\n5. The query is 'SELECT * FROM users WHERE email = ?' or similar\n\nThe key fixes are: db.get() method, prepared statement, and parameter array. Accept variations in spacing but all three issues must be fixed."
+    },
+    {
+      "id": "sqlite-ex-3",
+      "lessonId": "sqlite-intro",
+      "moduleId": "db-sqlite",
+      "title": "Understanding SQLite Type Affinity",
+      "difficulty": "intermediate",
+      "type": "code",
+      "description": "GitHub Copilot created a products table but mixed up SQLite types. Fix the type issues!",
+      "instructions": "Copilot generated this table schema:\n\n```sql\nCREATE TABLE products (\n  id INTEGER PRIMARY KEY,\n  name VARCHAR(255) NOT NULL,\n  price DECIMAL(10, 2),\n  quantity INT,\n  is_active BOOLEAN DEFAULT TRUE,\n  created_at TIMESTAMP DEFAULT NOW()\n)\n```\n\nThis code works but doesn't follow SQLite best practices! SQLite doesn't have these exact types - it uses type affinity.\n\nFix the table to use proper SQLite types:\n- Use AUTOINCREMENT for the id\n- Replace VARCHAR with TEXT\n- Replace DECIMAL with REAL\n- Replace BOOLEAN with INTEGER (0 or 1) and add a CHECK constraint\n- Replace TIMESTAMP and NOW() with TEXT and CURRENT_TIMESTAMP\n- Add DEFAULT 0 for quantity\n\n**Learning goal:** Understand that SQLite is flexible but following conventions prevents bugs!",
+      "starterCode": "CREATE TABLE products (\n  id INTEGER PRIMARY KEY,\n  name VARCHAR(255) NOT NULL,\n  price DECIMAL(10, 2),\n  quantity INT,\n  is_active BOOLEAN DEFAULT TRUE,\n  created_at TIMESTAMP DEFAULT NOW()\n)",
+      "solution": "CREATE TABLE products (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  name TEXT NOT NULL,\n  price REAL,\n  quantity INTEGER DEFAULT 0,\n  is_active INTEGER DEFAULT 1 CHECK (is_active IN (0, 1)),\n  created_at TEXT DEFAULT CURRENT_TIMESTAMP\n)",
+      "hints": [
+        "SQLite has only 5 storage classes: INTEGER, REAL, TEXT, BLOB, NULL",
+        "Use TEXT instead of VARCHAR - SQLite doesn't have length limits on TEXT",
+        "Use REAL for decimal numbers (price, percentages, etc.)",
+        "Booleans in SQLite: INTEGER with values 0 (false) or 1 (true)",
+        "Add CHECK constraint for boolean: CHECK (is_active IN (0, 1))",
+        "For timestamps, use TEXT with CURRENT_TIMESTAMP, not NOW()",
+        "Add AUTOINCREMENT to INTEGER PRIMARY KEY for auto-increment behavior"
+      ],
+      "validationPrompt": "Check if the student's table definition:\n1. Has id as INTEGER PRIMARY KEY AUTOINCREMENT\n2. Uses TEXT for name (not VARCHAR)\n3. Uses REAL for price (not DECIMAL)\n4. Uses INTEGER for quantity and is_active\n5. Has is_active with DEFAULT 1 and CHECK constraint (is_active IN (0, 1))\n6. Uses TEXT for created_at with DEFAULT CURRENT_TIMESTAMP\n7. Has DEFAULT 0 for quantity\n\nAccept variations in spacing, line breaks, or order of constraints, but the types must be SQLite-native and follow best practices."
+    },
+    {
+      "id": "sqlite-ex-4",
+      "lessonId": "sqlite-node",
+      "moduleId": "db-sqlite",
+      "title": "Debugging SQLite Transaction Errors",
+      "difficulty": "intermediate",
+      "type": "code",
+      "description": "ChatGPT wrote a transaction to transfer money between accounts, but it's not rolling back on errors. Fix it!",
+      "instructions": "An AI generated this code to transfer money between two accounts:\n\n```javascript\nawait db.run('UPDATE accounts SET balance = balance - ? WHERE id = ?', [amount, fromId]);\nawait db.run('UPDATE accounts SET balance = balance + ? WHERE id = ?', [amount, toId]);\n```\n\nProblem: If the second update fails, the money disappears! You need to wrap this in a transaction.\n\nFix the code to:\n1. Start a transaction with `BEGIN TRANSACTION`\n2. Execute both updates\n3. Commit with `COMMIT` if successful\n4. Rollback with `ROLLBACK` if there's an error\n\n**Requirements:**\n- Use try/catch to handle errors\n- Use db.exec() for transaction control (BEGIN, COMMIT, ROLLBACK)\n- Keep the same two UPDATE statements\n- Ensure atomicity: either both updates happen or neither\n\n**Tip:** This is critical for financial operations - transactions ensure data integrity!",
+      "starterCode": "// Transfer money from one account to another\nawait db.run('UPDATE accounts SET balance = balance - ? WHERE id = ?', [amount, fromId]);\nawait db.run('UPDATE accounts SET balance = balance + ? WHERE id = ?', [amount, toId]);",
+      "solution": "// Transfer money from one account to another\ntry {\n  await db.exec('BEGIN TRANSACTION');\n  \n  await db.run('UPDATE accounts SET balance = balance - ? WHERE id = ?', [amount, fromId]);\n  await db.run('UPDATE accounts SET balance = balance + ? WHERE id = ?', [amount, toId]);\n  \n  await db.exec('COMMIT');\n} catch (error) {\n  await db.exec('ROLLBACK');\n  throw error;\n}",
+      "hints": [
+        "Wrap the operations in try/catch to handle errors",
+        "Use db.exec('BEGIN TRANSACTION') to start a transaction",
+        "If everything succeeds, use db.exec('COMMIT') to save changes",
+        "If there's an error, use db.exec('ROLLBACK') in the catch block to undo changes",
+        "Transactions ensure atomicity: all operations succeed or all fail together",
+        "Don't forget to re-throw the error after rollback so the caller knows it failed"
+      ],
+      "validationPrompt": "Check if the student's code:\n1. Wraps the operations in a try/catch block\n2. Starts with db.exec('BEGIN TRANSACTION') or db.exec('BEGIN')\n3. Keeps both UPDATE statements with prepared statements\n4. Ends with db.exec('COMMIT') in the try block\n5. Has db.exec('ROLLBACK') in the catch block\n6. Re-throws the error after rollback (optional but good practice)\n\nThe key concept is transaction wrapping with BEGIN, COMMIT, and ROLLBACK. Accept variations in naming or exact error handling, but the transaction structure must be correct."
+    }
+  ]
 }
