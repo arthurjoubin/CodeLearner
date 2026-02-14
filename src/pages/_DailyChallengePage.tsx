@@ -37,6 +37,7 @@ function CodeCraftDailyPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
   const [challengeDate, setChallengeDate] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'instructions' | 'editor' | 'output'>('instructions');
 
   useEffect(() => {
     // Get date from URL params
@@ -180,91 +181,69 @@ function CodeCraftDailyPageContent() {
         { label: 'Daily Challenge' },
       ]} />
 
-      {/* Header */}
-      <div className="mb-4 lg:mb-6">
-        <div className="flex items-center justify-between gap-3">
-          {/* Left - Title */}
-          <PageTitle className="flex-shrink-0">
-            <div className="flex items-center gap-3">
-              <Calendar className="w-6 h-6 text-primary-600" />
-              <h1 className="text-xl font-black text-gray-900 uppercase">Daily Challenge</h1>
-            </div>
-          </PageTitle>
-          
-          {/* Center - Tags */}
-          <div className="flex items-center justify-center gap-2 flex-wrap flex-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 bg-gray-100 text-gray-700 border-gray-300">
-              {challenge.date}
-            </span>
-            {language && (
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 bg-gray-100 text-gray-700 border-gray-300">
-                {language.name}
-              </span>
-            )}
-            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 ${difficultyColors[exercise.difficulty]}`}>
-              {exercise.difficulty}
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 border-primary-200 bg-primary-50 text-primary-600">
-              +75 XP
-            </span>
-            {alreadyCompleted && (
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 text-green-600 bg-green-50 border-green-500">
-                Completed
-              </span>
-            )}
-          </div>
-          
-          {/* Right side - History button */}
-          <div className="flex-shrink-0">
-            <a
-              href="/codecraft/daily-history"
-              className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 border-accent-200 bg-accent-50 text-accent-700 hover:bg-accent-100 transition-colors"
-            >
-              <History className="w-3 h-3" />
-              See all previous days challenges
-            </a>
-          </div>
-        </div>
+      {/* Mobile Tab Switcher */}
+      <div className="lg:hidden flex border-2 border-gray-200 rounded-xl bg-white mt-4 p-1 shadow-sm sticky top-[72px] z-20">
+        <button
+          onClick={() => setActiveTab('instructions')}
+          className={`flex-1 py-2 text-xs font-black uppercase tracking-tight rounded-lg transition-all ${activeTab === 'instructions' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+        >
+          Instructions
+        </button>
+        <button
+          onClick={() => setActiveTab('editor')}
+          className={`flex-1 py-2 text-xs font-black uppercase tracking-tight rounded-lg transition-all ${activeTab === 'editor' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+        >
+          Editor
+        </button>
+        <button
+          onClick={() => setActiveTab('output')}
+          className={`flex-1 py-2 text-xs font-black uppercase tracking-tight rounded-lg transition-all ${activeTab === 'output' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+        >
+          Output
+        </button>
       </div>
 
       {/* Main Layout - Side by side on desktop */}
-      <div className="grid lg:grid-cols-[400px_1fr] gap-4 lg:gap-6">
+      <div className="grid lg:grid-cols-[400px_1fr] gap-4 lg:gap-6 mt-6">
         {/* Left Panel - Problem Description */}
-        <div className="flex flex-col gap-4 lg:max-h-[calc(100vh-200px)] lg:overflow-y-auto lg:pr-2">
+        <div className={`flex flex-col gap-4 lg:max-h-[calc(100vh-200px)] lg:overflow-y-auto lg:pr-2 ${activeTab !== 'instructions' ? 'hidden lg:flex' : ''}`}>
           {/* Instructions */}
-          <div className="border-2 border-gray-300 bg-white rounded-lg p-4">
-            <p className="text-xs font-bold text-gray-500 uppercase mb-2">Instructions</p>
-            <p className="text-sm leading-relaxed text-gray-700">{exercise.instructions}</p>
+          <div className="border-2 border-gray-300 bg-white rounded-xl p-5 shadow-sm">
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Instructions</p>
+            <p className="text-sm leading-relaxed text-gray-700 font-medium">{exercise.instructions}</p>
           </div>
 
           {/* Expected Output */}
           {exercise.expectedOutput && (
-            <div className="border-2 border-gray-300 bg-gray-900 rounded-lg p-4">
-              <p className="text-xs font-bold text-gray-500 uppercase mb-2">Expected Output</p>
-              <pre className="text-sm font-mono text-green-400 whitespace-pre-wrap">{exercise.expectedOutput}</pre>
+            <div className="border-2 border-gray-900 bg-gray-900 rounded-xl p-5 shadow-lg">
+              <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Expected Output</p>
+              <pre className="text-sm font-mono text-primary-400 whitespace-pre-wrap">{exercise.expectedOutput}</pre>
             </div>
           )}
 
           {/* Feedback */}
           {feedback && (
-            <div className={`hidden lg:flex p-4 border-2 items-start gap-3 rounded-lg ${feedback.isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
-              {feedback.isCorrect ? <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" /> : <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />}
+            <div className={`p-5 border-2 items-start gap-4 rounded-xl shadow-sm ${feedback.isCorrect ? 'bg-primary-50 border-primary-500' : 'bg-red-50 border-red-500'} ${activeTab === 'instructions' ? 'flex' : 'hidden lg:flex'}`}>
+              {feedback.isCorrect ? <CheckCircle className="w-6 h-6 text-primary-600 flex-shrink-0" /> : <XCircle className="w-6 h-6 text-red-600 flex-shrink-0" />}
               <div>
-                <p className={`font-bold text-sm uppercase ${feedback.isCorrect ? 'text-green-700' : 'text-red-700'}`}>
+                <p className={`font-black text-xs uppercase tracking-tight ${feedback.isCorrect ? 'text-primary-700' : 'text-red-700'}`}>
                   {feedback.isCorrect ? 'Correct!' : 'Not quite'}
                 </p>
-                <p className={`text-sm ${feedback.isCorrect ? 'text-green-600' : 'text-red-600'}`}>{feedback.message}</p>
+                <p className={`text-sm mt-1 font-medium ${feedback.isCorrect ? 'text-primary-600' : 'text-red-600'}`}>{feedback.message}</p>
               </div>
             </div>
           )}
 
           {/* Hint */}
           {showHint && hint && (
-            <div className="hidden lg:flex p-4 border-2 border-yellow-500 bg-yellow-50 items-start gap-3 rounded-lg">
-              <Lightbulb className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-yellow-700 flex-1">{hint}</p>
-              <button onClick={clearHint} className="p-1.5 hover:bg-black/10 rounded flex-shrink-0">
-                <XCircle className="w-4 h-4" />
+            <div className={`p-5 border-2 border-yellow-500 bg-yellow-50 items-start gap-4 rounded-xl shadow-sm ${activeTab === 'instructions' ? 'flex' : 'hidden lg:flex'}`}>
+              <Lightbulb className="w-6 h-6 text-yellow-600 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-xs font-black text-yellow-700 uppercase tracking-tight mb-1">Hint</p>
+                <p className="text-sm text-yellow-700 font-medium leading-relaxed">{hint}</p>
+              </div>
+              <button onClick={clearHint} className="p-1.5 hover:bg-yellow-200/50 rounded-lg transition-colors flex-shrink-0">
+                <XCircle className="w-5 h-5 text-yellow-600" />
               </button>
             </div>
           )}
@@ -273,20 +252,23 @@ function CodeCraftDailyPageContent() {
         {/* Right Panel - Editor & Output */}
         <div className="flex flex-col gap-4 pb-20 lg:pb-0">
           {/* Editor */}
-          <CodeCraftEditor
-            code={code}
-            languageId={exercise.language}
-            isCodeDirty={isCodeDirty}
-            onChange={handleCodeChange}
-            onReset={handleResetCode}
-          />
+          <div className={`rounded-xl overflow-hidden border-2 border-gray-300 shadow-sm ${activeTab !== 'editor' ? 'hidden lg:block' : ''}`}>
+            <CodeCraftEditor
+              code={code}
+              languageId={exercise.language}
+              isCodeDirty={isCodeDirty}
+              onChange={handleCodeChange}
+              onReset={handleResetCode}
+              className="h-[400px] lg:h-[280px]"
+            />
+          </div>
 
           {/* Action Buttons - Between Editor and Output */}
-          <div className="hidden lg:flex items-center justify-center gap-3 py-2">
+          <div className="hidden lg:flex items-center justify-center gap-4 py-2">
             <button
               onClick={handleRun}
               disabled={isRunning}
-              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-3 text-sm font-black uppercase tracking-tight bg-white text-gray-900 rounded-xl border-2 border-gray-300 hover:border-gray-900 hover:bg-gray-50 transition-all duration-200 shadow-sm"
             >
               {isRunning ? <Loader className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
               Run
@@ -294,15 +276,15 @@ function CodeCraftDailyPageContent() {
             <button
               onClick={handleValidate}
               disabled={isValidating || alreadyCompleted}
-              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-10 py-3 text-sm font-black uppercase tracking-tight bg-primary-600 text-white rounded-xl border-2 border-primary-600 hover:bg-primary-700 hover:border-primary-700 transition-all duration-200 shadow-lg shadow-primary-500/20 disabled:opacity-50 disabled:shadow-none"
             >
               {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-              {alreadyCompleted ? 'Already Completed' : 'Validate'}
+              {alreadyCompleted ? 'Completed' : 'Validate'}
             </button>
             <button
               onClick={handleGetHint}
               disabled={isLoadingHint}
-              className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-black uppercase tracking-tight bg-white text-gray-600 rounded-xl border-2 border-gray-300 hover:border-yellow-500 hover:text-yellow-600 transition-all duration-200 shadow-sm"
             >
               {isLoadingHint ? <Loader className="w-4 h-4 animate-spin" /> : <Lightbulb className="w-4 h-4" />}
               Hint
@@ -310,41 +292,42 @@ function CodeCraftDailyPageContent() {
           </div>
 
           {/* Output Panel - Auto height based on content */}
-          <div className="border-2 border-gray-300 bg-gray-900 rounded-lg">
-            <div className="px-4 py-2 bg-gray-800 border-b-2 border-gray-300 flex items-center justify-between">
-              <span className="text-xs font-bold uppercase text-white">Output</span>
+          <div className={`border-2 border-gray-900 bg-gray-900 rounded-xl overflow-hidden shadow-lg ${activeTab !== 'output' ? 'hidden lg:block' : ''}`}>
+            <div className="px-5 py-3 bg-gray-800/50 border-b-2 border-gray-800 flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Output Terminal</span>
               {output && (
                 <button 
                   onClick={() => {/* Add clear output functionality if needed */}}
-                  className="text-xs text-gray-400 hover:text-white"
+                  className="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
                 >
                   Clear
                 </button>
               )}
             </div>
-            <div className="p-4">
+            <div className="p-5 min-h-[120px]">
               {output ? (
-                <pre className="text-sm font-mono text-green-400 whitespace-pre-wrap">{output}</pre>
+                <pre className="text-sm font-mono text-primary-400 whitespace-pre-wrap leading-relaxed">{output}</pre>
               ) : (
-                <p className="text-sm text-gray-500 italic">Run your code to see output here...</p>
+                <div className="flex flex-col items-center justify-center py-6 text-gray-600">
+                  <Play className="w-8 h-8 mb-2 opacity-20" />
+                  <p className="text-xs font-bold uppercase tracking-widest opacity-40">Ready to execute</p>
+                </div>
               )}
             </div>
           </div>
-
-
         </div>
       </div>
 
       {/* Mobile Feedback Toast */}
       {feedback && !completed && (
-        <div className={`lg:hidden fixed top-16 left-3 right-3 p-3 border-2 z-30 rounded-lg shadow-lg ${feedback.isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
+        <div className={`lg:hidden fixed top-16 left-3 right-3 p-3 border-2 z-30 rounded-lg shadow-lg ${feedback.isCorrect ? 'bg-primary-50 border-primary-500' : 'bg-red-50 border-red-500'}`}>
           <div className="flex items-start gap-2.5">
-            {feedback.isCorrect ? <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" /> : <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />}
+            {feedback.isCorrect ? <CheckCircle className="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5" /> : <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />}
             <div className="flex-1 min-w-0">
-              <p className={`font-bold text-xs uppercase ${feedback.isCorrect ? 'text-green-700' : 'text-red-700'}`}>
+              <p className={`font-bold text-xs uppercase ${feedback.isCorrect ? 'text-primary-700' : 'text-red-700'}`}>
                 {feedback.isCorrect ? 'Correct!' : 'Not quite'}
               </p>
-              <p className={`text-xs mt-0.5 ${feedback.isCorrect ? 'text-green-600' : 'text-red-600'}`}>{feedback.message}</p>
+              <p className={`text-xs mt-0.5 ${feedback.isCorrect ? 'text-primary-600' : 'text-red-600'}`}>{feedback.message}</p>
             </div>
             <button onClick={clearFeedback} className="p-1.5 hover:bg-black/10 rounded flex-shrink-0">
               <XCircle className="w-4 h-4" />
@@ -370,14 +353,14 @@ function CodeCraftDailyPageContent() {
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 p-2 sm:p-3 z-30 shadow-lg safe-area-pb">
         <div className="flex items-center gap-2 max-w-screen-xl mx-auto">
           <button
-            onClick={handleRun}
+            onClick={() => { handleRun(); setActiveTab('output'); }}
             disabled={isRunning}
             className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors min-h-[44px]"
           >
             {isRunning ? <Loader className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
           </button>
           <button
-            onClick={handleValidate}
+            onClick={() => { handleValidate(); setActiveTab('output'); }}
             disabled={isValidating || alreadyCompleted}
             className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors flex-1 justify-center min-h-[44px] disabled:opacity-50"
           >
@@ -385,7 +368,7 @@ function CodeCraftDailyPageContent() {
             <span className="hidden sm:inline">{alreadyCompleted ? 'Completed' : 'Validate'}</span>
           </button>
           <button
-            onClick={handleGetHint}
+            onClick={() => { handleGetHint(); setActiveTab('instructions'); }}
             disabled={isLoadingHint}
             className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors min-h-[44px]"
           >

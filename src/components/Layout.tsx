@@ -355,32 +355,32 @@ function LayoutContent({ children }: LayoutProps) {
                   {lessonDropdownOpen && (
                     <>
                       <div className="fixed inset-0 z-40" onClick={() => setLessonDropdownOpen(false)} />
-                      <div className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-lg shadow-gray-200/60 z-50 overflow-hidden border border-gray-100">
-                        <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/30">
-                          <span className="text-xs font-medium text-gray-500 uppercase tracking-wider font-mono">Continue Learning</span>
+                      <div className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-xl shadow-gray-200/40 z-50 overflow-hidden border border-gray-200">
+                        <div className="px-4 py-3 border-b border-gray-100 bg-white">
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest font-mono">Continue Learning</span>
                         </div>
-                        <div className="p-2 space-y-1">
+                        <div className="p-2 space-y-2">
                           {pathLessons.map((pathLesson) => (
                             <a
                               key={pathLesson.pathId}
                               href={`/lesson/${pathLesson.id}`}
                               onClick={() => setLessonDropdownOpen(false)}
-                              className="group block p-3 rounded-lg bg-gray-50/50 border border-gray-200 hover:border-primary-300 hover:bg-white transition-all"
+                              className="group block p-3 rounded-xl bg-white border border-gray-100 hover:border-primary-300 hover:shadow-sm transition-all duration-200"
                             >
                               <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 border border-gray-100 group-hover:border-primary-200 transition-colors">
+                                <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 border border-gray-100 group-hover:border-primary-100 transition-colors">
                                   <img
                                     src={pathLesson.logo}
                                     alt={pathLesson.courseTitle}
-                                    className="w-5 h-5 object-contain"
+                                    className="w-6 h-6 object-contain"
                                   />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center justify-between gap-2">
-                                    <p className="text-sm font-medium text-gray-900 group-hover:text-primary-600 transition-colors truncate">
+                                    <p className="text-sm font-bold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
                                       {pathLesson.moduleTitle}
                                     </p>
-                                    <span className="flex-shrink-0 text-xs font-semibold text-primary-600 font-mono">
+                                    <span className="flex-shrink-0 px-1.5 py-0.5 bg-gray-100 text-[10px] font-bold text-gray-600 rounded">
                                       {pathLesson.currentLessonNumber}/{pathLesson.totalLessonsCount}
                                     </span>
                                   </div>
@@ -389,16 +389,16 @@ function LayoutContent({ children }: LayoutProps) {
                                   </p>
                                 </div>
                               </div>
-                              <div className="mt-2 ml-12">
-                                <div className="flex items-center justify-between text-[10px] text-gray-400 mb-1">
-                                  <span className="text-gray-400">{pathLesson.courseTitle}</span>
-                                  <span className="font-mono">{pathLesson.progress}%</span>
-                                </div>
-                                <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+                              <div className="mt-3">
+                                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                                   <div
-                                    className="h-full bg-primary-500 rounded-full transition-all"
+                                    className="h-full bg-gradient-to-r from-primary-400 to-primary-600 rounded-full transition-all duration-500"
                                     style={{ width: `${pathLesson.progress}%` }}
                                   />
+                                </div>
+                                <div className="flex items-center justify-between mt-1.5">
+                                  <span className="text-[10px] font-medium text-gray-400 truncate pr-2">{pathLesson.courseTitle}</span>
+                                  <span className="text-[10px] font-bold text-primary-600 font-mono">{pathLesson.progress}%</span>
                                 </div>
                               </div>
                             </a>
@@ -573,17 +573,17 @@ function LayoutContent({ children }: LayoutProps) {
                       {/* Learning Paths Section in Mobile Menu */}
                       {pathLessons.length > 0 && (
                         <div className="px-3 py-3 border-b border-gray-100 sm:hidden">
-                          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider px-3">Continue Learning</span>
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 font-mono">Continue Learning</span>
                           <div className="mt-2 space-y-2">
                             {pathLessons.slice(0, 4).map((pathLesson) => (
                               <a
                                 key={pathLesson.pathId}
                                 href={`/lesson/${pathLesson.id}`}
                                 onClick={() => setMenuOpen(false)}
-                                className="group block px-3 py-2.5 rounded-xl bg-gray-50/50 border border-gray-100 hover:bg-white hover:border-primary-200 hover:shadow-sm transition-all"
+                                className="group block p-3 rounded-xl bg-white border border-gray-100 hover:border-primary-200 hover:shadow-sm transition-all"
                               >
                                 <div className="flex items-center gap-3">
-                                  <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-gray-100">
+                                  <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 border border-gray-100 group-hover:border-primary-100 transition-colors">
                                     <img
                                       src={pathLesson.logo}
                                       alt={pathLesson.courseTitle}
@@ -592,28 +592,28 @@ function LayoutContent({ children }: LayoutProps) {
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between gap-2">
-                                      <p className="text-sm font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
+                                      <p className="text-sm font-bold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
                                         {pathLesson.moduleTitle}
                                       </p>
-                                      <span className="flex-shrink-0 text-xs font-bold text-primary-600 tabular-nums">
+                                      <span className="flex-shrink-0 px-1.5 py-0.5 bg-gray-100 text-[10px] font-bold text-gray-600 rounded">
                                         {pathLesson.currentLessonNumber}/{pathLesson.totalLessonsCount}
                                       </span>
                                     </div>
                                     <p className="text-xs text-gray-500 mt-0.5 truncate">
-                                      › {pathLesson.title}
+                                      {pathLesson.title}
                                     </p>
                                   </div>
                                 </div>
-                                <div className="ml-12 mt-2">
-                                  <div className="flex items-center justify-between text-[10px] text-gray-400 mb-1">
-                                    <span>{pathLesson.courseTitle}</span>
-                                    <span className="tabular-nums">{pathLesson.progress}%</span>
-                                  </div>
-                                  <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+                                <div className="mt-3">
+                                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                                     <div
-                                      className="h-full rounded-full bg-gradient-to-r from-primary-400 to-primary-600"
+                                      className="h-full bg-gradient-to-r from-primary-400 to-primary-600 rounded-full transition-all"
                                       style={{ width: `${pathLesson.progress}%` }}
                                     />
+                                  </div>
+                                  <div className="flex items-center justify-between mt-1.5">
+                                    <span className="text-[10px] font-medium text-gray-400 truncate pr-2">{pathLesson.courseTitle}</span>
+                                    <span className="text-[10px] font-bold text-primary-600 font-mono">{pathLesson.progress}%</span>
                                   </div>
                                 </div>
                               </a>

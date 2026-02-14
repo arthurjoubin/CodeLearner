@@ -67,14 +67,14 @@ function DailyChallengeHistoryContent() {
 
   if (loading) {
     return (
-      <div className="page-enter max-w-4xl mx-auto">
+      <div className="page-enter max-w-4xl mx-auto py-8">
         <Breadcrumb items={[
           { label: 'Daily Challenge', href: '/codecraft' },
           { label: 'History' },
         ]} />
         <div className="flex flex-col items-center justify-center h-96">
-          <Loader className="w-12 h-12 animate-spin text-primary-600 mb-4" />
-          <p className="text-gray-600 font-bold">Loading challenge history...</p>
+          <Loader className="w-10 h-10 animate-spin text-primary-600 mb-4" />
+          <p className="text-gray-500 font-medium">Loading challenge history...</p>
         </div>
       </div>
     );
@@ -82,7 +82,7 @@ function DailyChallengeHistoryContent() {
 
   if (error) {
     return (
-      <div className="page-enter max-w-4xl mx-auto">
+      <div className="page-enter max-w-4xl mx-auto py-8">
         <Breadcrumb items={[
           { label: 'Daily Challenge', href: '/codecraft' },
           { label: 'History' },
@@ -95,23 +95,23 @@ function DailyChallengeHistoryContent() {
   }
 
   return (
-    <div className="page-enter max-w-4xl mx-auto">
+    <div className="page-enter max-w-4xl mx-auto py-8">
       <Breadcrumb items={[
         { label: 'Daily Challenge', href: '/codecraft' },
         { label: 'History' },
       ]} />
 
-      <div className="mb-8">
+      <div className="mb-10">
         <PageTitle>
           <div className="flex items-center gap-3">
-            <Calendar className="w-6 h-6 text-accent-600" />
-            <h1 className="text-2xl font-black text-gray-900 uppercase">Challenge History</h1>
+            <Calendar className="w-8 h-8 text-primary-600" />
+            <h1 className="text-3xl font-black text-gray-900 uppercase tracking-tight">Challenge History</h1>
           </div>
         </PageTitle>
-        <p className="text-gray-600 mt-2">Browse past and upcoming daily challenges</p>
+        <p className="text-gray-500 mt-2 font-medium">Browse past and upcoming daily challenges</p>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {history.map((challenge) => {
           const status = getChallengeStatus(challenge.date);
           const isClickable = status === 'today' || status === 'missed';
@@ -121,55 +121,58 @@ function DailyChallengeHistoryContent() {
             <a
               key={challenge.date}
               href={isClickable ? `/codecraft/daily?date=${challenge.date}` : undefined}
-              className={`block border-2 rounded-lg p-4 transition-all ${
+              className={`block border-2 rounded-xl p-5 transition-all duration-200 ${
                 isClickable
-                  ? 'border-gray-300 hover:border-accent-500 hover:shadow-md bg-white cursor-pointer'
-                  : 'border-gray-200 bg-gray-50 cursor-default'
+                  ? 'border-gray-300 hover:border-primary-500 hover:shadow-md bg-white cursor-pointer'
+                  : 'border-gray-100 bg-gray-50/50 cursor-default'
               }`}
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-6">
                 {/* Date */}
-                <div className="flex-shrink-0 w-20 text-center">
-                  <p className="text-xs text-gray-500 uppercase">{dateObj.toLocaleDateString('en-US', { weekday: 'short' })}</p>
-                  <p className="text-lg font-bold text-gray-900">{dateObj.getDate()}</p>
+                <div className="flex-shrink-0 w-24 text-center border-r-2 border-gray-100 pr-6">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{dateObj.toLocaleDateString('en-US', { weekday: 'short' })}</p>
+                  <p className={`text-2xl font-black ${status === 'today' ? 'text-primary-600' : 'text-gray-900'}`}>{dateObj.getDate()}</p>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase">{dateObj.toLocaleDateString('en-US', { month: 'short' })}</p>
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-bold text-gray-700">
+                  <div className="flex items-center gap-3 mb-2 flex-wrap">
+                    <span className="text-xs font-black text-gray-900 uppercase tracking-tight">
                       {languageLabels[challenge.language] || challenge.language}
                     </span>
-                    <span className={`text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border ${difficultyColors[challenge.difficulty]}`}>
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded border-2 ${difficultyColors[challenge.difficulty]}`}>
                       {difficultyLabels[challenge.difficulty]}
                     </span>
                     {status === 'today' && (
-                      <span className="text-xs font-bold text-accent-600 bg-accent-50 px-2 py-0.5 rounded border border-accent-200">
+                      <span className="text-[10px] font-black text-white bg-gray-900 px-2 py-0.5 rounded uppercase tracking-widest">
                         TODAY
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 truncate">
-                    {challenge.title || 'Daily Challenge'}
+                  <p className="text-sm font-medium text-gray-500 truncate">
+                    {challenge.title || 'Daily AI-generated coding exercise'}
                   </p>
                 </div>
 
                 {/* Status */}
                 <div className="flex-shrink-0">
                   {status === 'completed' && (
-                    <div className="flex items-center gap-1 text-green-600">
+                    <div className="flex items-center gap-2 text-primary-600 bg-primary-50 px-3 py-1.5 rounded-lg border-2 border-primary-100">
                       <CheckCircle className="w-5 h-5" />
-                      <span className="text-xs font-bold">Done</span>
+                      <span className="text-xs font-black uppercase tracking-tight">Done</span>
                     </div>
                   )}
                   {status === 'future' && (
-                    <div className="flex items-center gap-1 text-gray-400">
+                    <div className="flex items-center gap-2 text-gray-400 bg-gray-100 px-3 py-1.5 rounded-lg border-2 border-gray-200">
                       <Lock className="w-4 h-4" />
-                      <span className="text-xs font-bold">Locked</span>
+                      <span className="text-xs font-black uppercase tracking-tight">Locked</span>
                     </div>
                   )}
                   {(status === 'today' || status === 'missed') && (
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 group-hover:bg-primary-100 transition-colors">
+                      <ChevronRight className="w-6 h-6 text-gray-400 group-hover:text-primary-600" />
+                    </div>
                   )}
                 </div>
               </div>
@@ -179,24 +182,24 @@ function DailyChallengeHistoryContent() {
       </div>
 
       {/* Legend */}
-      <div className="mt-8 p-4 border-2 border-gray-200 rounded-lg bg-gray-50">
-        <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase">Legend</h3>
-        <div className="grid grid-cols-2 gap-3 text-sm">
+      <div className="mt-12 p-6 border-2 border-gray-200 rounded-2xl bg-white shadow-sm">
+        <h3 className="text-xs font-black text-gray-400 mb-4 uppercase tracking-widest">Status Legend</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-accent-500"></div>
-            <span className="text-gray-600">Today's challenge</span>
+            <div className="w-3 h-3 rounded-full bg-gray-900"></div>
+            <span className="font-bold text-gray-700">Today</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            <span className="text-gray-600">Completed</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-gray-400"></div>
-            <span className="text-gray-600">Available to try</span>
+            <div className="w-3 h-3 rounded-full bg-primary-500"></div>
+            <span className="font-bold text-gray-700">Completed</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-gray-300"></div>
-            <span className="text-gray-600">Future challenge</span>
+            <span className="font-bold text-gray-700">Available</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-gray-100"></div>
+            <span className="font-bold text-gray-700">Locked</span>
           </div>
         </div>
       </div>
