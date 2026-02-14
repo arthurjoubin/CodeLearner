@@ -16,10 +16,65 @@ const languagesWithStats = supportedLanguages.map(lang => {
     }
   };
 });
+
+// Calculate today's language for the daily challenge banner
+const baseDate = new Date('2024-01-01');
+const currentDate = new Date();
+const dayIndex = Math.floor(
+  (currentDate.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24)
+);
+const dailyLanguage = supportedLanguages[dayIndex % supportedLanguages.length];
+const dailyDifficulty = (['easy', 'medium', 'hard'] as const)[dayIndex % 3];
+
+const difficultyLabels: Record<string, string> = {
+  easy: 'Easy',
+  medium: 'Medium',
+  hard: 'Hard'
+};
+
+const difficultyColors: Record<string, string> = {
+  easy: 'text-green-600 bg-green-100 border-green-300',
+  medium: 'text-yellow-600 bg-yellow-100 border-yellow-300',
+  hard: 'text-red-600 bg-red-100 border-red-300'
+};
 ---
 
 <MainLayout title="CodeCraft - Practice Programming">
   <div class="page-enter">
+    <!-- Daily Challenge Banner -->
+    <a href="/codecraft/daily" class="block mb-6 group">
+      <div class="relative overflow-hidden rounded-lg border-2 border-accent-500 bg-gradient-to-r from-accent-50 to-accent-100 p-4 hover:shadow-lg transition-shadow">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-lg bg-accent-500 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h2 class="text-lg font-black text-gray-900 uppercase">Daily Challenge</h2>
+              <svg class="w-4 h-4 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+            </div>
+            <p class="text-gray-600 text-sm">
+              Today's challenge: <span class="font-bold">{dailyLanguage.name}</span> • 
+              <span class={`text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border ml-2 ${difficultyColors[dailyDifficulty]}`}>
+                {difficultyLabels[dailyDifficulty]}
+              </span>
+              <span class="ml-2 text-accent-600 font-bold">+75 XP</span>
+            </p>
+          </div>
+          <div class="hidden sm:flex items-center gap-2 text-accent-600 font-bold text-sm uppercase">
+            Start Challenge
+            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </a>
+
     <!-- Header -->
     <div class="mb-8">
       <PageTitle>

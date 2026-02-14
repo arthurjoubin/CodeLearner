@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   CheckCircle,
   XCircle,
@@ -6,21 +6,22 @@ import {
   Loader,
   Play,
   RotateCcw,
+  Calendar,
 } from 'lucide-react';
 import { useUser, UserProvider } from '../context/UserContext';
 import { useCodeCraftExercise } from '../hooks/useCodeCraftExercise';
 import { CodeCraftEditor } from '../components/CodeCraftEditor';
 import { LanguageExercise } from '../types';
-import { supportedLanguages, getExercisesByLanguage } from '../data/language-exercises';
+import { supportedLanguages } from '../data/language-exercises';
 import Breadcrumb from '../components/Breadcrumb';
 import { PageTitle } from '../components/PageTitle';
 import { NavButton } from '../components/NavButton';
-import { CodeCraftCompletionModal } from '../components/completion-modals';
 import CodeCraftChat from '../components/CodeCraftChat';
+import { api } from '../services/api';
 
-interface CodeCraftExercisePageProps {
-  language: typeof supportedLanguages[number] | undefined;
-  exercise: LanguageExercise | undefined;
+interface DailyChallengeData {
+  date: string;
+  exercise: LanguageExercise;
 }
 
 const difficultyColors = {
@@ -29,19 +30,65 @@ const difficultyColors = {
   hard: 'text-red-600 bg-red-50 border-red-500',
 };
 
-function CodeCraftExercisePageContent({
-  language,
-  exercise,
-}: CodeCraftExercisePageProps) {
-  const { user, completeExercise, isExerciseCompleted } = useUser();
+function CodeCraftDailyPageContent() {
+  const { isGuest, isExerciseCompleted, completeExercise, addXp, user } = useUser();
+  const [challenge, setChallenge] = useState<DailyChallengeData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
 
-  const handleValidateSuccess = useCallback(() => {
-    if (exercise && !isExerciseCompleted(exercise.id)) {
-      completeExercise(exercise.id);
+  useEffect(() => {
+    // Wait for auth state to be determined
+    if (user === undefined) {
+      return; // Still loading auth state
     }
-    setCompleted(true);
-  }, [exercise, completeExercise, isExerciseCompleted]);
+
+    if (isGuest) {
+      setError('Log in to access the daily challenge!');
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const fetchDaily = async () => {
+      try {
+        const result = await api.getDailyChallenge();
+        if (!cancelled) {
+          setChallenge(result);
+          // Check if already completed
+          if (isExerciseCompleted(`daily-${result.date}`)) {
+            setCompleted(true);
+          }
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'Failed to load daily challenge');
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchDaily();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isGuest, isExerciseCompleted, user]);
+
+  const handleValidateSuccess = useCallback(() => {
+    if (challenge) {
+      const exerciseId = `daily-${challenge.date}`;
+      if (!isExerciseCompleted(exerciseId)) {
+        completeExercise(exerciseId);
+        addXp(75);
+      }
+      setCompleted(true);
+    }
+  }, [challenge, isExerciseCompleted, completeExercise, addXp]);
 
   const {
     code,
@@ -61,57 +108,94 @@ function CodeCraftExercisePageContent({
     clearFeedback,
     clearHint,
   } = useCodeCraftExercise({
-    exercise: exercise || null,
-    languageId: language?.id || 'python',
-    storagePrefix: 'codecraft',
+    exercise: challenge?.exercise || null,
+    languageId: challenge?.exercise.language || 'python',
+    storagePrefix: 'codecraft-daily',
     onValidateSuccess: handleValidateSuccess,
   });
 
-  // Get navigation
-  const exercises = language ? getExercisesByLanguage(language.id) : [];
-  const currentIndex = exercise ? exercises.findIndex(e => e.id === exercise.id) : -1;
-  const nextExercise = exercises[currentIndex + 1];
-  const previousExercise = exercises[currentIndex - 1];
-  const alreadyCompleted = exercise && user ? isExerciseCompleted(exercise.id) : false;
-
-  if (!exercise || !language) {
+  // Loading State
+  if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-center">
-          <p className="text-gray-500 font-bold">Exercise not found</p>
-          <a href="/codecraft" className="text-primary-600 hover:underline text-xs font-bold uppercase mt-2 inline-block">
-            Back to CodeCraft
-          </a>
+      <div className="page-enter">
+        <Breadcrumb items={[
+          { label: 'CodeCraft', href: '/codecraft' },
+          { label: 'Daily Challenge' },
+        ]} />
+
+        <div className="flex flex-col items-center justify-center h-96">
+          <Loader className="w-12 h-12 animate-spin text-primary-600 mb-4" />
+          <p className="text-gray-600 font-bold">Loading daily challenge...</p>
         </div>
       </div>
     );
   }
+
+  // Error State
+  if (error || !challenge) {
+    return (
+      <div className="page-enter">
+        <Breadcrumb items={[
+          { label: 'CodeCraft', href: '/codecraft' },
+          { label: 'Daily Challenge' },
+        ]} />
+
+        <div className="flex flex-col items-center justify-center h-96">
+          <p className="text-red-600 font-bold mb-4">{error || 'Failed to load daily challenge'}</p>
+          <NavButton
+            href="/codecraft"
+            label="Back to CodeCraft"
+            variant="outline"
+            icon="arrow"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  const exercise = challenge.exercise;
+  const language = supportedLanguages.find(l => l.id === exercise.language);
+  const alreadyCompleted = isExerciseCompleted(`daily-${challenge.date}`);
 
   return (
     <div className="page-enter pb-20 lg:pb-0">
       {/* Breadcrumb */}
       <Breadcrumb items={[
         { label: 'CodeCraft', href: '/codecraft' },
-        { label: language.name, href: `/codecraft/${language.id}` },
-        { label: exercise.title },
+        { label: 'Daily Challenge' },
       ]} />
 
-      {/* Title + Badges */}
+      {/* Header */}
       <div className="mb-4 lg:mb-6">
         <PageTitle>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-xl font-black text-gray-900 uppercase">{exercise.title}</h1>
-            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 ${difficultyColors[exercise.difficulty]}`}>
-              {exercise.difficulty}
-            </span>
-            {alreadyCompleted && (
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 text-primary-600 bg-primary-50 border-primary-500">
-                Completed
-              </span>
-            )}
+            <Calendar className="w-6 h-6 text-primary-600" />
+            <h1 className="text-xl font-black text-gray-900 uppercase">Daily Challenge</h1>
+            <span className="text-sm text-gray-500">{challenge.date}</span>
           </div>
         </PageTitle>
-        <p className="text-gray-600 mt-1">{exercise.description}</p>
+
+        <div className="flex items-center gap-2 mt-2 flex-wrap">
+          {language && (
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 bg-gray-100 text-gray-700 border-gray-300">
+              {language.name}
+            </span>
+          )}
+          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 ${difficultyColors[exercise.difficulty]}`}>
+            {exercise.difficulty}
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 border-primary-200 bg-primary-50 text-primary-600">
+            +75 XP
+          </span>
+          {alreadyCompleted && (
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 text-green-600 bg-green-50 border-green-500">
+              Completed Today
+            </span>
+          )}
+        </div>
+
+        <h2 className="text-lg font-bold text-gray-900 mt-3">{exercise.title}</h2>
+        <p className="text-gray-600">{exercise.description}</p>
       </div>
 
       {/* Main Layout - Side by side on desktop */}
@@ -163,7 +247,7 @@ function CodeCraftExercisePageContent({
           <div className="flex-1 min-h-[400px]">
             <CodeCraftEditor
               code={code}
-              languageId={language.id}
+              languageId={exercise.language}
               isCodeDirty={isCodeDirty}
               onChange={handleCodeChange}
               onReset={handleResetCode}
@@ -175,6 +259,14 @@ function CodeCraftExercisePageContent({
           <div className={`border-2 border-gray-300 bg-gray-900 rounded-lg flex flex-col transition-all duration-300 ${output ? 'h-48' : 'h-12'}`}>
             <div className="px-4 py-2 bg-gray-800 border-b-2 border-gray-300 flex items-center justify-between">
               <span className="text-xs font-bold uppercase text-white">Output</span>
+              {output && (
+                <button 
+                  onClick={() => {/* Add clear output functionality if needed */}}
+                  className="text-xs text-gray-400 hover:text-white"
+                >
+                  Clear
+                </button>
+              )}
             </div>
             <div className="flex-1 p-4 overflow-auto">
               {output ? (
@@ -197,11 +289,11 @@ function CodeCraftExercisePageContent({
             </button>
             <button
               onClick={handleValidate}
-              disabled={isValidating}
-              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors"
+              disabled={isValidating || alreadyCompleted}
+              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors disabled:opacity-50"
             >
               {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-              Validate
+              {alreadyCompleted ? 'Already Completed' : 'Validate'}
             </button>
             <button
               onClick={handleGetHint}
@@ -214,35 +306,17 @@ function CodeCraftExercisePageContent({
             <button
               onClick={handleResetCode}
               className="inline-flex items-center gap-2 px-4 py-3 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
-              title="Reset code to original"
             >
               <RotateCcw className="w-4 h-4" />
               Reset
             </button>
             <div className="flex-1"></div>
-            {/* Navigation Buttons */}
-            {previousExercise && (
-              <NavButton
-                href={`/codecraft/${language.id}/${previousExercise.id}`}
-                label="Previous"
-                variant="outline"
-                icon="none"
-              />
-            )}
             <NavButton
-              href={`/codecraft/${language.id}`}
-              label="All"
+              href="/codecraft"
+              label="Back"
               variant="outline"
-              icon="none"
+              icon="arrow"
             />
-            {nextExercise && (
-              <NavButton
-                href={`/codecraft/${language.id}/${nextExercise.id}`}
-                label="Next"
-                variant="dark"
-                icon="arrow"
-              />
-            )}
           </div>
         </div>
       </div>
@@ -287,16 +361,14 @@ function CodeCraftExercisePageContent({
             className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors min-h-[44px]"
           >
             {isRunning ? <Loader className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
-            <span className="hidden sm:inline">Run</span>
           </button>
           <button
             onClick={handleValidate}
-            disabled={isValidating}
-            className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors flex-1 justify-center min-h-[44px]"
+            disabled={isValidating || alreadyCompleted}
+            className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold bg-primary-600 text-white rounded-lg border-2 border-primary-600 hover:bg-primary-700 transition-colors flex-1 justify-center min-h-[44px] disabled:opacity-50"
           >
             {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-            <span className="hidden sm:inline">Validate</span>
-            <span className="sm:hidden">Validate</span>
+            <span className="hidden sm:inline">{alreadyCompleted ? 'Completed' : 'Validate'}</span>
           </button>
           <button
             onClick={handleGetHint}
@@ -304,38 +376,58 @@ function CodeCraftExercisePageContent({
             className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors min-h-[44px]"
           >
             {isLoadingHint ? <Loader className="w-4 h-4 animate-spin" /> : <Lightbulb className="w-4 h-4" />}
-            <span className="hidden sm:inline">Hint</span>
           </button>
         </div>
       </div>
 
       {/* Completion Modal */}
       {completed && (
-        <CodeCraftCompletionModal
-          isOpen={true}
-          alreadyCompleted={alreadyCompleted}
-          hasNextExercise={!!nextExercise}
-          nextExerciseUrl={nextExercise ? `/codecraft/${language.id}/${nextExercise.id}` : undefined}
-          languageUrl={`/codecraft/${language.id}`}
-          onStay={() => setCompleted(false)}
-        />
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-gray-300 rounded-lg max-w-md w-full p-6 shadow-2xl">
+            <div className="text-center mb-6">
+              <div className="text-6xl mb-3">🎉</div>
+              <h2 className="text-2xl font-black text-gray-900 uppercase">Daily Challenge Complete!</h2>
+              <p className="text-gray-600 mt-2">
+                {alreadyCompleted 
+                  ? "You've already completed today's challenge. Come back tomorrow!"
+                  : "Great job! You earned 75 XP. See you tomorrow!"}
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <NavButton
+                href="/codecraft"
+                label="Back to CodeCraft"
+                variant="primary"
+                icon="arrow"
+              />
+              <button
+                onClick={() => setCompleted(false)}
+                className="w-full py-2.5 px-5 text-sm font-bold text-gray-600 hover:text-gray-900 transition-colors uppercase"
+              >
+                Stay Here
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* AI Chat */}
-      <CodeCraftChat
-        language={language}
-        exercise={exercise}
-        code={code}
-      />
+      {language && (
+        <CodeCraftChat
+          language={language}
+          exercise={exercise}
+          code={code}
+        />
+      )}
     </div>
   );
 }
 
 // Wrapper component with UserProvider
-export default function CodeCraftExercisePageWrapper(props: CodeCraftExercisePageProps) {
+export default function CodeCraftDailyPageWrapper() {
   return (
     <UserProvider>
-      <CodeCraftExercisePageContent {...props} />
+      <CodeCraftDailyPageContent />
     </UserProvider>
   );
 }

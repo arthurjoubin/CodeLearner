@@ -45,6 +45,27 @@ if (!language) {
     <!-- Exercise List (React Island with progress) -->
     <CodeCraftExerciseList client:load exercises={exercises} language={language} />
 
+    <!-- Practice Mode Card -->
+    <a
+      href={`/codecraft/practice/${language.id}`}
+      class="mt-6 block border-2 border-dashed border-primary-300 bg-primary-50/50 rounded-lg p-4 hover:bg-primary-50 hover:border-primary-400 transition-colors group"
+    >
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 group-hover:bg-primary-200 transition-colors">
+          <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-bold text-gray-900">Generate Practice Exercise</h3>
+          <p class="text-sm text-gray-600">AI-powered exercises with unlimited generation</p>
+        </div>
+        <svg class="w-5 h-5 text-primary-400 group-hover:text-primary-600 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+    </a>
+
     <!-- Back to languages -->
     <a 
       href="/codecraft" 

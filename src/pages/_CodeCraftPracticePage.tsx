@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   CheckCircle,
   XCircle,
@@ -6,42 +6,92 @@ import {
   Loader,
   Play,
   RotateCcw,
+  Sparkles,
 } from 'lucide-react';
 import { useUser, UserProvider } from '../context/UserContext';
 import { useCodeCraftExercise } from '../hooks/useCodeCraftExercise';
 import { CodeCraftEditor } from '../components/CodeCraftEditor';
 import { LanguageExercise } from '../types';
-import { supportedLanguages, getExercisesByLanguage } from '../data/language-exercises';
+import { supportedLanguages } from '../data/language-exercises';
 import Breadcrumb from '../components/Breadcrumb';
 import { PageTitle } from '../components/PageTitle';
 import { NavButton } from '../components/NavButton';
-import { CodeCraftCompletionModal } from '../components/completion-modals';
 import CodeCraftChat from '../components/CodeCraftChat';
+import { api } from '../services/api';
 
-interface CodeCraftExercisePageProps {
-  language: typeof supportedLanguages[number] | undefined;
-  exercise: LanguageExercise | undefined;
+interface CodeCraftPracticePageProps {
+  language: typeof supportedLanguages[number];
 }
 
-const difficultyColors = {
-  easy: 'text-green-600 bg-green-50 border-green-500',
-  medium: 'text-yellow-600 bg-yellow-50 border-yellow-500',
-  hard: 'text-red-600 bg-red-50 border-red-500',
+type PracticeState = 
+  | { type: 'selection' }
+  | { type: 'loading' }
+  | { type: 'exercise'; exercise: LanguageExercise };
+
+const difficultyConfig = {
+  easy: {
+    label: 'Easy',
+    description: 'Basic syntax, simple operations',
+    xp: 50,
+    color: 'text-green-600 bg-green-50 border-green-500 hover:bg-green-100',
+  },
+  medium: {
+    label: 'Medium',
+    description: 'Combine 2-3 concepts',
+    xp: 75,
+    color: 'text-yellow-600 bg-yellow-50 border-yellow-500 hover:bg-yellow-100',
+  },
+  hard: {
+    label: 'Hard',
+    description: 'Algorithm design, complex problems',
+    xp: 100,
+    color: 'text-red-600 bg-red-50 border-red-500 hover:bg-red-100',
+  },
 };
 
-function CodeCraftExercisePageContent({
-  language,
-  exercise,
-}: CodeCraftExercisePageProps) {
-  const { user, completeExercise, isExerciseCompleted } = useUser();
+function CodeCraftPracticePageContent({ language }: CodeCraftPracticePageProps) {
+  const { isGuest, addXp, user } = useUser();
+  const [state, setState] = useState<PracticeState>({ type: 'selection' });
   const [completed, setCompleted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Wait for auth to be determined before allowing generation
+  useEffect(() => {
+    // Auth check is handled by isGuest
+  }, [user]);
+
+  const handleGenerate = async (difficulty: 'easy' | 'medium' | 'hard') => {
+    if (isGuest) {
+      setError('Log in to generate practice exercises!');
+      return;
+    }
+
+    setState({ type: 'loading' });
+    setError(null);
+
+    try {
+      const result = await api.generateExercise(language.id, difficulty);
+      setState({ type: 'exercise', exercise: result.exercise });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to generate exercise');
+      setState({ type: 'selection' });
+    }
+  };
 
   const handleValidateSuccess = useCallback(() => {
-    if (exercise && !isExerciseCompleted(exercise.id)) {
-      completeExercise(exercise.id);
+    if (state.type === 'exercise') {
+      addXp(state.exercise.xpReward);
+      setCompleted(true);
     }
-    setCompleted(true);
-  }, [exercise, completeExercise, isExerciseCompleted]);
+  }, [state, addXp]);
+
+  const handleGenerateAnother = () => {
+    setState({ type: 'selection' });
+    setCompleted(false);
+    setError(null);
+  };
+
+  const currentExercise = state.type === 'exercise' ? state.exercise : null;
 
   const {
     code,
@@ -61,31 +111,85 @@ function CodeCraftExercisePageContent({
     clearFeedback,
     clearHint,
   } = useCodeCraftExercise({
-    exercise: exercise || null,
-    languageId: language?.id || 'python',
-    storagePrefix: 'codecraft',
+    exercise: currentExercise,
+    languageId: language.id,
+    storagePrefix: 'codecraft-practice',
     onValidateSuccess: handleValidateSuccess,
   });
 
-  // Get navigation
-  const exercises = language ? getExercisesByLanguage(language.id) : [];
-  const currentIndex = exercise ? exercises.findIndex(e => e.id === exercise.id) : -1;
-  const nextExercise = exercises[currentIndex + 1];
-  const previousExercise = exercises[currentIndex - 1];
-  const alreadyCompleted = exercise && user ? isExerciseCompleted(exercise.id) : false;
-
-  if (!exercise || !language) {
+  // Selection State
+  if (state.type === 'selection') {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-center">
-          <p className="text-gray-500 font-bold">Exercise not found</p>
-          <a href="/codecraft" className="text-primary-600 hover:underline text-xs font-bold uppercase mt-2 inline-block">
-            Back to CodeCraft
-          </a>
+      <div className="page-enter">
+        <Breadcrumb items={[
+          { label: 'CodeCraft', href: '/codecraft' },
+          { label: language.name, href: `/codecraft/${language.id}` },
+          { label: 'Practice' },
+        ]} />
+
+        <PageTitle>
+          <h1 className="text-2xl font-black text-gray-900 uppercase">Practice Mode</h1>
+        </PageTitle>
+
+        <p className="text-gray-600 mb-6">
+          Generate unlimited AI-powered exercises for {language.name}. Choose your difficulty level.
+        </p>
+
+        {error && (
+          <div className="mb-6 p-4 border-2 border-red-500 bg-red-50 rounded-lg">
+            <p className="text-red-700 text-sm">{error}</p>
+          </div>
+        )}
+
+        <div className="grid md:grid-cols-3 gap-4">
+          {(Object.keys(difficultyConfig) as Array<keyof typeof difficultyConfig>).map((diff) => (
+            <button
+              key={diff}
+              onClick={() => handleGenerate(diff)}
+              className={`p-6 border-2 rounded-lg text-left transition-colors ${difficultyConfig[diff].color}`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-lg font-black uppercase">{difficultyConfig[diff].label}</span>
+                <span className="text-xs font-bold">+{difficultyConfig[diff].xp} XP</span>
+              </div>
+              <p className="text-sm opacity-80">{difficultyConfig[diff].description}</p>
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-8 flex items-center gap-2">
+          <NavButton
+            href={`/codecraft/${language.id}`}
+            label="Back to Exercises"
+            variant="outline"
+            icon="arrow"
+          />
         </div>
       </div>
     );
   }
+
+  // Loading State
+  if (state.type === 'loading') {
+    return (
+      <div className="page-enter">
+        <Breadcrumb items={[
+          { label: 'CodeCraft', href: '/codecraft' },
+          { label: language.name, href: `/codecraft/${language.id}` },
+          { label: 'Practice' },
+        ]} />
+
+        <div className="flex flex-col items-center justify-center h-96">
+          <Loader className="w-12 h-12 animate-spin text-primary-600 mb-4" />
+          <p className="text-gray-600 font-bold">Generating exercise...</p>
+          <p className="text-gray-500 text-sm">This may take a few seconds</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Exercise State
+  const exercise = state.exercise;
 
   return (
     <div className="page-enter pb-20 lg:pb-0">
@@ -93,7 +197,7 @@ function CodeCraftExercisePageContent({
       <Breadcrumb items={[
         { label: 'CodeCraft', href: '/codecraft' },
         { label: language.name, href: `/codecraft/${language.id}` },
-        { label: exercise.title },
+        { label: 'Practice' },
       ]} />
 
       {/* Title + Badges */}
@@ -101,14 +205,12 @@ function CodeCraftExercisePageContent({
         <PageTitle>
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-xl font-black text-gray-900 uppercase">{exercise.title}</h1>
-            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 ${difficultyColors[exercise.difficulty]}`}>
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 ${difficultyConfig[exercise.difficulty].color}`}>
               {exercise.difficulty}
             </span>
-            {alreadyCompleted && (
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 text-primary-600 bg-primary-50 border-primary-500">
-                Completed
-              </span>
-            )}
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 border-primary-200 bg-primary-50 text-primary-600">
+              +{exercise.xpReward} XP
+            </span>
           </div>
         </PageTitle>
         <p className="text-gray-600 mt-1">{exercise.description}</p>
@@ -214,35 +316,18 @@ function CodeCraftExercisePageContent({
             <button
               onClick={handleResetCode}
               className="inline-flex items-center gap-2 px-4 py-3 text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors"
-              title="Reset code to original"
             >
               <RotateCcw className="w-4 h-4" />
               Reset
             </button>
             <div className="flex-1"></div>
-            {/* Navigation Buttons */}
-            {previousExercise && (
-              <NavButton
-                href={`/codecraft/${language.id}/${previousExercise.id}`}
-                label="Previous"
-                variant="outline"
-                icon="none"
-              />
-            )}
-            <NavButton
-              href={`/codecraft/${language.id}`}
-              label="All"
-              variant="outline"
-              icon="none"
-            />
-            {nextExercise && (
-              <NavButton
-                href={`/codecraft/${language.id}/${nextExercise.id}`}
-                label="Next"
-                variant="dark"
-                icon="arrow"
-              />
-            )}
+            <button
+              onClick={handleGenerateAnother}
+              className="inline-flex items-center gap-2 px-4 py-3 text-sm font-bold bg-accent-600 text-white rounded-lg border-2 border-accent-600 hover:bg-accent-700 transition-colors"
+            >
+              <Sparkles className="w-4 h-4" />
+              Generate Another
+            </button>
           </div>
         </div>
       </div>
@@ -287,7 +372,6 @@ function CodeCraftExercisePageContent({
             className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors min-h-[44px]"
           >
             {isRunning ? <Loader className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
-            <span className="hidden sm:inline">Run</span>
           </button>
           <button
             onClick={handleValidate}
@@ -296,7 +380,6 @@ function CodeCraftExercisePageContent({
           >
             {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
             <span className="hidden sm:inline">Validate</span>
-            <span className="sm:hidden">Validate</span>
           </button>
           <button
             onClick={handleGetHint}
@@ -304,38 +387,61 @@ function CodeCraftExercisePageContent({
             className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition-colors min-h-[44px]"
           >
             {isLoadingHint ? <Loader className="w-4 h-4 animate-spin" /> : <Lightbulb className="w-4 h-4" />}
-            <span className="hidden sm:inline">Hint</span>
           </button>
         </div>
       </div>
 
       {/* Completion Modal */}
       {completed && (
-        <CodeCraftCompletionModal
-          isOpen={true}
-          alreadyCompleted={alreadyCompleted}
-          hasNextExercise={!!nextExercise}
-          nextExerciseUrl={nextExercise ? `/codecraft/${language.id}/${nextExercise.id}` : undefined}
-          languageUrl={`/codecraft/${language.id}`}
-          onStay={() => setCompleted(false)}
-        />
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-gray-300 rounded-lg max-w-md w-full p-6 shadow-2xl">
+            <div className="text-center mb-6">
+              <div className="text-6xl mb-3">🎉</div>
+              <h2 className="text-2xl font-black text-gray-900 uppercase">Exercise Complete!</h2>
+              <p className="text-gray-600 mt-2">Great job! You earned {exercise.xpReward} XP.</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={handleGenerateAnother}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold bg-accent-600 text-white rounded-lg border-2 border-accent-600 hover:bg-accent-700 transition-colors"
+              >
+                <Sparkles className="w-4 h-4" />
+                Generate Another
+              </button>
+              <NavButton
+                href={`/codecraft/${language.id}`}
+                label={`Back to ${language.name}`}
+                variant="outline"
+                icon="none"
+              />
+              <button
+                onClick={() => setCompleted(false)}
+                className="w-full py-2.5 px-5 text-sm font-bold text-gray-600 hover:text-gray-900 transition-colors uppercase"
+              >
+                Stay Here
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* AI Chat */}
-      <CodeCraftChat
-        language={language}
-        exercise={exercise}
-        code={code}
-      />
+      {currentExercise && (
+        <CodeCraftChat
+          language={language}
+          exercise={currentExercise}
+          code={code}
+        />
+      )}
     </div>
   );
 }
 
 // Wrapper component with UserProvider
-export default function CodeCraftExercisePageWrapper(props: CodeCraftExercisePageProps) {
+export default function CodeCraftPracticePageWrapper(props: CodeCraftPracticePageProps) {
   return (
     <UserProvider>
-      <CodeCraftExercisePageContent {...props} />
+      <CodeCraftPracticePageContent {...props} />
     </UserProvider>
   );
 }

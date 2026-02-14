@@ -388,11 +388,11 @@ export function HomePageContent() {
   };
 
   return (
-    <div className="page-enter bg-gradient-to-b from-gray-100 to-white min-h-[calc(100vh-120px)] pb-4">
+    <div className="page-enter bg-gray-50 min-h-[calc(100vh-120px)] pb-4">
       {pathResumes.length > 0 && (
         <div className="mb-8">
           <SectionTitle>Continue Learning</SectionTitle>
-          <div className="space-y-3 mt-3">
+          <div className="space-y-3">
             {pathResumes.map(resume => {
               const pathData = learningPaths.find(p => p.id === resume.pathId);
               const courseModule = modules.find(m => m.id === resume.nextLesson.moduleId);
@@ -403,14 +403,14 @@ export function HomePageContent() {
               const isExpanded = expandedPath === resume.pathId;
 
               return (
-                <div
-                  key={resume.pathId}
-                  className="border-2 border-gray-300 rounded-lg hover:border-primary-500 hover:shadow-md transition-all bg-white overflow-hidden"
-                >
+                  <div
+                    key={resume.pathId}
+                    className="border border-gray-300 rounded-xl hover:border-gray-400 transition-all duration-200 bg-transparent overflow-hidden"
+                  >
                   {/* Header - Clickable */}
                   <button
                     onClick={() => toggleExpand(resume.pathId)}
-                    className="w-full p-4 text-left hover:bg-gray-50 transition-colors"
+                    className="w-full p-4 text-left hover:bg-gray-100/50 transition-colors duration-200"
                   >
                     <div className="space-y-3">
                       {/* Header row */}
@@ -471,7 +471,7 @@ export function HomePageContent() {
 
                   {/* Expanded Content - Single Line */}
                   <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <div className="px-4 pb-4 pt-2 border-t border-gray-100 bg-gray-50/50">
+                    <div className="px-4 pb-4 pt-2 border-t border-gray-200/50 bg-gray-100/30">
                       <div className="flex items-center gap-4">
                         {/* Module */}
                         <div className="flex-1 min-w-0">
@@ -488,7 +488,7 @@ export function HomePageContent() {
                         {/* CTA */}
                         <a
                           href={`/lesson/${resume.nextLesson.id}`}
-                          className="flex items-center gap-1 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold rounded-lg transition-colors flex-shrink-0"
+                          className="flex items-center gap-1 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold rounded-lg transition-colors flex-shrink-0 shadow-[0_1px_2px_rgba(34,197,94,0.3)]"
                         >
                           Continue
                           <ArrowRight className="w-4 h-4" />

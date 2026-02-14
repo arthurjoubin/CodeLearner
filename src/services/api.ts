@@ -1,4 +1,4 @@
-import { User, ChatMessage, ValidationResult } from '../types';
+import { User, ChatMessage, ValidationResult, LanguageExercise } from '../types';
 
 const WORKER_URL = 'https://codelearner-api.arthurjoubin.workers.dev';
 const LOCAL_URL = 'http://localhost:3001';
@@ -157,6 +157,34 @@ export const api = {
     if (!res.ok) {
       const data = await res.json();
       throw new Error(data.error || 'Code execution failed');
+    }
+    return res.json();
+  },
+
+  // CodeCraft endpoints
+  async generateExercise(language: string, difficulty: 'easy' | 'medium' | 'hard'): Promise<{ exercise: LanguageExercise }> {
+    const baseUrl = import.meta.env.DEV ? LOCAL_URL : WORKER_URL;
+    const res = await fetch(`${baseUrl}/api/codecraft/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ language, difficulty }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Failed to generate exercise');
+    }
+    return res.json();
+  },
+
+  async getDailyChallenge(): Promise<{ date: string; exercise: LanguageExercise }> {
+    const baseUrl = import.meta.env.DEV ? LOCAL_URL : WORKER_URL;
+    const res = await fetch(`${baseUrl}/api/codecraft/daily`, {
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Failed to get daily challenge');
     }
     return res.json();
   },

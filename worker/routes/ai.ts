@@ -1,36 +1,11 @@
 import type { Env } from '../types';
 import { json, error, getAuthenticatedUserId } from '../utils';
 import { isRateLimited } from '../rate-limit';
-
-const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
+import { callDeepSeek } from '../deepseek';
 
 // Rate limit: 20 AI requests per user per minute
 const AI_RATE_LIMIT = 20;
 const AI_RATE_WINDOW = 60 * 1000;
-
-async function callDeepSeek(apiKey: string, messages: Array<{ role: string; content: string }>, maxTokens = 500) {
-  const response = await fetch(DEEPSEEK_API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: 'deepseek-chat',
-      messages,
-      max_tokens: maxTokens,
-      temperature: 0.7,
-    }),
-  });
-
-  if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`DeepSeek API error: ${err}`);
-  }
-
-  const data = await response.json() as { choices: Array<{ message: { content: string } }> };
-  return data.choices[0].message.content;
-}
 
 export async function handleAi(path: string, method: string, request: Request, origin: string | null, env: Env): Promise<Response | null> {
 
