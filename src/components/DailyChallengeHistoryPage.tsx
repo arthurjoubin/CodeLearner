@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar, ChevronRight, Lock, CheckCircle, Loader } from 'lucide-react';
 import { api } from '../services/api';
-import { useUser } from '../context/UserContext';
+import { useUser, UserProvider } from '../context/UserContext';
 import Breadcrumb from './Breadcrumb';
 import { PageTitle } from './PageTitle';
 
@@ -33,7 +33,7 @@ const languageLabels: Record<string, string> = {
   go: 'Go',
 };
 
-export default function DailyChallengeHistoryPage() {
+function DailyChallengeHistoryContent() {
   const { isExerciseCompleted, loading: userLoading } = useUser();
   const [history, setHistory] = useState<ChallengeHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -201,5 +201,14 @@ export default function DailyChallengeHistoryPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Wrapper component with UserProvider
+export default function DailyChallengeHistoryPage() {
+  return (
+    <UserProvider>
+      <DailyChallengeHistoryContent />
+    </UserProvider>
   );
 }

@@ -1,7 +1,7 @@
 {
   "module": {
     "id": "deployment-fundamentals",
-    "courseId": "deployment",
+    "courseId": "production",
     "title": "Deployment Fundamentals",
     "description": "Learn the core concepts of deploying web applications",
     "icon": "Rocket",

@@ -274,9 +274,9 @@ function CodeCraftDailyPageContent() {
         </div>
 
         {/* Right Panel - Editor & Output */}
-        <div className="flex flex-col gap-4 min-h-[calc(100vh-280px)] lg:min-h-[calc(100vh-200px)] pb-20 lg:pb-0">
-          {/* Editor - Takes available space */}
-          <div className="flex-1 min-h-[300px] lg:min-h-[400px]">
+        <div className="flex flex-col gap-4 pb-20 lg:pb-0">
+          {/* Editor - Fixed height */}
+          <div className="h-[400px] lg:h-[500px]">
             <CodeCraftEditor
               code={code}
               languageId={exercise.language}
@@ -287,9 +287,9 @@ function CodeCraftDailyPageContent() {
             />
           </div>
 
-          {/* Output Panel - Expands when there's output */}
-          <div className={`border-2 border-gray-300 bg-gray-900 rounded-lg flex flex-col transition-all duration-300 ${output ? 'min-h-[200px] h-[200px]' : 'min-h-[48px] h-[48px]'}`}>
-            <div className="px-4 py-2 bg-gray-800 border-b-2 border-gray-300 flex items-center justify-between flex-shrink-0">
+          {/* Output Panel - Auto height based on content */}
+          <div className="border-2 border-gray-300 bg-gray-900 rounded-lg">
+            <div className="px-4 py-2 bg-gray-800 border-b-2 border-gray-300 flex items-center justify-between">
               <span className="text-xs font-bold uppercase text-white">Output</span>
               {output && (
                 <button 
@@ -300,7 +300,7 @@ function CodeCraftDailyPageContent() {
                 </button>
               )}
             </div>
-            <div className="flex-1 p-4 overflow-auto">
+            <div className="p-4">
               {output ? (
                 <pre className="text-sm font-mono text-green-400 whitespace-pre-wrap">{output}</pre>
               ) : (

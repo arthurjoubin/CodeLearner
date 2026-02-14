@@ -6,7 +6,7 @@
     "icon": "Target",
     "requiredXp": 2100,
     "color": "from-emerald-400 to-emerald-600",
-    "courseId": "frontend-production"
+    "courseId": "production"
   },
   "lessons": [
     {

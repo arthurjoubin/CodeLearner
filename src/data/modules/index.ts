@@ -399,8 +399,10 @@ export const LEARNING_PATHS: Record<string, LearningPathConfig> = {
   },
   'fullstack': {
     name: 'Fullstack',
-    description: 'Modern full-stack with Next.js',
-    courses: ['nextjs', 'architecture-patterns', 'deployment'],
+    description: 'Modern full-stack with Next.js and production deployment',
+    courses: ['nextjs', 'production'],
+    // Note: 'production' course combines architecture-patterns + deployment
+    // WebSockets moved to node-express (backend path) as it's a backend technology
     prerequisites: ['frontend', 'backend'],
     color: 'from-orange-500 to-red-600'
   }

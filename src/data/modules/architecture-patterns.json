@@ -6,7 +6,7 @@
     "icon": "Boxes",
     "requiredXp": 1750,
     "color": "from-violet-400 to-violet-600",
-    "courseId": "architecture-patterns"
+    "courseId": "production"
   },
   "lessons": [
     {

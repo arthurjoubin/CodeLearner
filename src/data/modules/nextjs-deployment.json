@@ -6,7 +6,7 @@
     "icon": "Rocket",
     "requiredXp": 3600,
     "color": "from-orange-500 to-red-500",
-    "courseId": "deployment"
+    "courseId": "production"
   },
   "lessons": [
     {

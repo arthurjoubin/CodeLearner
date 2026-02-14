@@ -6,7 +6,7 @@
     "icon": "GitBranch",
     "requiredXp": 2500,
     "color": "from-sky-400 to-sky-600",
-    "courseId": "deployment"
+    "courseId": "production"
   },
   "lessons": [
     {
