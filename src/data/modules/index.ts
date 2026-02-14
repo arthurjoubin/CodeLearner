@@ -22,7 +22,6 @@ import type { Module, Lesson, Exercise } from '../../types';
 // ============================================
 
 // Course: internet-tools (Internet & Tools) - Reordered for vibe coder progression
-import ideSetupData from './ide-setup.json';
 import terminalCliData from './terminal-cli.json';
 import howWebWorksData from './how-web-works.json';
 import dataFormatsLogsData from './data-formats-logs.json';
@@ -135,7 +134,6 @@ import nextjsDeploymentData from './nextjs-deployment.json';
 
 // Course: architecture-patterns (Architecture & Patterns)
 import architecturePatternsData from './architecture-patterns.json';
-import makingRightChoiceData from './making-right-choice.json';
 import devopsBasicsData from './devops-basics.json';
 import websocketsBasicsData from './websockets-basics.json';
 
@@ -168,8 +166,7 @@ const moduleFiles: ModuleData[] = [
   // LEARNING PATH 1: WEB FUNDAMENTALS
   // ============================================
 
-  // Course: internet-tools (Reordered: IDE → Terminal → Web → Data/Logs → DevTools → Errors → Package Mgrs → Build → Env → Vibe Coding)
-  ideSetupData as ModuleData,
+  // Course: internet-tools (Reordered: Terminal → Web → Data/Logs → DevTools → Errors → Package Mgrs → Build → Env → Vibe Coding)
   terminalCliData as ModuleData,
   howWebWorksData as ModuleData,
   dataFormatsLogsData as ModuleData,
@@ -280,7 +277,6 @@ const moduleFiles: ModuleData[] = [
   
   // Course: architecture-patterns
   architecturePatternsData as ModuleData,
-  makingRightChoiceData as ModuleData,
   devopsBasicsData as ModuleData,
   websocketsBasicsData as ModuleData,
   
