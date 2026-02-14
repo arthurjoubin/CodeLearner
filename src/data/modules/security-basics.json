@@ -6,7 +6,7 @@
     "icon": "Shield",
     "requiredXp": 2800,
     "color": "from-rose-400 to-rose-600",
-    "courseId": "frontend-production"
+    "courseId": "auth-security"
   },
   "lessons": [
     {

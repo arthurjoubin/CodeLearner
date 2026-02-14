@@ -6,7 +6,7 @@
     "icon": "Zap",
     "requiredXp": 3100,
     "color": "from-amber-400 to-amber-600",
-    "courseId": "frontend-production"
+    "courseId": "react"
   },
   "lessons": [
     {

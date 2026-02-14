@@ -6,7 +6,7 @@
     "icon": "TestTube",
     "requiredXp": 3400,
     "color": "from-rose-400 to-rose-600",
-    "courseId": "frontend-production"
+    "courseId": "react"
   },
   "lessons": [
     {
