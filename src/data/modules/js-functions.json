@@ -46,5 +46,79 @@
       "codeExample": "const numbers = [1, 2, 3, 4, 5];\n\n// map: transform each element\nconst doubled = numbers.map(n => n * 2);\n// [2, 4, 6, 8, 10]\n\n// filter: keep elements that pass a test\nconst evens = numbers.filter(n => n % 2 === 0);\n// [2, 4]\n\n// reduce: combine into single value\nconst sum = numbers.reduce((acc, n) => acc + n, 0);\n// 15"
     }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "js-func-ex-1",
+      "lessonId": "js-func-declarations",
+      "moduleId": "js-functions",
+      "title": "Fix the Broken Function",
+      "difficulty": "easy",
+      "type": "code",
+      "description": "AI generated this function to calculate a discount, but it has a bug. Fix it!",
+      "instructions": "The function should:\n1. Take a price and discount percentage\n2. Return the discounted price\n3. Currently it's broken - find and fix the bug\n\nExample: calculateDiscount(100, 20) should return 80",
+      "starterCode": "function calculateDiscount(price, discount) {\n  const amount = price * discount;\n  return price - amount;\n}",
+      "solution": "function calculateDiscount(price, discount) {\n  const amount = price * (discount / 100);\n  return price - amount;\n}",
+      "hints": [
+        "The discount is a percentage (20 means 20%, not 0.20)",
+        "You need to divide the discount by 100 before multiplying",
+        "Test with calculateDiscount(100, 20) - should return 80, not -1900"
+      ],
+      "validationPrompt": "Check if the code correctly calculates a discount by:\n1. Converting percentage to decimal (discount / 100)\n2. Multiplying price by the decimal\n3. Subtracting from original price\n4. Test: calculateDiscount(100, 20) should return 80"
+    },
+    {
+      "id": "js-func-ex-2",
+      "lessonId": "js-arrow-functions",
+      "moduleId": "js-functions",
+      "title": "Refactor to Arrow Functions",
+      "difficulty": "easy",
+      "type": "code",
+      "description": "AI generated old-style functions. Refactor them to modern arrow functions.",
+      "instructions": "Convert these function expressions to arrow functions:\n\n1. Keep the same functionality\n2. Use implicit return when possible\n3. Remove unnecessary curly braces",
+      "starterCode": "const double = function(x) {\n  return x * 2;\n};\n\nconst greet = function(name) {\n  return \"Hello, \" + name;\n};\n\nconst add = function(a, b) {\n  return a + b;\n};",
+      "solution": "const double = (x) => x * 2;\n\nconst greet = (name) => `Hello, ${name}`;\n\nconst add = (a, b) => a + b;",
+      "hints": [
+        "Arrow syntax: (params) => expression",
+        "Single expression = implicit return (no braces needed)",
+        "Use template literals instead of string concatenation"
+      ],
+      "validationPrompt": "Check if the code:\n1. Uses arrow function syntax for all three functions\n2. Uses implicit returns (no curly braces)\n3. Uses template literal for greet function\n4. Maintains the same functionality"
+    },
+    {
+      "id": "js-func-ex-3",
+      "lessonId": "js-higher-order",
+      "moduleId": "js-functions",
+      "title": "Filter Adult Users",
+      "difficulty": "medium",
+      "type": "code",
+      "description": "Use array methods to filter and transform user data.",
+      "instructions": "Given an array of users, write a function that:\n1. Filters users who are 18 or older\n2. Returns only their names\n3. Use map() and filter()\n\nExample input:\n[{name: 'Alice', age: 25}, {name: 'Bob', age: 17}]\n\nExpected output:\n['Alice']",
+      "starterCode": "function getAdultNames(users) {\n  // Your code here\n}",
+      "solution": "function getAdultNames(users) {\n  return users\n    .filter(user => user.age >= 18)\n    .map(user => user.name);\n}",
+      "hints": [
+        "First filter() users where age >= 18",
+        "Then map() to extract just the name",
+        "Chain the methods: users.filter(...).map(...)"
+      ],
+      "validationPrompt": "Check if the code:\n1. Uses filter() to get users with age >= 18\n2. Uses map() to extract names\n3. Returns an array of strings (names)\n4. Chains the methods together\n5. Works correctly with the example input"
+    },
+    {
+      "id": "js-func-ex-4",
+      "lessonId": "js-scope-closures",
+      "moduleId": "js-functions",
+      "title": "Create a Counter with Closures",
+      "difficulty": "medium",
+      "type": "code",
+      "description": "Build a counter function using closures (like React's useState!).",
+      "instructions": "Create a makeCounter() function that:\n1. Returns an object with increment, decrement, and getValue methods\n2. Keeps count private (using closure)\n3. increment() increases count by 1\n4. decrement() decreases count by 1\n5. getValue() returns current count",
+      "starterCode": "function makeCounter() {\n  // Your code here\n}",
+      "solution": "function makeCounter() {\n  let count = 0;\n  \n  return {\n    increment: () => ++count,\n    decrement: () => --count,\n    getValue: () => count\n  };\n}",
+      "hints": [
+        "Declare a count variable inside makeCounter",
+        "Return an object with three methods",
+        "Each method can access count (closure!)",
+        "Use ++count and --count for increment/decrement"
+      ],
+      "validationPrompt": "Check if the code:\n1. Declares a count variable inside makeCounter\n2. Returns an object with increment, decrement, getValue methods\n3. increment increases count and returns new value\n4. decrement decreases count and returns new value\n5. getValue returns current count\n6. Count is private (not accessible outside)"
+    }
+  ]
 }

@@ -2,6 +2,48 @@
 
 ## ✅ Completed Tasks
 
+### P2: Réordonner modules Internet & Tools (Task #9) - DONE
+
+**Actions effectuées :**
+
+1. **Nouvel ordre des modules** (optimisé pour vibe coders)
+   - 1. IDE Setup (inchangé)
+   - 2. Terminal & CLI (monté de 8 à 2 - essentiel tôt)
+   - 3. How the Web Works (core understanding)
+   - 4. Data Formats & Logs (JSON, YAML, .env)
+   - 5. DevTools & Debugging (compétence critique)
+   - 6. Package Managers (npm, yarn, pnpm)
+   - 7. Build Tools (Vite - descend de 1 à 7, maintenant a le contexte)
+   - 8. Environment Configuration (reste 8 - avancé)
+   - 9. Vibe Coding Mastery (NOUVEAU - capstone)
+
+2. **Data Formats & Logs déplacé**
+   - Retiré de `advanced-topics`
+   - Ajouté à `internet-tools` (fait plus de sens avec les fondamentaux)
+
+**Résultat :** Progression plus logique pour un vibe coder qui a besoin du terminal et du debugging tôt.
+
+---
+
+### P2: Créer module "Vibe Coding Mastery" (Task #8) - DONE
+
+**Module créé :** `vibe-coding-mastery.json`
+
+**5 Lessons :**
+1. Reading & Understanding AI-Generated Code (4-pass method, pattern recognition)
+2. Reading Error Messages & Stack Traces (anatomy of errors, debugging process)
+3. When AI is Wrong: Red Flags to Spot (security, performance, edge cases)
+4. Refactoring AI Code for Maintainability (extract functions, DRY, simplify)
+5. Writing Better Prompts for Better Code (prompt patterns, constraints, iteration)
+
+**Cible :** Developers utilisant Cursor/v0/Bolt qui doivent comprendre, débugger, et refactorer du code AI.
+
+**USP :** Différenciation majeure de CodeLearner - seule plateforme qui enseigne explicitement comment travailler avec l'AI.
+
+**Résultat :** Module complet de 5 lessons sans exercices pour l'instant (à ajouter en P0).
+
+---
+
 ### P1: Éliminer les redondances (Task #4) - DONE
 
 **Actions effectuées :**
@@ -69,8 +111,8 @@
 
 ### Priority 2 (Amélioration contenu)
 
-- [ ] **Task #8**: Créer module "Vibe Coding Mastery" dans Web Fundamentals
-- [ ] **Task #9**: Réordonner modules Internet & Tools (Build Tools en premier → Terminal & CLI en premier)
+- [x] **Task #8**: Créer module "Vibe Coding Mastery" dans Web Fundamentals ✅
+- [x] **Task #9**: Réordonner modules Internet & Tools (Build Tools en premier → Terminal & CLI en premier) ✅
 
 ### Priority 3 (Nouveaux modules)
 
@@ -109,5 +151,6 @@
 
 ---
 
-**Status:** 2 tâches terminées / 15 tâches totales
+**Status:** 4 tâches terminées / 15 tâches totales (27% complete)
 **Date:** 2026-02-14
+**Last Update:** Added Vibe Coding Mastery module and reordered Internet & Tools
