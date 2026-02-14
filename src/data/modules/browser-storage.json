@@ -6,7 +6,7 @@
     "icon": "Database",
     "requiredXp": 1100,
     "color": "from-orange-400 to-red-600",
-    "courseId": "javascript-core"
+    "courseId": "frontend-production"
   },
   "lessons": [
     {

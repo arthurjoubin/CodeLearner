@@ -48,6 +48,7 @@ import jsDomData from './js-dom.json';
 import jsModernData from './js-modern.json';
 import typescriptBasicsData from './typescript-basics.json';
 import jsApiConsumptionData from './js-api-consumption.json';
+// Browser Storage moved to frontend-production to avoid duplication
 
 // ============================================
 // LEARNING PATH 2: FRONTEND
@@ -99,9 +100,8 @@ import expressIntroData from './express-intro.json';
 import expressMiddlewareData from './express-middleware.json';
 import restApiDesignData from './rest-api-design.json';
 import expressApisData from './express-apis.json';
-import expressProductionData from './express-production.json';
 import backendTestingData from './backend-testing.json';
-import backendDockerData from './backend-docker.json';
+// backend-docker and express-production moved to deployment course
 
 // Course: databases (Databases)
 import dbConceptsData from './db-concepts.json';
@@ -147,6 +147,8 @@ import dataFormatsLogsData from './data-formats-logs.json';
 
 // Course: deployment (Deployment)
 import deploymentFundamentalsData from './deployment-fundamentals.json';
+import expressProductionData from './express-production.json';
+import backendDockerData from './backend-docker.json';
 // import frontendDeploymentData from './frontend-deployment.json'; // File temporarily disabled due to corruption
 
 // Type for the JSON file structure
@@ -180,7 +182,7 @@ const moduleFiles: ModuleData[] = [
   gitRebaseData as ModuleData,
   gitAdvancedData as ModuleData,
   
-  // Course: javascript-core
+  // Course: javascript-core (Browser Storage removed - now only in frontend-production)
   jsVariablesTypesData as ModuleData,
   jsFunctionsData as ModuleData,
   jsArraysObjectsData as ModuleData,
@@ -231,7 +233,7 @@ const moduleFiles: ModuleData[] = [
   // LEARNING PATH 3: BACKEND
   // ============================================
   
-  // Course: node-express
+  // Course: node-express (Docker and Express Production moved to deployment)
   nodejsIntroData as ModuleData,
   nodejsModulesData as ModuleData,
   nodejsAsyncData as ModuleData,
@@ -240,9 +242,7 @@ const moduleFiles: ModuleData[] = [
   expressMiddlewareData as ModuleData,
   restApiDesignData as ModuleData,
   expressApisData as ModuleData,
-  expressProductionData as ModuleData,
   backendTestingData as ModuleData,
-  backendDockerData as ModuleData,
   
   // Course: databases
   dbConceptsData as ModuleData,
@@ -285,9 +285,11 @@ const moduleFiles: ModuleData[] = [
   // ============================================
   // LEARNING PATH 4: FULLSTACK - DEPLOYMENT COURSE
   // ============================================
-  
-  // Course: deployment
+
+  // Course: deployment (includes Express Production and Docker from Backend path)
   deploymentFundamentalsData as ModuleData,
+  expressProductionData as ModuleData,
+  backendDockerData as ModuleData,
   // frontendDeploymentData as ModuleData, // File temporarily disabled
 ];
 
@@ -378,7 +380,7 @@ export const LEARNING_PATHS: Record<string, LearningPathConfig> = {
     name: 'Frontend',
     description: 'Building user interfaces',
     courses: ['html-css-tailwind', 'react', 'frontend-production'],
-    prerequisites: ['web-fundamentals'],
+    prerequisites: ['web-fundamentals'], // JavaScript Core is in web-fundamentals, no duplication
     color: 'from-blue-500 to-purple-600'
   },
   'backend': {

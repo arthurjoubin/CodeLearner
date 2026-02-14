@@ -6,7 +6,7 @@
     "icon": "Smartphone",
     "requiredXp": 1500,
     "color": "from-indigo-500 to-purple-600",
-    "courseId": "html-css-tailwind"
+    "courseId": "frontend-production"
   },
   "lessons": [
     {
