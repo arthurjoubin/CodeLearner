@@ -7,6 +7,7 @@ import {
   Play,
   RotateCcw,
   Calendar,
+  History,
 } from 'lucide-react';
 import { useUser, UserProvider } from '../context/UserContext';
 import { useCodeCraftExercise } from '../hooks/useCodeCraftExercise';
@@ -31,15 +32,23 @@ const difficultyColors = {
 };
 
 function CodeCraftDailyPageContent() {
-  const { isGuest, isExerciseCompleted, completeExercise, addXp, user } = useUser();
+  const { isGuest, isExerciseCompleted, completeExercise, addXp, user, loading: userLoading } = useUser();
   const [challenge, setChallenge] = useState<DailyChallengeData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
+  const [challengeDate, setChallengeDate] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Get date from URL params
+    const params = new URLSearchParams(window.location.search);
+    const dateParam = params.get('date');
+    setChallengeDate(dateParam);
+  }, []);
 
   useEffect(() => {
     // Wait for auth state to be determined
-    if (user === undefined) {
+    if (userLoading) {
       return; // Still loading auth state
     }
 
@@ -53,7 +62,14 @@ function CodeCraftDailyPageContent() {
 
     const fetchDaily = async () => {
       try {
-        const result = await api.getDailyChallenge();
+        let result;
+        if (challengeDate) {
+          // Fetch specific date challenge
+          result = await api.getDailyChallengeByDate(challengeDate);
+        } else {
+          // Fetch today's challenge
+          result = await api.getDailyChallenge();
+        }
         if (!cancelled) {
           setChallenge(result);
           // Check if already completed
@@ -77,7 +93,7 @@ function CodeCraftDailyPageContent() {
     return () => {
       cancelled = true;
     };
-  }, [isGuest, isExerciseCompleted, user]);
+  }, [isGuest, isExerciseCompleted, user, userLoading, challengeDate]);
 
   const handleValidateSuccess = useCallback(() => {
     if (challenge) {
@@ -119,7 +135,7 @@ function CodeCraftDailyPageContent() {
     return (
       <div className="page-enter">
         <Breadcrumb items={[
-          { label: 'CodeCraft', href: '/codecraft' },
+          { label: 'Daily Challenge', href: '/codecraft' },
           { label: 'Daily Challenge' },
         ]} />
 
@@ -136,7 +152,7 @@ function CodeCraftDailyPageContent() {
     return (
       <div className="page-enter">
         <Breadcrumb items={[
-          { label: 'CodeCraft', href: '/codecraft' },
+          { label: 'Daily Challenge', href: '/codecraft' },
           { label: 'Daily Challenge' },
         ]} />
 
@@ -161,19 +177,28 @@ function CodeCraftDailyPageContent() {
     <div className="page-enter pb-20 lg:pb-0">
       {/* Breadcrumb */}
       <Breadcrumb items={[
-        { label: 'CodeCraft', href: '/codecraft' },
+        { label: 'Daily Challenge', href: '/codecraft' },
         { label: 'Daily Challenge' },
       ]} />
 
       {/* Header */}
       <div className="mb-4 lg:mb-6">
-        <PageTitle>
-          <div className="flex items-center gap-3 flex-wrap">
-            <Calendar className="w-6 h-6 text-primary-600" />
-            <h1 className="text-xl font-black text-gray-900 uppercase">Daily Challenge</h1>
-            <span className="text-sm text-gray-500">{challenge.date}</span>
-          </div>
-        </PageTitle>
+        <div className="flex items-start justify-between gap-4">
+          <PageTitle className="flex-1">
+            <div className="flex items-center gap-3 flex-wrap">
+              <Calendar className="w-6 h-6 text-primary-600" />
+              <h1 className="text-xl font-black text-gray-900 uppercase">Daily Challenge</h1>
+              <span className="text-sm text-gray-500">{challenge.date}</span>
+            </div>
+          </PageTitle>
+          <a
+            href="/codecraft/daily-history"
+            className="hidden sm:flex items-center gap-2 px-3 py-2 bg-accent-50 border-2 border-accent-200 rounded-lg hover:bg-accent-100 hover:border-accent-300 transition-all group flex-shrink-0"
+          >
+            <History className="w-4 h-4 text-accent-600" />
+            <span className="text-xs font-bold text-accent-700">History</span>
+          </a>
+        </div>
 
         <div className="flex items-center gap-2 mt-2 flex-wrap">
           {language && (
@@ -192,6 +217,13 @@ function CodeCraftDailyPageContent() {
               Completed Today
             </span>
           )}
+          <a
+            href="/codecraft/daily-history"
+            className="sm:hidden inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border-2 border-accent-200 bg-accent-50 text-accent-700 hover:bg-accent-100 transition-colors ml-auto"
+          >
+            <History className="w-3 h-3" />
+            History
+          </a>
         </div>
 
         <h2 className="text-lg font-bold text-gray-900 mt-3">{exercise.title}</h2>
@@ -242,9 +274,9 @@ function CodeCraftDailyPageContent() {
         </div>
 
         {/* Right Panel - Editor & Output */}
-        <div className="flex flex-col gap-4 lg:h-[calc(100vh-200px)]">
-          {/* Editor - Takes most space */}
-          <div className="flex-1 min-h-[400px]">
+        <div className="flex flex-col gap-4 min-h-[calc(100vh-280px)] lg:min-h-[calc(100vh-200px)] pb-20 lg:pb-0">
+          {/* Editor - Takes available space */}
+          <div className="flex-1 min-h-[300px] lg:min-h-[400px]">
             <CodeCraftEditor
               code={code}
               languageId={exercise.language}
@@ -255,9 +287,9 @@ function CodeCraftDailyPageContent() {
             />
           </div>
 
-          {/* Output Panel */}
-          <div className={`border-2 border-gray-300 bg-gray-900 rounded-lg flex flex-col transition-all duration-300 ${output ? 'h-48' : 'h-12'}`}>
-            <div className="px-4 py-2 bg-gray-800 border-b-2 border-gray-300 flex items-center justify-between">
+          {/* Output Panel - Expands when there's output */}
+          <div className={`border-2 border-gray-300 bg-gray-900 rounded-lg flex flex-col transition-all duration-300 ${output ? 'min-h-[200px] h-[200px]' : 'min-h-[48px] h-[48px]'}`}>
+            <div className="px-4 py-2 bg-gray-800 border-b-2 border-gray-300 flex items-center justify-between flex-shrink-0">
               <span className="text-xs font-bold uppercase text-white">Output</span>
               {output && (
                 <button 

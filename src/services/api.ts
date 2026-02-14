@@ -188,4 +188,28 @@ export const api = {
     }
     return res.json();
   },
+
+  async getDailyChallengeHistory(limit: number = 30): Promise<{ history: Array<{ date: string; language: string; difficulty: string; title: string | null; description: string | null }> }> {
+    const baseUrl = import.meta.env.DEV ? LOCAL_URL : WORKER_URL;
+    const res = await fetch(`${baseUrl}/api/codecraft/history?limit=${limit}`, {
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Failed to get challenge history');
+    }
+    return res.json();
+  },
+
+  async getDailyChallengeByDate(date: string): Promise<{ date: string; exercise: LanguageExercise }> {
+    const baseUrl = import.meta.env.DEV ? LOCAL_URL : WORKER_URL;
+    const res = await fetch(`${baseUrl}/api/codecraft/history/${date}`, {
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Failed to get daily challenge');
+    }
+    return res.json();
+  },
 };

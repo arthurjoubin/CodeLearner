@@ -435,6 +435,77 @@ Be more specific with each attempt. Don't give the answer directly.`;
       }
     }
 
+    // GET /api/codecraft/history - Get daily challenge history
+    if (pathname === '/api/codecraft/history' && req.method === 'GET') {
+      const url = new URL(req.url, `http://localhost:${PORT}`);
+      const limit = parseInt(url.searchParams.get('limit') || '30');
+      
+      // Generate history from past days
+      const history = [];
+      const today = new Date();
+      
+      for (let i = 0; i < limit; i++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        
+        // Check if we have this challenge cached
+        const cached = dailyCache.get(dateStr);
+        if (cached) {
+          history.push({
+            date: dateStr,
+            language: cached.language,
+            difficulty: cached.difficulty,
+            title: cached.title,
+            description: cached.description
+          });
+        } else {
+          // Generate metadata without full exercise
+          const { language, difficulty } = getDailyRotation(dateStr);
+          history.push({
+            date: dateStr,
+            language,
+            difficulty,
+            title: null,
+            description: null
+          });
+        }
+      }
+      
+      return sendJSON(res, { history });
+    }
+
+    // GET /api/codecraft/history/:date - Get specific daily challenge
+    if (pathname.startsWith('/api/codecraft/history/') && req.method === 'GET') {
+      const dateStr = pathname.split('/').pop();
+      
+      if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        return sendError(res, 'Invalid date format. Use YYYY-MM-DD', 400);
+      }
+      
+      // Check cache first
+      const cached = dailyCache.get(dateStr);
+      if (cached) {
+        return sendJSON(res, { date: dateStr, exercise: cached });
+      }
+      
+      // Generate challenge for this date
+      const { language, difficulty } = getDailyRotation(dateStr);
+      
+      try {
+        const exerciseData = await generateExerciseWithAI(language, difficulty);
+        const exercise = processGeneratedExercise(exerciseData, `daily-${dateStr}`, language, difficulty);
+        
+        // Cache it
+        dailyCache.set(dateStr, exercise);
+        
+        return sendJSON(res, { date: dateStr, exercise });
+      } catch (err) {
+        console.error('Failed to generate daily challenge:', err);
+        return sendError(res, 'Failed to generate daily challenge', 500);
+      }
+    }
+
     // 404 for unknown routes
     sendError(res, 'Not found', 404);
   } catch (error) {

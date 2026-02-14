@@ -21,14 +21,16 @@ import type { Module, Lesson, Exercise } from '../../types';
 // LEARNING PATH 1: WEB FUNDAMENTALS
 // ============================================
 
-// Course: internet-tools (Internet & Tools)
+// Course: internet-tools (Internet & Tools) - Reordered for vibe coder progression
 import ideSetupData from './ide-setup.json';
 import terminalCliData from './terminal-cli.json';
 import howWebWorksData from './how-web-works.json';
+import dataFormatsLogsData from './data-formats-logs.json';
 import devtoolsDebuggingData from './devtools-debugging.json';
 import packageManagersData from './package-managers.json';
-import envConfigData from './env-config.json';
 import buildToolsData from './build-tools.json';
+import envConfigData from './env-config.json';
+import vibeCodingMasteryData from './vibe-coding-mastery.json';
 
 // Course: git-mastery (Git Mastery)
 import gitBasicsData from './git-basics.json';
@@ -139,7 +141,7 @@ import websocketsBasicsData from './websockets-basics.json';
 import frontendFrameworksData from './frontend-frameworks.json';
 import backendFrameworksData from './backend-frameworks.json';
 import fullstackFrameworksData from './fullstack-frameworks.json';
-import dataFormatsLogsData from './data-formats-logs.json';
+// dataFormatsLogsData moved to internet-tools course
 
 // ============================================
 // LEARNING PATH 4: FULLSTACK - DEPLOYMENT COURSE
@@ -164,14 +166,16 @@ const moduleFiles: ModuleData[] = [
   // LEARNING PATH 1: WEB FUNDAMENTALS
   // ============================================
 
-  // Course: internet-tools
+  // Course: internet-tools (Reordered: IDE → Terminal → Web → Data/Logs → DevTools → Package Mgrs → Build → Env → Vibe Coding)
   ideSetupData as ModuleData,
   terminalCliData as ModuleData,
   howWebWorksData as ModuleData,
+  dataFormatsLogsData as ModuleData,
   devtoolsDebuggingData as ModuleData,
   packageManagersData as ModuleData,
-  envConfigData as ModuleData,
   buildToolsData as ModuleData,
+  envConfigData as ModuleData,
+  vibeCodingMasteryData as ModuleData,
   
   // Course: git-mastery
   gitBasicsData as ModuleData,
@@ -276,11 +280,10 @@ const moduleFiles: ModuleData[] = [
   devopsBasicsData as ModuleData,
   websocketsBasicsData as ModuleData,
   
-  // Course: advanced-topics
+  // Course: advanced-topics (dataFormatsLogsData moved to internet-tools)
   frontendFrameworksData as ModuleData,
   backendFrameworksData as ModuleData,
   fullstackFrameworksData as ModuleData,
-  dataFormatsLogsData as ModuleData,
   
   // ============================================
   // LEARNING PATH 4: FULLSTACK - DEPLOYMENT COURSE

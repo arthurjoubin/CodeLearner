@@ -199,28 +199,32 @@ function LearningPathSection({ pathId }: LearningPathSectionProps) {
 interface CoursesSectionProps {
   title?: string;
   showTotalHours?: boolean;
+  showHeader?: boolean;
 }
 
 export function CoursesSection({ 
   title = "Our Courses", 
   showTotalHours = true,
+  showHeader = true,
 }: CoursesSectionProps) {
   const allCourses = LEARNING_PATH_ORDER.flatMap(pathId => getCoursesForPath(pathId));
   const totalHours = allCourses.reduce((total, course) => total + course.hours, 0);
 
   return (
     <div>
-      <div className="flex items-end justify-between mb-6">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-900">{title}</h2>
-        {showTotalHours && (
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 border border-primary-200 rounded-lg">
-            <svg className="w-5 h-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="font-semibold text-primary-700">{formatHours(totalHours)} of learning</span>
-          </div>
-        )}
-      </div>
+      {showHeader && (
+        <div className="flex items-end justify-between mb-6">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900">{title}</h2>
+          {showTotalHours && (
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 border border-primary-200 rounded-lg">
+              <svg className="w-5 h-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="font-semibold text-primary-700">{formatHours(totalHours)} of learning</span>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Learning Path Sections */}
       <div>

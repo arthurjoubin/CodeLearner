@@ -131,7 +131,8 @@ function LandingContent() {
       {/* Learning Paths */}
       <section className="py-8 md:py-12 lg:py-16">
         <div className="max-w-6xl mx-auto px-4">
-          <CoursesSection />
+          <SectionTitle>Our courses</SectionTitle>
+          <CoursesSection showHeader={false} />
         </div>
       </section>
     </div>

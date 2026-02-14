@@ -224,17 +224,6 @@ function LayoutContent({ children }: LayoutProps) {
                   <span>Learning</span>
                 </a>
                 <a
-                  href="/courses"
-                  className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
-                    currentPath.startsWith('/courses')
-                      ? 'text-primary-600 bg-primary-50'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
-                >
-                  <GraduationCap className="w-4 h-4" />
-                  <span>Courses</span>
-                </a>
-                <a
                   href="/resources"
                   className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
                     (currentPath.startsWith('/resources') || currentPath.startsWith('/lab'))
@@ -254,7 +243,7 @@ function LayoutContent({ children }: LayoutProps) {
                   }`}
                 >
                   <Code className="w-4 h-4" />
-                  <span>CodeCraft</span>
+                  <span>Daily</span>
                 </a>
                 <a
                   href="/pricing"
@@ -325,7 +314,7 @@ function LayoutContent({ children }: LayoutProps) {
                             currentPath.startsWith('/codecraft') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-50'
                           }`}
                         >
-                          <Code className="w-4 h-4" /> CodeCraft
+                          <Code className="w-4 h-4" /> Daily
                         </a>
                         <a
                           href="/pricing"
@@ -438,20 +427,7 @@ function LayoutContent({ children }: LayoutProps) {
                 <span>Lab</span>
               </a>
 
-              {/* Courses Button */}
-              <a 
-                href="/courses" 
-                className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
-                  currentPath.startsWith('/courses')
-                    ? 'text-primary-600 bg-primary-50'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-              >
-                <GraduationCap className="w-4 h-4" />
-                <span>Courses</span>
-              </a>
-
-              {/* CodeCraft Button */}
+              {/* Daily Button */}
               <a 
                 href="/codecraft" 
                 className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
@@ -459,10 +435,10 @@ function LayoutContent({ children }: LayoutProps) {
                     ? 'text-primary-600 bg-primary-50'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
-                title="CodeCraft"
+                title="Daily"
               >
                 <Code className="w-4 h-4" />
-                <span>CodeCraft</span>
+                <span>Daily</span>
               </a>
 
               {/* Streak Button */}
@@ -683,7 +659,7 @@ function LayoutContent({ children }: LayoutProps) {
                           onClick={() => setMenuOpen(false)}
                           className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                         >
-                          <Code className="w-4 h-4" /> CodeCraft
+                          <Code className="w-4 h-4" /> Daily
                         </a>
                         <a
                           href="/resources/devfinds"
@@ -728,7 +704,7 @@ function LayoutContent({ children }: LayoutProps) {
               <a href="/resources/devfinds" className="text-xs font-medium text-yellow-600 hover:text-yellow-700 transition-colors uppercase tracking-wider">Dev Finds</a>
               <a href="/leaderboard" className="text-xs font-medium text-gray-600 hover:text-primary-600 transition-colors uppercase tracking-wider">Leaderboard</a>
               <a href="/labs" className="text-xs font-medium text-gray-600 hover:text-primary-600 transition-colors uppercase tracking-wider">Labs</a>
-              <a href="/codecraft" className="text-xs font-medium text-gray-600 hover:text-primary-600 transition-colors uppercase tracking-wider">CodeCraft</a>
+              <a href="/codecraft" className="text-xs font-medium text-gray-600 hover:text-primary-600 transition-colors uppercase tracking-wider">Daily</a>
             </div>
             <div className="flex items-center gap-3">
               <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900 transition-colors">
