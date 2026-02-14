@@ -46,5 +46,94 @@
       "codeExample": "// Create a new element\nconst li = document.createElement('li');\nli.textContent = 'New item';\nli.classList.add('list-item');\n\n// Add to DOM\nconst list = document.querySelector('ul');\nlist.appendChild(li);\n\n// Remove\nli.remove();"
     }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "js-dom-ex-1",
+      "lessonId": "js-dom-selecting",
+      "moduleId": "js-dom",
+      "title": "Select Elements Quiz",
+      "difficulty": "easy",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Which method should you use to select ALL elements with class 'card'?",
+          "options": [
+            "document.getElementById('card')",
+            "document.querySelector('.card')",
+            "document.querySelectorAll('.card')",
+            "document.getElementsByClass('card')"
+          ],
+          "correctAnswer": 2,
+          "explanation": "querySelectorAll() selects all matching elements. querySelector() only returns the first match."
+        },
+        {
+          "question": "What does document.querySelector('#main .button') select?",
+          "options": [
+            "All elements with class 'button'",
+            "Element with ID 'main' or class 'button'",
+            "Elements with class 'button' INSIDE element with ID 'main'",
+            "Element with ID 'main.button'"
+          ],
+          "correctAnswer": 2,
+          "explanation": "The space means descendant selector - it selects .button elements inside #main."
+        }
+      ]
+    },
+    {
+      "id": "js-dom-ex-2",
+      "lessonId": "js-dom-modifying",
+      "moduleId": "js-dom",
+      "title": "Fix the Button Toggle",
+      "difficulty": "easy",
+      "type": "code",
+      "description": "AI generated this code to toggle a button's active state, but it doesn't work. Fix it!",
+      "instructions": "The code should:\n1. Select the button with ID 'toggle-btn'\n2. Add click listener\n3. Toggle the 'active' class on click\n\nCurrently it has a bug - find and fix it.",
+      "starterCode": "const button = document.querySelector('toggle-btn');\n\nbutton.addEventListener('click', () => {\n  button.classList.add('active');\n});",
+      "solution": "const button = document.querySelector('#toggle-btn');\n\nbutton.addEventListener('click', () => {\n  button.classList.toggle('active');\n});",
+      "hints": [
+        "ID selectors need a # prefix in querySelector",
+        "Use toggle() instead of add() to switch on/off",
+        "Missing # means it's looking for a <toggle-btn> tag, not an ID"
+      ],
+      "validationPrompt": "Check if the code: 1) Uses querySelector with '#toggle-btn' (not 'toggle-btn') 2) Uses classList.toggle('active') to switch the class on and off 3) Has a click event listener"
+    },
+    {
+      "id": "js-dom-ex-3",
+      "lessonId": "js-dom-events",
+      "moduleId": "js-dom",
+      "title": "Handle Form Submission",
+      "difficulty": "medium",
+      "type": "code",
+      "description": "Create a form handler that prevents default submission and logs the input value.",
+      "instructions": "Write code that:\n1. Selects the form with ID 'user-form'\n2. Adds a submit event listener\n3. Prevents the default form submission\n4. Gets the value of the input with name 'username'\n5. Logs 'Submitted: [username]' to console",
+      "starterCode": "// Your code here\n// Form has: <form id=\"user-form\"><input name=\"username\"></form>",
+      "solution": "const form = document.querySelector('#user-form');\n\nform.addEventListener('submit', (e) => {\n  e.preventDefault();\n  const formData = new FormData(form);\n  const username = formData.get('username');\n  console.log(`Submitted: ${username}`);\n});",
+      "hints": [
+        "Use querySelector to select the form by ID",
+        "Submit events need e.preventDefault() to stop page reload",
+        "Use FormData to easily get input values by name",
+        "FormData.get('username') returns the input value"
+      ],
+      "validationPrompt": "Check if the code: 1) Selects form with querySelector('#user-form') 2) Adds 'submit' event listener 3) Calls e.preventDefault() 4) Uses FormData to get input value 5) Logs the username"
+    },
+    {
+      "id": "js-dom-ex-4",
+      "lessonId": "js-dom-creating",
+      "moduleId": "js-dom",
+      "title": "Build a Todo List Item",
+      "difficulty": "medium",
+      "type": "code",
+      "description": "Create a function that dynamically adds a todo item to a list.",
+      "instructions": "Write an addTodo(text) function that:\n1. Creates a new <li> element\n2. Sets its textContent to the text parameter\n3. Adds class 'todo-item' to it\n4. Appends it to the <ul> with ID 'todo-list'\n\nExample: addTodo('Buy milk') should add <li class=\"todo-item\">Buy milk</li> to the list",
+      "starterCode": "function addTodo(text) {\n  // Your code here\n}",
+      "solution": "function addTodo(text) {\n  const li = document.createElement('li');\n  li.textContent = text;\n  li.classList.add('todo-item');\n  \n  const list = document.querySelector('#todo-list');\n  list.appendChild(li);\n}",
+      "hints": [
+        "Use document.createElement('li') to create the element",
+        "Set textContent property to the text parameter",
+        "Use classList.add() to add the class",
+        "Select the ul with querySelector, then appendChild()"
+      ],
+      "validationPrompt": "Check if the code: 1) Creates an li element 2) Sets textContent to the text parameter 3) Adds 'todo-item' class 4) Selects the #todo-list 5) Appends the li to the list"
+    }
+  ]
 }

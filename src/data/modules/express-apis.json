@@ -42,5 +42,77 @@
       "content": "# Essential to know\n- Test your API endpoints automatically\n- Supertest to test HTTP without starting a server\n- Test both successes AND errors\n- Mock external dependencies (DB, APIs)\n\n---\n\n# Integration Testing for APIs\n\nAPI tests verify that your endpoints work correctly without having to manually start the server.\n\n## Setup with Jest and Supertest\n\n```bash\nnpm install --save-dev jest supertest\n```\n\n```json\n// package.json\n{\n  \"scripts\": {\n    \"test\": \"jest\",\n    \"test:watch\": \"jest --watch\"\n  }\n}\n```\n\n## Test Structure\n\n```javascript\n// tests/users.test.js\nimport request from 'supertest';\nimport app from '../src/app.js';\nimport { User } from '../src/models/User.js';\n\ndescribe('Users API', () => {\n  beforeEach(async () => {\n    // Clean DB before each test\n    await User.deleteMany();\n  });\n\n  describe('GET /api/users', () => {\n    it('should return empty array when no users', async () => {\n      const response = await request(app)\n        .get('/api/users')\n        .expect('Content-Type', /json/)\n        .expect(200);\n      \n      expect(response.body.data).toEqual([]);\n    });\n\n    it('should return list of users', async () => {\n      // Create test data\n      await User.create([\n        { name: 'John', email: 'john@test.com' },\n        { name: 'Jane', email: 'jane@test.com' }\n      ]);\n      \n      const response = await request(app)\n        .get('/api/users')\n        .expect(200);\n      \n      expect(response.body.data).toHaveLength(2);\n      expect(response.body.data[0].name).toBe('John');\n    });\n  });\n\n  describe('POST /api/users', () => {\n    it('should create a new user', async () => {\n      const newUser = {\n        name: 'Test User',\n        email: 'test@example.com',\n        password: 'password123'\n      };\n      \n      const response = await request(app)\n        .post('/api/users')\n        .send(newUser)\n        .expect('Content-Type', /json/)\n        .expect(201);\n      \n      expect(response.body.data.name).toBe('Test User');\n      expect(response.body.data.email).toBe('test@example.com');\n      expect(response.body.data.password).toBeUndefined(); // Should not return password\n    });\n\n    it('should return 400 for invalid data', async () => {\n      const invalidUser = {\n        name: 'A',  // Too short\n        email: 'invalid-email'\n      };\n      \n      const response = await request(app)\n        .post('/api/users')\n        .send(invalidUser)\n        .expect(400);\n      \n      expect(response.body.status).toBe('error');\n      expect(response.body.errors).toBeDefined();\n    });\n  });\n\n  describe('GET /api/users/:id', () => {\n    it('should return user by id', async () => {\n      const user = await User.create({\n        name: 'John',\n        email: 'john@test.com'\n      });\n      \n      const response = await request(app)\n        .get(`/api/users/${user.id}`)\n        .expect(200);\n      \n      expect(response.body.data.name).toBe('John');\n    });\n\n    it('should return 404 for non-existent user', async () => {\n      const response = await request(app)\n        .get('/api/users/999999')\n        .expect(404);\n      \n      expect(response.body.status).toBe('error');\n    });\n  });\n});\n```\n\n## Testing with Authentication\n\n```javascript\n// tests/auth.test.js\ndescribe('Protected Routes', () => {\n  let authToken;\n  let userId;\n\n  beforeEach(async () => {\n    // Create user and login\n    const user = await User.create({\n      email: 'test@test.com',\n      password: await hashPassword('password123')\n    });\n    userId = user.id;\n\n    const loginResponse = await request(app)\n      .post('/auth/login')\n      .send({ email: 'test@test.com', password: 'password123' });\n    \n    authToken = loginResponse.body.accessToken;\n  });\n\n  it('should access protected route with token', async () => {\n    const response = await request(app)\n      .get('/api/profile')\n      .set('Authorization', `Bearer ${authToken}`)\n      .expect(200);\n    \n    expect(response.body.data.email).toBe('test@test.com');\n  });\n\n  it('should reject request without token', async () => {\n    const response = await request(app)\n      .get('/api/profile')\n      .expect(401);\n    \n    expect(response.body.error).toBe('Token required');\n  });\n\n  it('should reject request with invalid token', async () => {\n    const response = await request(app)\n      .get('/api/profile')\n      .set('Authorization', 'Bearer invalid-token')\n      .expect(401);\n    \n    expect(response.body.error).toBe('Invalid or expired token');\n  });\n});\n```\n\n## Testing Best Practices\n\n1. **Use separate test database**\n2. **Clean up before/after tests**\n3. **Test both success and error cases**\n4. **Don't test implementation, test behavior**\n5. **Use realistic test data**\n6. **Test edge cases** (empty inputs, large data, etc.)\n7. **Mock external services** (emails, payments, etc.)"
     }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "api-get-filter",
+      "lessonId": "rest-principles",
+      "moduleId": "express-apis",
+      "title": "Complete the GET Endpoint",
+      "difficulty": "easy",
+      "description": "Complete a GET endpoint that filters users by age.",
+      "instructions": "You're building a user API. Complete the `/api/users` endpoint that:\n1. Returns all users if no query param is provided\n2. Filters users by minimum age if `minAge` query param exists\n3. Returns proper JSON response with status field\n\nThe users array is already defined for you.",
+      "starterCode": "import express from 'express';\nconst app = express();\n\nconst users = [\n  { id: 1, name: 'Alice', age: 25 },\n  { id: 2, name: 'Bob', age: 17 },\n  { id: 3, name: 'Charlie', age: 30 }\n];\n\napp.get('/api/users', (req, res) => {\n  // TODO: Get minAge from query params\n  // TODO: Filter users if minAge is provided\n  // TODO: Return JSON with status and data fields\n\n});",
+      "solution": "import express from 'express';\nconst app = express();\n\nconst users = [\n  { id: 1, name: 'Alice', age: 25 },\n  { id: 2, name: 'Bob', age: 17 },\n  { id: 3, name: 'Charlie', age: 30 }\n];\n\napp.get('/api/users', (req, res) => {\n  const { minAge } = req.query;\n  \n  let filteredUsers = users;\n  if (minAge) {\n    filteredUsers = users.filter(u => u.age >= parseInt(minAge));\n  }\n  \n  res.json({\n    status: 'success',\n    data: filteredUsers\n  });\n});",
+      "hints": [
+        "Use req.query to get query parameters",
+        "Remember to parse minAge to a number with parseInt()",
+        "Use array.filter() to filter users by age"
+      ],
+      "validationPrompt": "Check that the solution: 1) Uses req.query to get minAge, 2) Filters users when minAge is provided using filter(), 3) Returns all users when no minAge is provided, 4) Returns proper JSON with status and data fields"
+    },
+    {
+      "id": "api-fix-validation",
+      "lessonId": "validation-zod",
+      "moduleId": "express-apis",
+      "title": "Fix the Broken Validation",
+      "difficulty": "medium",
+      "description": "An AI generated this POST route but the validation is broken. Fix it!",
+      "instructions": "The AI generated a POST route for creating products, but there are several bugs:\n1. The Zod schema allows invalid prices (negative numbers)\n2. The name validation is too permissive\n3. The validation middleware doesn't handle errors properly\n\nFix all three issues:\n- Name should be 2-100 characters\n- Price must be positive\n- Validation errors should return 400 with proper error format",
+      "starterCode": "import express from 'express';\nimport { z } from 'zod';\nconst app = express();\n\napp.use(express.json());\n\nconst ProductSchema = z.object({\n  name: z.string(),\n  price: z.number()\n});\n\nconst validate = (schema) => {\n  return (req, res, next) => {\n    schema.parse(req.body);\n    next();\n  };\n};\n\napp.post('/api/products', validate(ProductSchema), (req, res) => {\n  res.status(201).json({\n    status: 'success',\n    data: req.body\n  });\n});",
+      "solution": "import express from 'express';\nimport { z } from 'zod';\nconst app = express();\n\napp.use(express.json());\n\nconst ProductSchema = z.object({\n  name: z.string().min(2).max(100),\n  price: z.number().positive()\n});\n\nconst validate = (schema) => {\n  return (req, res, next) => {\n    try {\n      schema.parse(req.body);\n      next();\n    } catch (error) {\n      if (error instanceof z.ZodError) {\n        return res.status(400).json({\n          status: 'error',\n          message: 'Validation failed',\n          errors: error.errors\n        });\n      }\n      next(error);\n    }\n  };\n};\n\napp.post('/api/products', validate(ProductSchema), (req, res) => {\n  res.status(201).json({\n    status: 'success',\n    data: req.body\n  });\n});",
+      "hints": [
+        "Add .min(2).max(100) to the name string validation",
+        "Add .positive() to the price number validation",
+        "Wrap schema.parse() in try/catch to handle ZodError",
+        "Check if error is instanceof z.ZodError before handling it"
+      ],
+      "validationPrompt": "Check that: 1) ProductSchema validates name with min(2) and max(100), 2) ProductSchema validates price as positive number, 3) validate middleware catches errors with try/catch, 4) ZodError returns 400 status with error details"
+    },
+    {
+      "id": "api-debug-404",
+      "lessonId": "rest-principles",
+      "moduleId": "express-apis",
+      "title": "Debug: Why Always 404?",
+      "difficulty": "medium",
+      "description": "This route always returns 404. Find and fix the bug!",
+      "instructions": "A developer copied this code from ChatGPT but `/api/users/123` always returns 404 even though the user exists.\n\nDebug the code and fix the issue. The bug is in how the route compares the ID.",
+      "starterCode": "import express from 'express';\nconst app = express();\n\nconst users = [\n  { id: 1, name: 'Alice' },\n  { id: 2, name: 'Bob' },\n  { id: 3, name: 'Charlie' }\n];\n\napp.get('/api/users/:id', (req, res) => {\n  const user = users.find(u => u.id === req.params.id);\n  \n  if (!user) {\n    return res.status(404).json({\n      status: 'error',\n      message: 'User not found'\n    });\n  }\n  \n  res.json({\n    status: 'success',\n    data: user\n  });\n});",
+      "solution": "import express from 'express';\nconst app = express();\n\nconst users = [\n  { id: 1, name: 'Alice' },\n  { id: 2, name: 'Bob' },\n  { id: 3, name: 'Charlie' }\n];\n\napp.get('/api/users/:id', (req, res) => {\n  const user = users.find(u => u.id === parseInt(req.params.id));\n  \n  if (!user) {\n    return res.status(404).json({\n      status: 'error',\n      message: 'User not found'\n    });\n  }\n  \n  res.json({\n    status: 'success',\n    data: user\n  });\n});",
+      "hints": [
+        "req.params.id is always a string, not a number",
+        "The user IDs in the array are numbers",
+        "Use parseInt() to convert the string to a number",
+        "Alternatively, you could use == instead of === for loose comparison"
+      ],
+      "validationPrompt": "Check that the solution converts req.params.id to a number (using parseInt or Number) before comparing with user.id, or uses loose equality (==) instead of strict equality (===)"
+    },
+    {
+      "id": "api-error-handling",
+      "lessonId": "rest-principles",
+      "moduleId": "express-apis",
+      "title": "Add Error Handling to Async Route",
+      "difficulty": "medium",
+      "description": "Add proper error handling to this async endpoint.",
+      "instructions": "This async route can crash the server if the database throws an error. Add proper error handling:\n1. Wrap the async code in try/catch\n2. Return 500 status on errors\n3. Send proper error response format\n4. Don't expose internal error details to the client",
+      "starterCode": "import express from 'express';\nconst app = express();\n\napp.use(express.json());\n\n// Simulated async database\nconst db = {\n  async createUser(data) {\n    // Simulates potential database errors\n    if (!data.email) throw new Error('Database: email is required');\n    return { id: Date.now(), ...data };\n  }\n};\n\napp.post('/api/users', async (req, res) => {\n  const user = await db.createUser(req.body);\n  res.status(201).json({\n    status: 'success',\n    data: user\n  });\n});",
+      "solution": "import express from 'express';\nconst app = express();\n\napp.use(express.json());\n\n// Simulated async database\nconst db = {\n  async createUser(data) {\n    // Simulates potential database errors\n    if (!data.email) throw new Error('Database: email is required');\n    return { id: Date.now(), ...data };\n  }\n};\n\napp.post('/api/users', async (req, res) => {\n  try {\n    const user = await db.createUser(req.body);\n    res.status(201).json({\n      status: 'success',\n      data: user\n    });\n  } catch (error) {\n    res.status(500).json({\n      status: 'error',\n      message: 'Failed to create user'\n    });\n  }\n});",
+      "hints": [
+        "Use try/catch to wrap async operations",
+        "Return 500 status code for server errors",
+        "Don't send error.message directly - it might expose internal details",
+        "Send a generic error message to the client"
+      ],
+      "validationPrompt": "Check that: 1) The async code is wrapped in try/catch, 2) The catch block returns 500 status, 3) Error response has proper format with status and message, 4) The error message is generic (not exposing internal error details)"
+    }
+  ]
 }

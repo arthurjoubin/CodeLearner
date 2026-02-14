@@ -46,5 +46,96 @@
       "codeExample": "async function safeFetch(url) {\n  try {\n    const res = await fetch(url);\n    if (!res.ok) {\n      throw new Error(`HTTP ${res.status}`);\n    }\n    return await res.json();\n  } catch (error) {\n    console.error('Fetch failed:', error.message);\n    return null;\n  } finally {\n    console.log('Request completed');\n  }\n}"
     }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "js-async-ex-1",
+      "lessonId": "js-promises",
+      "moduleId": "js-async",
+      "title": "Promises Quiz",
+      "difficulty": "easy",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "What happens if you don't add .catch() to a Promise?",
+          "options": [
+            "The Promise won't run",
+            "Errors will crash the app",
+            "Errors will be silently ignored (bad!)",
+            "JavaScript automatically handles it"
+          ],
+          "correctAnswer": 2,
+          "explanation": "Unhandled Promise rejections are silently ignored (or show warnings). Always add .catch() or use try/catch!"
+        },
+        {
+          "question": "What does Promise.all() do?",
+          "options": [
+            "Runs Promises one after another",
+            "Runs Promises in parallel and waits for all to finish",
+            "Runs only the fastest Promise",
+            "Cancels all Promises"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Promise.all() runs all Promises in parallel and resolves when ALL finish (or rejects if ANY fails)."
+        }
+      ]
+    },
+    {
+      "id": "js-async-ex-2",
+      "lessonId": "js-async-await",
+      "moduleId": "js-async",
+      "title": "Fix the Async Function",
+      "difficulty": "medium",
+      "type": "code",
+      "description": "AI generated this async function but forgot error handling. Fix it!",
+      "instructions": "The function should:\n1. Fetch data from the API\n2. Parse the JSON response\n3. Return the data\n4. Handle errors with try/catch\n5. Return null if it fails\n\nCurrently it has no error handling - add it!",
+      "starterCode": "async function getUserData(userId) {\n  const response = await fetch(`/api/users/${userId}`);\n  const data = await response.json();\n  return data;\n}",
+      "solution": "async function getUserData(userId) {\n  try {\n    const response = await fetch(`/api/users/${userId}`);\n    if (!response.ok) {\n      throw new Error(`HTTP ${response.status}`);\n    }\n    const data = await response.json();\n    return data;\n  } catch (error) {\n    console.error('Failed to fetch user:', error);\n    return null;\n  }\n}",
+      "hints": [
+        "Wrap the fetch in try/catch",
+        "Check response.ok before parsing JSON",
+        "Throw an error if response is not OK",
+        "Return null in the catch block"
+      ],
+      "validationPrompt": "Check if the code: 1) Has try/catch wrapping the fetch 2) Checks response.ok and throws error if not OK 3) Handles errors in catch block 4) Returns null on error 5) Logs the error"
+    },
+    {
+      "id": "js-async-ex-3",
+      "lessonId": "js-fetch-api",
+      "moduleId": "js-async",
+      "title": "Make a POST Request",
+      "difficulty": "medium",
+      "type": "code",
+      "description": "Write a function to create a new user via POST request.",
+      "instructions": "Create a createUser(name, email) function that:\n1. Makes a POST request to '/api/users'\n2. Sends JSON body with name and email\n3. Sets Content-Type header to 'application/json'\n4. Returns the created user data\n5. Uses async/await",
+      "starterCode": "async function createUser(name, email) {\n  // Your code here\n}",
+      "solution": "async function createUser(name, email) {\n  const response = await fetch('/api/users', {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json'\n    },\n    body: JSON.stringify({ name, email })\n  });\n  \n  const data = await response.json();\n  return data;\n}",
+      "hints": [
+        "Use fetch() with options object as second parameter",
+        "Set method: 'POST' in options",
+        "Headers need Content-Type: application/json",
+        "Body must be JSON.stringify() of the object",
+        "Don't forget to await response.json()"
+      ],
+      "validationPrompt": "Check if the code: 1) Uses fetch with POST method 2) Sets Content-Type header 3) Sends JSON body with name and email using JSON.stringify 4) Awaits response and parses JSON 5) Returns the data"
+    },
+    {
+      "id": "js-async-ex-4",
+      "lessonId": "js-error-handling",
+      "moduleId": "js-async",
+      "title": "Debug the Fetch Error",
+      "difficulty": "medium",
+      "type": "code",
+      "description": "This code doesn't handle HTTP errors correctly. Fix it!",
+      "instructions": "The code below doesn't check if the response is successful.\nAdd proper error handling:\n1. Check response.ok before parsing\n2. Throw descriptive error if status is not 2xx\n3. Catch and log errors properly",
+      "starterCode": "async function fetchPosts() {\n  try {\n    const response = await fetch('/api/posts');\n    const posts = await response.json();\n    return posts;\n  } catch (error) {\n    console.log('Error');\n  }\n}",
+      "solution": "async function fetchPosts() {\n  try {\n    const response = await fetch('/api/posts');\n    if (!response.ok) {\n      throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);\n    }\n    const posts = await response.json();\n    return posts;\n  } catch (error) {\n    console.error('Fetch failed:', error.message);\n    throw error;\n  }\n}",
+      "hints": [
+        "Check response.ok (true for status 200-299)",
+        "If not OK, throw new Error with status code",
+        "Log full error.message, not just 'Error'",
+        "Consider re-throwing the error so caller knows it failed"
+      ],
+      "validationPrompt": "Check if the code: 1) Checks response.ok before parsing JSON 2) Throws error with status code if not OK 3) Logs descriptive error message in catch 4) Either returns null or re-throws the error"
+    }
+  ]
 }

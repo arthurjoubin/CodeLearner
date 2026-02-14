@@ -381,8 +381,10 @@ export const LEARNING_PATHS: Record<string, LearningPathConfig> = {
   },
   'frontend': {
     name: 'Frontend',
-    description: 'Building user interfaces',
-    courses: ['html-css-tailwind', 'react', 'frontend-production'],
+    description: 'Building user interfaces with HTML, CSS, and React',
+    courses: ['html-css-tailwind', 'react'],
+    // Note: Testing, performance, and security modules will be integrated into React course later
+    // For now, browser-storage and pwa-basics remain in frontend-production courseId but not in path
     prerequisites: ['web-fundamentals'], // JavaScript Core is in web-fundamentals, no duplication
     color: 'from-blue-500 to-purple-600'
   },

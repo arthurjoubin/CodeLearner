@@ -46,5 +46,78 @@
       "codeExample": "// Object destructuring\nconst { name, age } = { name: \"Alice\", age: 25 };\n\n// Array destructuring\nconst [first, ...rest] = [1, 2, 3, 4];\n// first = 1, rest = [2, 3, 4]\n\n// Spread to merge\nconst defaults = { theme: \"dark\", lang: \"en\" };\nconst settings = { ...defaults, lang: \"fr\" };\n// { theme: \"dark\", lang: \"fr\" }"
     }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "js-arr-obj-ex-1",
+      "lessonId": "js-array-methods",
+      "moduleId": "js-arrays-objects",
+      "title": "Filter Products by Price Range",
+      "difficulty": "easy",
+      "type": "code",
+      "description": "AI returned a list of products. Filter them by price range.",
+      "instructions": "Given an array of products from an API, write a function that:\n1. Filters products between $10 and $50\n2. Returns the filtered array\n3. Use the filter() method\n\nExample input:\n[{name: 'Mouse', price: 25}, {name: 'Keyboard', price: 80}, {name: 'Cable', price: 5}]\n\nExpected output:\n[{name: 'Mouse', price: 25}]",
+      "starterCode": "function filterByPrice(products) {\n  // Your code here\n}",
+      "solution": "function filterByPrice(products) {\n  return products.filter(product => product.price >= 10 && product.price <= 50);\n}",
+      "hints": [
+        "Use filter() to keep only products that match the condition",
+        "Check if price >= 10 AND price <= 50",
+        "Remember to return the filtered array"
+      ],
+      "validationPrompt": "Check if the code:\n1. Uses filter() method on the products array\n2. Filters products with price >= 10 and price <= 50\n3. Returns the filtered array\n4. Works correctly with the example input"
+    },
+    {
+      "id": "js-arr-obj-ex-2",
+      "lessonId": "js-array-methods",
+      "moduleId": "js-arrays-objects",
+      "title": "Extract User Names from API Response",
+      "difficulty": "easy",
+      "type": "code",
+      "description": "Transform an array of user objects into just their usernames.",
+      "instructions": "The API returned users with lots of fields, but you only need the usernames.\n\nWrite a function that:\n1. Takes an array of user objects\n2. Returns an array of just the usernames\n3. Use map() method\n\nExample input:\n[{id: 1, username: 'alice_dev', email: 'alice@example.com'}, {id: 2, username: 'bob_code', email: 'bob@example.com'}]\n\nExpected output:\n['alice_dev', 'bob_code']",
+      "starterCode": "function getUsernames(users) {\n  // Your code here\n}",
+      "solution": "function getUsernames(users) {\n  return users.map(user => user.username);\n}",
+      "hints": [
+        "Use map() to transform each user object",
+        "Extract just the username property from each user",
+        "map() returns a new array with the transformed values"
+      ],
+      "validationPrompt": "Check if the code:\n1. Uses map() method on the users array\n2. Extracts the username property from each user\n3. Returns an array of strings (usernames)\n4. Works correctly with the example input"
+    },
+    {
+      "id": "js-arr-obj-ex-3",
+      "lessonId": "js-destructuring",
+      "moduleId": "js-arrays-objects",
+      "title": "Merge Settings with Defaults",
+      "difficulty": "medium",
+      "type": "code",
+      "description": "Use the spread operator to merge user settings with defaults.",
+      "instructions": "You're building a settings panel. Merge user preferences with default settings.\n\nWrite a function that:\n1. Takes a userSettings object\n2. Merges it with default settings\n3. User settings should override defaults\n4. Use spread operator (...)\n\nDefault settings:\n{ theme: 'light', notifications: true, language: 'en' }\n\nExample: mergeSettings({theme: 'dark'}) should return:\n{theme: 'dark', notifications: true, language: 'en'}",
+      "starterCode": "function mergeSettings(userSettings) {\n  const defaults = {\n    theme: 'light',\n    notifications: true,\n    language: 'en'\n  };\n  \n  // Your code here\n}",
+      "solution": "function mergeSettings(userSettings) {\n  const defaults = {\n    theme: 'light',\n    notifications: true,\n    language: 'en'\n  };\n  \n  return { ...defaults, ...userSettings };\n}",
+      "hints": [
+        "Use spread operator: { ...obj1, ...obj2 }",
+        "Order matters: later spreads override earlier ones",
+        "Spread defaults first, then userSettings to override"
+      ],
+      "validationPrompt": "Check if the code:\n1. Uses spread operator to merge objects\n2. Spreads defaults first, then userSettings\n3. Returns a new object with merged properties\n4. User settings correctly override defaults\n5. Works with the example input"
+    },
+    {
+      "id": "js-arr-obj-ex-4",
+      "lessonId": "js-array-methods",
+      "moduleId": "js-arrays-objects",
+      "title": "Debug the Broken Map/Filter Chain",
+      "difficulty": "medium",
+      "type": "code",
+      "description": "AI generated this code to process orders, but it's broken. Fix it!",
+      "instructions": "The code should:\n1. Filter orders that are 'completed'\n2. Map to get just the total amounts\n3. Calculate the sum with reduce()\n\nCurrently it returns the wrong result. Find and fix the bugs!\n\nExample input:\n[{id: 1, status: 'completed', total: 50}, {id: 2, status: 'pending', total: 30}, {id: 3, status: 'completed', total: 75}]\n\nExpected output: 125 (50 + 75)",
+      "starterCode": "function getTotalRevenue(orders) {\n  return orders\n    .filter(order => order.status = 'completed')\n    .map(order => order.total)\n    .reduce((sum, total) => sum + total);\n}",
+      "solution": "function getTotalRevenue(orders) {\n  return orders\n    .filter(order => order.status === 'completed')\n    .map(order => order.total)\n    .reduce((sum, total) => sum + total, 0);\n}",
+      "hints": [
+        "Check the filter condition - is it comparing or assigning?",
+        "The reduce needs an initial value (second parameter)",
+        "Use === for comparison, not = (assignment)"
+      ],
+      "validationPrompt": "Check if the code:\n1. Uses === (comparison) instead of = (assignment) in filter\n2. Provides initial value of 0 to reduce\n3. Correctly filters completed orders\n4. Maps to extract totals\n5. Sums the totals correctly\n6. Returns 125 for the example input"
+    }
+  ]
 }

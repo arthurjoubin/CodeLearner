@@ -42,5 +42,80 @@
       "content": "# Essential to know\n- CTE (WITH) breaks complex queries into parts\n- Window functions for calculations on row sets\n- ROW_NUMBER, RANK, DENSE_RANK for ranking\n- LAG/LEAD to access previous/next rows\n\n---\n\n# CTEs: Common Table Expressions\n\nCTEs define temporary named tables to simplify complex queries.\n\n## Basic Syntax\n\n```sql\nWITH cte_name AS (\n  SELECT ...\n)\nSELECT * FROM cte_name;\n\n-- Multiple CTEs\nWITH\n  cte1 AS (SELECT ...),\n  cte2 AS (SELECT ...),\n  cte3 AS (SELECT FROM cte1 JOIN cte2 ...)\nSELECT * FROM cte3;\n```\n\n## Practical Examples\n\n```sql\n-- Top 3 products per category\nWITH product_stats AS (\n  SELECT\n    category,\n    name,\n    sales_count,\n    RANK() OVER (PARTITION BY category ORDER BY sales_count DESC) AS rank\n  FROM products\n)\nSELECT category, name, sales_count\nFROM product_stats\nWHERE rank <= 3;\n\n-- Monthly revenue growth\nWITH monthly_revenue AS (\n  SELECT\n    DATE_TRUNC('month', created_at) AS month,\n    SUM(total) AS revenue\n  FROM orders\n  GROUP BY 1\n)\nSELECT\n  month,\n  revenue,\n  LAG(revenue) OVER (ORDER BY month) AS prev_month_revenue,\n  revenue - LAG(revenue) OVER (ORDER BY month) AS growth\nFROM monthly_revenue;\n\n-- Recursive: Employee hierarchy\nWITH RECURSIVE employee_tree AS (\n  -- Anchor: level 0 (CEO with no manager)\n  SELECT id, name, manager_id, 0 AS level\n  FROM employees\n  WHERE manager_id IS NULL\n\n  UNION ALL\n\n  -- Recursive: employees whose manager is in tree\n  SELECT e.id, e.name, e.manager_id, et.level + 1\n  FROM employees e\n  INNER JOIN employee_tree et ON e.manager_id = et.id\n)\nSELECT * FROM employee_tree ORDER BY level, name;\n```\n\n# Window Functions\n\nWindow functions calculate over a set of rows related to current row.\n\n## ROW_NUMBER, RANK, DENSE_RANK\n\n```sql\n-- Rank sales\nSELECT\n  name,\n  sales,\n  ROW_NUMBER() OVER (ORDER BY sales DESC) AS row_num,\n  RANK() OVER (ORDER BY sales DESC) AS rank,\n  DENSE_RANK() OVER (ORDER BY sales DESC) AS dense_rank\nFROM products;\n\n-- Differences:\n-- sales | row_num | rank | dense_rank\n-- 1000  | 1       | 1    | 1\n-- 1000  | 2       | 1    | 1   ← Tied\n-- 900   | 3       | 3    | 2   ← RANK skips 3, DENSE_RANK continues 2\n-- 800   | 4       | 4    | 3\n\n-- PARTITION BY: Rank within category\nSELECT\n  category,\n  name,\n  sales,\n  ROW_NUMBER() OVER (PARTITION BY category ORDER BY sales DESC) AS rank_in_category\nFROM products;\n```\n\n## LAG and LEAD\n\n```sql\n-- Access previous/next rows\nSELECT\n  date,\n  revenue,\n  LAG(revenue) OVER (ORDER BY date) AS prev_day,\n  revenue - LAG(revenue) OVER (ORDER BY date) AS day_change,\n  LEAD(revenue) OVER (ORDER BY date) AS next_day\nFROM daily_revenue;\n\n-- Year-over-year comparison\nSELECT\n  month,\n  year_2023,\n  year_2022,\n  year_2023 - year_2022 AS yoy_change,\n  (year_2023 - year_2022) * 100.0 / year_2022 AS yoy_percent\nFROM (\n  SELECT\n    EXTRACT(MONTH FROM date) AS month,\n    SUM(CASE WHEN EXTRACT(YEAR FROM date) = 2023 THEN revenue END) AS year_2023,\n    SUM(CASE WHEN EXTRACT(YEAR FROM date) = 2022 THEN revenue END) AS year_2022\n  FROM sales\n  GROUP BY 1\n) monthly;\n```\n\n## SUM and AVG with OVER\n\n```sql\n-- Running total of sales\nSELECT\n  date,\n  daily_sales,\n  SUM(daily_sales) OVER (ORDER BY date) AS running_total,\n  AVG(daily_sales) OVER (ORDER BY date ROWS 6 PRECEDING) AS moving_average_7d\nFROM daily_sales;\n```\n\n## FIRST_VALUE, LAST_VALUE, NTH_VALUE\n\n```sql\nSELECT\n  category,\n  name,\n  price,\n  FIRST_VALUE(name) OVER (PARTITION BY category ORDER BY price DESC) AS most_expensive_in_category,\n  LAST_VALUE(name) OVER (PARTITION BY category ORDER BY price DESC\n    RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS cheapest_in_category\nFROM products;\n```\n\n## Frame Specifications\n\n```sql\n-- ROWS: number of rows\n-- RANGE: value-based\n\nSUM(amount) OVER (ORDER BY date ROWS UNBOUNDED PRECEDING)\nSUM(amount) OVER (ORDER BY date ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)\nSUM(amount) OVER (ORDER BY date RANGE BETWEEN INTERVAL '7 days' PRECEDING AND CURRENT ROW)\n```"
     }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "sql-ex-1",
+      "lessonId": "sql-basics",
+      "moduleId": "db-sql-fundamentals",
+      "title": "Fix the Broken WHERE Clause",
+      "difficulty": "easy",
+      "type": "code",
+      "description": "ChatGPT generated this query to find active users in France, but it's returning no results. Debug and fix it!",
+      "instructions": "Your AI coding assistant generated this query:\n\n```sql\nSELECT * FROM users WHERE country = \"France\" AND status = \"active\"\n```\n\nBut when you run it, you get a syntax error. This is a common mistake when translating between different SQL dialects. Fix the query so it works correctly.\n\n**Expected behavior:** Should return all users where country is 'France' AND status is 'active'.\n\n**Hint:** Check the string delimiters - SQL uses different quotes than some programming languages!",
+      "starterCode": "SELECT * FROM users WHERE country = \"France\" AND status = \"active\"",
+      "solution": "SELECT * FROM users WHERE country = 'France' AND status = 'active'",
+      "hints": [
+        "In SQL, string literals use single quotes ('), not double quotes (\")",
+        "Double quotes are used for identifiers (table/column names) in some SQL dialects",
+        "This is one of the most common errors when AI tools generate SQL without knowing your database"
+      ],
+      "validationPrompt": "Check if the student's SQL query:\n1. Uses single quotes (') for string literals instead of double quotes (\")\n2. Correctly filters for country = 'France' AND status = 'active'\n3. The query syntax is valid SQL\n\nAccept variations like different spacing or line breaks, but the quotes MUST be single quotes for the strings."
+    },
+    {
+      "id": "sql-ex-2",
+      "lessonId": "sql-joins",
+      "moduleId": "db-sql-fundamentals",
+      "title": "Understanding JOIN Types",
+      "difficulty": "easy",
+      "type": "quiz",
+      "question": "You asked Cursor to \"show all users and their orders\". It generated `SELECT * FROM users INNER JOIN orders ON users.id = orders.user_id`. When you run it, you notice some users are missing from the results. Why?",
+      "options": [
+        "INNER JOIN only returns users who have at least one order - users without orders are excluded",
+        "The query has a syntax error and needs to be fixed",
+        "INNER JOIN returns too many results because of duplicate users",
+        "The ON clause is wrong and should use orders.id = users.user_id instead"
+      ],
+      "correctAnswer": 0,
+      "explanation": "INNER JOIN only returns rows where there's a match in BOTH tables. Users without orders won't appear in the results because they have no matching row in the orders table.\n\nTo show ALL users (including those without orders), you need LEFT JOIN:\n```sql\nSELECT * FROM users LEFT JOIN orders ON users.id = orders.user_id\n```\n\nThis is a classic mistake when working with AI-generated queries - always check which JOIN type matches your actual requirement!"
+    },
+    {
+      "id": "sql-ex-3",
+      "lessonId": "sql-aggregation",
+      "moduleId": "db-sql-fundamentals",
+      "title": "Fix the GROUP BY Error",
+      "difficulty": "intermediate",
+      "type": "code",
+      "description": "v0 generated this query to show user names with their order counts, but it throws an error. Fix it!",
+      "instructions": "Your AI tool generated this query:\n\n```sql\nSELECT users.name, COUNT(orders.id) AS order_count\nFROM users\nLEFT JOIN orders ON users.id = orders.user_id\n```\n\nWhen you run it, you get an error: `column \"users.name\" must appear in the GROUP BY clause`.\n\nFix the query so it correctly shows each user's name and their total number of orders.\n\n**Expected output columns:**\n- name (user's name)\n- order_count (number of orders for that user)\n\n**Requirements:**\n- Use LEFT JOIN so users with 0 orders still appear\n- Use COUNT to count orders\n- Group the results properly",
+      "starterCode": "SELECT users.name, COUNT(orders.id) AS order_count\nFROM users\nLEFT JOIN orders ON users.id = orders.user_id",
+      "solution": "SELECT users.name, COUNT(orders.id) AS order_count\nFROM users\nLEFT JOIN orders ON users.id = orders.user_id\nGROUP BY users.name",
+      "hints": [
+        "When you use an aggregate function like COUNT(), all non-aggregated columns must be in GROUP BY",
+        "You're selecting users.name (non-aggregated) and COUNT(orders.id) (aggregated)",
+        "Add GROUP BY users.name at the end of the query",
+        "This is one of the most common SQL errors when using aggregations!"
+      ],
+      "validationPrompt": "Check if the student's SQL query:\n1. Includes 'GROUP BY users.name' or 'GROUP BY name' (or uses users.id if they also selected it)\n2. Still has the LEFT JOIN to include users without orders\n3. Uses COUNT(orders.id) or COUNT(*) to count orders\n4. Selects name and the count with an alias like order_count\n\nThe key requirement is that non-aggregated columns (name) must appear in GROUP BY. Accept reasonable variations in formatting or if they use users.id in both SELECT and GROUP BY."
+    },
+    {
+      "id": "sql-ex-4",
+      "lessonId": "sql-aggregation",
+      "moduleId": "db-sql-fundamentals",
+      "title": "Debug the HAVING vs WHERE Mix-up",
+      "difficulty": "intermediate",
+      "type": "code",
+      "description": "ChatGPT wrote a query to find countries with more than 10 users, but used WHERE instead of HAVING. Fix it!",
+      "instructions": "An AI assistant generated this query to find countries that have more than 10 users:\n\n```sql\nSELECT country, COUNT(*) AS user_count\nFROM users\nWHERE COUNT(*) > 10\nGROUP BY country\n```\n\nWhen you run it, you get: `aggregate functions are not allowed in WHERE`.\n\nFix the query so it correctly returns countries with more than 10 users.\n\n**Expected behavior:** Returns countries and their user counts, but ONLY for countries with more than 10 users.\n\n**Tip:** Think about when filtering happens - before or after grouping?",
+      "starterCode": "SELECT country, COUNT(*) AS user_count\nFROM users\nWHERE COUNT(*) > 10\nGROUP BY country",
+      "solution": "SELECT country, COUNT(*) AS user_count\nFROM users\nGROUP BY country\nHAVING COUNT(*) > 10",
+      "hints": [
+        "WHERE filters individual rows BEFORE grouping happens",
+        "HAVING filters groups AFTER aggregation is complete",
+        "You can't use aggregate functions (like COUNT) in WHERE clause",
+        "Use HAVING to filter on aggregated values: GROUP BY country HAVING COUNT(*) > 10",
+        "Remember: WHERE = filter rows, HAVING = filter groups"
+      ],
+      "validationPrompt": "Check if the student's SQL query:\n1. Uses HAVING instead of WHERE for the COUNT(*) > 10 condition\n2. Keeps the GROUP BY country clause\n3. Has HAVING clause AFTER the GROUP BY (correct SQL order)\n4. The condition HAVING COUNT(*) > 10 is present (or similar like HAVING user_count > 10 if they reference the alias)\n\nThe key fix is moving the aggregate filter from WHERE to HAVING. Accept variations in spacing or if they use the alias in HAVING (though not all databases support that)."
+    }
+  ]
 }
