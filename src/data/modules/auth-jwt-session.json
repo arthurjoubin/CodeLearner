@@ -26,5 +26,108 @@
       "content": "# Essential to know\n- JWT = JSON Web Token: signed token containing claims\n- Stateless: server doesn't store state\n- Structure: header.payload.signature\n- Access token (short duration) + Refresh token (long duration)\n\n---\n\n# JSON Web Tokens (JWT)\n\n## JWT Structure\n\n```\neyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.  ← Header (algo, type)\neyJ1c2VySWQiOjQyLCJyb2xlIjoidXNlciJ9.   ← Payload (data)\nSflKxwRJSMeKKF2QT4fwpMe...                ← Signature (verification)\n```\n\nDecode at https://jwt.io\n\n## Implementation\n\n```bash\nnpm install jsonwebtoken\n```\n\n```javascript\nimport jwt from 'jsonwebtoken';\n\nconst JWT_SECRET = process.env.JWT_SECRET;\nconst JWT_EXPIRES_IN = '15m';      // Access token: short\nconst REFRESH_EXPIRES_IN = '7d';   // Refresh token: long\n\n// Generate tokens\nfunction generateTokens(user) {\n  const accessToken = jwt.sign(\n    { userId: user.id, role: user.role },\n    JWT_SECRET,\n    { expiresIn: JWT_EXPIRES_IN }\n  );\n  \n  const refreshToken = jwt.sign(\n    { userId: user.id, type: 'refresh' },\n    JWT_SECRET,\n    { expiresIn: REFRESH_EXPIRES_IN }\n  );\n  \n  return { accessToken, refreshToken };\n}\n\n// Login\napp.post('/auth/login', async (req, res) => {\n  const { email, password } = req.body;\n  \n  const user = await db.findUserByEmail(email);\n  if (!user || !await verifyPassword(password, user.passwordHash)) {\n    return res.status(401).json({ error: 'Invalid credentials' });\n  }\n  \n  const tokens = generateTokens(user);\n  \n  // Store the refresh token (to be able to revoke it)\n  await db.saveRefreshToken(user.id, tokens.refreshToken);\n  \n  res.json({\n    accessToken: tokens.accessToken,\n    refreshToken: tokens.refreshToken,\n    expiresIn: 900  // 15 minutes in seconds\n  });\n});\n\n// JWT verification middleware\nfunction requireAuth(req, res, next) {\n  const authHeader = req.headers.authorization;\n  \n  if (!authHeader?.startsWith('Bearer ')) {\n    return res.status(401).json({ error: 'Token required' });\n  }\n  \n  const token = authHeader.substring(7);\n  \n  try {\n    const decoded = jwt.verify(token, JWT_SECRET);\n    req.userId = decoded.userId;\n    req.userRole = decoded.role;\n    next();\n  } catch (err) {\n    return res.status(401).json({ error: 'Invalid or expired token' });\n  }\n}\n\n// Refresh token\napp.post('/auth/refresh', async (req, res) => {\n  const { refreshToken } = req.body;\n  \n  if (!refreshToken) {\n    return res.status(401).json({ error: 'Refresh token required' });\n  }\n  \n  try {\n    const decoded = jwt.verify(refreshToken, JWT_SECRET);\n    \n    // Check if token is valid in DB (not revoked)\n    const storedToken = await db.findRefreshToken(decoded.userId);\n    if (storedToken !== refreshToken) {\n      return res.status(401).json({ error: 'Invalid refresh token' });\n    }\n    \n    // Generate new tokens\n    const user = await db.findUserById(decoded.userId);\n    const tokens = generateTokens(user);\n    \n    // Replace old refresh token\n    await db.saveRefreshToken(user.id, tokens.refreshToken);\n    \n    res.json(tokens);\n  } catch (err) {\n    return res.status(401).json({ error: 'Invalid refresh token' });\n  }\n});\n```\n\n## Using JWT on the Client\n\n```javascript\n// Store tokens (after login)\nlocalStorage.setItem('accessToken', response.accessToken);\nlocalStorage.setItem('refreshToken', response.refreshToken);\n\n// Send token with each request\nfetch('/api/protected', {\n  headers: {\n    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`\n  }\n});\n\n// Automatic token refresh\nasync function fetchWithAuth(url, options = {}) {\n  let token = localStorage.getItem('accessToken');\n  \n  let response = await fetch(url, {\n    ...options,\n    headers: {\n      ...options.headers,\n      'Authorization': `Bearer ${token}`\n    }\n  });\n  \n  // If expired, refresh and retry\n  if (response.status === 401) {\n    const newToken = await refreshAccessToken();\n    response = await fetch(url, {\n      ...options,\n      headers: {\n        ...options.headers,\n        'Authorization': `Bearer ${newToken}`\n      }\n    });\n  }\n  \n  return response;\n}\n```\n\n## Sessions vs JWT: When to Use Which?\n\n**Use Sessions when:**\n- Traditional web application\n- You need to revoke sessions immediately\n- Simple architecture with one server\n- You want automatic session management\n\n**Use JWT when:**\n- Mobile or SPA application\n- Microservices architecture\n- API that needs to be stateless\n- Cross-domain authentication required\n\n**Best Practice:**\n- Use short-lived access tokens (15-30 minutes)\n- Use refresh tokens for long sessions\n- Store tokens securely (HttpOnly cookies preferred over localStorage)"
     }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "jwt-ex-1",
+      "lessonId": "jwt-auth",
+      "moduleId": "auth-jwt-session",
+      "title": "Fix the Broken JWT Verification",
+      "difficulty": "medium",
+      "type": "code",
+      "description": "AI generated this protected route but it always returns 401. Debug and fix it!",
+      "instructions": "This Express route is supposed to validate JWT tokens, but it's broken.\n\nBugs to find and fix:\n1. The Authorization header parsing is incorrect\n2. The error handling doesn't work properly\n3. The decoded data isn't attached to the request\n\nFix all three issues so the middleware works correctly.",
+      "starterCode": "import jwt from 'jsonwebtoken';\n\nfunction requireAuth(req, res, next) {\n  const token = req.headers.authorization;\n  \n  if (!token) {\n    return res.status(401).json({ error: 'Token required' });\n  }\n  \n  const decoded = jwt.verify(token, process.env.JWT_SECRET);\n  next();\n}",
+      "solution": "import jwt from 'jsonwebtoken';\n\nfunction requireAuth(req, res, next) {\n  const authHeader = req.headers.authorization;\n  \n  if (!authHeader?.startsWith('Bearer ')) {\n    return res.status(401).json({ error: 'Token required' });\n  }\n  \n  const token = authHeader.substring(7);\n  \n  try {\n    const decoded = jwt.verify(token, process.env.JWT_SECRET);\n    req.userId = decoded.userId;\n    req.userRole = decoded.role;\n    next();\n  } catch (err) {\n    return res.status(401).json({ error: 'Invalid or expired token' });\n  }\n}",
+      "hints": [
+        "Authorization header format is 'Bearer <token>', not just the token",
+        "Use .substring(7) or .split(' ')[1] to extract the token",
+        "jwt.verify() throws an error if token is invalid - wrap in try/catch",
+        "Store decoded data on req object so routes can access it"
+      ],
+      "validationPrompt": "Check that: 1) Extracts token from 'Bearer <token>' format, 2) Wraps jwt.verify in try/catch, 3) Attaches decoded.userId and decoded.role to req object, 4) Returns 401 on errors"
+    },
+    {
+      "id": "jwt-ex-2",
+      "lessonId": "jwt-auth",
+      "moduleId": "auth-jwt-session",
+      "title": "Implement Token Refresh",
+      "difficulty": "medium",
+      "type": "code",
+      "description": "Complete the refresh token endpoint to generate new access tokens.",
+      "instructions": "Users' access tokens expire after 15 minutes. Implement the /auth/refresh endpoint that:\n\n1. Accepts a refresh token in the request body\n2. Verifies the refresh token is valid\n3. Generates a new access token\n4. Returns the new token\n\nThe generateAccessToken() function is already provided.",
+      "starterCode": "import jwt from 'jsonwebtoken';\n\nfunction generateAccessToken(userId, role) {\n  return jwt.sign(\n    { userId, role },\n    process.env.JWT_SECRET,\n    { expiresIn: '15m' }\n  );\n}\n\napp.post('/auth/refresh', async (req, res) => {\n  // TODO: Get refresh token from request body\n  // TODO: Verify the refresh token\n  // TODO: Generate new access token\n  // TODO: Return new token\n});",
+      "solution": "import jwt from 'jsonwebtoken';\n\nfunction generateAccessToken(userId, role) {\n  return jwt.sign(\n    { userId, role },\n    process.env.JWT_SECRET,\n    { expiresIn: '15m' }\n  );\n}\n\napp.post('/auth/refresh', async (req, res) => {\n  const { refreshToken } = req.body;\n  \n  if (!refreshToken) {\n    return res.status(401).json({ error: 'Refresh token required' });\n  }\n  \n  try {\n    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);\n    \n    const newAccessToken = generateAccessToken(decoded.userId, decoded.role);\n    \n    res.json({\n      accessToken: newAccessToken,\n      expiresIn: 900\n    });\n  } catch (err) {\n    return res.status(401).json({ error: 'Invalid refresh token' });\n  }\n});",
+      "hints": [
+        "Get refreshToken from req.body",
+        "Verify it with jwt.verify() wrapped in try/catch",
+        "Extract userId and role from the decoded token",
+        "Call generateAccessToken() with the decoded data",
+        "Return the new access token in the response"
+      ],
+      "validationPrompt": "Check that: 1) Gets refreshToken from req.body, 2) Returns 401 if missing, 3) Verifies token with jwt.verify in try/catch, 4) Generates new access token using decoded data, 5) Returns new token in response"
+    },
+    {
+      "id": "jwt-ex-3",
+      "lessonId": "session-auth",
+      "moduleId": "auth-jwt-session",
+      "title": "Debug Session Configuration",
+      "difficulty": "medium",
+      "type": "code",
+      "description": "This session setup has security issues. Fix them!",
+      "instructions": "An AI generated this express-session configuration but it has several security problems:\n\n1. Session cookies aren't secure in production\n2. The secret is hardcoded (security risk!)\n3. Cookies are accessible to JavaScript (XSS vulnerability)\n4. Sessions are being created for unauthenticated users\n\nFix all four security issues.",
+      "starterCode": "import session from 'express-session';\n\napp.use(session({\n  secret: 'my-secret-key',\n  resave: false,\n  saveUninitialized: true,\n  cookie: {\n    maxAge: 24 * 60 * 60 * 1000\n  }\n}));",
+      "solution": "import session from 'express-session';\n\napp.use(session({\n  secret: process.env.SESSION_SECRET,\n  resave: false,\n  saveUninitialized: false,\n  cookie: {\n    secure: process.env.NODE_ENV === 'production',\n    httpOnly: true,\n    maxAge: 24 * 60 * 60 * 1000,\n    sameSite: 'strict'\n  }\n}));",
+      "hints": [
+        "Never hardcode secrets - use process.env.SESSION_SECRET",
+        "Set cookie.secure: true in production (requires HTTPS)",
+        "Set cookie.httpOnly: true to prevent XSS attacks",
+        "Set saveUninitialized: false to not create sessions for anonymous users",
+        "Add sameSite: 'strict' for CSRF protection"
+      ],
+      "validationPrompt": "Check that: 1) Uses process.env.SESSION_SECRET, 2) Sets cookie.secure based on NODE_ENV, 3) Sets cookie.httpOnly: true, 4) Sets saveUninitialized: false, 5) Optionally sets sameSite: 'strict'"
+    },
+    {
+      "id": "jwt-ex-4",
+      "lessonId": "jwt-auth",
+      "moduleId": "auth-jwt-session",
+      "title": "JWT Security Best Practices Quiz",
+      "difficulty": "easy",
+      "type": "quiz",
+      "questions": [
+        {
+          "question": "Where should you store JWT tokens in a web application for maximum security?",
+          "options": [
+            "localStorage - easy to access from JavaScript",
+            "sessionStorage - clears when tab closes",
+            "HttpOnly cookies - not accessible to JavaScript",
+            "In the URL query parameters"
+          ],
+          "correctAnswer": 2,
+          "explanation": "HttpOnly cookies are the most secure option because JavaScript cannot access them, preventing XSS attacks from stealing tokens. localStorage and sessionStorage are vulnerable to XSS. Never put tokens in URLs (they appear in logs and history)."
+        },
+        {
+          "question": "Why do we use short-lived access tokens (15-30 min) with refresh tokens instead of long-lived access tokens?",
+          "options": [
+            "To annoy users by making them log in frequently",
+            "Shorter tokens are smaller in size",
+            "If an access token is stolen, it expires quickly (limited damage)",
+            "Refresh tokens are easier to implement"
+          ],
+          "correctAnswer": 2,
+          "explanation": "Short-lived access tokens limit the damage if they're stolen - they expire quickly. The refresh token (stored more securely) is used to get new access tokens. This balances security and user experience."
+        },
+        {
+          "question": "What's the main advantage of JWT over session-based auth?",
+          "options": [
+            "JWTs are more secure than sessions",
+            "JWTs are stateless - no server-side storage needed",
+            "JWTs are easier to revoke immediately",
+            "JWTs work better with traditional web apps"
+          ],
+          "correctAnswer": 1,
+          "explanation": "JWTs are stateless - the server doesn't need to store session data. This makes them perfect for microservices and mobile apps. However, this also makes them harder to revoke immediately (you need a blocklist). Sessions are better when you need instant revocation."
+        }
+      ]
+    }
+  ]
 }
