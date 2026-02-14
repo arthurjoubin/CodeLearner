@@ -27,6 +27,7 @@ import terminalCliData from './terminal-cli.json';
 import howWebWorksData from './how-web-works.json';
 import dataFormatsLogsData from './data-formats-logs.json';
 import devtoolsDebuggingData from './devtools-debugging.json';
+import errorMessagesData from './error-messages.json';
 import packageManagersData from './package-managers.json';
 import buildToolsData from './build-tools.json';
 import envConfigData from './env-config.json';
@@ -166,12 +167,13 @@ const moduleFiles: ModuleData[] = [
   // LEARNING PATH 1: WEB FUNDAMENTALS
   // ============================================
 
-  // Course: internet-tools (Reordered: IDE → Terminal → Web → Data/Logs → DevTools → Package Mgrs → Build → Env → Vibe Coding)
+  // Course: internet-tools (Reordered: IDE → Terminal → Web → Data/Logs → DevTools → Errors → Package Mgrs → Build → Env → Vibe Coding)
   ideSetupData as ModuleData,
   terminalCliData as ModuleData,
   howWebWorksData as ModuleData,
   dataFormatsLogsData as ModuleData,
   devtoolsDebuggingData as ModuleData,
+  errorMessagesData as ModuleData,
   packageManagersData as ModuleData,
   buildToolsData as ModuleData,
   envConfigData as ModuleData,
