@@ -112,6 +112,7 @@ import dbSqlFundamentalsData from './db-sql-fundamentals.json';
 import dbSqliteData from './db-sqlite.json';
 import dbPostgresqlData from './db-postgresql.json';
 import dbOrmsData from './db-orms.json';
+import dbMigrationsData from './db-migrations.json';
 
 // Course: auth-security (Authentication & Security)
 import authFundamentalsData from './auth-fundamentals.json';
@@ -256,6 +257,7 @@ const moduleFiles: ModuleData[] = [
   dbSqliteData as ModuleData,
   dbPostgresqlData as ModuleData,
   dbOrmsData as ModuleData,
+  dbMigrationsData as ModuleData,
   
   // Course: auth-security
   authFundamentalsData as ModuleData,
